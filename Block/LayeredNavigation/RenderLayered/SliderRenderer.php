@@ -21,7 +21,7 @@ class SliderRenderer extends DefaultRenderer
     /**
      * {@inheritDoc}
      */
-    protected $_template = 'Emico_Tweakwise::product/layered/slider.phtml';
+    protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/slider.phtml';
 
     /**
      * @var PriceHelper

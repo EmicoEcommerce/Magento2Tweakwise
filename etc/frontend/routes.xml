@@ -10,7 +10,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
         <route id="tweakwise" frontName="tweakwise">
-            <module name="Emico_Tweakwise" />
+            <module name="Tweakwise_Magento2Tweakwise" />
         </route>
     </router>
 </config>

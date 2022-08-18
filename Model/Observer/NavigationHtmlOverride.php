@@ -70,11 +70,11 @@ class NavigationHtmlOverride implements ObserverInterface
         $isNavigation = !$isSearch;
 
         if ($isSearch && $searchEnabled) {
-            $block->setTemplate('Emico_Tweakwise::layer/view.phtml');
+            $block->setTemplate('Tweakwise_Magento2Tweakwise::layer/view.phtml');
         }
 
         if ($isNavigation && $navigationEnabled) {
-            $block->setTemplate('Emico_Tweakwise::layer/view.phtml');
+            $block->setTemplate('Tweakwise_Magento2Tweakwise::layer/view.phtml');
         }
     }
 }

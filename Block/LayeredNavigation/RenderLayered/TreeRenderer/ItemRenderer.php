@@ -20,7 +20,7 @@ class ItemRenderer extends TreeRenderer
     /**
      * {@inheritDoc}
      */
-    protected $_template = 'Emico_Tweakwise::product/layered/tree/item.phtml';
+    protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/tree/item.phtml';
 
     /**
      * @var Item

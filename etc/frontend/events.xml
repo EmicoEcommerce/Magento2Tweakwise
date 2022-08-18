@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="controller_action_postdispatch_catalog_category_view">
-        <observer name="emico-tweakwise" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogNavigationLastPageRedirect" />
+        <observer name="tweakwise-magento2tweakwise" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogNavigationLastPageRedirect" />
     </event>
 
     <event name="controller_action_predispatch_catalogsearch_result_index">
-        <observer name="emico-tweakwise-redirect" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogSearchRedirect" />
+        <observer name="tweakwise-magento2tweakwise-redirect" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogSearchRedirect" />
     </event>
 
     <event name="controller_action_postdispatch_catalogsearch_result_index">
-        <observer name="emico-tweakwise-last-page" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogSearchLastPageRedirect" />
+        <observer name="tweakwise-magento2tweakwise-last-page" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogSearchLastPageRedirect" />
     </event>
 
     <event name="view_block_abstract_to_html_before">
-        <observer name="emico-tweakwise-navigation-override" instance="Tweakwise\Magento2Tweakwise\Model\Observer\NavigationHtmlOverride" />
+        <observer name="tweakwise-magento2tweakwise-navigation-override" instance="Tweakwise\Magento2Tweakwise\Model\Observer\NavigationHtmlOverride" />
     </event>
 </config>

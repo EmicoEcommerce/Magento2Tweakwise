@@ -20,7 +20,7 @@ class LinkRenderer extends DefaultRenderer
     /**
      * {@inheritDoc}
      */
-    protected $_template = 'Emico_Tweakwise::product/layered/link.phtml';
+    protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/link.phtml';
 
     /**
      * @param Item $item

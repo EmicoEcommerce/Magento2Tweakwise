@@ -16,7 +16,7 @@ class TreeRenderer extends DefaultRenderer
     /**
      * {@inheritDoc}
      */
-    protected $_template = 'Emico_Tweakwise::product/layered/tree.phtml';
+    protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/tree.phtml';
 
     /**
      * @param Item $item

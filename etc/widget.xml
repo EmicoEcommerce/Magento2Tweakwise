@@ -9,7 +9,7 @@
 -->
 <widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
     <widget id="tweakwise_featured_products" class="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\Widget\FeaturedProducts" is_email_compatible="true"
-            placeholder_image="Emico_Tweakwise::images/featured_products.png" ttl="86400">
+            placeholder_image="Tweakwise_Magento2Tweakwise::images/featured_products.png" ttl="86400">
         <label>Tweakwise - featured products</label>
         <description>List of Products from Tweakwise recommendations</description>
         <parameters>

@@ -13,5 +13,5 @@ class CheckboxRenderer extends DefaultRenderer
     /**
      * {@inheritDoc}
      */
-    protected $_template = 'Emico_Tweakwise::product/layered/checkbox.phtml';
+    protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/checkbox.phtml';
 }

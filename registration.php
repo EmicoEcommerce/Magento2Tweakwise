@@ -8,6 +8,6 @@
 
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'Emico_Tweakwise',
+    'Tweakwise_Magento2Tweakwise',
     __DIR__
 );

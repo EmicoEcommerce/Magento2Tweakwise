@@ -24,7 +24,7 @@ class DefaultRenderer extends Template
     /**
      * {@inheritDoc}
      */
-    protected $_template = 'Emico_Tweakwise::product/layered/default.phtml';
+    protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/default.phtml';
 
     /**
      * @var Filter

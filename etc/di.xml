@@ -23,7 +23,7 @@
 
     <!-- Frontend plugins -->
     <type name="Magento\Catalog\Model\Layer\FilterList">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin" />
     </type>
     <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin">
         <arguments>
@@ -32,43 +32,43 @@
     </type>
 
     <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Theme\Block\Html\Pager">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Theme\Html\Pager\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Theme\Html\Pager\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\LayeredNavigation\Block\Navigation\FilterRenderer">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Navigation\FilterRenderer\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Navigation\FilterRenderer\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Swatches\Block\LayeredNavigation\RenderLayered">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\Plugin" sortOrder="0" />
     </type>
     <!-- Commerce only -->
     <type name="Magento\TargetRule\Block\Catalog\Product\ProductList\Upsell">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\UpsellPlugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\UpsellPlugin" sortOrder="0" />
     </type>
     <type name="Magento\TargetRule\Block\Catalog\Product\ProductList\Related">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\RelatedPlugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\RelatedPlugin" sortOrder="0" />
     </type>
     <!-- End of Commerce only-->
     <type name="Magento\Catalog\Block\Product\ProductList\Upsell">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Catalog\Block\Product\ProductList\Related">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Swatches\Helper\Data">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Swatches\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Swatches\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\CatalogSearch\Controller\Result\Index">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\CatalogSearch\Controller\Result\Index\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Model\CatalogSearch\Controller\Result\Index\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Framework\View\Page\Config">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Seo\Robots\Plugin" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Seo\Robots\Plugin" />
     </type>
     <!-- Add meta of custom fields to data provider -->
     <type name="Magento\Catalog\Model\Category\DataProvider">
-        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Category\DataProvider\Plugin" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Category\DataProvider\Plugin" />
     </type>
 
     <!-- If you need other layouts or possible even layer objects register them here -->

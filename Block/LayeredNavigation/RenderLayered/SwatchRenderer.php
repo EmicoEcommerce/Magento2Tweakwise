@@ -32,7 +32,7 @@ class SwatchRenderer extends RenderLayered
      *
      * @var string
      */
-    protected $_template = 'Emico_Tweakwise::product/layered/swatch.phtml';
+    protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/swatch.phtml';
 
     /**
      * @var Filter

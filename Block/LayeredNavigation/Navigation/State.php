@@ -71,11 +71,11 @@ class State extends MagentoStateBlock
         $isNavigation = !$isSearch;
 
         if ($isSearch && $searchEnabled) {
-            $this->_template = 'Emico_Tweakwise::layer/state.phtml';
+            $this->_template = 'Tweakwise_Magento2Tweakwise::layer/state.phtml';
         }
 
         if ($isNavigation && $navigationEnabled) {
-            $this->_template = 'Emico_Tweakwise::layer/state.phtml';
+            $this->_template = 'Tweakwise_Magento2Tweakwise::layer/state.phtml';
         }
     }
 

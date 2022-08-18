@@ -1,12 +1,8 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
 
-namespace Emico\Tweakwise\Model\Client\Request;
+namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;

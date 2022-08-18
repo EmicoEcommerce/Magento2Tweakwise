@@ -1,14 +1,10 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
 
-namespace Emico\Tweakwise\Model\Seo\Robots;
+namespace Tweakwise\Magento2Tweakwise\Model\Seo\Robots;
 
 use Magento\Framework\View\Page\Config as PageConfig;
-use Emico\Tweakwise\Model\Seo\FilterHelper;
-use Emico\Tweakwise\Model\Config as TweakwiseConfig;
+use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
+use Tweakwise\Magento2Tweakwise\Model\Config as TweakwiseConfig;
 
 class Plugin
 {

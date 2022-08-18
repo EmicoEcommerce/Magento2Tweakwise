@@ -1,21 +1,21 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Block\TargetRule\Catalog\Product\ProductList;
+namespace Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList;
 
 use Closure;
-use Emico\Tweakwise\Exception\ApiException;
-use Emico\Tweakwise\Exception\InvalidArgumentException;
-use Emico\Tweakwise\Model\Catalog\Product\Recommendation\Collection;
-use Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context;
-use Emico\Tweakwise\Model\Client\Request\Recommendations\ProductRequest;
-use Emico\Tweakwise\Model\Config;
-use Emico\Tweakwise\Model\Config\TemplateFinder;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\ProductRequest;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Registry;
 use Magento\TargetRule\Block\Catalog\Product\ProductList\AbstractProductList;

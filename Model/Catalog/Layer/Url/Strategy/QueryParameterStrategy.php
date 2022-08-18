@@ -1,22 +1,22 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2019 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy;
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\StrategyHelper;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\UrlInterface;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\UrlModel;
-use Emico\Tweakwise\Model\Client\Request\ProductNavigationRequest;
-use Emico\Tweakwise\Model\Client\Request\ProductSearchRequest;
-use Emico\Tweakwise\Model\Config as TweakwiseConfig;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\StrategyHelper;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlModel;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
+use Tweakwise\Magento2Tweakwise\Model\Config as TweakwiseConfig;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;

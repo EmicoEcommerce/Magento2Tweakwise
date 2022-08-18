@@ -1,21 +1,21 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Model\Catalog\Layer;
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer;
 
-use Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
-use Emico\Tweakwise\Model\Client;
-use Emico\Tweakwise\Model\Client\Request\ProductNavigationRequest;
-use Emico\Tweakwise\Model\Client\Request\ProductSearchRequest;
-use Emico\Tweakwise\Model\Client\RequestFactory;
-use Emico\Tweakwise\Model\Client\Response\ProductNavigationResponse;
-use Emico\Tweakwise\Model\Config;
-use Emico\TweakwiseExport\Model\ProductAttributes;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\ProductAttributes;
 use Magento\Catalog\Helper\Product\ProductList;
 use Magento\Catalog\Model\Layer\FilterableAttributeListInterface;
 use Magento\Catalog\Model\Product\ProductList\Toolbar as ToolbarModel;

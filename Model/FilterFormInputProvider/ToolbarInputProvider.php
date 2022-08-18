@@ -1,18 +1,13 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-
-namespace Emico\Tweakwise\Model\FilterFormInputProvider;
+namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Catalog\Model\Product\ProductList\Toolbar;
 
 /**
  * Class ToolbarInputProvider
- * @package Emico\Tweakwise\Model\FilterFormInputProvider
+ * @package Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider
  */
 class ToolbarInputProvider implements FilterFormInputProviderInterface
 {

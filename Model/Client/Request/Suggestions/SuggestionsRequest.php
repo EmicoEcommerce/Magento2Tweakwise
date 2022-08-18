@@ -1,18 +1,14 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Client\Request\Suggestions;
+namespace Tweakwise\Magento2Tweakwise\Model\Client\Request\Suggestions;
 
-use Emico\Tweakwise\Model\Client\Request;
-use Emico\Tweakwise\Model\Client\Request\SearchRequestInterface;
-use Emico\Tweakwise\Model\Client\Request\SearchRequestTrait;
-use Emico\Tweakwise\Model\Config;
-use Emico\TweakwiseExport\Model\Helper;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\SearchRequestInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\SearchRequestTrait;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManager;
-use Emico\Tweakwise\Model\Client\Response\Suggestions\SuggestionsResponse;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions\SuggestionsResponse;
 
 class SuggestionsRequest extends Request implements SearchRequestInterface
 {

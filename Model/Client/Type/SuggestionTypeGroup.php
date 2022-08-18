@@ -1,17 +1,13 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Client\Type;
+namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
 
-use Emico\Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeAbstract;
-use Emico\Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeAbstract;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeFactory;
 
 /**
  * Class SuggestionGroupType
- * @package Emico\Tweakwise\Model\Client\Type
+ * @package Tweakwise\Magento2Tweakwise\Model\Client\Type
  *
  * @method string|null getName()
  * @method setName(string $name);

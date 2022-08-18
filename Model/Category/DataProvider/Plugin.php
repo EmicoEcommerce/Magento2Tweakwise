@@ -1,6 +1,6 @@
 <?php
 
-namespace Emico\Tweakwise\Model\Category\DataProvider;
+namespace Tweakwise\Magento2Tweakwise\Model\Category\DataProvider;
 
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 use Magento\Eav\Model\Config;

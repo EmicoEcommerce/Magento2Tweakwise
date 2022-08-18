@@ -1,14 +1,10 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
 
-namespace Emico\Tweakwise\Controller\Ajax;
+namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
-use Emico\Tweakwise\Model\AjaxNavigationResult;
-use Emico\Tweakwise\Model\AjaxResultInitializer\InitializerInterface;
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\AjaxNavigationResult;
+use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\InitializerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
@@ -19,7 +15,7 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 /**
  * Class Navigation
  * Handles ajax filtering requests for category pages
- * @package Emico\Tweakwise\Controller\Ajax
+ * @package Tweakwise\Magento2Tweakwise\Controller\Ajax
  */
 class Navigation extends Action
 {

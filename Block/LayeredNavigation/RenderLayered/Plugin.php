@@ -1,18 +1,18 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Block\LayeredNavigation\RenderLayered;
+namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
 use Closure;
-use Emico\Tweakwise\Exception\TweakwiseException;
-use Emico\Tweakwise\Model\Catalog\Layer\Filter;
-use Emico\Tweakwise\Model\Config;
-use Emico\TweakwiseExport\Model\Logger;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use Magento\Catalog\Model\Layer\Filter\AbstractFilter;
 use Magento\Swatches\Block\LayeredNavigation\RenderLayered;
 

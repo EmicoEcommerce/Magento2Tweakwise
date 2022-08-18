@@ -1,16 +1,13 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
-namespace Emico\Tweakwise\Cron;
+
+namespace Tweakwise\Magento2Tweakwise\Cron;
 
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Composer\ComposerInformation;
 
 /**
  * Class Version
- * @package Emico\Tweakwise\Cron
+ * @package Tweakwise\Magento2Tweakwise\Cron
  */
 class Version
 {

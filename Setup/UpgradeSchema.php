@@ -1,12 +1,8 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
 
-namespace Emico\Tweakwise\Setup;
+namespace Tweakwise\Magento2Tweakwise\Setup;
 
-use Emico\Tweakwise\Api\Data\AttributeSlugInterface;
+use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;

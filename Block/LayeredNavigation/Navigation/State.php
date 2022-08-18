@@ -1,18 +1,13 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
+namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\Navigation;
 
-namespace Emico\Tweakwise\Block\LayeredNavigation\Navigation;
-
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
-use Emico\Tweakwise\Model\Client\Request\ProductSearchRequest;
-use Emico\Tweakwise\Model\Client\Type\FacetType\SettingsType;
-use Emico\Tweakwise\Model\Config;
-use Emico\Tweakwise\Model\Catalog\Layer\Url;
-use Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\LayeredNavigation\Block\Navigation\State as MagentoStateBlock;

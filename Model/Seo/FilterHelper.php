@@ -1,17 +1,13 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
 
-namespace Emico\Tweakwise\Model\Seo;
+namespace Tweakwise\Magento2Tweakwise\Model\Seo;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Filter;
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
-use Emico\Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise;
-use Emico\Tweakwise\Model\Client\Type\FacetType\SettingsType;
-use Emico\Tweakwise\Model\Config;
-use Emico\Tweakwise\Model\ConfigAttributeProcessService;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\ConfigAttributeProcessService;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;

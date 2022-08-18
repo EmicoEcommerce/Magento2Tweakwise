@@ -1,5 +1,5 @@
 {
-    "name": "emico/tweakwise",
+    "name": "tweakwise/magento2tweakwise",
     "license": "OSL-3.0",
     "description": "Magento 2 module for Tweakwise integration",
     "require": {
@@ -8,23 +8,16 @@
         "ext-pcre": "*",
         "ext-simplexml": "*",
         "ext-libxml": "*",
-        "emico/tweakwise-export": ">=4.0",
+        "tweakwise/magento2-tweakwise-export": ">=4.0",
         "guzzlehttp/guzzle": ">=6.0"
     },
-    "require-dev": {
-        "malukenho/docheader": "~0.1",
-        "phpro/grumphp": "1.2.0"
-    },
     "type": "magento2-module",
-    "scripts": {
-        "docheader": "docheader check ."
-    },
     "autoload": {
         "files": [
             "registration.php"
         ],
         "psr-4": {
-            "Emico\\Tweakwise\\": ""
+            "Tweakwise\\Magento2Tweakwise\\": ""
         }
     },
     "repositories": [

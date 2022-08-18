@@ -1,82 +1,82 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <preference for="Emico\Tweakwise\Api\AttributeSlugRepositoryInterface" type="Emico\Tweakwise\Model\AttributeSlugRepository"/>
-    <preference for="Emico\Tweakwise\Api\Data\AttributeSlugSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
-    <preference for="Emico\Tweakwise\Api\Data\AttributeSlugInterface" type="Emico\Tweakwise\Model\AttributeSlug"/>
+    <preference for="Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface" type="Tweakwise\Magento2Tweakwise\Model\AttributeSlugRepository"/>
+    <preference for="Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface" type="Tweakwise\Magento2Tweakwise\Model\AttributeSlug"/>
 
-    <preference for="Emico\Tweakwise\Model\Catalog\Layer\Url\UrlInterface" type="Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
-    <preference for="Emico\Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface" type="Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
-    <preference for="Emico\Tweakwise\Model\Catalog\Layer\Url\RouteMatchingInterface" type="Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\NullStrategy" />
-    <preference for="Emico\Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface" type="Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
+    <preference for="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlInterface" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
+    <preference for="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
+    <preference for="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\RouteMatchingInterface" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\NullStrategy" />
+    <preference for="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
 
-    <preference for="Magento\LayeredNavigation\Block\Navigation\State" type="Emico\Tweakwise\Block\LayeredNavigation\Navigation\State" />
-    <preference for="Emico\Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface" type="Emico\Tweakwise\Model\FilterFormInputProvider\EmptyInputProvider" />
+    <preference for="Magento\LayeredNavigation\Block\Navigation\State" type="Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\Navigation\State" />
+    <preference for="Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface" type="Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\EmptyInputProvider" />
 
     <!-- Frontend plugins -->
     <type name="Magento\Catalog\Model\Layer\FilterList">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Model\Catalog\Layer\FilterList\Plugin" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin" />
     </type>
-    <type name="Emico\Tweakwise\Model\Catalog\Layer\FilterList\Plugin">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin">
         <arguments>
-            <argument name="tweakwiseFilterList" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise\Proxy</argument>
+            <argument name="tweakwiseFilterList" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise\Proxy</argument>
         </arguments>
     </type>
 
     <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\Catalog\Product\ProductList\Toolbar\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Theme\Block\Html\Pager">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\Theme\Html\Pager\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Theme\Html\Pager\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\LayeredNavigation\Block\Navigation\FilterRenderer">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\Navigation\FilterRenderer\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Navigation\FilterRenderer\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Swatches\Block\LayeredNavigation\RenderLayered">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\LayeredNavigation\RenderLayered\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\Plugin" sortOrder="0" />
     </type>
     <!-- Commerce only -->
     <type name="Magento\TargetRule\Block\Catalog\Product\ProductList\Upsell">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\TargetRule\Catalog\Product\ProductList\UpsellPlugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\UpsellPlugin" sortOrder="0" />
     </type>
     <type name="Magento\TargetRule\Block\Catalog\Product\ProductList\Related">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\TargetRule\Catalog\Product\ProductList\RelatedPlugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\RelatedPlugin" sortOrder="0" />
     </type>
     <!-- End of Commerce only-->
     <type name="Magento\Catalog\Block\Product\ProductList\Upsell">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Catalog\Block\Product\ProductList\Related">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Swatches\Helper\Data">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Model\Swatches\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Swatches\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\CatalogSearch\Controller\Result\Index">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Model\CatalogSearch\Controller\Result\Index\Plugin" sortOrder="0" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\CatalogSearch\Controller\Result\Index\Plugin" sortOrder="0" />
     </type>
     <type name="Magento\Framework\View\Page\Config">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Model\Seo\Robots\Plugin" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Seo\Robots\Plugin" />
     </type>
     <!-- Add meta of custom fields to data provider -->
     <type name="Magento\Catalog\Model\Category\DataProvider">
-        <plugin name="emico-tweakwise" type="Emico\Tweakwise\Model\Category\DataProvider\Plugin" />
+        <plugin name="emico-tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Category\DataProvider\Plugin" />
     </type>
 
     <!-- If you need other layouts or possible even layer objects register them here -->
-    <type name="Emico\Tweakwise\Controller\Ajax\Navigation">
+    <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\Navigation">
         <arguments>
             <argument name="initializerMap" xsi:type="array">
-                <item name="category" xsi:type="object">Emico\Tweakwise\Model\AjaxResultInitializer\CategoryInitializer</item>
-                <item name="search" xsi:type="object">Emico\Tweakwise\Model\AjaxResultInitializer\SearchInitializer</item>
+                <item name="category" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CategoryInitializer</item>
+                <item name="search" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\SearchInitializer</item>
             </argument>
         </arguments>
     </type>
@@ -84,58 +84,58 @@
     <type name="Magento\Search\Model\Autocomplete">
         <arguments>
             <argument name="dataProviders" xsi:type="array">
-                <item name="10" xsi:type="object">Emico\Tweakwise\Model\Autocomplete\DataProvider</item>
+                <item name="10" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider</item>
             </argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Autocomplete\DataProvider">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider">
         <arguments>
             <argument name="dataProviders" xsi:type="array">
-                <item name="autocomplete" xsi:type="object">Emico\Tweakwise\Model\Autocomplete\DataProvider\AutocompleteDataProvider</item>
-                <item name="suggestion" xsi:type="object">Emico\Tweakwise\Model\Autocomplete\DataProvider\SuggestionDataProvider</item>
+                <item name="autocomplete" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\AutocompleteDataProvider</item>
+                <item name="suggestion" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionDataProvider</item>
             </argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Autocomplete\DataProvider\AutocompleteDataProvider">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\AutocompleteDataProvider">
         <arguments>
-            <argument name="autocompleteRequestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\AutocompleteRequest</argument>
+            <argument name="autocompleteRequestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AutocompleteRequest</argument>
         </arguments>
     </type>
-    <type name="Emico\Tweakwise\Model\Autocomplete\DataProvider\SuggestionDataProvider">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionDataProvider">
         <arguments>
-            <argument name="productSuggestionRequestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Suggestions\ProductSuggestionsRequest</argument>
-            <argument name="suggestionRequestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Suggestions\SuggestionsRequest</argument>
+            <argument name="productSuggestionRequestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Suggestions\ProductSuggestionsRequest</argument>
+            <argument name="suggestionRequestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Suggestions\SuggestionsRequest</argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Autocomplete\DataProvider\ProductItem">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\ProductItem">
         <arguments>
             <argument name="imageFactory" xsi:type="object">Magento\Catalog\Block\Product\ImageFactory\Proxy</argument>
             <argument name="imageBuilder" xsi:type="object">Magento\Catalog\Block\Product\ImageBuilder\Proxy</argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Observer\CatalogSearchRedirect">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogSearchRedirect">
         <arguments>
-            <argument name="context" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
+            <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Observer\CatalogSearchLastPageRedirect">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogSearchLastPageRedirect">
         <arguments>
-            <argument name="context" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
+            <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Observer\CatalogNavigationLastPageRedirect">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogNavigationLastPageRedirect">
         <arguments>
-            <argument name="context" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\Category</argument>
+            <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category</argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Catalog\Layer\Url\UrlModel">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlModel">
         <arguments>
             <!-- The tweakwiseSystemParams will be ignored while building filter urls -->
             <argument name="tweakwiseSystemParams" xsi:type="array">
@@ -147,7 +147,7 @@
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy">
         <arguments>
             <argument name="rewriteEntities" xsi:type="array">
                 <item name="category" xsi:type="string">category</item>
@@ -162,227 +162,227 @@
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy">
         <arguments>
             <argument name="rewriteResolvers" xsi:type="array">
-                <item name="category" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\Url\RewriteResolver\CategoryResolver</item>
+                <item name="category" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\RewriteResolver\CategoryResolver</item>
             </argument>
         </arguments>
     </type>
 
     <!-- TW models -->
-    <virtualType name="Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\Category" type="Emico\Tweakwise\Model\Catalog\Layer\NavigationContext">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\ProductNavigationRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\ProductNavigationRequest</argument>
             <argument name="filterableAttributes" xsi:type="object">Magento\Catalog\Model\Layer\Category\FilterableAttributeList</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\Search" type="Emico\Tweakwise\Model\Catalog\Layer\NavigationContext">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\ProductSearchRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\ProductSearchRequest</argument>
             <argument name="filterableAttributes" xsi:type="object">Magento\Catalog\Model\Layer\Search\FilterableAttributeList</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell" type="Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related" type="Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Featured" shared="false" type="Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Featured" shared="false" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Recommendations\FeaturedRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\FeaturedRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\NavigationConfig\Category" type="Emico\Tweakwise\Model\NavigationConfig">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category" type="Tweakwise\Magento2Tweakwise\Model\NavigationConfig">
         <arguments>
-            <argument name="filterFormInputProvider" xsi:type="object">Emico\Tweakwise\Model\FilterFormInputProvider\CategoryInputProvider</argument>
+            <argument name="filterFormInputProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\CategoryInputProvider</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\NavigationConfig\Search" type="Emico\Tweakwise\Model\NavigationConfig">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search" type="Tweakwise\Magento2Tweakwise\Model\NavigationConfig">
         <arguments>
-            <argument name="filterFormInputProvider" xsi:type="object">Emico\Tweakwise\Model\FilterFormInputProvider\SearchInputProvider</argument>
+            <argument name="filterFormInputProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\SearchInputProvider</argument>
         </arguments>
     </virtualType>
 
-    <type name="Emico\Tweakwise\Model\Catalog\Layer\Url">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url">
         <arguments>
             <argument name="request" xsi:type="object">Magento\Framework\App\Request\Http</argument>
         </arguments>
     </type>
 
-    <virtualType name="Emico\Tweakwise\Model\Config\Source\FilterTemplate" type="Emico\Tweakwise\Model\Config\Source\Template">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FilterTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Template">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Catalog\TemplateRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\TemplateRequest</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Emico\Tweakwise\Model\Config\Source\SortTemplate" type="Emico\Tweakwise\Model\Config\Source\Template">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\SortTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Template">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest</argument>
         </arguments>
     </virtualType>
 
-    <type name="Emico\Tweakwise\Model\Config\Source\Language">
+    <type name="Tweakwise\Magento2Tweakwise\Model\Config\Source\Language">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Catalog\LanguageRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\LanguageRequest</argument>
         </arguments>
     </type>
 
     <!-- TW blocks -->
-    <type name="Emico\Tweakwise\Block\TargetRule\Catalog\Product\ProductList\UpsellPlugin">
+    <type name="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\UpsellPlugin">
         <arguments>
-            <argument name="context" xsi:type="object">Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell</argument>
+            <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell</argument>
         </arguments>
     </type>
-    <type name="Emico\Tweakwise\Block\TargetRule\Catalog\Product\ProductList\RelatedPlugin">
+    <type name="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\RelatedPlugin">
         <arguments>
-            <argument name="context" xsi:type="object">Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related</argument>
+            <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related</argument>
         </arguments>
     </type>
 
-    <type name="Emico\Tweakwise\Block\Catalog\Product\ProductList\Featured">
+    <type name="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Featured">
         <arguments>
-            <argument name="recommendationsContext" xsi:type="object" shared="false">Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Featured</argument>
+            <argument name="recommendationsContext" xsi:type="object" shared="false">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Featured</argument>
         </arguments>
     </type>
-    <type name="Emico\Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin">
+    <type name="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin">
         <arguments>
-            <argument name="context" xsi:type="object">Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell</argument>
+            <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell</argument>
         </arguments>
     </type>
-    <type name="Emico\Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin">
+    <type name="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin">
         <arguments>
-            <argument name="context" xsi:type="object">Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related</argument>
+            <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related</argument>
         </arguments>
     </type>
 
     <!-- Tweakwise virtual collection provider types used in overrides of magento collection providers -->
-    <virtualType name="Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category" type="Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider">
         <arguments>
             <argument name="originalProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider</argument>
-            <argument name="navigationContext" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\Category</argument>
+            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search" type="Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider">
         <arguments>
             <argument name="originalProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
-            <argument name="navigationContext" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
+            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
         </arguments>
     </virtualType>
 
     <!-- Override virtual types of magento to inject our product collection -->
     <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>
         </arguments>
     </virtualType>
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
         </arguments>
     </virtualType>
     <virtualType name="Magento\Elasticsearch\Model\Layer\Search\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>
         </arguments>
     </virtualType>
     <virtualType name="Magento\Elasticsearch\Model\Layer\Category\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Emico\Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Emico\Tweakwise\Model\Config\Source\RecommendationOption\Product" type="Emico\Tweakwise\Model\Config\Source\RecommendationOption">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\ProductRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\ProductRequest</argument>
             <argument name="addCodeOption" xsi:type="boolean">true</argument>
             <argument name="addEmpty" xsi:type="boolean">true</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Config\Source\RecommendationOption\Product\System" type="Emico\Tweakwise\Model\Config\Source\RecommendationOption">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product\System" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\ProductRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\ProductRequest</argument>
             <argument name="addCodeOption" xsi:type="boolean">true</argument>
             <argument name="addEmpty" xsi:type="boolean">true</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Config\Source\RecommendationOption\Featured" type="Emico\Tweakwise\Model\Config\Source\RecommendationOption">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\FeaturedRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\FeaturedRequest</argument>
         </arguments>
     </virtualType>
     <!-- Same as above but with an empty option so it can fallback to the default option defined in Stores > Configuration > Catalog > Tweakwise > Featured template -->
-    <virtualType name="Emico\Tweakwise\Model\Config\Source\Category\RecommendationOption\Featured" type="Emico\Tweakwise\Model\Config\Source\RecommendationOption">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\Category\RecommendationOption\Featured" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Emico\Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\FeaturedRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\FeaturedRequest</argument>
             <argument name="addEmpty" xsi:type="boolean">true</argument>
         </arguments>
     </virtualType>
 
     <!-- Tweakwise virtual request factory types -->
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\ProductNavigationRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\ProductNavigationRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\ProductNavigationRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\ProductSearchRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\ProductSearchRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\ProductSearchRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\AutocompleteRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AutocompleteRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\AutocompleteRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\AutocompleteRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Suggestions\ProductSuggestionsRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Suggestions\ProductSuggestionsRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Suggestions\ProductSuggestionsRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Suggestions\ProductSuggestionsRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Suggestions\SuggestionsRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Suggestions\SuggestionsRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Suggestions\SuggestionsRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Suggestions\SuggestionsRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Catalog\TemplateRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\TemplateRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Catalog\TemplateRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\TemplateRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Catalog\SortTemplateRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\SortTemplateRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Catalog\LanguageRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\LanguageRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Catalog\LanguageRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\LanguageRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\ProductRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\ProductRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Catalog\Recommendation\ProductRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\Recommendation\ProductRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\FeaturedRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\Recommendation\FeaturedRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Catalog\Recommendation\FeaturedRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\Recommendation\FeaturedRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Recommendations\ProductRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\ProductRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Emico\Tweakwise\Model\Client\RequestFactory\Recommendations\FeaturedRequest" type="Emico\Tweakwise\Model\Client\RequestFactory">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\FeaturedRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
-            <argument name="type" xsi:type="string">Emico\Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest</argument>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest</argument>
         </arguments>
     </virtualType>
 

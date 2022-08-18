@@ -1,15 +1,11 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
 
-namespace Emico\Tweakwise\Model\Config\Source;
+namespace Tweakwise\Magento2Tweakwise\Model\Config\Source;
 
-use Emico\Tweakwise\Exception\ApiException;
-use Emico\Tweakwise\Model\Client;
-use Emico\Tweakwise\Model\Client\RequestFactory;
-use Emico\Tweakwise\Model\Client\Response\Catalog\LanguageResponse;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\LanguageResponse;
 use Magento\Framework\Data\OptionSourceInterface;
 
 class Language implements OptionSourceInterface

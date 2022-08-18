@@ -1,19 +1,19 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Block\LayeredNavigation\RenderLayered;
+namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
-use Emico\Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer\ItemRenderer;
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer\ItemRenderer;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 
 /**
  * Class LinkRenderer
- * @package Emico\Tweakwise\Block\LayeredNavigation\RenderLayered
+ * @package Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered
  */
 class LinkRenderer extends DefaultRenderer
 {

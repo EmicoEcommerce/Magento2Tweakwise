@@ -1,17 +1,17 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Block\LayeredNavigation\RenderLayered;
+namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Filter;
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
-use Emico\Tweakwise\Model\Seo\FilterHelper;
-use Emico\Tweakwise\Model\Swatches\SwatchAttributeResolver;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
+use Tweakwise\Magento2Tweakwise\Model\Swatches\SwatchAttributeResolver;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as EavAttributeFactory;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\AttributeFactory;
@@ -114,7 +114,7 @@ class SwatchRenderer extends RenderLayered
         /**
          * When this attribute has an id it is an actual magento attribute. If so we can use the parent method to
          * get the swatches, otherwise it is a mocked attribute see:
-         * @see \Emico\Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise line 105
+         * @see \Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise line 105
         */
         if ($this->eavAttribute->getId()) {
             return parent::getSwatchData();

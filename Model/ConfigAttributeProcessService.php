@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Emico\Tweakwise\Model;
+namespace Tweakwise\Magento2Tweakwise\Model;
 
 class ConfigAttributeProcessService
 {

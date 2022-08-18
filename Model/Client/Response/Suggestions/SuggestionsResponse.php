@@ -1,21 +1,16 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
+namespace Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions;
 
-namespace Emico\Tweakwise\Model\Client\Response\Suggestions;
-
-use Emico\Tweakwise\Model\Client\Request;
-use Emico\Tweakwise\Model\Client\Response;
-use Emico\Tweakwise\Model\Client\Type\SuggestionTypeGroup;
-use Emico\Tweakwise\Model\Client\Type\SuggestionTypeGroupFactory;
-use Emico\TweakwiseExport\Model\Helper;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionTypeGroup;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionTypeGroupFactory;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 /**
  * Class SuggestionsResponse
- * @package Emico\Tweakwise\Model\Client\Response\Suggestions
+ * @package Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions
  *
  * @method SuggestionTypeGroup[] getGroups();
  */

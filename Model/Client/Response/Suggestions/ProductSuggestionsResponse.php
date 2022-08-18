@@ -1,19 +1,14 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
+namespace Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions;
 
-namespace Emico\Tweakwise\Model\Client\Response\Suggestions;
-
-use Emico\Tweakwise\Model\Client\Response;
-use Emico\Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
-use Emico\Tweakwise\Model\Client\Type\ItemType;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 
 /**
  * Class ProductSuggestionsResponse
- * @package Emico\Tweakwise\Model\Client\Response\Suggestions
+ * @package Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions
  *
  * @method ItemType[] getItems();
  */

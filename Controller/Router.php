@@ -1,13 +1,9 @@
 <?php
-/**
- * @author Bram Gerritsen <bgerritsen@emico.nl>
- * @copyright (c) Emico B.V. 2017
- */
 
-namespace Emico\Tweakwise\Controller;
+namespace Tweakwise\Magento2Tweakwise\Controller;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Url\RouteMatchingInterface;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\UrlStrategyFactory;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\RouteMatchingInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\UrlStrategyFactory;
 use Magento\Framework\App\Action\Forward;
 use Magento\Framework\App\ActionFactory;
 use Magento\Framework\App\ActionInterface;

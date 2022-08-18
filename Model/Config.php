@@ -1,15 +1,15 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Model;
+namespace Tweakwise\Magento2Tweakwise\Model;
 
-use Emico\Tweakwise\Exception\InvalidArgumentException;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
+use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -96,7 +96,7 @@ class Config
 
     /**
      * @deprecated
-     * @see \Emico\Tweakwise\Model\Client\EndpointManager::getServerUrl()
+     * @see \Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager::getServerUrl()
      * @param bool $useFallBack
      * @return string
      */
@@ -118,7 +118,7 @@ class Config
 
     /**
      * @deprecated
-     * @see \Emico\Tweakwise\Model\Client::REQUEST_TIMEOUT
+     * @see \Tweakwise\Magento2Tweakwise\Model\Client::REQUEST_TIMEOUT
      * @return int
      */
     public function getTimeout()

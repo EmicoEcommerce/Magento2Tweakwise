@@ -1,20 +1,20 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   Proprietary and confidential, Unauthorized copying of this file, via any medium is strictly prohibited
  */
 
-namespace Emico\Tweakwise\Block\Catalog\Product\ProductList;
+namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList;
 
-use Emico\Tweakwise\Exception\ApiException;
-use Emico\Tweakwise\MagentoCompat\PreparePostDataFactory;
-use Emico\Tweakwise\Model\Catalog\Product\Recommendation\Collection;
-use Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context as RecommendationsContext;
-use Emico\Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
-use Emico\Tweakwise\Model\Config;
-use Emico\Tweakwise\Model\Config\TemplateFinder;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\MagentoCompat\PreparePostDataFactory;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context as RecommendationsContext;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Block\Product\Context as ProductContext;
 use Magento\Catalog\Block\Product\ListProduct;
@@ -26,7 +26,7 @@ use Magento\Framework\Url\Helper\Data;
 /**
  * Class Featured
  *
- * @package Emico\Tweakwise\Block\Catalog\Product\ProductList
+ * @package Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList
  *
  * @method string getRenderLocation();
  */

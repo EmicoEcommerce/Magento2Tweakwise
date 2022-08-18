@@ -1,17 +1,13 @@
-[![Build Status](https://travis-ci.org/EmicoEcommerce/Magento2Tweakwise.svg?branch=master)](https://travis-ci.org/EmicoEcommerce/Magento2Tweakwise)
-[![Code Climate](https://codeclimate.com/github/EmicoEcommerce/Magento2Tweakwise.png)](https://codeclimate.com/github/EmicoEcommerce/Magento2Tweakwise)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a273bc8c5317438c9d18c6f2c2c67c3f)](https://www.codacy.com/app/Fgruntjes/Magento2Tweakwise?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=EmicoEcommerce/Magento2Tweakwise&amp;utm_campaign=Badge_Grade)
-
 ## Installation
 Install package using composer
 ```sh
-composer require emico/tweakwise
+composer require tweakwise/magento2-tweakwise
 ```
-This will install emico/tweakwise and emico/tweakwise-export
+This will install tweakwise/magento2-tweakwise and tweakwise/magento2-tweakwise-export
 
 Enable module(s) and run installers
 ```sh
-php bin/magento module:enable Emico_TweakwiseExport Emico_Tweakwise
+php bin/magento module:enable Tweakwise_TweakwiseExport Tweakwise_Tweakwise
 php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy
 ```
@@ -55,10 +51,11 @@ Below is a rundown of all configuration options
 #### Autocomplete (All settings depend on Enabled having value yes)
 1) Enabled: Use tweakwise autocomplete results or not.
 2) Use Suggestions Autocomplete: Use new suggestion api (Yes) or use the standard autocomplete api (No) 
-3) Show products: Show product suggestions in autocomplete results.
-4) Show suggestions: Show search suggestions in autocomplete results.
+3) Show products *: Show product suggestions in autocomplete results.
+4) Show suggestions *: Show search suggestions in autocomplete results.
 5) Stay in category: Use the current category when getting autocomplete results.
-6) Maximum number of results: At most this many autocomplete results will be show.
+6) Maximum number of results *: At most this many autocomplete results will be show.
+* Hidden when Use Suggestions Autocomplete is enabled. These settings are not used in the new suggestions api. The new suggestions api is configured in tweakwise itself.
 
 #### Search (All settings depend on Enabled having value yes)
 1) Enabled: Use tweakwise search of default magento search results
@@ -68,7 +65,7 @@ Below is a rundown of all configuration options
     If Language is set to English then in the example above tweakwise might suggest 'Beds'.
 
 #### Personal Merchandising
-1) Enabled: Use personal Merchandising (Yes/No) This is only available if you use ajax filtering.
+1) Enabled: Use personal Merchandising (Yes/No)
 2) Cookie name: The cookie which holds the tweakwise profile id, this cookie is (usually) set with a tracking script. The value of this cookie will be added to the tweakwise request, the response will contain a personalized sort order for that particular customer.
 
 Note that enabling these settings has consequences for performance. Using this feature means that all category pages have personalized content. As such, it is no longer possible cache navigation responses where this profile cookie name has been used.
@@ -79,9 +76,7 @@ This means that the user is greeted by a loader. The product list is reloaded if
 2) Cookie name setting has a value
 3) The user has the specified cookie with a non empty value.
 
-The product list reload happens once for every category visit. 
-This means that if the user does not have the specified cookie the normal (cached) results are served.
-When the product list is reloaded in such a manner the result will not be cacheable. This has consequences for server load keep this in mind.
+When the product list is loaded in such a manner the result will not be cacheable. This has consequences for server load keep this in mind.
     
 #### Recommendations
 1) Crosssell enabled: Replace magento native related products with tweakwise crosssell & upsell recommendations. Terminology is confusing since this is relevant for magento related products and not for magento crosssell products
@@ -107,8 +102,8 @@ For technical issues github is used. If you find a technical issue please create
 
 ### Compatibility
 We strive to remain compatible with all Magento 2.X versions and the latest 2.X-1 version where X is the highest Magento official 'sub' release.
-Currently X=3 hence we should be compatible with all 2.3 versions and the latest 2.2 version which is 2.2.10 (at the time of writing).
+Currently X=4 hence we should be compatible with all 2.4 versions and the latest 2.3.x version.
 We do not actively drop support for versions below this range and will implement `minor` changes if that means we can remain compatible with versions below this range.
-That being said if we can do a massive simplification of code at the cost of dropping support for version 2.1.Y we will do so.
+That being said if we can do a massive simplification of code at the cost of dropping support for version 2.3.Y we will do so.
 We also refer to the magento software lifecycle: https://magento.com/sites/default/files/magento-software-lifecycle-policy.pdf.
-Note that 2.2 is End Of Life.
+Note that 2.3 is End Of Life.

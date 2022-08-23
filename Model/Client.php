@@ -1,19 +1,19 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Model;
+namespace Tweakwise\Magento2Tweakwise\Model;
 
-use Emico\Tweakwise\Exception\ApiException;
-use Emico\Tweakwise\Model\Client\EndpointManager;
-use Emico\Tweakwise\Model\Client\Request;
-use Emico\Tweakwise\Model\Client\Response;
-use Emico\Tweakwise\Model\Client\ResponseFactory;
-use Emico\TweakwiseExport\Model\Logger;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response;
+use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
+use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;

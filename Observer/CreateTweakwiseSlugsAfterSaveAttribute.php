@@ -1,10 +1,10 @@
 <?php
 
-namespace Emico\Tweakwise\Observer;
+namespace Tweakwise\Magento2Tweakwise\Observer;
 
-use Emico\Tweakwise\Api\AttributeSlugRepositoryInterface;
-use Emico\Tweakwise\Model\Catalog\Layer\Filter;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\FilterSlugManager;
+use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\FilterSlugManager;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;

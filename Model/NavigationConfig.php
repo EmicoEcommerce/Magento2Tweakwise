@@ -1,14 +1,10 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
 
-namespace Emico\Tweakwise\Model;
+namespace Tweakwise\Magento2Tweakwise\Model;
 
-use Emico\Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer;
-use Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
-use Emico\Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface;
+use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\UrlInterface;
@@ -19,10 +15,10 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
  * Class NavigationConfig
  * This class provides configuration for the various data-mage-init statements in phtml files.
  * It will be used by
- * @see \Emico\Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRenderer
- * @see \Emico\Tweakwise\Block\LayeredNavigation\RenderLayered\SwatchRenderer
- * @see \Emico\Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer
- * @package Emico\Tweakwise\Model
+ * @see \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRenderer
+ * @see \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SwatchRenderer
+ * @see \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer
+ * @package Tweakwise\Magento2Tweakwise\Model
  */
 class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInterface
 {

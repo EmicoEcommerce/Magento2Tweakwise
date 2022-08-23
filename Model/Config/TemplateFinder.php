@@ -1,13 +1,9 @@
 <?php
-/**
- * @author Emico <info@emico.nl>
- * @copyright (c) Emico B.V. 2017
- */
 
-namespace Emico\Tweakwise\Model\Config;
+namespace Tweakwise\Magento2Tweakwise\Model\Config;
 
-use Emico\Tweakwise\Model\Config;
-use Emico\Tweakwise\Model\Config\Source\RecommendationOption;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 

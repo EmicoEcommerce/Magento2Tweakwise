@@ -1,10 +1,6 @@
 <?php
-/**
- * @author Bram Gerritsen <bgerritsen@emico.nl>
- * @copyright (c) Emico B.V. 2019
- */
 
-namespace Emico\Tweakwise\Api\Data;
+namespace Tweakwise\Magento2Tweakwise\Api\Data;
 
 interface AttributeSlugInterface
 {

@@ -2,13 +2,13 @@
     <event name="catalog_entity_attribute_save_before">
         <observer
             name="remove_tweakwise_slugs_before_save_attribute"
-            instance="Emico\Tweakwise\Observer\RemoveTweakwiseSlugsBeforeSaveAttribute"
+            instance="Tweakwise\Magento2Tweakwise\Observer\RemoveTweakwiseSlugsBeforeSaveAttribute"
         />
     </event>
     <event name="catalog_entity_attribute_save_after">
         <observer
             name="create_tweakwise_slugs_after_save_attribute"
-            instance="Emico\Tweakwise\Observer\CreateTweakwiseSlugsAfterSaveAttribute"
+            instance="Tweakwise\Magento2Tweakwise\Observer\CreateTweakwiseSlugsAfterSaveAttribute"
         />
     </event>
 </config>

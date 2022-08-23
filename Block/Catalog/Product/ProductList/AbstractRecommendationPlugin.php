@@ -1,17 +1,13 @@
 <?php
-/**
- * @author Emico <info@emico.nl>
- * @copyright (c) Emico B.V. 2017
- */
 
-namespace Emico\Tweakwise\Block\Catalog\Product\ProductList;
+namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList;
 
-use Emico\Tweakwise\Exception\InvalidArgumentException;
-use Emico\Tweakwise\Model\Catalog\Product\Recommendation\Collection;
-use Emico\Tweakwise\Model\Catalog\Product\Recommendation\Context;
-use Emico\Tweakwise\Model\Client\Request\Recommendations\ProductRequest;
-use Emico\Tweakwise\Model\Config;
-use Emico\Tweakwise\Model\Config\TemplateFinder;
+use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\ProductRequest;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Registry;
 

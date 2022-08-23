@@ -1,13 +1,9 @@
 <?php
-/**
- * @author Bram Gerritsen <bgerritsen@emico.nl>
- * @copyright (c) Emico B.V. 2017
- */
 
-namespace Emico\Tweakwise\Api;
+namespace Tweakwise\Magento2Tweakwise\Api;
 
-use Emico\Tweakwise\Api\Data\AttributeSlugInterface;
-use Emico\Tweakwise\Api\Data\AttributeSlugSearchResultsInterface;
+use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
+use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 

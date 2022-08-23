@@ -1,23 +1,23 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   Proprietary and confidential, Unauthorized copying of this file, via any medium is strictly prohibited
  */
 
-namespace Emico\Tweakwise\Model\Observer;
+namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
-use Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
-use Emico\Tweakwise\Model\Client\Request\ProductSearchRequest;
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\LayeredNavigation\Block\Navigation;
 
 /**
  * Class NavigationHtmlOverride
- * @package Emico\Tweakwise\Model\Observer
+ * @package Tweakwise\Magento2Tweakwise\Model\Observer
  *
  * Change template of the navigation block.
  * Changing the template depends on configuration so this could not be done in layout, also since the original definition
@@ -70,11 +70,11 @@ class NavigationHtmlOverride implements ObserverInterface
         $isNavigation = !$isSearch;
 
         if ($isSearch && $searchEnabled) {
-            $block->setTemplate('Emico_Tweakwise::layer/view.phtml');
+            $block->setTemplate('Tweakwise_Magento2Tweakwise::layer/view.phtml');
         }
 
         if ($isNavigation && $navigationEnabled) {
-            $block->setTemplate('Emico_Tweakwise::layer/view.phtml');
+            $block->setTemplate('Tweakwise_Magento2Tweakwise::layer/view.phtml');
         }
     }
 }

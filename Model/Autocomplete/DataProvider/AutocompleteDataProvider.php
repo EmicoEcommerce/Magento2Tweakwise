@@ -1,18 +1,14 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Autocomplete\DataProvider;
+namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
-use Emico\Tweakwise\Model\Autocomplete\DataProviderHelper;
-use Emico\Tweakwise\Model\Autocomplete\DataProviderInterface;
-use Emico\Tweakwise\Model\Client;
-use Emico\Tweakwise\Model\Client\Request\AutocompleteRequest;
-use Emico\Tweakwise\Model\Client\RequestFactory;
-use Emico\Tweakwise\Model\Client\Response\AutocompleteResponse;
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\AutocompleteRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteResponse;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\Layer\Category\CollectionFilter;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Framework\Exception\LocalizedException;

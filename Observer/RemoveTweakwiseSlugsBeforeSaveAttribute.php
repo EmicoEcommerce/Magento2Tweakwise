@@ -1,8 +1,8 @@
 <?php
 
-namespace Emico\Tweakwise\Observer;
+namespace Tweakwise\Magento2Tweakwise\Observer;
 
-use Emico\Tweakwise\Api\AttributeSlugRepositoryInterface;
+use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;

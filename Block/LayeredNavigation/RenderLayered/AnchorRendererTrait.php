@@ -1,13 +1,9 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
 
-namespace Emico\Tweakwise\Block\LayeredNavigation\RenderLayered;
+namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
-use Emico\Tweakwise\Model\Seo\FilterHelper;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
 
 trait AnchorRendererTrait
 {

@@ -1,14 +1,14 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   Proprietary and confidential, Unauthorized copying of this file, via any medium is strictly prohibited
  */
 
-namespace Emico\Tweakwise\Setup;
+namespace Tweakwise\Magento2Tweakwise\Setup;
 
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
@@ -77,7 +77,7 @@ class UpgradeData implements UpgradeDataInterface
                 'sort_order' => 10,
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
-                'source' => 'Emico\Tweakwise\Model\Config\Source\RecommendationOption\Product',
+                'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product',
             ]);
 
             $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_CROSSSELL_GROUP_CODE, [
@@ -103,7 +103,7 @@ class UpgradeData implements UpgradeDataInterface
                 'sort_order' => 10,
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
-                'source' => 'Emico\Tweakwise\Model\Config\Source\RecommendationOption\Product',
+                'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product',
             ]);
 
             $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_UPSELL_GROUP_CODE, [
@@ -128,7 +128,7 @@ class UpgradeData implements UpgradeDataInterface
             'sort_order' => 10,
             'global' => ScopedAttributeInterface::SCOPE_STORE,
             'group' => 'Tweakwise',
-            'source' => 'Emico\Tweakwise\Model\Config\Source\RecommendationOption\Featured',
+            'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured',
         ]);
     }
 

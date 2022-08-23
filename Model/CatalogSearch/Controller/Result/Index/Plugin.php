@@ -1,12 +1,8 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2018.
- */
 
-namespace Emico\Tweakwise\Model\CatalogSearch\Controller\Result\Index;
+namespace Tweakwise\Magento2Tweakwise\Model\CatalogSearch\Controller\Result\Index;
 
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\CatalogSearch\Controller\Result\Index;
 use Magento\Search\Model\Query;
 use Magento\Search\Model\QueryFactory;
@@ -14,7 +10,7 @@ use Magento\Search\Model\QueryFactory;
 /**
  * Class Plugin
  *
- * @package Emico\Tweakwise\Model\CatalogSearch\Controller\Result\Index
+ * @package Tweakwise\Magento2Tweakwise\Model\CatalogSearch\Controller\Result\Index
  */
 class Plugin
 {

@@ -1,13 +1,8 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
+namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 
-namespace Emico\Tweakwise\Model\AjaxResultInitializer;
-
-use Emico\Tweakwise\Model\AjaxNavigationResult;
+use Tweakwise\Magento2Tweakwise\Model\AjaxNavigationResult;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\App\RequestInterface;

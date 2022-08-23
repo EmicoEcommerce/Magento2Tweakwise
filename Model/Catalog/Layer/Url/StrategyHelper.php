@@ -1,13 +1,9 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Catalog\Layer\Url;
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
-use Emico\TweakwiseExport\Model\Helper as ExportHelper;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper as ExportHelper;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;

@@ -1,15 +1,11 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Client\Type\SuggestionType;
+namespace Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
-use Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\UrlStrategyFactory;
-use Emico\TweakwiseExport\Model\Helper;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\UrlStrategyFactory;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
@@ -74,7 +70,7 @@ class SuggestionTypeFacet extends SuggestionTypeCategory
         /**
          * This should be handled by whatever implements The tweakwise url interface
          * However that is not available for this data structure, as such it is sort of copied from the relevant classes.
-         * @see \Emico\Tweakwise\Model\Catalog\Layer\Url\UrlInterface
+         * @see \Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlInterface
          */
         $strategy = $this->urlStrategyFactory->create();
         if ($isSearch || $strategy instanceof QueryParameterStrategy) {

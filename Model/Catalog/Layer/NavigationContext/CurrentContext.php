@@ -1,17 +1,17 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   Proprietary and confidential, Unauthorized copying of this file, via any medium is strictly prohibited
  */
 
-namespace Emico\Tweakwise\Model\Catalog\Layer\NavigationContext;
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 
-use Emico\Tweakwise\Exception\RuntimeException;
-use Emico\Tweakwise\Model\Catalog\Layer\NavigationContext;
-use Emico\Tweakwise\Model\Client\Request\ProductNavigationRequest;
-use Emico\Tweakwise\Model\Client\Response\ProductNavigationResponse;
+use Tweakwise\Magento2Tweakwise\Exception\RuntimeException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 
 class CurrentContext
 {

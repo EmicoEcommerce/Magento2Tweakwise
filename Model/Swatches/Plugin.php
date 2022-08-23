@@ -1,10 +1,6 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2018.
- */
 
-namespace Emico\Tweakwise\Model\Swatches;
+namespace Tweakwise\Magento2Tweakwise\Model\Swatches;
 
 use Magento\Catalog\Api\Data\ProductInterface as Product;
 use Magento\Swatches\Helper\Data;

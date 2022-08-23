@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 -->
@@ -12,7 +12,7 @@
         <section id="tweakwise">
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
-                <comment>Tweakwise version v4.2.2</comment>
+                <comment>Tweakwise version v5.0.0</comment>
                 <field id="authentication_key" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Authentication key</label>
                     <comment>Provided by Tweakwise (8 alphanumeric characters)</comment>
@@ -60,7 +60,7 @@
                 <field id="query_filter_type" translate="label,comment" type="select" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filter url query arguments</label>
                     <comment>Url's rendered by tweakwise for filter contain all the arguments in the request url. These query arguments can be filtered out with this setting.</comment>
-                    <source_model>Emico\Tweakwise\Model\Config\Source\QueryFilterType</source_model>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\QueryFilterType</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -84,7 +84,7 @@
                 <field id="url_strategy" translate="label,comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>URL strategy</label>
                     <comment>Specify how you want the filter URL's to be build</comment>
-                    <source_model>Emico\Tweakwise\Model\Config\Source\UrlStrategy</source_model>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\UrlStrategy</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -180,14 +180,14 @@
                 </field>
                 <field id="template" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Tweakwise search template to use in search results</label>
-                    <source_model>Emico\Tweakwise\Model\Config\Source\FilterTemplate</source_model>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\FilterTemplate</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
                 <field id="language" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Search language</label>
-                    <source_model>Emico\Tweakwise\Model\Config\Source\Language</source_model>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\Language</source_model>
                     <comment>Language for search, used to keep track of word conjugations. For example searching for "bed" wil also yield results matching "beds" if english is selected.</comment>
                     <depends>
                         <field id="enabled">1</field>
@@ -221,7 +221,7 @@
                 </field>
                 <field id="crosssell_template" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default crosssell template</label>
-                    <source_model>Emico\Tweakwise\Model\Config\Source\RecommendationOption\Product\System</source_model>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product\System</source_model>
                     <depends>
                         <field id="crosssell_enabled">1</field>
                     </depends>
@@ -240,7 +240,7 @@
                 </field>
                 <field id="upsell_template" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default upsell template</label>
-                    <source_model>Emico\Tweakwise\Model\Config\Source\RecommendationOption\Product\System</source_model>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product\System</source_model>
                     <depends>
                         <field id="upsell_enabled">1</field>
                     </depends>
@@ -259,7 +259,7 @@
                 </field>
                 <field id="featured_template" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default featured product template</label>
-                    <source_model>Emico\Tweakwise\Model\Config\Source\RecommendationOption\Featured</source_model>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured</source_model>
                     <validate>required-entry</validate>
                     <depends>
                         <field id="featured_enabled">1</field>

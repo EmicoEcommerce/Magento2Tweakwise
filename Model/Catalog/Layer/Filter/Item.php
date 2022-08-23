@@ -1,23 +1,23 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2017 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Model\Catalog\Layer\Filter;
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Filter;
-use Emico\Tweakwise\Model\Catalog\Layer\Url;
-use Emico\Tweakwise\Model\Client\Type\AttributeType;
-use Emico\Tweakwise\Model\Client\Type\FacetType\SettingsType;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\AttributeType;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Magento\Catalog\Model\Layer\Filter\Item as MagentoItem;
 
 /**
  * Class Item extends Magento\Catalog\Model\Layer\Filter\Item only for the type hint in Magento\Swatches\Block\LayeredNavigation\RenderLayered
  *
- * @package Emico\Tweakwise\Model\Catalog\Layer\Filter
+ * @package Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter
  */
 class Item extends MagentoItem
 {

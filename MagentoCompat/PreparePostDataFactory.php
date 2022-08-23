@@ -1,10 +1,6 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
 
-namespace Emico\Tweakwise\MagentoCompat;
+namespace Tweakwise\Magento2Tweakwise\MagentoCompat;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ProductMetadataInterface;
@@ -13,7 +9,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 /**
  * Class PreparePostDataResolver
- * @package Emico\Tweakwise\MagentoCompat
+ * @package Tweakwise\Magento2Tweakwise\MagentoCompat
  * Unfortunately class \Magento\Catalog\ViewModel\Product\Listing\PreparePostData
  * does not exist in magento 2.3 but is used in magento 2.4.
  * Magento_Catalog::product/list/items.phtml line 265 wants a PreparePostData from the block rendering the template

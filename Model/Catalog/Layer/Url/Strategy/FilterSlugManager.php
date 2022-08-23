@@ -1,27 +1,23 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2019 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy;
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
-use Emico\Tweakwise\Api\AttributeSlugRepositoryInterface;
-use Emico\Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
-use Emico\Tweakwise\Exception\UnexpectedValueException;
-use Emico\Tweakwise\Model\AttributeSlug;
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
+use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
+use Tweakwise\Magento2Tweakwise\Exception\UnexpectedValueException;
+use Tweakwise\Magento2Tweakwise\Model\AttributeSlug;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Filter\TranslitUrl;
 use Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * @author Bram Gerritsen <bgerritsen@emico.nl>
- * @copyright (c) Emico B.V. 2017
- */
 class FilterSlugManager
 {
     private const CACHE_KEY = 'tweakwise.slug.lookup';

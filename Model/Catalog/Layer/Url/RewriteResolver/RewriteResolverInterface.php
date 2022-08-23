@@ -1,11 +1,6 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-
-namespace Emico\Tweakwise\Model\Catalog\Layer\Url\RewriteResolver;
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\RewriteResolver;
 
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
@@ -24,7 +19,7 @@ interface RewriteResolverInterface
      *
      * @param MagentoHttpRequest $request
      * @return UrlRewrite[]
-     * @see \Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy::match()
+     * @see \Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy::match()
      */
     public function getRewrites(MagentoHttpRequest $request);
 }

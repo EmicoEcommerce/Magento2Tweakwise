@@ -1,19 +1,15 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Autocomplete\DataProvider;
+namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
-use Emico\Tweakwise\Model\Autocomplete\DataProviderHelper;
-use Emico\Tweakwise\Model\Autocomplete\DataProviderInterface;
-use Emico\Tweakwise\Model\Client;
-use Emico\Tweakwise\Model\Client\Request\Suggestions\ProductSuggestionsRequest;
-use Emico\Tweakwise\Model\Client\RequestFactory;
-use Emico\Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
-use Emico\Tweakwise\Model\Client\Response\Suggestions\SuggestionsResponse;
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\Suggestions\ProductSuggestionsRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions\SuggestionsResponse;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use function GuzzleHttp\Promise\unwrap;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Search\Model\Autocomplete\ItemInterface;

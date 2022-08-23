@@ -1,13 +1,9 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Swatches;
+namespace Tweakwise\Magento2Tweakwise\Model\Swatches;
 
-use Emico\Tweakwise\Model\Catalog\Layer\Filter;
-use Emico\Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Model\Entity\Attribute\Source\SourceInterface;

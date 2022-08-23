@@ -1,24 +1,24 @@
 <?php
 /**
- * Tweakwise & Emico (https://www.tweakwise.com/ & https://www.emico.nl/) - All Rights Reserved
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2019 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Emico\Tweakwise\Model;
+namespace Tweakwise\Magento2Tweakwise\Model;
 
-use Emico\Tweakwise\Api\AttributeSlugRepositoryInterface;
-use Emico\Tweakwise\Api\Data\AttributeSlugInterface;
+use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
+use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Emico\Tweakwise\Api\Data\AttributeSlugSearchResultsInterfaceFactory;
-use Emico\Tweakwise\Model\ResourceModel\AttributeSlug as AttributeSlugResource;
+use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterfaceFactory;
+use Tweakwise\Magento2Tweakwise\Model\ResourceModel\AttributeSlug as AttributeSlugResource;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
-use Emico\Tweakwise\Model\ResourceModel\AttributeSlug\CollectionFactory;
-use Emico\Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
+use Tweakwise\Magento2Tweakwise\Model\ResourceModel\AttributeSlug\CollectionFactory;
+use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
 
 class AttributeSlugRepository implements AttributeSlugRepositoryInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Emico\Tweakwise\Setup\Patch\Data;
+namespace Tweakwise\Magento2Tweakwise\Setup\Patch\Data;
 
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;

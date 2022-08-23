@@ -1,16 +1,13 @@
 <?php
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2019.
- */
-namespace Emico\Tweakwise\Cron;
+
+namespace Tweakwise\Magento2Tweakwise\Cron;
 
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Composer\ComposerInformation;
 
 /**
  * Class Version
- * @package Emico\Tweakwise\Cron
+ * @package Tweakwise\Magento2Tweakwise\Cron
  */
 class Version
 {
@@ -45,12 +42,12 @@ class Version
         $installedPackages = $this->composerInformation
             ->getInstalledMagentoPackages();
 
-        if (!isset($installedPackages['emico/tweakwise']['version'])) {
+        if (!isset($installedPackages['tweakwise/magento2tweakwise']['version'])) {
             // This should never be the case
             return;
         }
 
-        $version = $installedPackages['emico/tweakwise']['version'];
+        $version = $installedPackages['tweakwise/magento2tweakwise']['version'];
         $userAgentString = sprintf(
             '%s(%s)',
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36 Magento2Tweakwise',

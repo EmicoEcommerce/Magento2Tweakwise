@@ -1,13 +1,8 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
+namespace Tweakwise\Magento2Tweakwise\Model;
 
-namespace Emico\Tweakwise\Model;
-
-use Emico\Tweakwise\Model\Catalog\Layer\Url;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework;
 use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
@@ -18,7 +13,7 @@ use Magento\Framework\View\Result\Layout;
 
 /**
  * Class AjaxNavigationResponse
- * @package Emico\Tweakwise\Model
+ * @package Tweakwise\Magento2Tweakwise\Model
  */
 class AjaxNavigationResult extends Layout
 {

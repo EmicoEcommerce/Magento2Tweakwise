@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
+namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
-namespace Emico\Tweakwise\Model\FilterFormInputProvider;
-
-use Emico\Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
-use Emico\Tweakwise\Model\Config;
-use Emico\Tweakwise\Model\Seo\FilterHelper;
-use Emico\TweakwiseExport\Model\Helper;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class SearchInputProvider implements FilterFormInputProviderInterface
 {

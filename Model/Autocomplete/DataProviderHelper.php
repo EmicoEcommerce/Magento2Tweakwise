@@ -1,14 +1,10 @@
 <?php
 
-/**
- * @author : Edwin Jacobs, email: ejacobs@emico.nl.
- * @copyright : Copyright Emico B.V. 2020.
- */
-namespace Emico\Tweakwise\Model\Autocomplete;
+namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete;
 
-use Emico\Tweakwise\Model\Autocomplete\DataProvider\ProductItemFactory;
-use Emico\Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
-use Emico\Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\ProductItemFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer\Category\CollectionFilter;

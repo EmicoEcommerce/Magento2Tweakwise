@@ -20,6 +20,9 @@
             "Tweakwise\\Magento2Tweakwise\\": ""
         }
     },
+    "replace": {
+        "emico/tweakwise": "v4.2.2"
+    },
     "repositories": [
         {
             "type": "composer",

@@ -1,5 +1,5 @@
 {
-    "name": "tweakwise/magento2tweakwise",
+    "name": "tweakwise/magento2-tweakwise",
     "license": "OSL-3.0",
     "description": "Magento 2 module for Tweakwise integration",
     "require": {

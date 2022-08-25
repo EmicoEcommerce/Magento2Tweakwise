@@ -21,7 +21,7 @@
         }
     },
     "replace": {
-        "emico/tweakwise": "v4.2.2"
+        "emico/tweakwise": "v4.3.0"
     },
     "repositories": [
         {

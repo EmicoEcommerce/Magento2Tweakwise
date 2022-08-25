@@ -4,6 +4,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType;
 
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
+use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -37,6 +38,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
      * @param StoreManagerInterface $storeManager
      * @param UrlInterface $url
      * @param Helper $exportHelper
+     * @param Config $config
      * @param array $data
      */
     public function __construct(
@@ -44,6 +46,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
         StoreManagerInterface $storeManager,
         UrlInterface $url,
         Helper $exportHelper,
+        Config $config,
         array $data = []
     ) {
         parent::__construct(
@@ -53,6 +56,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
         );
         $this->categoryRepository = $categoryRepository;
         $this->storeManager = $storeManager;
+        $this->config = $config;
     }
 
     /**
@@ -63,6 +67,12 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
         $match = $this->getMatch();
         /** @var string $category */
         $categoryName = $this->getCategoryName();
+
+        $parentCategory = $this->getParentCategory();
+
+        if ($this->config->showAutocompleteParentCategories() && !empty($parentCategory)) {
+            $categoryName = $parentCategory . '/' . $categoryName;
+        }
 
         return $categoryName ?: $match;
     }

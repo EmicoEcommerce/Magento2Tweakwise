@@ -5,6 +5,7 @@ var config = {
             tweakwiseNavigationForm: 'Tweakwise_Magento2Tweakwise/js/navigation-form',
             tweakwiseNavigationSort: 'Tweakwise_Magento2Tweakwise/js/navigation-sort',
             tweakwiseNavigationSlider: 'Tweakwise_Magento2Tweakwise/js/navigation-slider',
+            tweakwiseNavigationSliderWidget: 'Tweakwise_Magento2Tweakwise/js/navigation-slider-widget',
             tweakwiseNavigationSliderCompat: 'Tweakwise_Magento2Tweakwise/js/navigation-slider-compat',
             tweakwisePMPageReload: 'Tweakwise_Magento2Tweakwise/js/pm-page-reload',
             productListToolbarForm: 'Tweakwise_Magento2Tweakwise/js/toolbar',

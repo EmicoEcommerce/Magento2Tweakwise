@@ -300,7 +300,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     protected function getCategoryFilters(MagentoHttpRequest $request)
     {
         $categories = $request->getQuery(self::PARAM_CATEGORY);
-        $categories = explode(self::CATEGORY_TREE_SEPARATOR, $categories);
+        $categories = explode(self::CATEGORY_TREE_SEPARATOR, $categories ?? '');
         $categories = array_map('intval', $categories);
         $categories = array_filter($categories);
         $categories = array_unique($categories);
@@ -311,7 +311,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     /**
      * {@inheritdoc}
      */
-    protected function getAttributeFilters(MagentoHttpRequest $request)
+    public function getAttributeFilters(MagentoHttpRequest $request)
     {
         $result = [];
         foreach ($request->getQuery() as $attribute => $value) {

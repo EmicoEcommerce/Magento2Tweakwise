@@ -19,7 +19,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
 
-class UpgradeData implements UpgradeDataInterface
+class InstallData implements UpgradeDataInterface
 {
     /**
      * @var EavSetupFactory
@@ -48,20 +48,20 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
 
-        if (version_compare($context->getVersion(), '2.0.0', '<=')) {
-            $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-            $this->ensureCrosssellTemplateAttribute($eavSetup);
-            $this->ensureUpsellTemplateAttribute($eavSetup);
-            $this->ensureFeaturedTemplateAttribute($eavSetup);
-        }
+        //rename settings from old module
+        $setup->getConnection()->query('update core_config_data SET value = "Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" WHERE value = "Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy"');
+        $setup->getConnection()->query('update core_config_data SET value = "Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy" WHERE value = "Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy"');
 
-        if (version_compare($context->getVersion(), '2.0.1', '<=')) {
-            $this->updateNavigatorBaseUrl();
-        }
+
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $this->ensureCrosssellTemplateAttribute($eavSetup);
+        $this->ensureUpsellTemplateAttribute($eavSetup);
+        $this->ensureFeaturedTemplateAttribute($eavSetup);
+        $this->updateNavigatorBaseUrl();
 
         $setup->endSetup();
     }

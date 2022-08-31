@@ -9,7 +9,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 
-class UpgradeSchema implements UpgradeSchemaInterface
+class InstallSchema implements UpgradeSchemaInterface
 {
     /**
      * Upgrades DB schema for a module
@@ -19,14 +19,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
      * @return void
      * @throws \Zend_Db_Exception
      */
-    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $installer = $setup;
         $installer->startSetup();
-        if (version_compare($context->getVersion(), '2.0.0') >= 0) {
-            $installer->endSetup();
-            return;
-        }
 
         $tableName = 'tweakwise_attribute_slug';
         if (!$installer->tableExists($tableName)) {

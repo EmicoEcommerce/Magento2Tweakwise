@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Setup;
 
+use Magento\Framework\Setup\InstallDataInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
@@ -17,9 +18,8 @@ use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Framework\Setup\UpgradeDataInterface;
 
-class InstallData implements UpgradeDataInterface
+class InstallData implements InstallDataInterface
 {
     /**
      * @var EavSetupFactory

@@ -2,14 +2,14 @@
 
 namespace Tweakwise\Magento2Tweakwise\Setup;
 
+use Magento\Framework\Setup\InstallSchemaInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
-use Magento\Framework\Setup\UpgradeSchemaInterface;
 
-class InstallSchema implements UpgradeSchemaInterface
+class InstallSchema implements InstallSchemaInterface
 {
     /**
      * Upgrades DB schema for a module

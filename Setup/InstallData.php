@@ -53,9 +53,8 @@ class InstallData implements InstallDataInterface
         $setup->startSetup();
 
         //rename settings from old module
-        $setup->getConnection()->query('update core_config_data SET value = "Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" WHERE value = "Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy"');
-        $setup->getConnection()->query('update core_config_data SET value = "Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy" WHERE value = "Emico\Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy"');
-
+        $setup->getConnection()->query('update core_config_data SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy"');
+        $setup->getConnection()->query('update core_config_data SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy"');
 
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
         $this->ensureCrosssellTemplateAttribute($eavSetup);

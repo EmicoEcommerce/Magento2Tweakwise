@@ -94,7 +94,7 @@ class AutocompleteDataProvider implements DataProviderInterface
      */
     public function isSupported(): bool
     {
-        return $this->config->isAutocompleteEnabled();
+        return ($this->config->isAutocompleteEnabled() && !$this->config->isSuggestionsAutocomplete());
     }
 
     /**

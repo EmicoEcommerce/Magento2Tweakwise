@@ -14,3 +14,7 @@ Bug fix for 500 error in autocomplete when no products are found
 Bug fixes for autocomplete
 - Old autocomplete api is still called when new suggestion api is enabled.
 - When using the suggetions api, if the result contains an category you get an 500 error.
+
+## 5.0.4
+Bug fix for areacode in config
+Updated readme

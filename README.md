@@ -24,7 +24,7 @@ Below is a rundown of all configuration options
 3) Timeout: If tweakwise fails to respond after this time in seconds the request is aborted.
 
 #### Layered Navigation (All settings depend on Enabled having value yes):
-1) Enabled: Use tweakwise results in navigation, if disabled the standard magento navigation is used.
+1) Enabled: Use tweakwise results in navigation, if disabled the standard magento navigation is used. 
 2) Hide facets with only one option: Given a result set from tweakwise in which a filter has only one option show that filter or not?
 3) Use default magento filter renderer: Use Magento standard filter templates or use templates bundled by the module.
    If you want to make full use of the features provided by this module then this should be set to No (i.e. make use of tweakwise template files).
@@ -90,6 +90,9 @@ When the product list is loaded in such a manner the result will not be cacheabl
 7) Featured products enabled: If yes then tweakwise can show featured products on category pages.
 8) Default Featured product template: The default template to use when rendering featured products.
     The template can also be set per category and falls back to this setting if not found on the category.
+
+## Not Supported
+1) Disabeling the anchor tag on an category when layered navigation is enabled. This causes all products to be shown when viewing the category
     
 ## Support
 For in depth support regarding configuration and all options tweakwise has to offer use the following links.

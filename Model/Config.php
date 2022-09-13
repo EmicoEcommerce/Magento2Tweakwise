@@ -14,6 +14,7 @@ use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\State;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -77,9 +78,14 @@ class Config
     protected $parsedFilterArguments;
 
     /**
-     * @var null|string
+     * @var RequestInterface
      */
-    protected $storeId = null;
+    protected $request;
+
+    /**
+     * @var State
+     */
+    protected $state;
 
     /**
      * Export constructor.
@@ -88,18 +94,27 @@ class Config
      * @param Json $jsonSerializer
      * @param RequestInterface $request
      * @param State $state
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
 
     public function __construct(ScopeConfigInterface $config, Json $jsonSerializer, RequestInterface $request, State $state)
     {
         $this->config = $config;
         $this->jsonSerializer = $jsonSerializer;
+        $this->request = $request;
+        $this->state = $state;
+    }
 
-        //only do this if its an admin request, to prevent setting the store id in the url in the frontend
-        if ($state->getAreaCode() === Area::AREA_ADMINHTML) {
-            $this->storeId = $request->getParam('store', null);
-        }
+    /**
+     * Only return store id from request param when area is Admin HTML
+     * On the frontend returning NULL is sufficient to keep using the current store id
+     *
+     * @return mixed|string|null
+     * @throws LocalizedException
+     */
+    public function getStoreId()
+    {
+        return ($this->state->getAreaCode() === Area::AREA_ADMINHTML) ? $this->request->getParam('store', null) : null;
     }
 
     /**
@@ -456,7 +471,7 @@ class Config
             return $store->getConfig($path);
         }
 
-        return $this->config->getValue($path, ScopeInterface::SCOPE_STORE, $this->storeId);
+        return $this->config->getValue($path, ScopeInterface::SCOPE_STORE, $this->getStoreId());
     }
 
     /**

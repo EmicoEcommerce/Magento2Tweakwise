@@ -109,15 +109,17 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 'ajaxEndpoint' => $this->getAjaxEndPoint(),
                 'filterSelector' => '#layered-filter-block',
                 'productListSelector' => '.products.wrapper',
-                'toolbarSelector' => '.toolbar.toolbar-products'
+                'toolbarSelector' => '.toolbar.toolbar-products',
+                'ajaxCache' => true,
             ],
         ];
         if ($this->config->isPersonalMerchandisingActive()) {
             $pmCookieName = $this->config->getPersonalMerchandisingCookieName();
             if ($pmCookieName) {
+                $path = $this->request->getPathInfo();
                 $navigationFormConfig['tweakwisePMPageReload'] = [
                     'cookieName' => $pmCookieName,
-                    'reloadList' => !$this->request->isAjax(),
+                    'reloadList' => (!$this->request->isAjax() && $path !== '/tweakwise/ajax/navigation/'),
                 ];
                 $navigationFormConfig['tweakwiseNavigationForm']['ajaxCache'] = false;
             }

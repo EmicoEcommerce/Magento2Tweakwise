@@ -367,11 +367,13 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         }
 
         // Add this only for ajax requests
-        if ($this->tweakwiseConfig->isPersonalMerchandisingActive() && $request->isAjax()) {
+        $path = $request->getPathInfo();
+        if ($this->tweakwiseConfig->isPersonalMerchandisingActive() && ($request->isAjax() || $path === '/tweakwise/ajax/navigation/')) {
             $profileKey = $this->cookieManager->getCookie(
                 $this->tweakwiseConfig->getPersonalMerchandisingCookieName(),
                 null
             );
+           
             if ($profileKey) {
                 $navigationRequest->setProfileKey($profileKey);
             }

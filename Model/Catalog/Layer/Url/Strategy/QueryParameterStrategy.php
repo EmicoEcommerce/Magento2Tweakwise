@@ -34,6 +34,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     public const PARAM_MODE = 'product_list_mode';
     public const PARAM_CATEGORY = 'categorie';
+    public const PARAM_CACHE = '_';
 
     /**
      * Commonly used query parameters from headers
@@ -54,6 +55,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         self::PARAM_LIMIT,
         self::PARAM_MODE,
         self::PARAM_SEARCH,
+        self::PARAM_CACHE,
     ];
 
     /**

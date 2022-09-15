@@ -18,3 +18,6 @@ Bug fixes for autocomplete
 ## 5.0.4
 Bug fix for areacode in config
 Updated readme
+
+## 5.0.5
+Bug fix for personal merchandising hyva theme

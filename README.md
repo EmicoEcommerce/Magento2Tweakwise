@@ -65,7 +65,7 @@ Below is a rundown of all configuration options
     If Language is set to English then in the example above tweakwise might suggest 'Beds'.
 
 #### Personal Merchandising
-1) Enabled: Use personal Merchandising (Yes/No)
+1) Enabled: Use personal Merchandising (Yes/No) This is only available if you use ajax filtering.
 2) Cookie name: The cookie which holds the tweakwise profile id, this cookie is (usually) set with a tracking script. The value of this cookie will be added to the tweakwise request, the response will contain a personalized sort order for that particular customer.
 
 Note that enabling these settings has consequences for performance. Using this feature means that all category pages have personalized content. As such, it is no longer possible cache navigation responses where this profile cookie name has been used.

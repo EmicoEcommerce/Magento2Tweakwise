@@ -21,3 +21,6 @@ Updated readme
 
 ## 5.0.5
 Bug fix for personal merchandising hyva theme
+
+## 5.0.6
+Bug fix adobe commerce

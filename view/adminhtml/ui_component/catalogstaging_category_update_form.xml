@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
+ *
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="tweakwise">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string">Tweakwise</item>
+                <item name="collapsible" xsi:type="boolean">true</item>
+                <item name="sortOrder" xsi:type="number">99</item>
+            </item>
+        </argument>
+        <field name="tweakwise_featured_template">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Config\Source\Category\RecommendationOption\Featured</item>
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Featured products template</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </field>
+        <field name="tweakwise_crosssell_template">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product</item>
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Product crosssell template</item>
+                    <item name="sortOrder" xsi:type="number">20</item>
+                </item>
+            </argument>
+        </field>
+        <field name="tweakwise_crosssell_group_code">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="label" xsi:type="string" translate="true">Product crosssell group code</item>
+                    <item name="comment" xsi:type="string" translate="true">Only used when template "- Group code -" is selected.</item>
+                    <item name="sortOrder" xsi:type="number">21</item>
+                </item>
+            </argument>
+        </field>
+        <field name="tweakwise_upsell_template">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product</item>
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Product upsell template</item>
+                    <item name="sortOrder" xsi:type="number">30</item>
+                </item>
+            </argument>
+        </field>
+        <field name="tweakwise_upsell_group_code">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="label" xsi:type="string" translate="true">Product upsell group code</item>
+                    <item name="comment" xsi:type="string" translate="true">Only used when template "- Group code -" is selected.</item>
+                    <item name="sortOrder" xsi:type="number">31</item>
+                </item>
+            </argument>
+        </field>
+        <field name="tweakwise_filter_whitelist">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">textarea</item>
+                    <item name="cols" xsi:type="number">15</item>
+                    <item name="rows" xsi:type="number">5</item>
+                    <item name="dataType" translate="true" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Filter whitelist</item>
+                    <item name="comment" xsi:type="string" translate="true">Overrules the store config value</item>
+                    <item name="sortOrder" xsi:type="number">32</item>
+                </item>
+            </argument>
+        </field>
+        <field name="tweakwise_filter_values_whitelist">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">textarea</item>
+                    <item name="cols" xsi:type="number">15</item>
+                    <item name="rows" xsi:type="number">5</item>
+                    <item name="dataType" translate="true" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Filter whitelist values</item>
+                    <item name="comment" xsi:type="string" translate="true">Overrules the store config value</item>
+                    <item name="sortOrder" xsi:type="number">33</item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+</form>

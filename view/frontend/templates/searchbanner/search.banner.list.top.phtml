@@ -1,0 +1,9 @@
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+/** @var \Magento\Framework\View\Element\Template $searchBannerLayout */
+
+$banners = $block->getListTopBanner();
+$searchBannerLayout = $this->getLayout()->createBlock("Magento\Framework\View\Element\Template");
+$searchBannerLayout->setData(['banners' => $banners]);
+$searchBannerLayout->setTemplate("Tweakwise_Magento2Tweakwise::searchbanner/search.banner.phtml");
+echo $searchBannerLayout->toHtml();

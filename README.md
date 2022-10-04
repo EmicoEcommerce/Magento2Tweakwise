@@ -7,7 +7,7 @@ This will install tweakwise/magento2-tweakwise and tweakwise/magento2-tweakwise-
 
 Enable module(s) and run installers
 ```sh
-php bin/magento module:enable Tweakwise_TweakwiseExport Tweakwise_Tweakwise
+php bin/magento module:enable Tweakwise_Magento2TweakwiseExport Tweakwise_Magento2Tweakwise
 php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy
 ```

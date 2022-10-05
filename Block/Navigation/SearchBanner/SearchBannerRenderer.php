@@ -15,35 +15,55 @@ class SearchBannerRenderer extends Template
     public function getContainerTopBanner()
     {
         $banners = $this->getSearchBanners();
-        return $banners['ContainerTop'];
+
+        if (!empty($banners['ContainerTop'])) {
+            return $banners['ContainerTop'];
+        }
+
+        return [];
     }
 
     public function getListTopBanner()
     {
         $banners = $this->getSearchBanners();
-        return $banners['ListTop'];
+
+        if (!empty($banners['ListTop'])) {
+            return $banners['ListTop'];
+        }
+
+        return [];
     }
 
     public function getProductsTopBanner()
     {
         $banners = $this->getSearchBanners();
-        return $banners['ProductsTop'];
+
+        if (!empty($banners['ProductsTop'])) {
+            return $banners['ProductsTop'];
+        }
+
+        return [];
     }
 
     private function getSearchBanners()
     {
-        $navigationContext = $this->getData('tweakwise_navigation_context')->getNavigationContext();
-        $response = $navigationContext->getResponse();
-        $banners = $response->getValue('searchbanners');
-        $banners = $banners['searchbanner'];
-
+        $navigationContext = $this->getData('tweakwise_navigation_context')->getNavigationContext()->getContext();
         $result = [];
-        //group by location
-        if (is_array($banners)) {
-            foreach ($banners as $banner) {
-                $result[$banner['location']][] = $banner;
+
+        if($navigationContext->showSearchBanners()) {
+            $response = $navigationContext->getResponse();
+            $banners = $response->getValue('searchbanners');
+            $banners = $banners['searchbanner'];
+
+            $result = [];
+            //group by location
+            if (is_array($banners)) {
+                foreach ($banners as $banner) {
+                    $result[$banner['location']][] = $banner;
+                }
             }
         }
+
 
         return $result;
     }

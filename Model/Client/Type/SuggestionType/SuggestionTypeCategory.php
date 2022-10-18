@@ -70,7 +70,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
         $parentCategory = $this->getParentCategory();
 
         if ($this->config->showAutocompleteParentCategories() && !empty($parentCategory)) {
-            $categoryName = $parentCategory . '/' . $categoryName;
+            $categoryName = $parentCategory . ' > ' . $categoryName;
         }
 
         return $categoryName ?: $match;

@@ -10,6 +10,14 @@ namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar;
 
 
 use Closure;
+use Magento\Catalog\Model\CategoryFactory;
+use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
+use Magento\CatalogInventory\Api\StockConfigurationInterface;
+use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\InventorySalesApi\Api\AreProductsSalableInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\SortFieldType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -28,15 +36,33 @@ class Plugin
     protected $config;
 
     /**
+     * @var StockConfigurationInterface
+     */
+    private $stockConfiguration;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Plugin constructor.
      *
      * @param Config $config
      * @param CurrentContext $context
+     * @param StockConfigurationInterface $stockConfiguration
+     * @param LoggerInterface $logger
      */
-    public function __construct(Config $config, CurrentContext $context)
-    {
+    public function __construct(
+        Config $config,
+        CurrentContext $context,
+        StockConfigurationInterface $stockConfiguration,
+        LoggerInterface $logger
+    ) {
         $this->context = $context;
         $this->config = $config;
+        $this->stockConfiguration = $stockConfiguration;
+        $this->logger = $logger;
     }
 
     /**
@@ -75,5 +101,36 @@ class Plugin
         $options['productListToolbarForm']['ajaxFilters'] = true;
 
         return json_encode($options);
+    }
+    /**
+     * Update toolbar count if store is in single source mode
+     *
+     * @param Toolbar $subject
+     * @param int $result
+     * @return int
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @throws LocalizedException
+     */
+    public function aroundGetTotalNum(Toolbar $subject, callable $proceed): int
+    {
+        if (!$this->config->isLayeredEnabled()) {
+            return $proceed();
+        }
+
+        if ($this->stockConfiguration->isShowOutOfStock()) {
+            try {
+                $response = $this->context->getResponse();
+                $result = $response->getProperties()->getNumberOfItems();
+            } catch (\Exception $e) {
+                $this->logger->critical($e->getMessage());
+            }
+        }
+
+        if (!isset($result))
+        {
+            return $proceed();
+        }
+
+        return $result;
     }
 }

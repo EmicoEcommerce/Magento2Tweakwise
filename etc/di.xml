@@ -32,7 +32,7 @@
     </type>
 
     <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
-        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar\Plugin" sortOrder="0" />
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar\Plugin" sortOrder="-10" />
     </type>
     <type name="Magento\Theme\Block\Html\Pager">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Theme\Html\Pager\Plugin" sortOrder="0" />

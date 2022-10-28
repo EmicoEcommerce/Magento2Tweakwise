@@ -104,6 +104,7 @@ class Plugin
     }
     /**
      * Update toolbar count if store is in single source mode
+     * Used in the commerce version
      *
      * @param Toolbar $subject
      * @param int $result

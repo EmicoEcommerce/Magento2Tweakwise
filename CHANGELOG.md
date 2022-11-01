@@ -24,3 +24,10 @@ Bug fix for personal merchandising hyva theme
 
 ## 5.0.6
 Bug fix adobe commerce
+
+## 5.0.7
+Bug fix show parent in autocomplete settings
+Bug fix for commerce, searching is slow and wrong item count in hyva theme
+
+## 5.0.8
+Bug fix for installer when using an db prefix 

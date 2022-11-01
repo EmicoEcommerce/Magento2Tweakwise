@@ -6,7 +6,7 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrateg
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\UrlStrategyFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use Tweakwise\Magento2TweakwiseExport\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;

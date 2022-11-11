@@ -53,13 +53,16 @@ class SearchBannerRenderer extends Template
         if($navigationContext->showSearchBanners()) {
             $response = $navigationContext->getResponse();
             $banners = $response->getValue('searchbanners');
-            $banners = $banners['searchbanner'];
 
-            $result = [];
-            //group by location
-            if (is_array($banners)) {
-                foreach ($banners as $banner) {
-                    $result[$banner['location']][] = $banner;
+            if (isset($banners['searchbanner'])) {
+                $banners = $banners['searchbanner'];
+
+                $result = [];
+                //group by location
+                if (is_array($banners)) {
+                    foreach ($banners as $banner) {
+                        $result[$banner['location']][] = $banner;
+                    }
                 }
             }
         }

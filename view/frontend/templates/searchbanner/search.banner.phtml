@@ -2,7 +2,7 @@
 /** @var array $banners  */
 $banners = $block->getData('banners');
 ?>
-<div class="searchbanners">
+<div class="container searchbanners">
     <?php foreach ($banners as $banner) : ?>
         <?php if (!empty($banner['clickurl'])): ?>
             <a href="<?=$banner['clickurl'];?>" type=<?=$banner['clicktarget'];?>">

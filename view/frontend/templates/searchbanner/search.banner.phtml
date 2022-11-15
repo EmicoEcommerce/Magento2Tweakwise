@@ -1,0 +1,35 @@
+<?php
+/** @var array $banners  */
+$banners = $block->getData('banners');
+?>
+<div class="container searchbanners">
+    <?php foreach ($banners as $banner) : ?>
+        <?php if (!empty($banner['clickurl'])): ?>
+            <a href="<?=$banner['clickurl'];?>" type=<?=$banner['clicktarget'];?>">
+        <?php endif; ?>
+                <img class="searchbanner <?=strtolower($banner['type']);?>" src="<?=$banner['imageurl'] ?>">
+        <?php if (!empty($banner['clickurl'])): ?>
+            </a>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>
+
+<style>
+    .mobile {
+        display: none;
+    }
+
+    .searchbanner {
+        width: 100%;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .searchbanner.desktop {
+            display: none;
+        }
+
+        .searchbanner.mobile {
+            display: block;
+        }
+    }
+</style>

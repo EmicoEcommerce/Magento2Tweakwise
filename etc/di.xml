@@ -31,6 +31,9 @@
         </arguments>
     </type>
 
+    <type name="Magento\Catalog\Block\Product\ListProduct">
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Plugin" sortOrder="0" />
+    </type>
     <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar\Plugin" sortOrder="-10" />
     </type>

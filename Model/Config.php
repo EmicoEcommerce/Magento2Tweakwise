@@ -350,6 +350,15 @@ class Config
 
     /**
      * @param Store|null $store
+     * @return bool
+     */
+    public function isSearchBannersActive(Store $store = null)
+    {
+        return (bool) $this->getStoreConfig('tweakwise/search/searchbanner', $store);
+    }
+
+    /**
+     * @param Store|null $store
      * @return string
      */
     public function getPersonalMerchandisingCookieName(Store $store = null)

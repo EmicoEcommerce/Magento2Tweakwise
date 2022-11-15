@@ -106,18 +106,6 @@ class Config
     }
 
     /**
-     * Only return store id from request param when area is Admin HTML
-     * On the frontend returning NULL is sufficient to keep using the current store id
-     *
-     * @return mixed|string|null
-     * @throws LocalizedException
-     */
-    public function getStoreId()
-    {
-        return ($this->state->getAreaCode() === Area::AREA_ADMINHTML) ? $this->request->getParam('store', null) : null;
-    }
-
-    /**
      * @param bool $thrown
      * @return $this
      */
@@ -480,7 +468,23 @@ class Config
             return $store->getConfig($path);
         }
 
-        return $this->config->getValue($path, ScopeInterface::SCOPE_STORE, $this->getStoreId());
+        $scope = ScopeInterface::SCOPE_STORE;
+        $scopeId = null;
+
+        //only get the parameters from the url in the admin
+        if($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
+            $scopeId = $this->request->getParam('store', null);
+            if (!empty($this->request->getParam('website', null))) {
+                $scope = ScopeInterface::SCOPE_WEBSITE;
+                $scopeId = $this->request->getParam('website', null);
+            }
+
+            if($scopeId === null) {
+                $scope = 'default';
+            }
+        }
+
+        return $this->config->getValue($path, $scope, $scopeId);
     }
 
     /**

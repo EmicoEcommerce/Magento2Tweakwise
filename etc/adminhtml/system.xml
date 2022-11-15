@@ -161,7 +161,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
-                        <field id="show_suggestions">1</field>
+                        <field id="use_suggestions">1</field>
                     </depends>
                 </field>
                 <field id="in_current_category" translate="label,comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">

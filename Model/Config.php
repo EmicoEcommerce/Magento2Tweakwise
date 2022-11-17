@@ -27,6 +27,7 @@ class Config
     public const RECOMMENDATION_TYPE_UPSELL = 'upsell';
     public const RECOMMENDATION_TYPE_CROSSSELL = 'crosssell';
     public const RECOMMENDATION_TYPE_FEATURED = 'featured';
+    public const RECCOMENDATION_TYPE_SHOPPINGCART = 'shoppingcart_crosssell';
 
     /**
      * Attribute names
@@ -495,11 +496,16 @@ class Config
             return;
         }
 
+        if ($type == self:: RECCOMENDATION_TYPE_SHOPPINGCART) {
+            return;
+        }
+
         throw new InvalidArgumentException(sprintf(
             '$type can be only of type string value: %s, %s, %s',
             self::RECOMMENDATION_TYPE_UPSELL,
             self::RECOMMENDATION_TYPE_CROSSSELL,
-            self::RECOMMENDATION_TYPE_FEATURED
+            self::RECOMMENDATION_TYPE_FEATURED,
+            self:: RECCOMENDATION_TYPE_SHOPPINGCART,
         ));
     }
 

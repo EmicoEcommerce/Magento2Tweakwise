@@ -25,6 +25,9 @@
     <type name="Magento\Catalog\Model\Layer\FilterList">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin" />
     </type>
+    <type name="Magento\Checkout\Block\Cart\Crosssell">
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Cart\Crosssell\Plugin" />
+    </type>
     <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin">
         <arguments>
             <argument name="tweakwiseFilterList" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise\Proxy</argument>

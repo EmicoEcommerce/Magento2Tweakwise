@@ -119,7 +119,7 @@ class SwatchRenderer extends RenderLayered
          * @see \Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise line 105
         */
         if ($this->eavAttribute->getId()) {
-            //$swatchData = parent::getSwatchData();
+            $swatchData = parent::getSwatchData();
         }
 
         if (empty($swatchData)) {
@@ -128,7 +128,7 @@ class SwatchRenderer extends RenderLayered
             $swatchAttributeData = $this->swatchAttributeResolver->getSwatchData($this->filter);
             // There was no attribute to be found
             if (!$swatchAttributeData) {
-                //$swatchData = parent::getSwatchData();
+                $swatchData = parent::getSwatchData();
             }
 
             if (empty($swatchData)) {

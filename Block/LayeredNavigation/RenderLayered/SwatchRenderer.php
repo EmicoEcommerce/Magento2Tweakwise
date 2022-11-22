@@ -111,59 +111,81 @@ class SwatchRenderer extends RenderLayered
             throw new \RuntimeException('Magento_Swatches: RenderLayered: Attribute has not been set.');
         }
 
+        $swatchData = [];
+
         /**
          * When this attribute has an id it is an actual magento attribute. If so we can use the parent method to
          * get the swatches, otherwise it is a mocked attribute see:
          * @see \Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise line 105
         */
         if ($this->eavAttribute->getId()) {
-            return parent::getSwatchData();
+            $swatchData = parent::getSwatchData();
         }
 
-        // We have a derived swatch filter.
-        $swatchAttributeData = $this->swatchAttributeResolver->getSwatchData($this->filter);
-        // There was no attribute to be found
-        if (!$swatchAttributeData) {
-            return parent::getSwatchData();
-        }
+        if (empty($swatchData)) {
 
-        /** @var AttributeInterface|Attribute $attribute */
-        $attribute = $swatchAttributeData['attribute'];
-        $this->filter->setAttributeModel($attribute);
-        $optionIds = array_values($swatchAttributeData['options']);
-        $optionLabels = array_keys($swatchAttributeData['options']);
-
-        $filterItems = [];
-        foreach ($this->filter->getItems() as $item) {
-            if (!in_array($item->getLabel(), $optionLabels, false)) {
-                continue;
+            // We have a derived swatch filter.
+            $swatchAttributeData = $this->swatchAttributeResolver->getSwatchData($this->filter);
+            // There was no attribute to be found
+            if (!$swatchAttributeData) {
+                $swatchData = parent::getSwatchData();
             }
 
-            $filterItems[$item->getLabel()] = $item;
+            if (empty($swatchData)) {
+                /** @var AttributeInterface|Attribute $attribute */
+                $attribute = $swatchAttributeData['attribute'];
+                $this->filter->setAttributeModel($attribute);
+                $optionIds = array_values($swatchAttributeData['options']);
+                $optionLabels = array_keys($swatchAttributeData['options']);
+
+                $filterItems = [];
+                foreach ($this->filter->getItems() as $item) {
+                    if (!in_array($item->getLabel(), $optionLabels, false)) {
+                        continue;
+                    }
+
+                    $filterItems[$item->getLabel()] = $item;
+                }
+
+
+                $attributeOptions = [];
+                foreach ($attribute->getOptions() as $option) {
+                    if (!in_array($option->getValue(), $optionIds, false)) {
+                        continue;
+                    }
+
+                    $filterItem = $filterItems[$option->getLabel()] ?? null;
+                    if (!$filterItem) {
+                        continue;
+                    }
+
+                    $attributeOptions[$option->getValue()] = $this->getOptionViewData($filterItem, $option);
+                }
+
+                $swatchData = [
+                    'attribute_id' => $attribute->getId(),
+                    'attribute_code' => $attribute->getAttributeCode(),
+                    'attribute_label' => $this->filter->getFacet()->getFacetSettings()->getTitle(),
+                    'options' => $attributeOptions,
+                    'swatches' => $this->swatchHelper->getSwatchesByOptionsId($optionIds),
+                ];
+            }
         }
 
-
-        $attributeOptions = [];
-        foreach ($attribute->getOptions() as $option) {
-            if (!in_array($option->getValue(), $optionIds, false)) {
-                continue;
+        //set swatch order
+        $sortedOptions = [];
+        foreach ($this->filter->getFacet()->getAttributes() as $attribute) {
+            foreach ($swatchData['options'] as $key => $option) {
+                if ($option['label'] == $attribute->getTitle()) {
+                    $sortedOptions[$key] = $option;
+                    continue 2;
+                }
             }
-
-            $filterItem = $filterItems[$option->getLabel()] ?? null;
-            if (!$filterItem) {
-                continue;
-            }
-
-            $attributeOptions[$option->getValue()] = $this->getOptionViewData($filterItem, $option);
         }
 
-        return [
-            'attribute_id' => $attribute->getId(),
-            'attribute_code' => $attribute->getAttributeCode(),
-            'attribute_label' => $this->filter->getFacet()->getFacetSettings()->getTitle(),
-            'options' => $attributeOptions,
-            'swatches' => $this->swatchHelper->getSwatchesByOptionsId($optionIds),
-        ];
+        $swatchData['options'] = $sortedOptions;
+
+        return $swatchData;
     }
 
     /**

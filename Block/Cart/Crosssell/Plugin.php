@@ -82,6 +82,11 @@ class Plugin extends AbstractRecommendationPlugin
         return $proceed();
     }
 
+    /**
+     * @param Crosssell $crosssell
+     * @param $result
+     * @return mixed
+     */
     public function afterGetItems(Crosssell $crosssell, $result)
     {
         if (!$this->config->isRecommendationsEnabled(Config::RECCOMENDATION_TYPE_SHOPPINGCART)) {
@@ -89,40 +94,31 @@ class Plugin extends AbstractRecommendationPlugin
         }
 
         $ninProductIds = $crosssell->getData('_cart_product_ids');
+        $itmes = [];
 
         if ($ninProductIds) {
 
             if ($this->lastAddedProduct) {
 
-                $requestFactory = new RequestFactory(ObjectManager::getInstance(), ProductRequest::class);
-                $request = $requestFactory->create();
-                $request->setProduct($this->lastAddedProduct);
-
-                if (!$this->templateFinder->forProduct($this->lastAddedProduct, $this->getType())) {
-                    return $result;
-                }
-
-                $request->setTemplate($this->templateFinder->forProduct($this->lastAddedProduct, $this->getType()));
-                $this->context->setRequest($request);
-
-                try {
-                    $collection = $this->getCollection();
-                } catch (ApiException $e) {
-                    return $result;
-                }
-
-                if (!empty($ninProductIds)) {
-                    $collection = $this->removeCartItems($collection, $ninProductIds);
-                }
-
-                foreach ($collection as $item) {
-                    $ninProductIds[] = $item->getId();
-                    $items[] = $item;
-                }
+                $itmes = $this->getShoppingcartTweakwiseItems($this->lastAddedProduct, $result, $ninProductIds);
             }
 
-            if (count($items) < 4) {
+            if (empty($items)) {
+                foreach ($ninProductIds as $productId) {
+                    try {
+                        $product = $this->productRepository->getById($productId);
+                    } catch (NoSuchEntityException $e) {
+                        $product = null;
+                    }
 
+                    if (!empty($product)) {
+                        $items = $this->getShoppingcartTweakwiseItems($product, $result, $ninProductIds);
+                    }
+
+                    if (!empty($items)) {
+                        break;
+                    }
+                }
             }
         }
         $crosssell->setData('items', $items);
@@ -159,6 +155,37 @@ class Plugin extends AbstractRecommendationPlugin
         return $this->checkoutSession->getLastAddedProductId(false);
     }
 
+    private function getShoppingcartTweakwiseItems (ProductInterface $product, array $result, array $cartItems) {
+        $items = [];
+
+        $requestFactory = new RequestFactory(ObjectManager::getInstance(), ProductRequest::class);
+        $request = $requestFactory->create();
+        $request->setProduct($product);
+
+        if (!$this->templateFinder->forProduct($product, $this->getType())) {
+            return $result;
+        }
+
+        $request->setTemplate($this->templateFinder->forProduct($product, $this->getType()));
+        $this->context->setRequest($request);
+
+        try {
+            $collection = $this->getCollection();
+        } catch (ApiException $e) {
+            return $result;
+        }
+
+        if (!empty($ninProductIds)) {
+            $collection = $this->removeCartItems($collection, $cartItems);
+        }
+
+        foreach ($collection as $item) {
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
     /**
      * @param $collection
      * @param $filteredProducts
@@ -166,13 +193,13 @@ class Plugin extends AbstractRecommendationPlugin
      */
     protected function removeCartItems($collection, $cartItems)
     {
-            $items = $collection->getItems();
+        $items = $collection->getItems();
 
-            if(!empty($cartItems)) {
-                foreach ($cartItems as $cartItem) {
-                    unset($items[$cartItem]);
-                }
+        if(!empty($cartItems)) {
+            foreach ($cartItems as $cartItem) {
+                unset($items[$cartItem]);
             }
-            return $items;
+        }
+        return $items;
     }
 }

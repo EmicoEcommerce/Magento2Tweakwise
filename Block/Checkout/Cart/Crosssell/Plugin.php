@@ -6,13 +6,13 @@
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Tweakwise\Magento2Tweakwise\Block\Cart\Crosssell;
+namespace Tweakwise\Magento2Tweakwise\Block\Checkout\Cart\Crosssell;
 
 use Closure;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
-use Magento\Checkout\Block\Cart\Crosssell;
+use Magento\TargetRule\Block\Checkout\Cart\Crosssell;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
@@ -25,6 +25,9 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Checkout\Model\Session;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 
+/**
+ * Class is only used by commerce version
+ */
 class Plugin extends AbstractRecommendationPlugin
 {
     /**
@@ -36,7 +39,6 @@ class Plugin extends AbstractRecommendationPlugin
      * @var ProductRepositoryInterface|null
      */
     private $productRepository;
-
 
     /**
      * @var Product
@@ -76,29 +78,7 @@ class Plugin extends AbstractRecommendationPlugin
         return Config::RECCOMENDATION_TYPE_SHOPPINGCART;
     }
 
-    /**
-     * Get the last added product before running the default getItems because the last added products gets deleted from the session
-     *
-     * @param Closure $proceed
-     * @return array
-     */
-    public function aroundGetItems(Crosssell $crosssell, Closure $proceed)
-    {
-        if (!$this->config->isRecommendationsEnabled(Config::RECCOMENDATION_TYPE_SHOPPINGCART)) {
-            return $proceed();
-        }
-
-        $this->lastAddedProduct = $this->getLastAddedProduct();
-
-        return $proceed();
-    }
-
-    /**
-     * Retrieve just added to cart product object
-     *
-     * @return ProductInterface|null
-     */
-    private function getLastAddedProduct(): ?ProductInterface
+    public function aroundGetLastAddedProduct(Crosssell $crossell, Closure $proceed)
     {
         $product = null;
         $productId = $this->_getLastAddedProductId();
@@ -109,7 +89,7 @@ class Plugin extends AbstractRecommendationPlugin
                 $product = null;
             }
         }
-        return $product;
+        $this->lastAddedProduct = $product;
     }
 
     /**
@@ -127,14 +107,18 @@ class Plugin extends AbstractRecommendationPlugin
      * @param $result
      * @return array
      */
-    public function afterGetItems(Crosssell $crosssell, $result)
+    public function afterGetItemCollection(Crosssell $crosssell, $result)
     {
         if (!$this->config->isRecommendationsEnabled(Config::RECCOMENDATION_TYPE_SHOPPINGCART)) {
             return $result;
         }
 
-        $cartItems = $crosssell->getData('_cart_product_ids');
-        $items = $this->getShoppingcartCrosssellItems($cartItems, $result);
+        $items = [];
+
+        $cartItems = $this->_getCartProducts();
+        if ($cartItems) {
+            $items = $this->getShoppingcartCrosssellItems($cartItems, $result);
+        }
 
         $crosssell->setData('items', $items);
         return $items;
@@ -228,5 +212,31 @@ class Plugin extends AbstractRecommendationPlugin
             }
         }
         return $items;
+    }
+
+    /**
+     * Retrieve quote instance
+     *
+     * @return \Magento\Quote\Model\Quote
+     */
+    public function getQuote()
+    {
+        return $this->checkoutSession->getQuote();
+    }
+
+    /**
+     * Retrieve Array of Product ids in Cart
+     *
+     * @return array
+     */
+    protected function _getCartProducts()
+    {
+        foreach ($this->getQuote()->getAllItems() as $quoteItem) {
+            /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
+            $product = $quoteItem->getProduct();
+            $products[] = $product->getEntityId();
+        }
+
+        return $products;
     }
 }

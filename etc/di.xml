@@ -53,10 +53,10 @@
     <type name="Magento\TargetRule\Block\Catalog\Product\ProductList\Related">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList\RelatedPlugin" sortOrder="0" />
     </type>
-    <!-- End of Commerce only-->
-    <type name="Magento\Catalog\Block\Product\ProductList\Upsell">
-        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin" sortOrder="0" />
+    <type name="Magento\TargetRule\Block\Checkout\Cart\Crosssell">
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Checkout\Cart\Crosssell\Plugin" sortOrder="0" />
     </type>
+    <!-- End of Commerce only-->
     <type name="Magento\Catalog\Block\Product\ProductList\Related">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin" sortOrder="0" />
     </type>

@@ -50,7 +50,7 @@ define([
                     data: this._getFilterParameters(),
                     cache: this.options.ajaxCache,
                     success: function (response) {
-                        window.history.replaceState({html: response.html}, '', response.url);
+                        this._replaceState(response);
                     }.bind(this)
                 });
             }
@@ -339,12 +339,46 @@ define([
         },
 
         /**
-         *
          * @param response
          * @private
          */
         _updateState: function (response) {
             window.history.pushState({html: response.html}, '', response.url);
+        },
+
+        /**
+         * @param response
+         * @private
+         */
+        _replaceState: function (response) {
+            const newUrl = this._buildUrlWithQueryString(response);
+            window.history.replaceState({html: response.html}, '', newUrl);
+        },
+
+        /**
+         * Merges existed query parameters with the ones get fron AJAX response if needed
+         *
+         * @param response
+         * @returns string
+         * @private
+         */
+        _buildUrlWithQueryString: function (response) {
+            let result = response.url;
+            const queryParams = new URLSearchParams(window.location.search ?? '');
+            const queryParamsString = queryParams.toString();
+            const responseUrl = new URL(response.url);
+
+            if (responseUrl.search && ('' !== queryParamsString)) {
+                const categoryFiltersString = responseUrl.searchParams.toString();
+
+                if (queryParamsString !== categoryFiltersString) {
+                    result += `&${queryParamsString}`;
+                }
+            } else if ('' !== queryParamsString) {
+                result += `?${queryParamsString}`;
+            }
+
+            return result;
         },
 
         /**

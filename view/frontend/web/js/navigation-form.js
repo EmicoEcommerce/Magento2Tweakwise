@@ -365,11 +365,11 @@ define([
         _buildUrlWithQueryString: function (response) {
             let result = response.url;
             const queryParams = new URLSearchParams(window.location.search ?? '');
-            const queryParamsString = queryParams.toString();
+            const queryParamsString = this._normalizeQueryString(queryParams.toString());
             const responseUrl = new URL(response.url);
 
             if (responseUrl.search && ('' !== queryParamsString)) {
-                const categoryFiltersString = responseUrl.searchParams.toString();
+                const categoryFiltersString = this._normalizeQueryString(responseUrl.searchParams.toString());
 
                 if (queryParamsString !== categoryFiltersString) {
                     result += `&${queryParamsString}`;
@@ -379,6 +379,17 @@ define([
             }
 
             return result;
+        },
+
+        /**
+         * Removes `=` sign for parameters without value
+         *
+         * @param queryString
+         * @returns string
+         * @private
+         */
+        _normalizeQueryString: function (queryString) {
+            return queryString.replace(/=$|=(?=&)/g, '');
         },
 
         /**
@@ -418,4 +429,3 @@ define([
 
     return $.tweakwise.navigationForm;
 });
-

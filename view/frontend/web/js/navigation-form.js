@@ -356,27 +356,24 @@ define([
         },
 
         /**
-         * Merges existed query parameters with the ones get fron AJAX response if needed
+         * Merges existed query parameters with the ones get from AJAX response if needed
          *
          * @param response
          * @returns string
          * @private
          */
         _buildUrlWithQueryString: function (response) {
-            let result = response.url;
+            const resultUrl = new URL(response.url);
             const queryParams = new URLSearchParams(window.location.search ?? '');
-            const queryParamsString = this._normalizeQueryString(queryParams.toString());
-            const responseUrl = new URL(response.url);
+            let queryParamsString = queryParams.toString();
 
-            if (responseUrl.search && ('' !== queryParamsString)) {
-                const categoryFiltersString = this._normalizeQueryString(responseUrl.searchParams.toString());
-
-                if (queryParamsString !== categoryFiltersString) {
-                    result += `&${queryParamsString}`;
-                }
-            } else if ('' !== queryParamsString) {
-                result += `?${queryParamsString}`;
+            if (resultUrl.search) {
+                queryParamsString = this._combineQueryStrings(queryParams, resultUrl.searchParams);
             }
+
+            resultUrl.search = queryParamsString;
+            let result = resultUrl.toString();
+            result = this._normalizeQueryString(result);
 
             return result;
         },
@@ -390,6 +387,32 @@ define([
          */
         _normalizeQueryString: function (queryString) {
             return queryString.replace(/=$|=(?=&)/g, '');
+        },
+
+        /**
+         * Combines the original query string parameters with the ones in the AJAX response
+         *
+         * @param origQueryString
+         * @param responseQueryString
+         * @returns string
+         * @private
+         */
+        _combineQueryStrings: function (origQueryString, responseQueryString) {
+            const uniqueQueryParams = new URLSearchParams();
+
+            origQueryString.forEach((value, key) => {
+                if (false === uniqueQueryParams.has(key)) {
+                    uniqueQueryParams.append(key, value);
+                }
+            });
+
+            responseQueryString.forEach((value, key) => {
+                if (false === uniqueQueryParams.has(key)) {
+                    uniqueQueryParams.append(key, value);
+                }
+            });
+
+            return uniqueQueryParams.toString();
         },
 
         /**

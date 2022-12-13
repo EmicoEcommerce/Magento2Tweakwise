@@ -35,7 +35,7 @@ if (!$block->canShowBlock()) return;
 
         <?php if ($block->getLayer()->getState()->getFilters()): ?>
             <div class="block-actions filter-actions">
-                <a href="<?=$block->getClearUrl() ?>" class="action clear filter-clear"><span><?=__('Clear All')?></span></a>
+                <a href="<?=$escaper->escapeUrl($block->getClearUrl()) ?>" class="action clear filter-clear"><span><?=__('Clear All')?></span></a>
             </div>
         <?php endif; ?>
 

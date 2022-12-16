@@ -363,7 +363,8 @@ define([
          * @private
          */
         _buildUrlWithQueryString: function (response) {
-            const resultUrl = new URL(response.url);
+            const baseUrl = window.location.origin;
+            const resultUrl = new URL(response.url, baseUrl);
             const queryParams = new URLSearchParams(window.location.search ?? '');
             let queryParamsString = queryParams.toString();
 

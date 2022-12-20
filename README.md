@@ -90,8 +90,10 @@ When the product list is loaded in such a manner the result will not be cacheabl
 6) Default upsell group code:  Only visible when Default upsell template has value '- Group Code -'. Use this to specify the group of recommendations
 7) Featured products enabled: If yes then tweakwise can show featured products on category pages.
 8) Default Featured product template: The default template to use when rendering featured products.
-    The template can also be set per category and falls back to this setting if not found on the category.
-    The templates that can be selected correspond with the templates under 'recomendations->featured products' in tweakwise.
+    The template can also be set per category and falls back to this setting if not found on the category. The templates that can be selected correspond with the templates under 'recomendations->featured products' in tweakwise.
+9) Show Cross-sell items in the shoppingcart. Enables tweakwise cross-sell items in the shoppingcart. Magento shoppingcart crossell items should also be enabled under 'Stores->configuration->sales->checkout->Show Cross-sell items in the Shopping Cart'
+10) Default shoppingcart crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items. Only relevant when shoppingcart crosssell is enabled
+11) Default shoppingcart crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
     
 ## Support
 For in depth support regarding configuration and all options tweakwise has to offer use the following links.

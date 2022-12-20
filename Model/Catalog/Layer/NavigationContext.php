@@ -160,6 +160,14 @@ class NavigationContext
     }
 
     /**
+     * @return bool
+     */
+    public function showSearchBanners() : bool
+    {
+        return $this->config->isSearchBannersActive();
+    }
+
+    /**
      * Can be called if there was a response without triggering the creation of one.
      *
      * @return bool

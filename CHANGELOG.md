@@ -40,7 +40,7 @@ Bug fix for installer when using an db prefix
 - Bug fix deprecated ctype function
 - Bug fix swatch order
 - Fix float and 0 prices
--
+
 ## 5.1.2
 - Escape clear url
 

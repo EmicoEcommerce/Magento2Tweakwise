@@ -63,7 +63,7 @@ class ItemType extends Type
      */
     public function getPrice()
     {
-        return (int) $this->getDataValue('price');
+        return (float) $this->getDataValue('price');
     }
 
     /**

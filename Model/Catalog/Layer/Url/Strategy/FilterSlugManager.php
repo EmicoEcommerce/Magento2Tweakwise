@@ -106,7 +106,7 @@ class FilterSlugManager
     public function createFilterSlugByAttributeOptions(array $options)
     {
         foreach ($options as $option) {
-            if (empty($option->getLabel()) || ctype_space($option->getLabel())) {
+            if (empty($option->getLabel()) || ctype_space((string) $option->getLabel())) {
                 continue;
             }
 

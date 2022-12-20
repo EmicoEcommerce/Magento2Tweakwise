@@ -84,7 +84,10 @@ class ProductItem implements ItemInterface
         $price = (float) $priceInfo->getPrice('regular_price')->getValue();
 
         if ($productType == Grouped::TYPE_CODE || $productType == Type::TYPE_BUNDLE) {
-            $price = (float) $product->getData('tweakwise_price');
+            $tweakwisePrice = (float)$product->getData('tweakwise_price');
+            if ($price < $tweakwisePrice) {
+                $price = $tweakwisePrice;
+            }
         }
 
         return [

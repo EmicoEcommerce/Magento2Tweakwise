@@ -50,7 +50,7 @@ define([
                     data: this._getFilterParameters(),
                     cache: this.options.ajaxCache,
                     success: function (response) {
-                        window.history.replaceState({html: response.html}, '', response.url);
+                        this._replaceState(response);
                     }.bind(this)
                 });
             }
@@ -339,12 +339,81 @@ define([
         },
 
         /**
-         *
          * @param response
          * @private
          */
         _updateState: function (response) {
             window.history.pushState({html: response.html}, '', response.url);
+        },
+
+        /**
+         * @param response
+         * @private
+         */
+        _replaceState: function (response) {
+            const newUrl = this._buildUrlWithQueryString(response);
+            window.history.replaceState({html: response.html}, '', newUrl);
+        },
+
+        /**
+         * Merges existed query parameters with the ones get from AJAX response if needed
+         *
+         * @param response
+         * @returns string
+         * @private
+         */
+        _buildUrlWithQueryString: function (response) {
+            const baseUrl = window.location.origin;
+            const resultUrl = new URL(response.url, baseUrl);
+            const queryParams = new URLSearchParams(window.location.search ?? '');
+            let queryParamsString = queryParams.toString();
+
+            if (resultUrl.search) {
+                queryParamsString = this._combineQueryStrings(queryParams, resultUrl.searchParams);
+            }
+
+            resultUrl.search = queryParamsString;
+            let result = resultUrl.toString();
+            result = this._normalizeQueryString(result);
+
+            return result;
+        },
+
+        /**
+         * Removes `=` sign for parameters without value
+         *
+         * @param queryString
+         * @returns string
+         * @private
+         */
+        _normalizeQueryString: function (queryString) {
+            return queryString.replace(/=$|=(?=&)/g, '');
+        },
+
+        /**
+         * Combines the original query string parameters with the ones in the AJAX response
+         *
+         * @param origQueryString
+         * @param responseQueryString
+         * @returns string
+         * @private
+         */
+        _combineQueryStrings: function (origQueryString, responseQueryString) {
+            const uniqueQueryParams = new URLSearchParams();
+
+            origQueryString.forEach((value, key) => {
+                if (false === uniqueQueryParams.has(key)) {
+                    uniqueQueryParams.append(key, value);
+                }
+            });
+
+            responseQueryString.forEach((value, key) => {
+                if (false === uniqueQueryParams.has(key)) {
+                    uniqueQueryParams.append(key, value);
+                }
+            });
+
+            return uniqueQueryParams.toString();
         },
 
         /**
@@ -384,4 +453,3 @@ define([
 
     return $.tweakwise.navigationForm;
 });
-

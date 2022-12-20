@@ -63,9 +63,10 @@ Below is a rundown of all configuration options
 3) Search language: This determines the language used by the store and is passed to tweakwise. Tweakwise uses this to determine word conjugations and also correct spelling errors when considering which results should be shown to the user.
     An example: suppose Language is set to 'Dutch' and the user types 'Bed' (which is the same in English, namely the place where one sleeps) then tweakwise might suggest 'Bedden' (this is plural for 'Beds')
     If Language is set to English then in the example above tweakwise might suggest 'Beds'.
+4) Searchbanners enabled: Show searchbanners in the search results. The searchbanners need to be configured in tweakwise.
 
 #### Personal Merchandising
-1) Enabled: Use personal Merchandising (Yes/No)
+1) Enabled: Use personal Merchandising (Yes/No) This is only available if you use ajax filtering.
 2) Cookie name: The cookie which holds the tweakwise profile id, this cookie is (usually) set with a tracking script. The value of this cookie will be added to the tweakwise request, the response will contain a personalized sort order for that particular customer.
 
 Note that enabling these settings has consequences for performance. Using this feature means that all category pages have personalized content. As such, it is no longer possible cache navigation responses where this profile cookie name has been used.
@@ -90,6 +91,7 @@ When the product list is loaded in such a manner the result will not be cacheabl
 7) Featured products enabled: If yes then tweakwise can show featured products on category pages.
 8) Default Featured product template: The default template to use when rendering featured products.
     The template can also be set per category and falls back to this setting if not found on the category.
+    The templates that can be selected correspond with the templates under 'recomendations->featured products' in tweakwise.
     
 ## Support
 For in depth support regarding configuration and all options tweakwise has to offer use the following links.

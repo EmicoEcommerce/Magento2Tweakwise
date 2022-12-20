@@ -39,7 +39,7 @@ class RemoveTweakwiseSlugsBeforeSaveAttribute implements ObserverInterface
     {
         foreach ($observer->getEvent()->getAttribute()->getOptions() as $option) {
             try {
-                if (empty($option->getLabel()) || ctype_space($option->getLabel())) {
+                if (empty($option->getLabel()) || ctype_space((string) $option->getLabel())) {
                     continue;
                 }
 

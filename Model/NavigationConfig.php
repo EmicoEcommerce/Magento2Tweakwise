@@ -208,4 +208,9 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
     {
         return $this->url->getUrl('tweakwise/ajax/navigation');
     }
+
+    public function getNavigationContext()
+    {
+        return $this->currentNavigationContext;
+    }
 }

@@ -31,3 +31,19 @@ Bug fix for commerce, searching is slow and wrong item count in hyva theme
 
 ## 5.0.8
 Bug fix for installer when using an db prefix 
+
+## 5.1.0
+- Added support for searchbanners. Show searchbanners in search results. Configure this in tweakwise. Only setting in magento is to enable/disable showing searchbanners
+- Bug fix upsell/crossell templates
+
+## 5.1.1
+- Bug fix deprecated ctype function
+- Bug fix swatch order
+- Fix float and 0 prices
+-
+## 5.1.2
+- Escape clear url
+
+## 5.2.0
+- Feature shoppingcart recommendations from tweakwise
+- Bug fix ajax query url

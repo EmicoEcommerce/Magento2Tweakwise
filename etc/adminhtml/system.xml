@@ -297,7 +297,7 @@
                     </depends>
                 </field>
                 <field id="shoppingcart_crosssell_group_code" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Default crosssell group code</label>
+                    <label>Default shoppingcart crosssell group code</label>
                     <depends>
                         <field id="shoppingcart_crosssell_enabled">1</field>
                         <field id="shoppingcart_crosssell_template">-1</field>

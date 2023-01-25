@@ -28,6 +28,12 @@
     <type name="Magento\Checkout\Block\Cart\Crosssell">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Cart\Crosssell\Plugin" />
     </type>
+    <type name="Magento\Catalog\Block\Product\ProductList\Related">
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin" sortOrder="0" />
+    </type>
+    <type name="Magento\Catalog\Block\Product\ProductList\Upsell">
+        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin" sortOrder="0" />
+    </type>
     <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin">
         <arguments>
             <argument name="tweakwiseFilterList" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise\Proxy</argument>
@@ -60,9 +66,6 @@
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Checkout\Cart\Crosssell\Plugin" sortOrder="0" />
     </type>
     <!-- End of Commerce only-->
-    <type name="Magento\Catalog\Block\Product\ProductList\Related">
-        <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Related\Plugin" sortOrder="0" />
-    </type>
     <type name="Magento\Swatches\Helper\Data">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Model\Swatches\Plugin" sortOrder="0" />
     </type>

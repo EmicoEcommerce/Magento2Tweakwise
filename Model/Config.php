@@ -28,6 +28,7 @@ class Config
     public const RECOMMENDATION_TYPE_CROSSSELL = 'crosssell';
     public const RECOMMENDATION_TYPE_FEATURED = 'featured';
     public const RECCOMENDATION_TYPE_SHOPPINGCART = 'shoppingcart_crosssell';
+    public const RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED = 'shoppingcart_featured_crosssell';
 
     /**
      * Attribute names
@@ -37,6 +38,9 @@ class Config
     public const ATTRIBUTE_UPSELL_GROUP_CODE = 'tweakwise_upsell_group_code';
     public const ATTRIBUTE_CROSSSELL_TEMPLATE = 'tweakwise_crosssell_template';
     public const ATTRIBUTE_CROSSSELL_GROUP_CODE = 'tweakwise_crosssell_group_code';
+    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE = 'tweakwise_shoppingcart_crosssell_template';
+    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE = 'tweakwise_shoppingcart_crosssell_group_code';
+    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_FEATURED_TEMPLATE = 'tweakwise_shoppingcart_crosssell_featured_template';
     public const ATTRIBUTE_FILTER_WHITELIST = 'tweakwise_filter_whitelist';
     public const ATTRIBUTE_FILTER_VALUES_WHITELIST = 'tweakwise_filter_values_whitelist';
 

@@ -28,7 +28,7 @@ class Config
     public const RECOMMENDATION_TYPE_CROSSSELL = 'crosssell';
     public const RECOMMENDATION_TYPE_FEATURED = 'featured';
     public const RECCOMENDATION_TYPE_SHOPPINGCART = 'shoppingcart_crosssell';
-    public const RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED = 'shoppingcart_featured_crosssell';
+    public const RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED = 'shoppingcart_crosssell_featured';
 
     /**
      * Attribute names
@@ -385,6 +385,16 @@ class Config
     /**
      * @param string $type
      * @param Store|null $store
+     * @return string
+     */
+    public function getShoppingcartCrossellType($store = null)
+    {
+        return (string)$this->getStoreConfig('tweakwise/recommendations/shoppingcart_crosssell_type', $store);
+    }
+
+    /**
+     * @param string $type
+     * @param Store|null $store
      * @return int
      */
     public function getRecommendationsTemplate($type, Store $store = null)
@@ -513,12 +523,17 @@ class Config
             return;
         }
 
+        if ($type == self:: RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED) {
+            return;
+        }
+
         throw new InvalidArgumentException(sprintf(
             '$type can be only of type string value: %s, %s, %s',
             self::RECOMMENDATION_TYPE_UPSELL,
             self::RECOMMENDATION_TYPE_CROSSSELL,
             self::RECOMMENDATION_TYPE_FEATURED,
             self:: RECCOMENDATION_TYPE_SHOPPINGCART,
+            self::RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED,
         ));
     }
 

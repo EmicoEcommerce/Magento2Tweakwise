@@ -100,6 +100,7 @@ For in depth support regarding configuration and all options tweakwise has to of
 1) Tweakwise support: https://www.tweakwise.com/support/
 2) Tweakwise api documentation: http://developers.tweakwise.com/
 3) General questions: https://www.tweakwise.com/contact/
+4) Security vulnerabilities: Send an email to support@tweakwise.com, with the message that it's an security issue for the magento plugin 
 
 For feature requests we refer to the links above.
 For technical issues github is used. If you find a technical issue please create an issue on github and notify tweakwise via the links above. If you also happen to have the solution to that issue feel free to create a merge request.

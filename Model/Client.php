@@ -87,7 +87,7 @@ class Client
                 RequestOptions::TIMEOUT => self::REQUEST_TIMEOUT,
                 RequestOptions::HEADERS => [
                     'user-agent' => $this->config->getUserAgentString(),
-                    'Accept-Encoding' => 'gzip, deflate, br'
+                    'Accept-Encoding' => 'gzip, deflate'
                 ]
             ];
             $this->client = new HttpClient($options);

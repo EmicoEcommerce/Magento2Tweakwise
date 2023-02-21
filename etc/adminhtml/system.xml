@@ -234,12 +234,12 @@
             <group id="recommendations" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Recommendations</label>
                 <field id="crosssell_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Crosssell enabled</label>
-                    <comment>Shows crosssell product on all product pages. This overrides the default related products. Can also be enabled per category.</comment>
+                    <label>Related products enabled</label>
+                    <comment>Shows related product on all product pages. This overrides the default related products. Can also be enabled per category.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="crosssell_template" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Default crosssell template</label>
+                    <label>Default related products template</label>
                     <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product\System</source_model>
                     <depends>
                         <field id="crosssell_enabled">1</field>
@@ -285,19 +285,19 @@
                     </depends>
                 </field>
                 <field id="shoppingcart_crosssell_enabled" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Shoppingcart Crosssell enabled</label>
-                    <comment>Shows crosssell product in the shoppingcart. This overrides the default crossell product in the shoppingcart</comment>
+                    <label>Crosssell enabled</label>
+                    <comment>Shows crosssell product in the shoppingcart. This overrides the default crossell products in the shoppingcart</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="shoppingcart_crosssell_template" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Default shoppingcart crosssell template</label>
+                    <label>Default crosssell template</label>
                     <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product\System</source_model>
                     <depends>
                         <field id="shoppingcart_crosssell_enabled">1</field>
                     </depends>
                 </field>
                 <field id="shoppingcart_crosssell_group_code" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Default shoppingcart crosssell group code</label>
+                    <label>Default crosssell group code</label>
                     <depends>
                         <field id="shoppingcart_crosssell_enabled">1</field>
                         <field id="shoppingcart_crosssell_template">-1</field>

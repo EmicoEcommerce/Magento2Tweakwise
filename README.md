@@ -80,10 +80,10 @@ This means that the user is greeted by a loader. The product list is reloaded if
 When the product list is loaded in such a manner the result will not be cacheable. This has consequences for server load keep this in mind.
     
 #### Recommendations
-1) Crosssell enabled: Replace magento native related products with tweakwise crosssell & upsell recommendations. Terminology is confusing since this is relevant for magento related products and not for magento crosssell products
-2) Default crosssell template: Which tweakwise recommendation template to use for related products. Only relevant when crosssell is enabled
+1) Related products enabled: Replace magento native related products with tweakwise crosssell & upsell recommendations. Terminology is confusing since this is relevant for magento related products and not for magento crosssell products
+2) Default related products template: Which tweakwise recommendation template to use for related products. Only relevant when crosssell is enabled
     This can also be configured on a product and on a category. The template used is determined as follows: first check product for a configured template if not then check the product category for a template. If the category does not have a template configured then use the default. 
-3) Default crosssell group code: Only visible when Default crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
+3) Default related group code: Only visible when Default crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
 4) Upsell Enabled: Replace magento native upsell results with tweakwise crosssell & upsell recommendations.
 5) Default upsell template: Which template recommendation template to use for upsell products. Only relevant when upsell is enabled.
     This can also be configured on a product and on a category. The template used is determined as follows: first check product for a configured template if not then check the product category for a template. If the category does not have a template configured then use the default.
@@ -92,8 +92,8 @@ When the product list is loaded in such a manner the result will not be cacheabl
 8) Default Featured product template: The default template to use when rendering featured products.
     The template can also be set per category and falls back to this setting if not found on the category. The templates that can be selected correspond with the templates under 'recomendations->featured products' in tweakwise.
 9) Show Cross-sell items in the shoppingcart. Enables tweakwise cross-sell items in the shoppingcart. Magento shoppingcart crossell items should also be enabled under 'Stores->configuration->sales->checkout->Show Cross-sell items in the Shopping Cart'
-10) Default shoppingcart crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items. Only relevant when shoppingcart crosssell is enabled
-11) Default shoppingcart crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
+10) Default crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items. Only relevant when shoppingcart crosssell is enabled
+11) Default crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
     
 ## Support
 For in depth support regarding configuration and all options tweakwise has to offer use the following links.

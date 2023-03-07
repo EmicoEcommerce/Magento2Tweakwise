@@ -8,9 +8,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
 
-/**
- * @method AttributeType[] getChildren();
- */
 class AttributeType extends Type
 {
     /**
@@ -32,6 +29,14 @@ class AttributeType extends Type
 
         $this->data['children'] = $values;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChildren()
+    {
+        return $this->getDataValue('children');
     }
 
     /**

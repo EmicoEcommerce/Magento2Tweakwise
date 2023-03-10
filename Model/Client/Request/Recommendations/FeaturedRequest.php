@@ -8,9 +8,15 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations;
 
+use Magento\Catalog\Helper\Category;
+use Magento\Catalog\Model\Layer;
+use Magento\Framework\Registry;
+use Magento\Store\Model\StoreManager;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\RecommendationsResponse;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class FeaturedRequest extends Request
 {
@@ -23,6 +29,14 @@ class FeaturedRequest extends Request
      * @var int
      */
     protected $templateId;
+
+    protected $registery;
+
+    public function __construct(Helper $helper, StoreManager $storeManager, Registry $registry)
+    {
+        $this->registery = $registry;
+        parent::__construct($helper, $storeManager);
+    }
 
     /**
      * {@inheritDoc}
@@ -64,5 +78,30 @@ class FeaturedRequest extends Request
         }
 
         return  '/' . $this->templateId;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCurrentCategoryId()
+    {
+        $category = $this->registery->registry('current_category');
+
+        if (!empty($category)) {
+            return $category->getId();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return void
+     */
+    public function setCategory()
+    {
+        $categoryId = $this->getCurrentCategoryId();
+        if (!empty($categoryId)) {
+            $this->addCategoryFilter($categoryId);
+        }
     }
 }

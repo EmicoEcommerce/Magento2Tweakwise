@@ -276,10 +276,17 @@
                     <comment>Shows featured product on all category pages. Can also be enabled per category.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="featured_template" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="featured_template" translate="label" type="select" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default featured product template</label>
                     <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured</source_model>
                     <validate>required-entry</validate>
+                    <depends>
+                        <field id="featured_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="featured_category" translate="label" type="select" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Only show products from current category for featured products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="featured_enabled">1</field>
                     </depends>

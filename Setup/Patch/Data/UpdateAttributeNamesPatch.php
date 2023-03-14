@@ -5,12 +5,9 @@ namespace Tweakwise\Magento2Tweakwise\Setup\Patch\Data;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
-use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
-use Magento\Eav\Setup\EavSetupFactory;
-use Tweakwise\Magento2Tweakwise\Setup\Patch\AddRecommendationCategoryFieldsPatch;
 
 /**
  * Patch is mechanism, that allows to do atomic upgrade data changes.
@@ -27,10 +24,8 @@ class UpdateAttributeNamesPatch implements DataPatchInterface
 	 */
     public function __construct(
         ModuleDataSetupInterface $moduleDataSetup,
-        EavSetupFactory $eavSetupFactory
     ) {
         $this->moduleDataSetup = $moduleDataSetup;
-        $this->eavSetupFactory = $eavSetupFactory;
     }
 
 	/**
@@ -40,14 +35,18 @@ class UpdateAttributeNamesPatch implements DataPatchInterface
 	 */
 	public function apply()
 	{
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
-
 		$this->moduleDataSetup->getConnection()->startSetup();
 
-		$this->updateCrosssellTemplateAttribute($eavSetup);
-        $this->updateShoppingcartCrosssellTemplateAttribute($eavSetup);
+        $table = $setup->getConnection()->getTableName('eav_attribute');
 
-		$this->moduleDataSetup->getConnection()->endSetup();
+        //rename labels
+        $setup->getConnection()->query('update '. $table .' SET label = "Related products" WHERE attribute_code = "' . Config::ATTRIBUTE_CROSSSELL_TEMPLATE .'"');
+        $setup->getConnection()->query('update '. $table .' SET label = "Related products group code" WHERE attribute_code = "' . Config::ATTRIBUTE_CROSSSELL_GROUP_CODE .'"');
+
+        $setup->getConnection()->query('update '. $table .' SET label = "Crosssell template" WHERE attribute_code = "' . Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE .'"');
+        $setup->getConnection()->query('update '. $table .' SET label = "Crosssell group code" WHERE attribute_code = "' . Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE .'"');
+
+        $this->moduleDataSetup->getConnection()->endSetup();
 	}
 
 	/**
@@ -76,22 +75,4 @@ class UpdateAttributeNamesPatch implements DataPatchInterface
 	{
 		return [];
 	}
-
-    protected function updateCrosssellTemplateAttribute(EavSetup $eavSetup)
-    {
-        foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
-            $eavSetup->updateAttribute($entityType, Config::ATTRIBUTE_CROSSSELL_TEMPLATE, 'label', 'Related products');
-
-            $eavSetup->updateAttribute($entityType, Config::ATTRIBUTE_CROSSSELL_GROUP_CODE, 'label', 'Related products group code');
-        }
-    }
-
-    protected function updateShoppingcartCrosssellTemplateAttribute(EavSetup $eavSetup)
-    {
-        foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
-            $eavSetup->updateAttribute($entityType, Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE, 'label', 'Crosssell template');
-
-            $eavSetup->updateAttribute($entityType, Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE, 'label', 'Crosssell group code');
-        }
-    }
 }

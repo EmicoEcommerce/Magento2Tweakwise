@@ -74,9 +74,7 @@ class UpdateAttributeNamesPatch implements DataPatchInterface
 	 */
 	public static function getDependencies()
 	{
-		return [
-            \Tweakwise\Magento2Tweakwise\Setup\Patch\AddRecommendationCategoryFieldsPatch::class,
-        ];
+		return [];
 	}
 
     protected function updateCrosssellTemplateAttribute(EavSetup $eavSetup)

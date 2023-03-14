@@ -23,7 +23,7 @@ class UpdateAttributeNamesPatch implements DataPatchInterface
 	 * @param ModuleDataSetupInterface $moduleDataSetup
 	 */
     public function __construct(
-        ModuleDataSetupInterface $moduleDataSetup,
+        ModuleDataSetupInterface $moduleDataSetup
     ) {
         $this->moduleDataSetup = $moduleDataSetup;
     }

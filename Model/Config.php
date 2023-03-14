@@ -37,6 +37,8 @@ class Config
     public const ATTRIBUTE_UPSELL_GROUP_CODE = 'tweakwise_upsell_group_code';
     public const ATTRIBUTE_CROSSSELL_TEMPLATE = 'tweakwise_crosssell_template';
     public const ATTRIBUTE_CROSSSELL_GROUP_CODE = 'tweakwise_crosssell_group_code';
+    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE = 'tweakwise_shoppingcart_crosssell_template';
+    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE = 'tweakwise_shoppingcart_crosssell_group_code';
     public const ATTRIBUTE_FILTER_WHITELIST = 'tweakwise_filter_whitelist';
     public const ATTRIBUTE_FILTER_VALUES_WHITELIST = 'tweakwise_filter_values_whitelist';
 
@@ -447,6 +449,15 @@ class Config
         return ConfigAttributeProcessService::extractFilterValuesWhitelist(
             $this->getStoreConfig('tweakwise/seo/filter_values_whitelist', $store)
         );
+    }
+
+    /**
+     * @param Store|null $store
+     * @return int
+     */
+    public function getLimitGroupCodeItems(Store $store = null): int
+    {
+        return (int) $this->getStoreConfig('tweakwise/recommendations/limit_group_code_items', $store);
     }
 
     /**

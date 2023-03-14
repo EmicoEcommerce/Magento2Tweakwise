@@ -65,6 +65,11 @@ class RecommendationsResponse extends Response
         return $this;
     }
 
+    public function replaceItems(array $items)
+    {
+        $this->data['items'] = $items;
+    }
+
     /**
      * @return int[]
      */

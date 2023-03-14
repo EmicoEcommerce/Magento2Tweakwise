@@ -10,6 +10,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Eav\Setup\EavSetupFactory;
+use Tweakwise\Magento2Tweakwise\Setup\Patch\AddRecommendationCategoryFieldsPatch;
 
 /**
  * Patch is mechanism, that allows to do atomic upgrade data changes.

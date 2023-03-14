@@ -246,7 +246,7 @@
                     </depends>
                 </field>
                 <field id="crosssell_group_code" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Default realted products group code</label>
+                    <label>Default related products group code</label>
                     <depends>
                         <field id="crosssell_enabled">1</field>
                         <field id="crosssell_template">-1</field>

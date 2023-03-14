@@ -94,6 +94,7 @@ When the product list is loaded in such a manner the result will not be cacheabl
 9) Show Cross-sell items in the shoppingcart. Enables tweakwise cross-sell items in the shoppingcart. Magento shoppingcart crossell items should also be enabled under 'Stores->configuration->sales->checkout->Show Cross-sell items in the Shopping Cart'
 10) Default shoppingcart crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items. Only relevant when shoppingcart crosssell is enabled
 11) Default shoppingcart crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
+12) Only show products from current category for featured products: Show product from current category in featured products.
     
 ## Support
 For in depth support regarding configuration and all options tweakwise has to offer use the following links.

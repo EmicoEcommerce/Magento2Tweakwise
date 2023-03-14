@@ -444,6 +444,15 @@ class Config
      * @param Store|null $store
      * @return int
      */
+    public function getLimitGroupCodeItems(Store $store = null): int
+    {
+        return (int) $this->getStoreConfig('tweakwise/recommendations/limit_group_code_items', $store);
+    }
+
+    /**
+     * @param Store|null $store
+     * @return int
+     */
     public function getMaxAllowedFacets(Store $store = null)
     {
         return $this->getStoreConfig('tweakwise/seo/max_allowed_facets', $store);

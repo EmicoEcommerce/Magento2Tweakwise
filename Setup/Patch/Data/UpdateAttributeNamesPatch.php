@@ -40,11 +40,11 @@ class UpdateAttributeNamesPatch implements DataPatchInterface
         $table = $setup->getConnection()->getTableName('eav_attribute');
 
         //rename labels
-        $setup->getConnection()->query('update '. $table .' SET label = "Related products" WHERE attribute_code = "' . Config::ATTRIBUTE_CROSSSELL_TEMPLATE .'"');
-        $setup->getConnection()->query('update '. $table .' SET label = "Related products group code" WHERE attribute_code = "' . Config::ATTRIBUTE_CROSSSELL_GROUP_CODE .'"');
+        $setup->getConnection()->query('update '. $table .' SET frontend_label = "Related products" WHERE attribute_code = "' . Config::ATTRIBUTE_CROSSSELL_TEMPLATE .'"');
+        $setup->getConnection()->query('update '. $table .' SET frontend_label = "Related products group code" WHERE attribute_code = "' . Config::ATTRIBUTE_CROSSSELL_GROUP_CODE .'"');
 
-        $setup->getConnection()->query('update '. $table .' SET label = "Crosssell template" WHERE attribute_code = "' . Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE .'"');
-        $setup->getConnection()->query('update '. $table .' SET label = "Crosssell group code" WHERE attribute_code = "' . Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE .'"');
+        $setup->getConnection()->query('update '. $table .' SET frontend_label = "Crosssell template" WHERE attribute_code = "' . Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE .'"');
+        $setup->getConnection()->query('update '. $table .' SET frontend_label = "Crosssell group code" WHERE attribute_code = "' . Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE .'"');
 
         $this->moduleDataSetup->getConnection()->endSetup();
 	}

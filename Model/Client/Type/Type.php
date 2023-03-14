@@ -94,12 +94,15 @@ class Type
      */
     public function getValue($key)
     {
-        $method = 'get' . $this->getMethodName($key);
-        if (method_exists($this, $method)) {
-            return $this->$method();
+        $value = $this->getDataValue($key);
+        if ($value === null) {
+            $method = 'get' . $this->getMethodName($key);
+            if (method_exists($this, $method)) {
+                return $this->$method();
+            }
         }
 
-        return $this->getDataValue($key);
+        return $value;
     }
 
     /**

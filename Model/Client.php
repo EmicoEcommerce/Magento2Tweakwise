@@ -105,6 +105,12 @@ class Client
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
 
+        if ($tweakwiseRequest instanceof Request\Recommendations\FeaturedRequest) {
+            if ($this->config->getRecommendationsFeaturedCategory()) {
+                $tweakwiseRequest->setCategory();
+            }
+        }
+
         $url = sprintf(
             '%s/%s/%s%s',
             rtrim($this->endpointManager->getServerUrl(), '/'),

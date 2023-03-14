@@ -45,9 +45,12 @@ cid
                 <crosssell_template />
                 <upsell_enabled>0</upsell_enabled>
                 <upsell_template />
+                <shoppingcart_crosssell_enabled>0</shoppingcart_crosssell_enabled>
+                <shoppingcart_crosssell_template />
                 <featured_enabled>0</featured_enabled>
                 <featured_template />
                 <featured_location>before</featured_location>
+                <featured_category>0</featured_category>
             </recommendations>
         </tweakwise>
     </default>

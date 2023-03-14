@@ -12,7 +12,7 @@
         <section id="tweakwise">
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
-                <comment>Tweakwise version v5.2.0</comment>
+                <comment>Tweakwise version v5.2.1</comment>
                 <field id="authentication_key" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Authentication key</label>
                     <comment>Provided by Tweakwise (8 alphanumeric characters)</comment>
@@ -302,6 +302,10 @@
                         <field id="shoppingcart_crosssell_enabled">1</field>
                         <field id="shoppingcart_crosssell_template">-1</field>
                     </depends>
+                </field>
+                <field id="limit_group_code_items" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Limit max number of products for group codes</label>
+                    <validate>validate-number</validate>
                 </field>
             </group>
         </section>

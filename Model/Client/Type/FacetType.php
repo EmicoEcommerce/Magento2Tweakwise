@@ -50,4 +50,17 @@ class FacetType extends Type
         $this->data['attributes'] = $values;
         return $this;
     }
+        
+    public function getFacetSettings(): ?SettingsType
+    {
+        return $this->getValue('facet_settings');
+    }
+
+    /**
+     * @return AttributeType[]
+     */
+    public function getAttributes(): ?array
+    {
+        return $this->getValue('attributes');
+    }
 }

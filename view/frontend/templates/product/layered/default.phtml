@@ -10,6 +10,11 @@ use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRen
 /** @var $block DefaultRenderer */
 $hasHiddenItems = $block->hasHiddenItems();
 $hasAlternateSortOrder = $block->hasAlternateSortOrder();
+$showCheckBox = $block->showCheckbox();
+$prefix = $block->getItemPrefix();
+$postfix = $block->getItemPostfix();
+$shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
+
 ?>
 <div data-mage-init='<?=$block->getJsSortConfig()?>'>
     <ol class="items">
@@ -22,7 +27,7 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
             >
                 <a <?=$block->renderAnchorHtmlTagAttributes($item);?>>
                     <?php $cssId = $item->getCssId();?>
-                    <?php if ($block->showCheckbox()): ?>
+                    <?php if ($showCheckBox): ?>
                         <input id="<?=$cssId?>"
                                name="<?=$item->getFilter()->getFacet()->getFacetSettings()->getUrlKey()?>[]"
                                type="checkbox" <?=($item->isSelected() ? 'checked="checked"' : '')?>
@@ -30,17 +35,13 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
                         >
 
                         <label for="<?=$cssId?>">
-                            <?=$block->getItemPrefix()?>
-                            <?=$block->escapeHtml($item->getLabel())?>
-                            <?=$block->getItemPostfix()?>
+                            <?=$prefix . $block->escapeHtml($item->getLabel()) . $postfix?>
                         </label>
                     <?php else: ?>
-                        <?=$block->getItemPrefix()?>
-                        <?=$block->escapeHtml($item->getLabel())?>
-                        <?=$block->getItemPostfix()?>
+                        <?=$prefix . $block->escapeHtml($item->getLabel()) . $postfix?>
                     <?php endif; ?>
 
-                    <?php if ($block->shouldDisplayProductCountOnLayer()): ?>
+                    <?php if ($shouldDisplayProductCountLayer): ?>
                         <span class="count">
                             <?=htmlentities($item->getCount())?>
                             <span class="filter-count-label">

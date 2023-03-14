@@ -14,6 +14,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\RecommendationsResponse;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\Config as CatalogConfig;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class Context
 {
@@ -59,25 +60,33 @@ class Context
     protected $collection;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * Context constructor.
      * @param Client $client
      * @param RequestFactory $requestFactory
      * @param CollectionFactory $collectionFactory
      * @param CatalogConfig $catalogConfig
      * @param Visibility $visibility
+     * @param Config $config
      */
     public function __construct(
         Client $client,
         RequestFactory $requestFactory,
         CollectionFactory $collectionFactory,
         CatalogConfig $catalogConfig,
-        Visibility $visibility
+        Visibility $visibility,
+        Config $config
     ) {
         $this->client = $client;
         $this->requestFactory = $requestFactory;
         $this->collectionFactory = $collectionFactory;
         $this->catalogConfig = $catalogConfig;
         $this->visibility = $visibility;
+        $this->config = $config;
     }
 
     /**
@@ -100,6 +109,19 @@ class Context
         if (!$this->response) {
             $this->response = $this->client->request($this->getRequest());
         }
+
+        $template = $this->request->getTemplate();
+
+        if (!is_int($this->request->getTemplate())) {
+            //grouped item
+            $limit = $this->config->getLimitGroupCodeItems();
+            if (!empty($limit) && $limit > 0) {
+                $items = $this->response->getItems();
+                $items = array_slice($items, 0, $limit);
+                $this->response->replaceItems($items);
+            }
+        }
+
         return $this->response;
     }
 

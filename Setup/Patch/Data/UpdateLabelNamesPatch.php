@@ -12,7 +12,7 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 /**
  * Patch is mechanism, that allows to do atomic upgrade data changes.
  */
-class UpdateAttributeNamesPatch implements DataPatchInterface
+class UpdateLabelNamesPatch implements DataPatchInterface
 {
 	/**
 	 * @var ModuleDataSetupInterface

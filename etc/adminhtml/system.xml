@@ -246,7 +246,7 @@
                     </depends>
                 </field>
                 <field id="crosssell_group_code" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Default crosssell group code</label>
+                    <label>Default related products group code</label>
                     <depends>
                         <field id="crosssell_enabled">1</field>
                         <field id="crosssell_template">-1</field>
@@ -293,14 +293,30 @@
                 </field>
                 <field id="shoppingcart_crosssell_enabled" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Crosssell enabled</label>
-                    <comment>Shows crosssell product in the shoppingcart. This overrides the default crossell products in the shoppingcart</comment>
+                    <comment>Shows crosssell product in the shoppingcart. This overrides the default crosssell products in the shoppingcart</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="shoppingcart_crosssell_type" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default crosssell type</label>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\CrosssellTemplateType</source_model>
+                    <depends>
+                        <field id="shoppingcart_crosssell_enabled">1</field>
+                    </depends>
                 </field>
                 <field id="shoppingcart_crosssell_template" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default crosssell template</label>
                     <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product\System</source_model>
                     <depends>
                         <field id="shoppingcart_crosssell_enabled">1</field>
+                        <field id="shoppingcart_crosssell_type">crosssell</field>
+                    </depends>
+                </field>
+                <field id="shoppingcart_crosssell_featured_template" translate="label" type="select" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default crosssell template</label>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured</source_model>
+                    <depends>
+                        <field id="shoppingcart_crosssell_enabled">1</field>
+                        <field id="shoppingcart_crosssell_type">featured</field>
                     </depends>
                 </field>
                 <field id="shoppingcart_crosssell_group_code" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -308,6 +324,7 @@
                     <depends>
                         <field id="shoppingcart_crosssell_enabled">1</field>
                         <field id="shoppingcart_crosssell_template">-1</field>
+                        <field id="shoppingcart_crosssell_type">crosssell</field>
                     </depends>
                 </field>
                 <field id="limit_group_code_items" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">

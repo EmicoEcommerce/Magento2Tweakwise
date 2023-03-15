@@ -261,10 +261,10 @@ class Plugin extends AbstractRecommendationPlugin
         $templateId = $this->config->getRecommendationsTemplate(Config::RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED);
         $request->setTemplate($templateId);
 
-        $this->recommendationsContext->setRequest($request);
+        $this->context->setRequest($request);
 
         try {
-            $collection = $this->recommendationsContext->getCollection();
+            $collection = $this->context->getCollection();
         } catch (ApiException $e) {
             return [];
         }

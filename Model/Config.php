@@ -28,6 +28,7 @@ class Config
     public const RECOMMENDATION_TYPE_CROSSSELL = 'crosssell';
     public const RECOMMENDATION_TYPE_FEATURED = 'featured';
     public const RECCOMENDATION_TYPE_SHOPPINGCART = 'shoppingcart_crosssell';
+    public const RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED = 'shoppingcart_crosssell_featured';
 
     /**
      * Attribute names
@@ -39,6 +40,7 @@ class Config
     public const ATTRIBUTE_CROSSSELL_GROUP_CODE = 'tweakwise_crosssell_group_code';
     public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE = 'tweakwise_shoppingcart_crosssell_template';
     public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE = 'tweakwise_shoppingcart_crosssell_group_code';
+    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_FEATURED_TEMPLATE = 'tweakwise_shoppingcart_crosssell_featured_template';
     public const ATTRIBUTE_FILTER_WHITELIST = 'tweakwise_filter_whitelist';
     public const ATTRIBUTE_FILTER_VALUES_WHITELIST = 'tweakwise_filter_values_whitelist';
 
@@ -383,6 +385,16 @@ class Config
     /**
      * @param string $type
      * @param Store|null $store
+     * @return string
+     */
+    public function getShoppingcartCrossellType($store = null)
+    {
+        return (string)$this->getStoreConfig('tweakwise/recommendations/shoppingcart_crosssell_type', $store);
+    }
+
+    /**
+     * @param string $type
+     * @param Store|null $store
      * @return int
      */
     public function getRecommendationsTemplate($type, Store $store = null)
@@ -529,12 +541,17 @@ class Config
             return;
         }
 
+        if ($type == self:: RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED) {
+            return;
+        }
+
         throw new InvalidArgumentException(sprintf(
             '$type can be only of type string value: %s, %s, %s',
             self::RECOMMENDATION_TYPE_UPSELL,
             self::RECOMMENDATION_TYPE_CROSSSELL,
             self::RECOMMENDATION_TYPE_FEATURED,
             self:: RECCOMENDATION_TYPE_SHOPPINGCART,
+            self::RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED,
         ));
     }
 

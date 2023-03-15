@@ -31,7 +31,7 @@
                 <item name="options" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product</item>
                 <item name="config" xsi:type="array">
                     <item name="formElement" xsi:type="string">select</item>
-                    <item name="label" xsi:type="string" translate="true">Product crosssell template</item>
+                    <item name="label" xsi:type="string" translate="true">Related products template</item>
                     <item name="sortOrder" xsi:type="number">20</item>
                 </item>
             </argument>
@@ -40,7 +40,7 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="formElement" xsi:type="string">input</item>
-                    <item name="label" xsi:type="string" translate="true">Product crosssell group code</item>
+                    <item name="label" xsi:type="string" translate="true">Related products group code</item>
                     <item name="comment" xsi:type="string" translate="true">Only used when template "- Group code -" is selected.</item>
                     <item name="sortOrder" xsi:type="number">21</item>
                 </item>

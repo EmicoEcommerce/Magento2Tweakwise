@@ -8,9 +8,18 @@
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRenderer;
 
 /** @var $block \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer */
+$hasHiddenItems = $block->hasHiddenItems();
 ?>
-<ol class="items link-attribute">
-    <?php foreach ($block->getItems() as $item): ?>
-        <?=$block->renderLinkItem($item)?>
-    <?php endforeach; ?>
-</ol>
+<div data-mage-init='<?=$block->getJsSortConfig()?>'>
+    <ol class="items link-attribute">
+        <?php foreach ($block->getItems() as $item): ?>
+            <?=$block->renderLinkItem($item)?>
+        <?php endforeach; ?>
+    </ol>
+
+    <?php if ($hasHiddenItems): ?>
+        <a class="more-items"><?=__($block->getMoreItemText())?></a>
+        <a class="less-items default-hidden"><?=__($block->getLessItemText())?></a>
+    <?php endif; ?>
+</div>
+

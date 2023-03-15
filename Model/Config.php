@@ -425,6 +425,15 @@ class Config
 
     /**
      * @param Store|null $store
+     * @return string
+     */
+    public function getRecommendationsFeaturedCategory(Store $store = null)
+    {
+        return (string)$this->getStoreConfig('tweakwise/recommendations/featured_category', $store);
+    }
+
+    /**
+     * @param Store|null $store
      * @return bool
      */
     public function isSeoEnabled(Store $store = null)
@@ -452,6 +461,15 @@ class Config
         return ConfigAttributeProcessService::extractFilterValuesWhitelist(
             $this->getStoreConfig('tweakwise/seo/filter_values_whitelist', $store)
         );
+    }
+
+    /**
+     * @param Store|null $store
+     * @return int
+     */
+    public function getLimitGroupCodeItems(Store $store = null): int
+    {
+        return (int) $this->getStoreConfig('tweakwise/recommendations/limit_group_code_items', $store);
     }
 
     /**

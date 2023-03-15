@@ -124,7 +124,7 @@ define([
                 return this._formFilterHandler;
             }
 
-            return this._defaultHandler
+            return this._defaultHandler;
         },
 
         /**
@@ -134,7 +134,22 @@ define([
          * @private
          */
         _getFilterParameters: function () {
-            return this.element.find(':not(.js-skip-submit)').serialize();
+            var serializedData = this.element.find(':not(.js-skip-submit)').serialize();
+            let params = new URLSearchParams(serializedData);
+
+            let keysForDel = [];
+            params.forEach((value, key) => {
+                if (value == '') {
+                    keysForDel.push(key);
+                }
+            });
+
+            //remove empty parameters
+            keysForDel.forEach(key => {
+                params.delete(key);
+            });
+
+            return params.toString();
         },
 
         // ------- Default filter handling (i.e. no ajax and no filter form)

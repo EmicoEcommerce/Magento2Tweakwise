@@ -86,7 +86,8 @@ class Client
             $options = [
                 RequestOptions::TIMEOUT => self::REQUEST_TIMEOUT,
                 RequestOptions::HEADERS => [
-                    'user-agent' => $this->config->getUserAgentString()
+                    'user-agent' => $this->config->getUserAgentString(),
+                    'Accept-Encoding' => 'gzip, deflate'
                 ]
             ];
             $this->client = new HttpClient($options);
@@ -103,6 +104,12 @@ class Client
     {
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
+
+        if ($tweakwiseRequest instanceof Request\Recommendations\FeaturedRequest) {
+            if ($this->config->getRecommendationsFeaturedCategory()) {
+                $tweakwiseRequest->setCategory();
+            }
+        }
 
         $url = sprintf(
             '%s/%s/%s%s',

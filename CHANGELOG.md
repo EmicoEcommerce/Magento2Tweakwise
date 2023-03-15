@@ -47,3 +47,6 @@ Bug fix for installer when using an db prefix
 ## 5.2.0
 - Feature shoppingcart recommendations from tweakwise
 - Bug fix ajax query url
+
+## 5.2.1
+- Bug fix upselll plugin not triggered

@@ -50,3 +50,12 @@ Bug fix for installer when using an db prefix
 
 ## 5.2.1
 - Bug fix upselll plugin not triggered
+
+## 5.3.0
+- Limit group code recommendations by @ah-net in #40
+- Rename recommendations by @ah-net in #32
+- add category to featured request by @ah-net in #42
+- Feature shoppingcart crosssell featured by @ah-net in #35
+- php8.2 by @ah-net in #43
+- Added php 8.2 support, and droppend php 7.4 support
+

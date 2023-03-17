@@ -70,6 +70,7 @@ class Navigation extends Action
 
         $request = $this->getRequest();
         $type = $request->getParam('__tw_ajax_type');
+
         if (!isset($this->initializerMap[$type])) {
             throw new \InvalidArgumentException('No ajax navigation result handler found for ' . $type);
         }

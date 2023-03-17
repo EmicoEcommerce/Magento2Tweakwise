@@ -30,6 +30,11 @@ class SearchInputProvider implements FilterFormInputProviderInterface
     protected $toolbarInputProvider;
 
     /**
+     * @var HashInputProvider
+     */
+    protected $hashInputProvider;
+
+    /**
      * SearchParameterProvider constructor.
      * @param Config $config
      * @param CurrentContext $currentNavigationContext
@@ -38,11 +43,13 @@ class SearchInputProvider implements FilterFormInputProviderInterface
     public function __construct(
         Config $config,
         CurrentContext $currentNavigationContext,
-        ToolbarInputProvider $toolbarInputProvider
+        ToolbarInputProvider $toolbarInputProvider,
+        HashInputProvider $hashInputProvider
     ) {
         $this->config = $config;
         $this->currentNavigationContext = $currentNavigationContext;
         $this->toolbarInputProvider = $toolbarInputProvider;
+        $this->hashInputProvider = $hashInputProvider;
     }
 
     /**
@@ -62,12 +69,18 @@ class SearchInputProvider implements FilterFormInputProviderInterface
             return $parameters;
         }
 
-        return array_merge(
+        $input = array_merge(
             $parameters,
             [
                 '__tw_ajax_type' => self::TYPE,
                 '__tw_original_url' => 'catalogsearch/result/index',
-            ],
+            ]
+        );
+
+        $input['__tw_hash'] = $this->hashInputProvider->getHash($input);
+
+        return array_merge(
+            $input,
             $this->toolbarInputProvider->getFilterFormInput()
         );
     }

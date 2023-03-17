@@ -551,7 +551,18 @@ class PathSlugStrategy implements
          This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
          These two are the only unique parts in this situation and so need to be removed.
          */
-        return implode('/', array_unique(explode('/', $url)));
+
+        $explode = explode('/', $url);
+        $lastpart = array_last($explode);
+
+        $url = implode('/', array_unique($explode));
+
+        if ($lastpart === "") {
+            //last part of the url was an slash, and needs te be re-added
+            $url .= '/';
+        }
+
+        return $url;
     }
 
     /**

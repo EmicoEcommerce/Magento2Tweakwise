@@ -93,7 +93,10 @@ class Plugin
         }
 
         if (!$this->config->isLayeredEnabled()) {
-            return $proceed($filter);
+            $request = $subject->getRequest();
+            if (!$this->config->isSearchEnabled() || (($request->getModuleName() !== 'catalogsearch') && (stripos($request->getParam('__tw_original_url'), 'catalogsearch')) === false)) {
+                return $proceed($filter);
+            }
         }
 
         $facet = $filter->getFacet();

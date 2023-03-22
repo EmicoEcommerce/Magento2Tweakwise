@@ -56,7 +56,9 @@ class Plugin
     public function aroundGetFilters(FilterList $subject, Closure $proceed, Layer $layer)
     {
         if (!$this->config->isLayeredEnabled()) {
-            return $proceed($layer);
+            if (!$this->config->isSearchEnabled() || !($layer instanceof Layer\Search)) {
+                return $proceed($layer);
+            }
         }
 
         try {

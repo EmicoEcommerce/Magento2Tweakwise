@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
+use Magento\Framework\Controller\ResultFactory;
 use Tweakwise\Magento2Tweakwise\Model\AjaxNavigationResult;
 use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\InitializerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -11,6 +12,8 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
+use Magento\Framework\Exception\InputException;
 
 /**
  * Class Navigation
@@ -36,6 +39,11 @@ class Navigation extends Action
     protected $initializerMap;
 
     /**
+     * @var HashInputProvider
+     */
+    protected $hashInputProvider;
+
+    /**
      * Navigation constructor.
      * @param Context $context Request context
      * @param Config $config Tweakwise configuration provider
@@ -46,12 +54,14 @@ class Navigation extends Action
         Context $context,
         Config $config,
         AjaxNavigationResult $ajaxNavigationResult,
+        HashInputProvider $hashInputProvider,
         array $initializerMap
     ) {
         parent::__construct($context);
         $this->config = $config;
         $this->ajaxNavigationResult = $ajaxNavigationResult;
         $this->initializerMap = $initializerMap;
+        $this->hashInputProvider = $hashInputProvider;
     }
 
     /**
@@ -69,6 +79,14 @@ class Navigation extends Action
         }
 
         $request = $this->getRequest();
+
+        $hashIsValid = $this->hashInputProvider->validateHash($request);
+
+        //form is modified, don't accept the request. Should only happen in an xss attack
+        if (!$hashIsValid) {
+            throw new \InvalidArgumentException('Incorrect/modified form parameters');
+        }
+
         $type = $request->getParam('__tw_ajax_type');
 
         if (!isset($this->initializerMap[$type])) {

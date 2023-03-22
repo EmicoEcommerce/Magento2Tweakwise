@@ -69,17 +69,17 @@ class SearchInputProvider implements FilterFormInputProviderInterface
             return $parameters;
         }
 
-        $input = array_merge(
-            $parameters,
+        $input =
             [
                 '__tw_ajax_type' => self::TYPE,
+                '__tw_object_id' => 0,
                 '__tw_original_url' => 'catalogsearch/result/index',
-            ]
-        );
+            ];
 
         $input['__tw_hash'] = $this->hashInputProvider->getHash($input);
 
         return array_merge(
+            $parameters,
             $input,
             $this->toolbarInputProvider->getFilterFormInput()
         );

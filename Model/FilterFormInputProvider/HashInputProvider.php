@@ -52,4 +52,24 @@ class HashInputProvider
 
         return $salt;
     }
+
+    public function validateHash($request)
+    {
+        $isValid = false;
+        $hash = $request->getParam('__tw_hash', null);
+
+        if (!empty($hash)) {
+            $input['__tw_ajax_type'] = $request->getParam('__tw_ajax_type');
+            $input['__tw_object_id'] = (int) $request->getParam('__tw_object_id');
+            $input['__tw_original_url'] = $request->getParam('__tw_original_url');
+
+            $originalHash = $this->getHash($input);
+
+            if ($hash === $originalHash) {
+                $isValid = true;
+            }
+        }
+
+        return $isValid;
+    }
 }

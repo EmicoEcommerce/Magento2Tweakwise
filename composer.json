@@ -23,9 +23,6 @@
     "replace": {
         "emico/tweakwise": "v4.3.1"
     },
-    "conflict": {
-        "tweakwise/magento2-attributelanding-tweakwise": "<5.4"
-    },
     "repositories": [
         {
             "type": "composer",

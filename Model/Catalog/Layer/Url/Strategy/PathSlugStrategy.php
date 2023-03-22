@@ -553,7 +553,12 @@ class PathSlugStrategy implements
          */
 
         $explode = explode('/', $url);
-        $lastpart = array_last($explode);
+
+        $lastpart = null;
+
+        if (is_array($explode)) {
+            $lastpart = end($explode);
+        }
 
         $url = implode('/', array_unique($explode));
 

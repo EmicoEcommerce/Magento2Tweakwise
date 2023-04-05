@@ -2,7 +2,7 @@
 /** @var array $banners  */
 $banners = $block->getData('banners');
 ?>
-<div class="container searchbanners">
+<div class="searchbanners">
     <?php foreach ($banners as $banner) : ?>
         <?php if (!empty($banner['clickurl'])): ?>
             <a href="<?=$banner['clickurl'];?>" type=<?=$banner['clicktarget'];?>">
@@ -21,6 +21,12 @@ $banners = $block->getData('banners');
 
     .searchbanner {
         width: 100%;
+    }
+
+    .searchbanners {
+        max-width: 1536px;
+        margin-right: auto;
+        margin-left: auto;
     }
 
     @media only screen and (max-width: 768px) {

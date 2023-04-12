@@ -1,8 +1,9 @@
 <?php
 /** @var array $banners  */
 $banners = $block->getData('banners');
+$styling = ($banners[0]['location'] == 'ContainerTop') ? 'style="margin-right: auto; margin-left: auto;"' : '';
 ?>
-<div class="searchbanners">
+<div class="searchbanners" <?= $styling ?>>
     <?php foreach ($banners as $banner) : ?>
         <?php if (!empty($banner['clickurl'])): ?>
             <a href="<?=$banner['clickurl'];?>" type=<?=$banner['clicktarget'];?>">
@@ -19,14 +20,12 @@ $banners = $block->getData('banners');
         display: none;
     }
 
-    .searchbanner {
-        width: 100%;
-    }
-
     .searchbanners {
         max-width: 1536px;
-        margin-right: auto;
-        margin-left: auto;
+    }
+
+    .searchbanner {
+        width: 100%;
     }
 
     @media only screen and (max-width: 768px) {

@@ -22,8 +22,8 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
 	private ModuleDataSetupInterface $moduleDataSetup;
 
     /**
-     * @var EavSetupFactory
-     */
+    * @var EavSetupFactory
+    */
 	private EavSetupFactory $eavSetupFactory;
 
 	/**

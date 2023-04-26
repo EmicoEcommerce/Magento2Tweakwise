@@ -95,7 +95,8 @@ class AjaxNavigationResult extends Layout
     public function render(HttpResponseInterface $response)
     {
         $html = $this->getLayout()->getOutput();
-        $url = $this->getResponseUrl();
+        $html = preg_replace('/\s+/', ' ', $html);
+        $url  = $this->getResponseUrl();
 
         $responseData = $this->serializer->serialize(['url' => $url, 'html' => $html]);
         $this->translateInline->processResponseBody($responseData, true);

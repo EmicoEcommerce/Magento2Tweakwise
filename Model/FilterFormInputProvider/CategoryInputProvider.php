@@ -52,6 +52,11 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
     protected $toolbarInputProvider;
 
     /**
+     * @var HashInputProvider
+     */
+    protected $hashInputProvider;
+
+    /**
      * CategoryParameterProvider constructor.
      * @param UrlInterface $url
      * @param Registry $registry
@@ -68,7 +73,8 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         StoreManagerInterface $storeManager,
         CategoryRepositoryInterface $categoryRepository,
         CategoryInterfaceFactory $categoryFactory,
-        ToolbarInputProvider $toolbarInputProvider
+        ToolbarInputProvider $toolbarInputProvider,
+        HashInputProvider $hashInputProvider
     ) {
         $this->url = $url;
         $this->registry = $registry;
@@ -77,6 +83,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         $this->categoryRepository = $categoryRepository;
         $this->categoryFactory = $categoryFactory;
         $this->toolbarInputProvider = $toolbarInputProvider;
+        $this->hashInputProvider = $hashInputProvider;
     }
 
     /**
@@ -90,9 +97,11 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
 
         $input = [
             '__tw_ajax_type' => self::TYPE,
+            '__tw_object_id' => $this->getCategoryId(),
             '__tw_original_url' => $this->getOriginalUrl(),
-            '__tw_object_id' => $this->getCategoryId()
         ];
+
+        $input['__tw_hash'] = $this->hashInputProvider->getHash($input);
 
         return array_merge($input, $this->toolbarInputProvider->getFilterFormInput());
     }

@@ -152,6 +152,7 @@
                 <item name="original_url" xsi:type="string">__tw_original_url</item>
                 <item name="ajax_type" xsi:type="string">__tw_ajax_type</item>
                 <item name="ajax_cache" xsi:type="string">_</item>
+                <item name="hash" xsi:type="string">__tw_hash</item>
             </argument>
         </arguments>
     </type>

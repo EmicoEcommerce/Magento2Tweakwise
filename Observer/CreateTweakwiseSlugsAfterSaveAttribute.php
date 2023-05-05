@@ -29,8 +29,11 @@ class CreateTweakwiseSlugsAfterSaveAttribute implements ObserverInterface
 
     public function execute(Observer $observer)
     {
+        $attribute = $observer->getEvent()->getAttribute();
+        $attribute->setStoreId(0);
+
         $this->filterSlugManager
-            ->createFilterSlugByAttributeOptions($observer->getEvent()->getAttribute()->getOptions())
+            ->createFilterSlugByAttributeOptions($attribute->getOptions())
         ;
     }
 }

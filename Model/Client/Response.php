@@ -36,4 +36,27 @@ class Response extends Type
         $this->helper = $helper;
         parent::__construct($data);
     }
+
+    public function isSuccess()
+    {
+        $statusCode = (int)$this->getValue('httpStatusCode');
+
+        return $statusCode >= 200 && $statusCode < 300;
+    }
+
+    public function isRetryable()
+    {
+        $statusCode = (int)$this->getValue('httpStatusCode');
+
+        if ($statusCode >= 200 && $statusCode < 300)
+            return false;
+
+        if ($statusCode >= 400 && $statusCode < 500)
+            return false;
+
+        if ($statusCode == 500)
+            return false;
+
+        return (int)$this->getValue('isNetworkError');
+    }
 }

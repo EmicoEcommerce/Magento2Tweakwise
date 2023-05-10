@@ -8,8 +8,10 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
+use Magento\ReCaptchaWebapiApi\Model\Data\Endpoint;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
-use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
+use Tweakwise\Magento2Tweakwise\Model\Client\Endpoints\EndpointContainer;
+use Tweakwise\Magento2Tweakwise\Model\Client\Endpoints\TwnEndpoint;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
@@ -53,9 +55,9 @@ class Client
     protected $responseFactory;
 
     /**
-     * @var EndpointManager
+     * @var EndpointContainer
      */
-    protected $endpointManager;
+    protected $endpointContainer;
 
     /**
      * Client constructor.
@@ -69,12 +71,12 @@ class Client
         Config $config,
         Logger $log,
         ResponseFactory $responseFactory,
-        EndpointManager $endpointManager
+        EndpointContainer $endpointContainer
     ) {
         $this->config = $config;
         $this->log = $log;
         $this->responseFactory = $responseFactory;
-        $this->endpointManager = $endpointManager;
+        $this->endpointContainer = $endpointContainer;
     }
 
     /**
@@ -100,7 +102,7 @@ class Client
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
-    protected function createHttpRequest(Request $tweakwiseRequest): HttpRequest
+    protected function createHttpRequest(Request $tweakwiseRequest, Endpoint $endpoint): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
@@ -113,7 +115,7 @@ class Client
 
         $url = sprintf(
             '%s/%s/%s%s',
-            rtrim($this->endpointManager->getServerUrl(), '/'),
+            rtrim($endpoint->hostname, '/'),
             trim($path, '/'),
             $this->config->getGeneralAuthenticationKey(),
             $pathSuffix
@@ -136,39 +138,56 @@ class Client
      * @param bool $async
      * @return Response|PromiseInterface
      */
-    protected function doRequest(Request $tweakwiseRequest, bool $async = false)
+    protected function doRequest(Request $tweakwiseRequest)
     {
-        $client = $this->getClient();
-        $httpRequest = $this->createHttpRequest($tweakwiseRequest);
-        $start = microtime(true);
+        /** @var TwnEndpoint $endpoint */
+        foreach ($this->endpointContainer->getEndpoints() as $endpoint) {
+            $client = $this->getClient();
+            $httpRequest = $this->createHttpRequest($tweakwiseRequest, $endpoint);
+            $response = new Response();
 
-        $responsePromise = $client
-            ->sendAsync($httpRequest)
-            ->then(
-                function (ResponseInterface $response) use ($tweakwiseRequest, $httpRequest, $start) {
-                    return $this->handleRequestSuccess(
-                        $response,
-                        $httpRequest,
-                        $tweakwiseRequest,
-                        $start
-                    );
-                },
-                function (GuzzleException $e) use ($tweakwiseRequest, $async) {
-                    // Timeout uses Guzzle ConnectException, ConnectException is more general but it also makes sense
-                    // to use this if the default server is unreachable for some reason
-                    if ($e instanceof ConnectException && !$this->endpointManager->isFallback()) {
-                        $this->endpointManager->handleConnectException();
-                        return $this->doRequest($tweakwiseRequest, $async);
-                    }
-                    throw new ApiException($e->getMessage(), $e->getCode(), $e);
-                }
-            );
+            try {
+                $responsePromise = $client
+                    ->sendAsync($httpRequest);
+            } catch (\Exception $e) {
+                $e = $e;
+            }
 
-        if ($async) {
-            return $responsePromise;
+            /*
+
+
+             $start = microtime(true);
+             $responsePromise = $client
+                 ->sendAsync($httpRequest)
+                 ->then(
+                     function (ResponseInterface $response) use ($tweakwiseRequest, $httpRequest, $start) {
+                         return $this->handleRequestSuccess(
+                             $response,
+                             $httpRequest,
+                             $tweakwiseRequest,
+                             $start
+                         );
+                     },
+                     function (GuzzleException $e) use ($tweakwiseRequest, $async, $endpoint) {
+                         // Timeout uses Guzzle ConnectException, ConnectException is more general but it also makes sense
+                         // to use this if the default server is unreachable for some reason
+                         if ($e instanceof ConnectException) {
+                             $
+                         }
+                         throw new ApiException($e->getMessage(), $e->getCode(), $e);
+                     }
+                 );
+
+             if ($async) {
+                 return $responsePromise;
+             }
+
+             return $responsePromise->wait(true);
+         }
+            */
         }
 
-        return $responsePromise->wait(true);
+        throw new \Exception('No reachable endpoints');
     }
 
     /**

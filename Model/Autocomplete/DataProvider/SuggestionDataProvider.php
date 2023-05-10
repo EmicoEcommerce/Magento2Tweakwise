@@ -2,9 +2,11 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
+use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Suggestions\ProductSuggestionsRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
@@ -22,6 +24,11 @@ class SuggestionDataProvider implements DataProviderInterface
     protected $config;
 
     /**
+     * @var CookieManagerInterface
+     */
+    protected $cookieManager;
+
+    /**
      * @var DataProviderHelper
      */
     protected $dataProviderHelper;
@@ -30,6 +37,11 @@ class SuggestionDataProvider implements DataProviderInterface
      * @var SuggestionGroupItemFactory
      */
     protected $suggestionGroupItemFactory;
+
+    /**
+     * @var Request
+     */
+    protected $request;
 
     /**
      * @var RequestFactory
@@ -49,26 +61,32 @@ class SuggestionDataProvider implements DataProviderInterface
     /**
      * AutocompleteDataProvider constructor.
      * @param Config $config
+     * @param CookieManagerInterface $cookieManager
      * @param DataProviderHelper $dataProviderHelper
      * @param SuggestionGroupItemFactory $suggestionGroupItemFactory
+     * @param Request $request
      * @param RequestFactory $productSuggestionRequestFactory
      * @param RequestFactory $suggestionRequestFactory
      * @param Client $client
      */
     public function __construct(
         Config $config,
+        CookieManagerInterface $cookieManager,
         DataProviderHelper $dataProviderHelper,
         SuggestionGroupItemFactory $suggestionGroupItemFactory,
         RequestFactory $productSuggestionRequestFactory,
         RequestFactory $suggestionRequestFactory,
-        Client $client
+        Client $client,
+        Request $request
     ) {
         $this->config = $config;
+        $this->cookieManager = $cookieManager;
         $this->dataProviderHelper = $dataProviderHelper;
         $this->suggestionGroupItemFactory = $suggestionGroupItemFactory;
         $this->productSuggestionRequestFactory = $productSuggestionRequestFactory;
         $this->suggestionRequestFactory = $suggestionRequestFactory;
         $this->client = $client;
+        $this->request = $request;
     }
 
     /**
@@ -90,17 +108,33 @@ class SuggestionDataProvider implements DataProviderInterface
         $category = $this->dataProviderHelper->getCategory();
         $promises = [];
 
+        $profileKeyCookie = $this->cookieManager->getCookie(
+            $this->config->getPersonalMerchandisingCookieName(),
+            null
+        );
+
         $suggestionsRequest = $this->suggestionRequestFactory->create();
         $suggestionsRequest->setSearch($query);
+
+        if ($profileKeyCookie) {
+            $profileKey = $this->request->setProfileKey($profileKeyCookie);
+            $suggestionsRequest->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
+        }
+
         $suggestionsRequest->addCategoryFilter($category);
         $promises['suggestions'] = $this->client->request(
             $suggestionsRequest,
             true
         );
 
-        /** @var ProductSuggestionsRequest $productSuggestionRequest */
+        /** @var ProductSuggestionsRequest $productSuggestionsRequest */
         $productSuggestionsRequest = $this->productSuggestionRequestFactory->create();
         $productSuggestionsRequest->setSearch($query);
+
+        if ($profileKeyCookie) {
+            $productSuggestionsRequest->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
+        }
+
         $productSuggestionsRequest->addCategoryFilter($category);
         $promises['product_suggestions'] = $this->client->request(
             $productSuggestionsRequest,

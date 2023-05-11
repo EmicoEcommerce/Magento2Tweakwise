@@ -2,6 +2,9 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Endpoints;
 
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\HttpResponseInfo;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\ResponseAction;
+
 class TwnEndpoint
 {
     private bool $isOnline;
@@ -28,8 +31,28 @@ class TwnEndpoint
         $this->lastUsage = date_create('now');
     }
 
-    public function ProcessResponse()
+    public function processResponse(HttpResponseInfo $responseInfo)
     {
+        $responseAction = new ResponseAction();
 
+        if ($responseInfo->isTimedOut()) {
+          $this->isOnline = true;
+          $this->lastUsage = date_create('now');
+          return $responseAction->retry;
+        }
+
+        if ($responseInfo->isSuccess()) {
+            $this->isOnline = true;
+            $this->lastUsage = date_create('now');
+            return $responseAction->returnResult;
+        }
+
+        if ($responseInfo->isRetryable()) {
+            $this->isOnline = false;
+            $this->lastUsage = date_create('now');
+            return $responseAction->retry;
+        }
+
+        return $responseAction->throwError;
     }
 }

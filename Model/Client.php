@@ -90,7 +90,9 @@ class Client
                 RequestOptions::HEADERS => [
                     'user-agent' => $this->config->getUserAgentString(),
                     'Accept-Encoding' => 'gzip, deflate'
-                ]
+                ],
+                //todo remove this
+                'verify' => false,
             ];
             $this->client = new HttpClient($options);
         }
@@ -102,7 +104,7 @@ class Client
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
-    protected function createHttpRequest(Request $tweakwiseRequest, Endpoint $endpoint): HttpRequest
+    protected function createHttpRequest(Request $tweakwiseRequest, TwnEndpoint $endpoint): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
@@ -144,15 +146,37 @@ class Client
         foreach ($this->endpointContainer->getEndpoints() as $endpoint) {
             $client = $this->getClient();
             $httpRequest = $this->createHttpRequest($tweakwiseRequest, $endpoint);
-            $response = new Response();
+            $responseInfo = new Response\HttpResponseInfo();
 
             try {
-                $responsePromise = $client
-                    ->sendAsync($httpRequest);
+                $start = microtime(true);
+                $response = $client
+                    ->sendAsync($httpRequest)
+                    ->wait(true);
+                $responseInfo->setStatusCode($response->getStatusCode());
+            } catch (ConnectException $e) {
+                //timeout
+                if ($e->getHandlerContext()['errno'] === 28) {
+                    $responseInfo->setIsTimedOut(true);
+                    $responseInfo->setError($e->getMessage());
+                } else {
+                    $responseInfo->setIsNetworkError(true);
+                    $responseInfo->setError($e->getMessage());
+                }
             } catch (\Exception $e) {
-                $e = $e;
+                $responseInfo->setError($e->getMessage());
             }
 
+            $responseAction = new Response\ResponseAction();
+
+            switch ($endpoint->processResponse($responseInfo))
+            {
+                case($responseAction->returnResult):
+                    return $this->handleRequestSuccess($response, $httpRequest, $tweakwiseRequest, $start);
+                case($responseAction->retry):
+                    continue 2;
+                case($responseAction->throwError):
+            }
             /*
 
 

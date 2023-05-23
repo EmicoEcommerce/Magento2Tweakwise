@@ -78,6 +78,9 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected $tweakwiseConfig;
 
+
+    private $queryUrlCache = [];
+
     /**
      * Magento constructor.
      *
@@ -248,12 +251,30 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $values[] = $value;
             $values = array_unique($values);
 
-            $query = [$urlKey => $values];
+            $queryParams = [];
+            foreach ($values as $key => $value) {
+                $queryParams[] = '__VALUE.'.$key.'__';
+            }
+
+            $query = [$urlKey => $queryParams];
         } else {
-            $query = [$urlKey => $value];
+            $query = [$urlKey => '__VALUE.0__'];
         }
 
-        return $this->getCurrentQueryUrl($request, $query);
+        $hash = sha1(serialize($query));
+        if (!isset($this->queryUrlCache[$hash])) {
+            $this->queryUrlCache[$hash] = $this->getCurrentQueryUrl($request, $query);
+        }
+        $queryUrl = $this->queryUrlCache[$hash];
+
+        if (!$settings->getIsMultipleSelect()) {
+            $values[] = $value;
+        }
+        foreach ($values as $key => $value) {
+            $queryUrl = str_replace('__VALUE.'.$key.'__', $value, $queryUrl);
+        }
+
+        return $queryUrl;
     }
 
     /**
@@ -375,7 +396,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
                 $this->tweakwiseConfig->getPersonalMerchandisingCookieName(),
                 null
             );
-           
+
             if ($profileKey) {
                 $navigationRequest->setProfileKey($profileKey);
             }

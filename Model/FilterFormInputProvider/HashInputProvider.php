@@ -2,7 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
-use Magento\Catalog\Model\Session;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Encryption\Encryptor;
 
@@ -14,23 +14,23 @@ class HashInputProvider
     protected $request;
 
     /**
-     * @var Session $session
-     */
-    protected $session;
-
-    /**
      * @var Encryptor $encryptor
      */
     protected $encryptor;
 
     /**
+     * @var Config $config
+     */
+    protected $config;
+
+    /**
      * ToolbarInputProvider constructor.
      * @param MagentoHttpRequest $request
      */
-    public function __construct(MagentoHttpRequest $request, Session $session, Encryptor $encryptor)
+    public function __construct(MagentoHttpRequest $request, Config $config, Encryptor $encryptor)
     {
         $this->request = $request;
-        $this->session = $session;
+        $this->config = $config;
         $this->encryptor = $encryptor;
     }
 
@@ -43,14 +43,7 @@ class HashInputProvider
 
     protected function getSalt()
     {
-        $salt = $this->session->getData('__tw_salt');
-
-        if (empty($salt)) {
-            $salt = random_bytes(18);
-            $this->session->setData('__tw_salt', $salt);
-        }
-
-        return $salt;
+        return $this->config->getSalt();
     }
 
     public function validateHash($request)

@@ -39,11 +39,15 @@ class Plugin extends AbstractRecommendationPlugin
      */
     private $productRepository;
 
-
     /**
      * @var Product
      */
     private $lastAddedProduct;
+
+    /**
+     * @var RecommendationsContext
+     */
+    private $recommendationsContext;
 
     /**
      * @param Config $config
@@ -51,7 +55,7 @@ class Plugin extends AbstractRecommendationPlugin
      * @param Context $context
      * @param TemplateFinder $templateFinder
      * @param Session $checkoutSession
-     * @param RecommendationsContext $recomendationsContext
+     * @param RecommendationsContext $recommendationsContext
      * @param ProductRepositoryInterface|null $productRepository
      */
     public function __construct(
@@ -60,13 +64,13 @@ class Plugin extends AbstractRecommendationPlugin
         Context $context,
         TemplateFinder $templateFinder,
         Session $checkoutSession,
-        RecommendationsContext $recomendationsContext,
+        RecommendationsContext $recommendationsContext,
         ?ProductRepositoryInterface $productRepository = null
     )
     {
         $this->productRepository = $productRepository;
         $this->checkoutSession  = $checkoutSession;
-        $this->recommendationsContext = $recomendationsContext;
+        $this->recommendationsContext = $recommendationsContext;
         $this->productRepository = $productRepository
             ?? ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
 

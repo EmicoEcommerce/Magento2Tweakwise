@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
+use Magento\Framework\App\Cache\TypeListInterface;
 use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Magento\Framework\App\Area;
@@ -18,6 +19,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\App\Config\Storage\WriterInterface;
 
 class Config
 {
@@ -93,21 +95,35 @@ class Config
     protected $state;
 
     /**
+     * @var WriterInterface
+     */
+    protected $configWriter;
+
+    /**
+     * @var TypeListInterface
+     */
+    protected $cacheTypeList;
+
+    /**
      * Export constructor.
      *
      * @param ScopeConfigInterface $config
      * @param Json $jsonSerializer
      * @param RequestInterface $request
      * @param State $state
+     * @param WriterInterface $configWriter
+     * @param TypeListInterface $cacheTypeList
      * @throws LocalizedException
      */
 
-    public function __construct(ScopeConfigInterface $config, Json $jsonSerializer, RequestInterface $request, State $state)
+    public function __construct(ScopeConfigInterface $config, Json $jsonSerializer, RequestInterface $request, State $state, WriterInterface $configWriter, TypeListInterface $cacheTypeList)
     {
         $this->config = $config;
         $this->jsonSerializer = $jsonSerializer;
         $this->request = $request;
         $this->state = $state;
+        $this->configWriter = $configWriter;
+        $this->cacheTypeList = $cacheTypeList;
     }
 
     /**
@@ -561,5 +577,20 @@ class Config
     public function getUserAgentString()
     {
         return $this->getStoreConfig('tweakwise/general/version') ?: null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSalt() : string
+    {
+        $salt =  $this->getStoreConfig('tweakwise/general/salt' ?: null);
+        if (empty($salt)) {
+            $salt = sha1(random_bytes(18));
+            $this->configWriter->save('tweakwise/general/salt', $salt, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);
+            //clear config cache
+            $this->cacheTypeList->cleanType('config');
+        }
+        return $salt;
     }
 }

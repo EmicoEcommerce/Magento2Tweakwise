@@ -15,7 +15,6 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
 <li class="item<?=$block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
     <?php if ($hasHiddenItems && $hasAlternateSortOrder):?>
         data-alternate-sort="<?=$item->getAlternateSortOrder();?>"
-        data-original-sort="<?=$index;?>"
     <?php endif;?>
 >
     <a href="<?=$block->getCategoryUrl($item)?>">

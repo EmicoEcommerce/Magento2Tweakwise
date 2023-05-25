@@ -113,7 +113,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      */
     public function getOriginalUrl()
     {
-        return str_replace($this->url->getBaseUrl(), '', $this->url->getCurrentUrl());
+        return str_replace($this->url->getBaseUrl(), '', $this->getCategory()->getUrl());
     }
 
     /**

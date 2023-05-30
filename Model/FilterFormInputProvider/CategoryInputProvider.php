@@ -6,6 +6,7 @@ use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterfaceFactory;
 use Magento\Catalog\Model\Category;
+use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
@@ -57,6 +58,11 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
     protected $hashInputProvider;
 
     /**
+     * @var MagentoHttpRequest
+     */
+    protected $request;
+
+    /**
      * CategoryParameterProvider constructor.
      * @param UrlInterface $url
      * @param Registry $registry
@@ -74,7 +80,8 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         CategoryRepositoryInterface $categoryRepository,
         CategoryInterfaceFactory $categoryFactory,
         ToolbarInputProvider $toolbarInputProvider,
-        HashInputProvider $hashInputProvider
+        HashInputProvider $hashInputProvider,
+        MagentoHttpRequest $request
     ) {
         $this->url = $url;
         $this->registry = $registry;
@@ -84,6 +91,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         $this->categoryFactory = $categoryFactory;
         $this->toolbarInputProvider = $toolbarInputProvider;
         $this->hashInputProvider = $hashInputProvider;
+        $this->request = $request;
     }
 
     /**
@@ -113,7 +121,14 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      */
     public function getOriginalUrl()
     {
-        return str_replace($this->url->getBaseUrl(), '', $this->getCategory()->getUrl());
+        $originalUrl = $this->request->get('__tw_original_url');
+        $url = $this->url->getDirectUrl($this->url->getCurrentUrl());
+
+        if (!empty($originalUrl)) {
+            $url = $originalUrl;
+        }
+
+        return str_replace($this->url->getBaseUrl(), '', $url);
     }
 
     /**

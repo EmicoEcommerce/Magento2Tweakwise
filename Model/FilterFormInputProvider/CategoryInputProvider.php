@@ -11,6 +11,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class CategoryInputProvider implements FilterFormInputProviderInterface
@@ -63,6 +64,11 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
     protected $request;
 
     /**
+     * @var Url
+     */
+    protected $urlStrategy;
+
+    /**
      * CategoryParameterProvider constructor.
      * @param UrlInterface $url
      * @param Registry $registry
@@ -81,7 +87,8 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         CategoryInterfaceFactory $categoryFactory,
         ToolbarInputProvider $toolbarInputProvider,
         HashInputProvider $hashInputProvider,
-        MagentoHttpRequest $request
+        MagentoHttpRequest $request,
+        Url $urlStrategy
     ) {
         $this->url = $url;
         $this->registry = $registry;
@@ -92,6 +99,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         $this->toolbarInputProvider = $toolbarInputProvider;
         $this->hashInputProvider = $hashInputProvider;
         $this->request = $request;
+        $this->urlStrategy = $urlStrategy;
     }
 
     /**
@@ -121,11 +129,12 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      */
     public function getOriginalUrl()
     {
-        $originalUrl = $this->request->get('__tw_original_url');
-        $url = $this->url->getDirectUrl($this->url->getCurrentUrl());
+        $url = $this->urlStrategy->getCategoryUrlStrategy()->buildFilterUrl($this->request);
 
-        if (!empty($originalUrl)) {
-            $url = $originalUrl;
+        //remove query string
+        $pos = stripos($url, '?');
+        if (!empty($pos)) {
+            $url = substr($url, 0, $pos);
         }
 
         return str_replace($this->url->getBaseUrl(), '', $url);

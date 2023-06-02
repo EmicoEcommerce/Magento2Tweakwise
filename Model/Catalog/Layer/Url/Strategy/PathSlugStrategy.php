@@ -368,11 +368,9 @@ class PathSlugStrategy implements
             CategoryUrlPathGenerator::XML_PATH_CATEGORY_URL_SUFFIX,
             'store'
         );
-        if ($categoryUrlSuffix !== '/') {
-            return $url;
-        }
+
         // Replace all occurrences of double slashes with a single slash except those in scheme.
-        // This can happen when $categoryUrlSuffix === '/'
+        // This can happen when $categoryUrlSuffix === '/' and in some other cases
         return preg_replace('/(?<!:)\/\//', '/', $url);
     }
 
@@ -532,19 +530,33 @@ class PathSlugStrategy implements
         $category = $this->strategyHelper->getCategoryFromItem($item);
         $categoryUrlPath = \parse_url($category->getUrl(), PHP_URL_PATH);
 
+        $url = $this->magentoUrl->getDirectUrl(
+            sprintf(
+                '%s/',
+                trim($categoryUrlPath, '/'),
+            )
+        );
+
+        /*
+         We explode the url so that we can capture its parts and find the double values in order to remove them.
+         This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
+         These two are the only unique parts in this situation and so need to be removed.
+         */
+
+        $explode = explode('/', $url);
+
+        if (is_array($explode)) {
+            $url = implode('/', array_unique($explode));
+        }
+
+
         /*
         Make sure we dont have any double slashes, add the current filter path to the category url to maintain
         the currently selected filters.
         */
         $filterSlugPath = $this->buildFilterSlugPath($this->getActiveFilters());
 
-        $url = $this->magentoUrl->getDirectUrl(
-            sprintf(
-                '%s/%s',
-                trim($categoryUrlPath, '/'),
-                ltrim($filterSlugPath, '/')
-            )
-        );
+        $url.= '/' . trim($filterSlugPath, '/');
 
         /*
          We explode the url so that we can capture its parts and find the double values in order to remove them.
@@ -559,8 +571,6 @@ class PathSlugStrategy implements
         if (is_array($explode)) {
             $lastpart = end($explode);
         }
-
-        $url = implode('/', array_unique($explode));
 
         if ($lastpart === "") {
             //last part of the url was an slash, and needs te be re-added

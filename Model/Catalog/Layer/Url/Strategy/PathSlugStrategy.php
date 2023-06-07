@@ -312,7 +312,7 @@ class PathSlugStrategy implements
             );
         }
 
-        return $this->getCurrentUrl();
+        return $this->getCurrentUrl($request);
     }
 
     /**
@@ -326,12 +326,17 @@ class PathSlugStrategy implements
     /**
      * @return string
      */
-    protected function getCurrentUrl(): string
+    protected function getCurrentUrl(MagentoHttpRequest $request): string
     {
-        $params['_current'] = true;
-        $params['_use_rewrite'] = true;
-        $params['_escape'] = false;
-        return $this->magentoUrl->getUrl('*/*/*', $params);
+        $url = $this->buildFilterUrl($request);
+
+        //remove query string
+        $pos = stripos($url, '?');
+        if (!empty($pos)) {
+            $url = substr($url, 0, $pos);
+        }
+
+        return str_replace($this->url->getBaseUrl(), '', $url);
     }
 
     /**

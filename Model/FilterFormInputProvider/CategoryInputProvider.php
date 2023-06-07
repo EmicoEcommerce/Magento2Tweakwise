@@ -6,12 +6,10 @@ use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterfaceFactory;
 use Magento\Catalog\Model\Category;
-use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class CategoryInputProvider implements FilterFormInputProviderInterface
@@ -59,16 +57,6 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
     protected $hashInputProvider;
 
     /**
-     * @var MagentoHttpRequest
-     */
-    protected $request;
-
-    /**
-     * @var Url
-     */
-    protected $urlStrategy;
-
-    /**
      * CategoryParameterProvider constructor.
      * @param UrlInterface $url
      * @param Registry $registry
@@ -86,9 +74,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         CategoryRepositoryInterface $categoryRepository,
         CategoryInterfaceFactory $categoryFactory,
         ToolbarInputProvider $toolbarInputProvider,
-        HashInputProvider $hashInputProvider,
-        MagentoHttpRequest $request,
-        Url $urlStrategy
+        HashInputProvider $hashInputProvider
     ) {
         $this->url = $url;
         $this->registry = $registry;
@@ -98,8 +84,6 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         $this->categoryFactory = $categoryFactory;
         $this->toolbarInputProvider = $toolbarInputProvider;
         $this->hashInputProvider = $hashInputProvider;
-        $this->request = $request;
-        $this->urlStrategy = $urlStrategy;
     }
 
     /**
@@ -129,15 +113,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      */
     public function getOriginalUrl()
     {
-        $url = $this->urlStrategy->getCategoryUrlStrategy()->buildFilterUrl($this->request);
-
-        //remove query string
-        $pos = stripos($url, '?');
-        if (!empty($pos)) {
-            $url = substr($url, 0, $pos);
-        }
-
-        return str_replace($this->url->getBaseUrl(), '', $url);
+        return str_replace($this->url->getBaseUrl(), '', $this->getCategory()->getUrl());
     }
 
     /**

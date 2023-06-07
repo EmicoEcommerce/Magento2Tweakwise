@@ -111,7 +111,7 @@ class Url
     /**
      * @return CategoryUrlInterface
      */
-    public function getCategoryUrlStrategy()
+    protected function getCategoryUrlStrategy()
     {
         if (!$this->categoryUrlStrategy) {
             $this->categoryUrlStrategy = $this->urlStrategyFactory

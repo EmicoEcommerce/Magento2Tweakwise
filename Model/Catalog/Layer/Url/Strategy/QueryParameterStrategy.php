@@ -21,6 +21,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 
 class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, CategoryUrlInterface
 {
@@ -78,8 +79,15 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected $tweakwiseConfig;
 
-
+    /**
+     * @var array
+     */
     private $queryUrlCache = [];
+
+    /**
+     * @var Url
+     */
+    protected $layerUrl;
 
     /**
      * Magento constructor.
@@ -93,12 +101,14 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         UrlModel $url,
         StrategyHelper $strategyHelper,
         CookieManagerInterface $cookieManager,
-        TweakwiseConfig $config
+        TweakwiseConfig $config,
+        Url $layerUrl
     ) {
         $this->url = $url;
         $this->strategyHelper = $strategyHelper;
         $this->cookieManager = $cookieManager;
         $this->tweakwiseConfig = $config;
+        $this->layerUrl = $layerUrl;
     }
 
     /**
@@ -461,5 +471,14 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     public function isAllowed(): bool
     {
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalUrl(MagentoHttpRequest $request) : string
+    {
+        $url = $this->layerUrl->getUrlStrategy()->getOriginalUrl($request);
+        return str_replace($this->url->getBaseUrl(), '', $url);
     }
 }

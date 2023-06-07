@@ -102,4 +102,11 @@ class NullStrategy implements RouteMatchingInterface, UrlInterface, FilterApplie
     {
         return '';
     }
+    /**
+     * @return string
+     */
+    public function getOriginalUrl(MagentoHttpRequest $request) : string
+    {
+        return '';
+    }
 }

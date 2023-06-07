@@ -86,7 +86,7 @@ class Url
     /**
      * @return UrlInterface
      */
-    protected function getUrlStrategy()
+    public function getUrlStrategy()
     {
         if (!$this->urlStrategy) {
             $this->urlStrategy = $this->urlStrategyFactory->create();

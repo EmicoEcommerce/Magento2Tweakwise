@@ -328,15 +328,8 @@ class PathSlugStrategy implements
      */
     protected function getCurrentUrl(MagentoHttpRequest $request): string
     {
-        $url = $this->buildFilterUrl($request);
-
-        //remove query string
-        $pos = stripos($url, '?');
-        if (!empty($pos)) {
-            $url = substr($url, 0, $pos);
-        }
-
-        return str_replace($this->url->getBaseUrl(), '', $url);
+        $url = $request->getRequestUri();
+        return str_replace($this->magentoUrl->getBaseUrl(), '', $url);
     }
 
     /**

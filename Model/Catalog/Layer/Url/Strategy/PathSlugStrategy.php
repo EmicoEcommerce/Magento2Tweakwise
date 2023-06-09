@@ -306,10 +306,12 @@ class PathSlugStrategy implements
                 $query['product_list_mode'] = $mode;
             }
 
-            return filter_var(
+            $url = filter_var(
                 $this->magentoUrl->getDirectUrl($twOriginalUrl, ['_query' => $query]),
                 FILTER_SANITIZE_URL
             );
+
+            return str_replace($this->magentoUrl->getBaseUrl(), '', $url);
         }
 
         return $this->getCurrentUrl($request);
@@ -329,6 +331,7 @@ class PathSlugStrategy implements
     protected function getCurrentUrl(MagentoHttpRequest $request): string
     {
         $url = $request->getRequestUri();
+
         return str_replace($this->magentoUrl->getBaseUrl(), '', $url);
     }
 

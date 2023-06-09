@@ -135,26 +135,15 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected function getCurrentQueryUrl(MagentoHttpRequest $request, array $query)
     {
-        $params['_current'] = true;
-        $params['_use_rewrite'] = true;
         $params['_query'] = $query;
-        $params['_escape'] = false;
 
         if ($originalUrl = $request->getQuery('__tw_original_url')) {
-            $urlArray = explode('/', $originalUrl);
-            $newOriginalUrl = '';
-            foreach ($urlArray as $url) {
-                $newOriginalUrl .= '/' . filter_var($url, FILTER_SANITIZE_ENCODED);
-            }
 
-            //check if string should start with an / to prevent double slashes later
-            if (strpos(mb_substr($originalUrl, 0, 1), '/', ) === false) {
-                $newOriginalUrl = mb_substr($newOriginalUrl, 1);
-            }
+            $newOriginalUrl = $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
 
-            return $this->url->getDirectUrl($newOriginalUrl, $params);
+            return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }
-        return $this->url->getUrl('*/*/*', $params);
+        return $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
     }
 
     /**
@@ -478,7 +467,30 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     public function getOriginalUrl(MagentoHttpRequest $request) : string
     {
-        $url = $this->layerUrl->getUrlStrategy()->getOriginalUrl($request);
+        if ($originalUrl = $request->getQuery('__tw_original_url')) {
+            $urlArray = explode('/', $originalUrl);
+            $newOriginalUrl = '';
+            foreach ($urlArray as $url) {
+                $newOriginalUrl .= '/' . filter_var($url, FILTER_SANITIZE_ENCODED);
+            }
+
+            //check if string should start with an / to prevent double slashes later
+            if (mb_stripos($originalUrl, '/') === 0) {
+                $newOriginalUrl = mb_substr($newOriginalUrl, 1);
+            }
+
+            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl);
+
+            return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
+        }
+
+        return $this->getCurrentUrl($request);
+    }
+
+    private function getCurrentUrl(MagentoHttpRequest $request) : string
+    {
+        $url = $request->getRequestUri();
+
         return str_replace($this->url->getBaseUrl(), '', $url);
     }
 }

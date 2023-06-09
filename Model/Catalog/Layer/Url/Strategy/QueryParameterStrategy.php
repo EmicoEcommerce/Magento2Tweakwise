@@ -21,6 +21,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, CategoryUrlInterface
 {
@@ -78,8 +79,15 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected $tweakwiseConfig;
 
-
+    /**
+     * @var array
+     */
     private $queryUrlCache = [];
+
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
 
     /**
      * Magento constructor.
@@ -93,12 +101,14 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         UrlModel $url,
         StrategyHelper $strategyHelper,
         CookieManagerInterface $cookieManager,
-        TweakwiseConfig $config
+        TweakwiseConfig $config,
+        SerializerInterface $serializer
     ) {
         $this->url = $url;
         $this->strategyHelper = $strategyHelper;
         $this->cookieManager = $cookieManager;
         $this->tweakwiseConfig = $config;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -261,7 +271,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $query = [$urlKey => '__VALUE.0__'];
         }
 
-        $hash = sha1(serialize($query));
+        $hash = sha1($this->serializer->serialize($query));
         if (!isset($this->queryUrlCache[$hash])) {
             $this->queryUrlCache[$hash] = $this->getCurrentQueryUrl($request, $query);
         }

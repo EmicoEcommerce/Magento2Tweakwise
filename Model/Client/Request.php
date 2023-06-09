@@ -260,4 +260,14 @@ class Request
 
         return null;
     }
+
+    /**
+     * @param string $profileKey
+     * @return $this
+     */
+    public function setProfileKey(string $profileKey)
+    {
+        $this->setParameter('tn_profilekey', $profileKey);
+        return $this;
+    }
 }

@@ -489,7 +489,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
     private function getCurrentUrl(MagentoHttpRequest $request) : string
     {
-        $url = $request->getRequestUri();
+        $url = $request->getOriginalPathInfo();
 
         return str_replace($this->url->getBaseUrl(), '', $url);
     }

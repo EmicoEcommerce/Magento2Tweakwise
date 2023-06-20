@@ -65,4 +65,12 @@ interface UrlInterface
      * @return boolean
      */
     public function isAllowed(): bool;
+
+    /**
+     * Determine the original url
+     *
+     * @param MagentoHttpRequest $request
+     * @return string
+     */
+    public function getOriginalUrl(MagentoHttpRequest $request): string;
 }

@@ -11,6 +11,9 @@ use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Magento\Framework\App\Request\Http as MagentoHttpRequest;
+
 
 class CategoryInputProvider implements FilterFormInputProviderInterface
 {
@@ -57,6 +60,16 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
     protected $hashInputProvider;
 
     /**
+     * @var Url
+     */
+    protected $layerUrl;
+
+    /**
+     * @var MagentoHttpRequest
+     */
+    protected $request;
+
+    /**
      * CategoryParameterProvider constructor.
      * @param UrlInterface $url
      * @param Registry $registry
@@ -74,7 +87,9 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         CategoryRepositoryInterface $categoryRepository,
         CategoryInterfaceFactory $categoryFactory,
         ToolbarInputProvider $toolbarInputProvider,
-        HashInputProvider $hashInputProvider
+        HashInputProvider $hashInputProvider,
+        Url $layerUrl,
+        MagentoHttpRequest $request
     ) {
         $this->url = $url;
         $this->registry = $registry;
@@ -84,6 +99,8 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         $this->categoryFactory = $categoryFactory;
         $this->toolbarInputProvider = $toolbarInputProvider;
         $this->hashInputProvider = $hashInputProvider;
+        $this->layerUrl = $layerUrl;
+        $this->request = $request;
     }
 
     /**
@@ -107,13 +124,11 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
     }
 
     /**
-     * Public because of plugin options
-     *
      * @return string
      */
-    public function getOriginalUrl()
+    public function getOriginalUrl() : string
     {
-        return str_replace($this->url->getBaseUrl(), '', $this->getCategory()->getUrl());
+        return $this->layerUrl->getUrlStrategy()->getOriginalUrl($this->request);
     }
 
     /**

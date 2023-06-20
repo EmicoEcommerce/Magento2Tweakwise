@@ -24,7 +24,7 @@
         "emico/tweakwise": "v4.3.1"
     },
     "conflict": {
-        "tweakwise/magento2-attributelanding-tweakwise": "<4.2"
+        "tweakwise/magento2-attributelanding-tweakwise": "<=4.2"
     },
     "repositories": [
         {

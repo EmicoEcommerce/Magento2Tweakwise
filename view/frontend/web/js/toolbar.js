@@ -56,6 +56,10 @@ define([
                 return this._super(paramName, paramValue, defaultValue);
             }
 
+            if (paramValue === 1) {
+                paramValue = '';
+            }
+
             var form = $(this.options.filterFormSelector);
             var input = form.find('input[name=' + paramName + ']');
             if (!input.length) {

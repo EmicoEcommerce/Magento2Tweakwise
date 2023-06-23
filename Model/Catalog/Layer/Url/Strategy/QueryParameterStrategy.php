@@ -136,6 +136,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     protected function getCurrentQueryUrl(MagentoHttpRequest $request, array $query)
     {
         $params['_query'] = $query;
+        $params['_escape'] = false;
 
         if ($originalUrl = $request->getQuery('__tw_original_url')) {
 
@@ -143,7 +144,16 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }
-        return $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
+
+        $url = $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
+
+        if (strpos($url, 'catalogsearch') !== false) {
+            $params['_current'] = true;
+            $params['_use_rewrite'] = true;
+            $url = $this->url->getUrl('*/*/*', $params);
+        }
+
+        return $url;
     }
 
     /**
@@ -484,12 +494,19 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }
 
-        return $this->getCurrentUrl($request);
+        return $this->getCur rentUrl($request);
     }
 
     private function getCurrentUrl(MagentoHttpRequest $request) : string
     {
         $url = $request->getOriginalPathInfo();
+
+        if (strpos($url, 'ajax/navigation') !== false) {
+            $params['_current'] = true;
+            $params['_use_rewrite'] = true;
+            $params['_escape'] = false;
+            return $this->url->getUrl('*/*/*', $params);
+        }
 
         return str_replace($this->url->getBaseUrl(), '', $url);
     }

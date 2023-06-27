@@ -140,6 +140,10 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
         if ($originalUrl = $request->getQuery('__tw_original_url')) {
 
+            if (!empty($request->getParam('q'))){
+                $params['_query']['q'] = $request->getParam('q');
+            }
+
             $newOriginalUrl = $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
 
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
@@ -494,7 +498,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }
 
-        return $this->getCur rentUrl($request);
+        return $this->getCurrentUrl($request);
     }
 
     private function getCurrentUrl(MagentoHttpRequest $request) : string

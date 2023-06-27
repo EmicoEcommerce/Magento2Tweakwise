@@ -1,0 +1,11 @@
+<table name="tweakwise_attribute_slug" resource="default" engine="innodb"
+       comment="tweakwise_attribute_slug Table">
+    <column xsi:type="varchar" name="attribute" length="255" nullable="false" />
+    <column xsi:type="varchar" name="slug" length="255" nullable="false" />
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+        <column name="attribute"/>
+    </constraint>
+    <constraint xsi:type="unique" referenceId="TWEAKWISE_ATTRIBUTE_SLUG_SLUG" >
+        <column name="slug"/>
+    </constraint>
+</table>

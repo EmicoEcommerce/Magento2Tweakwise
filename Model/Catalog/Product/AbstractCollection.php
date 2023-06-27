@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
+use Magento\Framework\DB\Select;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Magento\Catalog\Model\Category;
@@ -32,7 +33,6 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
-use Zend_Db_Select;
 
 abstract class AbstractCollection extends ProductCollection
 {
@@ -63,7 +63,7 @@ abstract class AbstractCollection extends ProductCollection
     protected function clearFilters()
     {
         $select = $this->getSelect();
-        $select->setPart(Zend_Db_Select::WHERE, []);
+        $select->setPart(Select::WHERE, []);
         $this->_pageSize = null;
         $this->_curPage = null;
         return $this;

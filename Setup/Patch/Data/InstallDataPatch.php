@@ -1,56 +1,43 @@
 <?php
-/**
- * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
- *
- * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
- * @license   Proprietary and confidential, Unauthorized copying of this file, via any medium is strictly prohibited
- */
 
-namespace Tweakwise\Magento2Tweakwise\Setup;
+namespace Tweakwise\Magento2Tweakwise\Setup\Patch\Data;
 
-use Magento\Framework\Setup\InstallDataInterface;
-use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;
-use Magento\Eav\Setup\EavSetupFactory;
-use Magento\Framework\App\Config\Storage\WriterInterface;
-use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\Patch\DataPatchInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 
-class InstallData implements InstallDataInterface
+/**
+ * Patch is mechanism, that allows to do atomic upgrade data changes.
+ */
+class InstallDataPatch implements DataPatchInterface
 {
-    /**
-     * @var EavSetupFactory
-     */
-    protected $eavSetupFactory;
+	/**
+	 * @var ModuleDataSetupInterface
+	 */
+	private ModuleDataSetupInterface $moduleDataSetup;
 
-    /**
-     * @var WriterInterface
-     */
-    protected $writer;
+	/**
+	 * @param ModuleDataSetupInterface $moduleDataSetup
+	 */
+	public function __construct(
+		ModuleDataSetupInterface $moduleDataSetup
+	)
+	{
+		$this->moduleDataSetup = $moduleDataSetup;
+	}
 
-    /**
-     * UpgradeData constructor.
-     *
-     * @param EavSetupFactory $eavSetupFactory
-     * @param WriterInterface $writer
-     */
-    public function __construct(
-        EavSetupFactory $eavSetupFactory,
-        WriterInterface $writer
-    ) {
-        $this->eavSetupFactory = $eavSetupFactory;
-        $this->writer = $writer;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
-    {
-        $setup->startSetup();
+	/**
+	 * Do Upgrade.
+	 *
+	 * @return void
+	 */
+	public function apply()
+	{
+		$this->moduleDataSetup->getConnection()->startSetup();
 
         $table = $setup->getConnection()->getTableName('core_config_data');
 
@@ -64,8 +51,35 @@ class InstallData implements InstallDataInterface
         $this->ensureFeaturedTemplateAttribute($eavSetup);
         $this->updateNavigatorBaseUrl();
 
-        $setup->endSetup();
-    }
+		$this->moduleDataSetup->getConnection()->endSetup();
+	}
+
+	/**
+	 * Get aliases (previous names) for the patch.
+	 *
+	 * @return string[]
+	 */
+	public function getAliases()
+	{
+		return [];
+	}
+
+	/**
+	 * Get array of patches that have to be executed prior to this.
+	 *
+	 * Example of implementation:
+	 *
+	 * [
+	 *      \Vendor_Name\Module_Name\Setup\Patch\Patch1::class,
+	 *      \Vendor_Name\Module_Name\Setup\Patch\Patch2::class
+	 * ]
+	 *
+	 * @return string[]
+	 */
+	public static function getDependencies()
+	{
+		return [];
+	}
 
     protected function ensureCrosssellTemplateAttribute(EavSetup $eavSetup)
     {

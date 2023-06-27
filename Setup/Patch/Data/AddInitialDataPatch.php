@@ -9,6 +9,7 @@ use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Magento\Eav\Setup\EavSetupFactory;
 
 /**
  * Patch is mechanism, that allows to do atomic upgrade data changes.
@@ -20,14 +21,22 @@ class AddInitialDataPatch implements DataPatchInterface
 	 */
 	private ModuleDataSetupInterface $moduleDataSetup;
 
+    /**
+     * @var EavSetupFactory
+     */
+    private $eavSetupFactory;
+
 	/**
 	 * @param ModuleDataSetupInterface $moduleDataSetup
+     * @param EavSetupFactory $eavSetupFactory
 	 */
 	public function __construct(
-		ModuleDataSetupInterface $moduleDataSetup
+		ModuleDataSetupInterface $moduleDataSetup,
+        EavSetupFactory $eavSetupFactory
 	)
 	{
 		$this->moduleDataSetup = $moduleDataSetup;
+        $this->eavSetupFactory = $eavSetupFactory;
 	}
 
 	/**
@@ -39,13 +48,13 @@ class AddInitialDataPatch implements DataPatchInterface
 	{
 		$this->moduleDataSetup->getConnection()->startSetup();
 
-        $table = $setup->getConnection()->getTableName('core_config_data');
+        $table = $this->moduleDataSetup->getConnection()->getTableName('core_config_data');
 
         //rename settings from old module
-        $setup->getConnection()->query('update '. $table .' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy"');
-        $setup->getConnection()->query('update '. $table .' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy"');
+        $this->moduleDataSetup->getConnection()->query('update '. $table .' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy"');
+        $this->moduleDataSetup->getConnection()->query('update '. $table .' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy"');
 
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
         $this->ensureCrosssellTemplateAttribute($eavSetup);
         $this->ensureUpsellTemplateAttribute($eavSetup);
         $this->ensureFeaturedTemplateAttribute($eavSetup);

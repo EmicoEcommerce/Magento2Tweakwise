@@ -58,7 +58,6 @@ class AddInitialDataPatch implements DataPatchInterface
         $this->ensureCrosssellTemplateAttribute($eavSetup);
         $this->ensureUpsellTemplateAttribute($eavSetup);
         $this->ensureFeaturedTemplateAttribute($eavSetup);
-        $this->updateNavigatorBaseUrl();
 
 		$this->moduleDataSetup->getConnection()->endSetup();
 	}
@@ -154,13 +153,5 @@ class AddInitialDataPatch implements DataPatchInterface
             'group' => 'Tweakwise',
             'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured',
         ]);
-    }
-
-    /**
-     * Update tw server url as the old url will be retired
-     */
-    protected function updateNavigatorBaseUrl()
-    {
-        $this->writer->save('tweakwise/general/server_url', 'https://gateway.tweakwisenavigator.com/');
     }
 }

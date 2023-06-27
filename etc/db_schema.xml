@@ -1,11 +1,21 @@
-<table name="tweakwise_attribute_slug" resource="default" engine="innodb"
-       comment="tweakwise_attribute_slug Table">
-    <column xsi:type="varchar" name="attribute" length="255" nullable="false" />
-    <column xsi:type="varchar" name="slug" length="255" nullable="false" />
-    <constraint xsi:type="primary" referenceId="PRIMARY">
-        <column name="attribute"/>
-    </constraint>
-    <constraint xsi:type="unique" referenceId="TWEAKWISE_ATTRIBUTE_SLUG_SLUG" >
-        <column name="slug"/>
-    </constraint>
-</table>
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="tweakwise_attribute_slug" resource="default" engine="innodb"
+           comment="tweakwise_attribute_slug Table">
+        <column xsi:type="varchar" name="attribute" length="255" nullable="false" />
+        <column xsi:type="varchar" name="slug" length="255" nullable="false" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="attribute"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="TWEAKWISE_ATTRIBUTE_SLUG" >
+            <column name="slug"/>
+        </constraint>
+    </table>
+</schema>

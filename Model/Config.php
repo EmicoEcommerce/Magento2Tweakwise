@@ -136,6 +136,11 @@ class Config
         return $this;
     }
 
+    public function getTweakwiseExceptionTrown()
+    {
+        return $this->tweakwiseExceptionThrown;
+    }
+
     /**
      * @deprecated
      * @see \Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager::getServerUrl()

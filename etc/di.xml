@@ -275,28 +275,18 @@
     <!-- Tweakwise virtual collection provider types used in overrides of magento collection providers -->
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider">
         <arguments>
-            <argument name="originalProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider</argument>
+            <argument name="originalProvider" xsi:type="object">elasticsearchLayerCategoryItemCollectionProvider</argument>
             <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category</argument>
         </arguments>
     </virtualType>
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider">
         <arguments>
-            <argument name="originalProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
+            <argument name="originalProvider" xsi:type="object">elasticsearchLayerSearchItemCollectionProvider</argument>
             <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
         </arguments>
     </virtualType>
 
     <!-- Override virtual types of magento to inject our product collection -->
-    <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context">
-        <arguments>
-            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context">
-        <arguments>
-            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
-        </arguments>
-    </virtualType>
     <virtualType name="Magento\Elasticsearch\Model\Layer\Search\Context">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>

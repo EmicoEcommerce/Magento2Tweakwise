@@ -231,6 +231,12 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetRequest</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\SortTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Template">
         <arguments>
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest</argument>

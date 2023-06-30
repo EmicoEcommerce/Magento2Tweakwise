@@ -493,7 +493,24 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
                 $newOriginalUrl = mb_substr($newOriginalUrl, 1);
             }
 
-            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl);
+            // This seems ugly, perhaps there is another way?
+            $query = [];
+            // Add page and sort
+            $sort = $request->getParam('product_list_order');
+            $limit = $request->getParam('product_list_limit');
+            $mode = $request->getParam('product_list_mode');
+
+            if ($sort) {
+                $query['product_list_order'] = $sort;
+            }
+            if ($limit) {
+                $query['product_list_limit'] = $limit;
+            }
+            if ($mode) {
+                $query['product_list_mode'] = $mode;
+            }
+
+            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl, ['_query' => $query]);
 
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }

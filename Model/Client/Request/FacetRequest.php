@@ -10,7 +10,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetResponse;
-use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 
 class FacetRequest extends Request
 {
@@ -30,26 +29,5 @@ class FacetRequest extends Request
     public function getResponseType()
     {
         return FacetResponse::class;
-    }
-
-    /**
-     * @param string $attribute
-     * @param string $value
-     * @return $this
-     */
-    public function addAttributeFilter(string $attribute, $value)
-    {
-        $this->addParameter('tn_fk_' . $attribute, $value);
-        return $this;
-    }
-
-    /**
-     * @param string $attribute
-     * @param $value
-     */
-    public function addHiddenParameter(string $attribute, $value)
-    {
-        $this->hiddenParameters[] = sprintf('%s=%s', $attribute, $value);
-        $this->setParameter('tn_parameters', implode('&', $this->hiddenParameters));
     }
 }

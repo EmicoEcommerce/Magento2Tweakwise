@@ -14,7 +14,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\TemplateResponse;
 use Magento\Framework\Data\OptionSourceInterface;
 
-class Facet implements OptionSourceInterface
+class FacetAttribute implements OptionSourceInterface
 {
     /**
      * @var Client
@@ -49,10 +49,10 @@ class Facet implements OptionSourceInterface
     protected function buildOptions()
     {
         $request = $this->requestFactory->create();
-        /** @var Client\Response\FacetResponse $response */
+        /** @var FacetAttributes $response */
         $response = $this->client->request($request);
-        foreach ($response->getFacets() as $facet) {
-            $result[] = ['value' => $facet->getFacetSettings()->getUrlKey(), 'label' => $facet->getFacetSettings()->getTitle()];
+        foreach ($response->getAttributes() as $attribute) {
+            $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
         }
         return $result;
     }

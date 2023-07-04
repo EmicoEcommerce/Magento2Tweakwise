@@ -10,19 +10,10 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
-use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
-use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
-use Tweakwise\Magento2Tweakwise\Model\Client\Type\RedirectType;
 
 /**
- * Class ProductNavigationResponse
- *
  * @package Tweakwise\Magento2Tweakwise\Model\Client\Response
- *
- * @method PropertiesType getProperties();
- * @method ItemType[] getItems();
  * @method FacetType[] getFacets();
- * @method RedirectType[] getRedirects();
  */
 class FacetResponse extends Response
 {

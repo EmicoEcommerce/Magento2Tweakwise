@@ -225,15 +225,21 @@
         </arguments>
     </type>
 
-    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FilterTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Template">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FacetTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\TemplateRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetRequest</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FacetAttributeTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\FacetAttribute">
         <arguments>
-            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetRequest</argument>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetAttributeRequest</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FilterTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Template">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\TemplateRequest</argument>
         </arguments>
     </virtualType>
 
@@ -369,6 +375,16 @@
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\TemplateRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
             <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\TemplateRequest</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
+        <arguments>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\FacetRequest</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetAttributeRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
+        <arguments>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\FacetAttributeRequest</argument>
         </arguments>
     </virtualType>
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">

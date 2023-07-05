@@ -166,6 +166,9 @@ class Featured extends ListProduct
         $category = $this->_coreRegistry->registry('current_category');
         if ($category instanceof Category) {
             $templateId = $this->templateFinder->forCategory($category, Config::RECOMMENDATION_TYPE_FEATURED);
+            if (!$templateId) {
+                $templateId = $this->config->getRecommendationsTemplate(Config::RECOMMENDATION_TYPE_FEATURED);
+            }
         } else {
             $templateId = $this->config->getRecommendationsTemplate(Config::RECOMMENDATION_TYPE_FEATURED);
         }

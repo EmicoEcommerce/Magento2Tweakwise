@@ -224,6 +224,16 @@
             <argument name="request" xsi:type="object">Magento\Framework\App\Request\Http</argument>
         </arguments>
     </type>
+    <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\Facets">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetRequest</argument>
+        </arguments>
+    </type>
+    <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\FacetAttributes">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetAttributeRequest</argument>
+        </arguments>
+    </type>
 
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FacetTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet">
         <arguments>

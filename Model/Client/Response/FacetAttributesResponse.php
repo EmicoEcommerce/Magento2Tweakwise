@@ -13,7 +13,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\AttributeType;
 
 /**
  * @package Tweakwise\Magento2Tweakwise\Model\Client\Response
- * @method AttributeType[] getAttributes();
  */
 class FacetAttributesResponse extends Response
 {
@@ -31,11 +30,23 @@ class FacetAttributesResponse extends Response
                 $value = new AttributeType($value);
             }
 
-            $this->data['attributes'] = $value->getValue('attribute');
+            $attributes = $value->getValue('attribute');
+
+            if (isset($attributes[0])) {
+                $this->data['attributes'] = $value->getValue('attribute');
+            }else {
+                //only one result
+                $this->data['attributes'][] = $value->getValue('attribute');
+            }
+
             return $this->data['attributes'];
 
         }
 
         return $this;
+    }
+
+    public function getAttributes(){
+        return $this->data['attributes'];
     }
 }

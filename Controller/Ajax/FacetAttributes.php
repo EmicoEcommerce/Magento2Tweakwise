@@ -45,7 +45,9 @@ class FacetAttributes extends Action
         $facetRequest = $this->requestFactory->create();
 
         $categoryId = $this->getRequest()->getParam('category');
+        $facetKey = $this->getRequest()->getParam('facetkey');
         $facetRequest->addCategoryFilter($categoryId);
+        $facetRequest->addFacetKey($facetKey);
 
         $response = $this->client->request($facetRequest);
         $result = [];

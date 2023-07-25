@@ -35,7 +35,6 @@ class FacetAttributeRequest extends Request
     public function __construct(Helper $helper, StoreManager $storeManager)
     {
         parent::__construct($helper, $storeManager);
-        $this->setPath($this->path);
     }
 
     /**
@@ -46,11 +45,7 @@ class FacetAttributeRequest extends Request
         return FacetAttributesResponse::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path .= '/ae-color/attributes';
+    public function addFacetKey($facetKey) {
+        $this->setPath($this->path . '/' . $facetKey . '/attributes');
     }
 }

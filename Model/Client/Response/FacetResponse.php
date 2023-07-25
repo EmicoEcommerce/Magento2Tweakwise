@@ -31,13 +31,6 @@ class FacetResponse extends Response
                 $value = new FacetType($value);
             }
 
-            if (isset($value[0])) {
-                $values = $value;
-            }else {
-                //only one result
-                $values[] = $value;
-            }
-
             $values[] = $value;
         }
 

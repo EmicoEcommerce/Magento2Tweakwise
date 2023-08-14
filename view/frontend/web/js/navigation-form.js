@@ -358,7 +358,7 @@ define([
          * @private
          */
         _updateState: function (response) {
-            window.history.pushState({html: response.html}, '', response.url);
+            window.history.pushState({html: response.html}, '', response.url + window.location.search);
         },
 
         /**

@@ -135,6 +135,13 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected function getCurrentQueryUrl(MagentoHttpRequest $request, array $query)
     {
+        $selectedFilters = $request->getQuery();
+        foreach ($selectedFilters as $filter => $value) {
+            if (!isset($query[$filter])) {
+                $query[$filter] = $value;
+            }
+        }
+
         $params['_query'] = $query;
         $params['_escape'] = false;
 
@@ -528,6 +535,8 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $params['_escape'] = false;
             return $this->url->getUrl('*/*/*', $params);
         }
+
+        $url = ltrim($url, '/');
 
         return str_replace($this->url->getBaseUrl(), '', $url);
     }

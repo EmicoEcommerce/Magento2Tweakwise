@@ -358,7 +358,7 @@ define([
          * @private
          */
         _updateState: function (response) {
-            const newUrl = this._buildUrlWithQueryString(response);
+            const newUrl = this._buildUrlWithQueryString(response, true);
             window.history.pushState({html: response.html}, '', newUrl);
         },
 
@@ -375,17 +375,22 @@ define([
          * Merges existed query parameters with the ones get from AJAX response if needed
          *
          * @param response
+         * @param flip
          * @returns string
          * @private
          */
-        _buildUrlWithQueryString: function (response) {
+        _buildUrlWithQueryString: function (response, flip = false) {
             const baseUrl = window.location.origin;
             const resultUrl = new URL(response.url, baseUrl);
             const queryParams = new URLSearchParams(window.location.search ?? '');
             let queryParamsString = queryParams.toString();
 
             if (resultUrl.search) {
-                queryParamsString = this._combineQueryStrings(queryParams, resultUrl.searchParams);
+                if (flip) {
+                    queryParamsString = this._combineQueryStrings(resultUrl.searchParams, queryParams);
+                } else {
+                    queryParamsString = this._combineQueryStrings(queryParams, resultUrl.searchParams);
+                }
             }
 
             resultUrl.search = queryParamsString;

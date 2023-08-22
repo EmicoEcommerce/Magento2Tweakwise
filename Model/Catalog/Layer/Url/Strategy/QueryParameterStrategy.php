@@ -137,7 +137,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     {
         $selectedFilters = $request->getQuery();
         foreach ($selectedFilters as $filter => $value) {
-            if (!isset($query[$filter])) {
+            if (!array_key_exists($filter, $query)) {
                 $query[$filter] = $value;
             }
         }

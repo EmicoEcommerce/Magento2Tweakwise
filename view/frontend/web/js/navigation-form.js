@@ -358,7 +358,8 @@ define([
          * @private
          */
         _updateState: function (response) {
-            window.history.pushState({html: response.html}, '', response.url + window.location.search);
+            const newUrl = this._buildUrlWithQueryString(response);
+            window.history.pushState({html: response.html}, '', newUrl);
         },
 
         /**

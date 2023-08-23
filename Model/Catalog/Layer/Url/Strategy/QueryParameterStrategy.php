@@ -136,8 +136,15 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     protected function getCurrentQueryUrl(MagentoHttpRequest $request, array $query)
     {
         $selectedFilters = $request->getQuery();
+        $reservedParams = [
+            self::PARAM_LIMIT,
+            self::PARAM_MODE,
+            self::PARAM_PAGE,
+            self::PARAM_ORDER,
+        ];
+
         foreach ($selectedFilters as $filter => $value) {
-            if (!array_key_exists($filter, $query)) {
+            if (!array_key_exists($filter, $query) && (!in_array($filter, $reservedParams))) {
                 $query[$filter] = $value;
             }
         }

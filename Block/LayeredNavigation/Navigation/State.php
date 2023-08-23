@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\Navigation;
 
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
@@ -69,6 +70,18 @@ class State extends MagentoStateBlock
 
         $isSearch = $currentContext->getRequest() instanceof ProductSearchRequest;
         $isNavigation = !$isSearch;
+
+        if ($this->config->getTweakwiseExceptionTrown()) {
+            //no api response
+            return;
+        }
+
+        try {
+            $currentContext->getResponse();
+        } catch (ApiException $e) {
+            //no api response
+            return;
+        }
 
         if ($isSearch && $searchEnabled) {
             $this->_template = 'Tweakwise_Magento2Tweakwise::layer/state.phtml';

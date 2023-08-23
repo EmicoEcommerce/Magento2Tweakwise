@@ -63,6 +63,10 @@ class NavigationHtmlOverride implements ObserverInterface
             return;
         }
 
+        if ($this->config->getTweakwiseExceptionTrown()) {
+            return;
+        }
+
         $searchEnabled = $this->config->isSearchEnabled();
         $navigationEnabled = $this->config->isLayeredEnabled();
 

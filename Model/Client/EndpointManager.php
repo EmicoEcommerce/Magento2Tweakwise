@@ -13,8 +13,8 @@ class EndpointManager
     public const DOWN_PERIOD = 300; // 5 minutes
     public const VARIABLE_NAME = '__tw_primary_down_timer';
 
-    public const SERVER_URL = 'https://gateway.tweakwisenavigator.net';
-    public const FALLBACK_SERVER_URL = 'https://gateway.tweakwisenavigator.com';
+    public const SERVER_URL = 'http://gateway.tweakwisenavigator.net';
+    public const FALLBACK_SERVER_URL = 'http://gateway.tweakwisenavigator.com';
 
     /**
      * @var VariableFactory

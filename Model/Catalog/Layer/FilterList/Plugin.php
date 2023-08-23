@@ -61,6 +61,11 @@ class Plugin
             }
         }
 
+        //no api responseA
+        if($this->config->getTweakwiseExceptionTrown()) {
+            return $proceed($layer);
+        }
+
         try {
             return $this->tweakwiseFilterList->getFilters($layer);
         } catch (TweakwiseException $e) {

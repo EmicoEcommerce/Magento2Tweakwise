@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Action\Action;
@@ -60,7 +61,18 @@ class CatalogSearchRedirect implements ObserverInterface
             return;
         }
 
-        $redirects = $this->context->getResponse()->getRedirects();
+        if ($this->config->getTweakwiseExceptionTrown()) {
+            //no api response
+            return;
+        }
+
+        try{
+            $redirects = $this->context->getResponse()->getRedirects();
+        }catch (ApiException $e) {
+            //no api response
+            return;
+        }
+
         if (!$redirects) {
             return;
         }

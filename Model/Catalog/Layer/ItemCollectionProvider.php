@@ -77,11 +77,6 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
             }
         }
 
-        //no api response
-        if($this->config->getTweakwiseExceptionTrown()) {
-            return $this->originalProvider->getCollection($category);
-        }
-
         try {
             $collection = $this->collectionFactory->create(['navigationContext' => $this->navigationContext]);
 

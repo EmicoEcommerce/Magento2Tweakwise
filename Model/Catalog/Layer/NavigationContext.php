@@ -8,7 +8,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer;
 
-use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
@@ -147,21 +146,14 @@ class NavigationContext
     /**
      * @return ProductNavigationResponse
      */
-    public function getResponse(): ProductNavigationResponse|null
+    public function getResponse(): ProductNavigationResponse
     {
         if (!$this->response) {
             $request = $this->getRequest();
 
             $this->initializeRequest($request);
 
-            if (!$this->config->getTweakwiseExceptionTrown()) {
-                try{
-                    $this->response = $this->client->request($request);
-                }catch (ApiException $e) {
-                    //no api response
-                    throw $e;
-                }
-            }
+            $this->response = $this->client->request($request);
         }
 
         return $this->response;

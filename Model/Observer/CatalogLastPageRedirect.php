@@ -55,11 +55,6 @@ class CatalogLastPageRedirect implements ObserverInterface
             return;
         }
 
-        if ($this->config->getTweakwiseExceptionTrown()) {
-            //no api response
-            return;
-        }
-
         $properties = $this->context->getResponse()->getProperties();
         if (!$properties->getNumberOfItems()) {
             return;

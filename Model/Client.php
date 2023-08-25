@@ -285,7 +285,6 @@ class Client
         try {
             return $this->doRequest($request, $async);
         } catch (ApiException $e) {
-            $this->config->setTweakwiseExceptionThrown(true);
             $this->log->throwException($e);
         } finally {
             Profiler::stop('tweakwise::request::' . $request->getPath());

@@ -220,11 +220,27 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $categoryUrlPath = \parse_url($categoryUrl, PHP_URL_PATH);
 
             $url = $this->url->getDirectUrl(
-                trim($categoryUrlPath, '/'),
-                [
-                    '_query' => $this->getAttributeFilters($request)
-                ]
+                sprintf(
+                    '%s/',
+                    trim($categoryUrlPath, '/'),
+                    [
+                        '_query' => $this->getAttributeFilters($request)
+                    ]
+                )
             );
+
+
+            /*
+             We explode the url so that we can capture its parts and find the double values in order to remove them.
+             This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
+             These two are the only unique parts in this situation and so need to be removed.
+             */
+
+            $explode = explode('/', $url);
+
+            if (is_array($explode)) {
+                $url = implode('/', array_unique($explode));
+            }
 
             $url = str_replace($this->url->getBaseUrl(), '', $url);
 

@@ -135,15 +135,43 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected function getCurrentQueryUrl(MagentoHttpRequest $request, array $query)
     {
+        $selectedFilters = $request->getQuery();
+        $reservedParams = [
+            self::PARAM_LIMIT,
+            self::PARAM_MODE,
+            self::PARAM_PAGE,
+            self::PARAM_ORDER,
+        ];
+
+        foreach ($selectedFilters as $filter => $value) {
+            if (!array_key_exists($filter, $query) && (!in_array($filter, $reservedParams))) {
+                $query[$filter] = $value;
+            }
+        }
+
         $params['_query'] = $query;
+        $params['_escape'] = false;
 
         if ($originalUrl = $request->getQuery('__tw_original_url')) {
+
+            if (!empty($request->getParam('q'))){
+                $params['_query']['q'] = $request->getParam('q');
+            }
 
             $newOriginalUrl = $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
 
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }
-        return $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
+
+        $url = $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
+
+        if (strpos($url, 'catalogsearch') !== false) {
+            $params['_current'] = true;
+            $params['_use_rewrite'] = true;
+            $url = $this->url->getUrl('*/*/*', $params);
+        }
+
+        return $url;
     }
 
     /**
@@ -479,7 +507,24 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
                 $newOriginalUrl = mb_substr($newOriginalUrl, 1);
             }
 
-            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl);
+            // This seems ugly, perhaps there is another way?
+            $query = [];
+            // Add page and sort
+            $sort = $request->getParam('product_list_order');
+            $limit = $request->getParam('product_list_limit');
+            $mode = $request->getParam('product_list_mode');
+
+            if ($sort) {
+                $query['product_list_order'] = $sort;
+            }
+            if ($limit) {
+                $query['product_list_limit'] = $limit;
+            }
+            if ($mode) {
+                $query['product_list_mode'] = $mode;
+            }
+
+            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl, ['_query' => $query]);
 
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }
@@ -490,6 +535,15 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     private function getCurrentUrl(MagentoHttpRequest $request) : string
     {
         $url = $request->getOriginalPathInfo();
+
+        if (strpos($url, 'ajax/navigation') !== false) {
+            $params['_current'] = true;
+            $params['_use_rewrite'] = true;
+            $params['_escape'] = false;
+            return $this->url->getUrl('*/*/*', $params);
+        }
+
+        $url = ltrim($url, '/');
 
         return str_replace($this->url->getBaseUrl(), '', $url);
     }

@@ -13,7 +13,7 @@
 ?>
 <?php /** @var Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item[] $_filters */ ?>
 <?php $_filters = $block->getActiveFilters() ?>
-<?php if (!empty($_filters)) : ?>
+<?php if (!empty($filters) && $filters instanceof Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item) : ?>
 <div class="filter-current" data-mage-init='{"collapsible":{"openedState": "active", "collapsible": true, "active": false }}'>
     <strong class="block-subtitle filter-current-subtitle"
             role="heading"

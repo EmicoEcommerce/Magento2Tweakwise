@@ -76,13 +76,6 @@ class State extends MagentoStateBlock
             return;
         }
 
-        try {
-            $currentContext->getResponse();
-        } catch (ApiException $e) {
-            //no api response
-            return;
-        }
-
         if ($isSearch && $searchEnabled) {
             $this->_template = 'Tweakwise_Magento2Tweakwise::layer/state.phtml';
         }

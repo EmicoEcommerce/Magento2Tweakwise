@@ -9,7 +9,8 @@
         "ext-simplexml": "*",
         "ext-libxml": "*",
         "tweakwise/magento2-tweakwise-export": ">=4.0",
-        "guzzlehttp/guzzle": ">=6.0"
+        "guzzlehttp/guzzle": ">=6.0",
+        "guzzlehttp/promise": ">=1.4"
     },
     "type": "magento2-module",
     "autoload": {

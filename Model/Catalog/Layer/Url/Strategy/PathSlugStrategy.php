@@ -544,12 +544,6 @@ class PathSlugStrategy implements
          These two are the only unique parts in this situation and so need to be removed.
          */
 
-        $explode = explode('/', $url);
-
-        if (is_array($explode)) {
-            $url = implode('/', array_unique($explode));
-        }
-
 
         /*
         Make sure we dont have any double slashes, add the current filter path to the category url to maintain
@@ -568,6 +562,10 @@ class PathSlugStrategy implements
         $explode = explode('/', $url);
 
         $lastpart = null;
+
+        if (is_array($explode)) {
+            $url = implode('/', array_unique($explode));
+        }
 
         if (is_array($explode)) {
             $lastpart = end($explode);

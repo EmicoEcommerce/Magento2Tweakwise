@@ -6,7 +6,7 @@ $styling = ($banners[0]['location'] == 'ContainerTop') ? 'style="margin-right: a
 <div class="searchbanners" <?= $styling ?>>
     <?php foreach ($banners as $banner) : ?>
         <?php if (!empty($banner['clickurl'])): ?>
-            <a href="<?=$banner['clickurl'];?>" type=<?=$banner['clicktarget'];?>">
+            <a href="<?=$banner['clickurl'];?>" type="<?=$banner['clicktarget'];?>">
         <?php endif; ?>
                 <img class="searchbanner <?=strtolower($banner['type']);?>" src="<?=$banner['imageurl'] ?>">
         <?php if (!empty($banner['clickurl'])): ?>

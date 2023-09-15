@@ -31,7 +31,10 @@ class FacetResponse extends Response
                 $value = new FacetType($value);
             }
 
-            $values[] = $value;
+            //remove tree, link and slider facets
+            if ($value->getFacetSettings()->getSelectionType() === 'checkbox' || ($value->getFacetSettings()->getSelectionType() === 'color')) {
+                $values[] = $value;
+            }
         }
 
         $this->data['facets'] = $values;

@@ -49,10 +49,16 @@ class FacetAttributes extends Action
         $facetRequest->addCategoryFilter($categoryId);
         $facetRequest->addFacetKey($facetKey);
 
-        $response = $this->client->request($facetRequest);
         $result = [];
-        foreach ($response->getAttributes() as $attribute) {
-            $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
+        try {
+            $response = $this->client->request($facetRequest);
+            foreach ($response->getAttributes() as $attribute) {
+                $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
+            }
+        } catch (ApiException $e) {
+            if (!$e->getCode() == 404) {
+                throw $e;
+            }
         }
 
         $json->setData(['data' => $result]);

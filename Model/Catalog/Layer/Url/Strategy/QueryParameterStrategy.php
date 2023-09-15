@@ -135,20 +135,6 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected function getCurrentQueryUrl(MagentoHttpRequest $request, array $query)
     {
-        $selectedFilters = $request->getQuery();
-        $reservedParams = [
-            self::PARAM_LIMIT,
-            self::PARAM_MODE,
-            self::PARAM_PAGE,
-            self::PARAM_ORDER,
-        ];
-
-        foreach ($selectedFilters as $filter => $value) {
-            if (!array_key_exists($filter, $query) && (!in_array($filter, $reservedParams))) {
-                $query[$filter] = $value;
-            }
-        }
-
         $params['_query'] = $query;
         $params['_escape'] = false;
 
@@ -220,27 +206,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $categoryUrlPath = \parse_url($categoryUrl, PHP_URL_PATH);
 
             $url = $this->url->getDirectUrl(
-                sprintf(
-                    '%s/',
-                    trim($categoryUrlPath, '/'),
-                    [
-                        '_query' => $this->getAttributeFilters($request)
-                    ]
-                )
+                trim($categoryUrlPath, '/'),
+                [
+                    '_query' => $this->getAttributeFilters($request)
+                ]
             );
-
-
-            /*
-             We explode the url so that we can capture its parts and find the double values in order to remove them.
-             This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
-             These two are the only unique parts in this situation and so need to be removed.
-             */
-
-            $explode = explode('/', $url);
-
-            if (is_array($explode)) {
-                $url = implode('/', array_unique($explode));
-            }
 
             $url = str_replace($this->url->getBaseUrl(), '', $url);
 
@@ -523,24 +493,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
                 $newOriginalUrl = mb_substr($newOriginalUrl, 1);
             }
 
-            // This seems ugly, perhaps there is another way?
-            $query = [];
-            // Add page and sort
-            $sort = $request->getParam('product_list_order');
-            $limit = $request->getParam('product_list_limit');
-            $mode = $request->getParam('product_list_mode');
-
-            if ($sort) {
-                $query['product_list_order'] = $sort;
-            }
-            if ($limit) {
-                $query['product_list_limit'] = $limit;
-            }
-            if ($mode) {
-                $query['product_list_mode'] = $mode;
-            }
-
-            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl, ['_query' => $query]);
+            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl);
 
             return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
         }
@@ -558,8 +511,6 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $params['_escape'] = false;
             return $this->url->getUrl('*/*/*', $params);
         }
-
-        $url = ltrim($url, '/');
 
         return str_replace($this->url->getBaseUrl(), '', $url);
     }

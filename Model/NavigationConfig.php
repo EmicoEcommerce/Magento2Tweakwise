@@ -10,7 +10,6 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
 
 /**
  * Class NavigationConfig
@@ -59,11 +58,6 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
     protected $request;
 
     /**
-     * @var HashInputProvider
-     */
-    protected $hashInputProvider;
-
-    /**
      * NavigationConfig constructor.
      * @param Config $config
      * @param UrlInterface $url
@@ -80,8 +74,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
         ProductMetadataInterface $productMetadata,
         FilterFormInputProviderInterface $filterFormInputProvider,
         Json $jsonSerializer,
-        Http $request,
-        HashInputProvider $hashInputProvider
+        Http $request
     ) {
         $this->config = $config;
         $this->jsonSerializer = $jsonSerializer;
@@ -90,7 +83,6 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
         $this->productMetadata = $productMetadata;
         $this->filterFormInputProvider = $filterFormInputProvider;
         $this->request = $request;
-        $this->hashInputProvider = $hashInputProvider;
     }
 
     /**
@@ -98,12 +90,6 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
      */
     public function getFilterFormInput(): array
     {
-        //check request for modified values
-        if (!$this->hashInputProvider->validateHash($this->request)) {
-            //form is modified, don't accept the request. Should only happen in an xss attack
-            throw new \InvalidArgumentException('Incorrect/modified form parameters');
-        }
-
         $filterFormInput = $this->filterFormInputProvider->getFilterFormInput();
         unset($filterFormInput['p']);
 

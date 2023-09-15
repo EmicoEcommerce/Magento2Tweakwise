@@ -97,8 +97,6 @@ class Plugin extends AbstractRecommendationPlugin
             }
         }
         $this->lastAddedProduct = $product;
-
-        return $this->lastAddedProduct;
     }
 
     /**

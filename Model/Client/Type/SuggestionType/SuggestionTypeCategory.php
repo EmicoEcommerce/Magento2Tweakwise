@@ -32,11 +32,6 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
     protected $urlInstance;
 
     /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
      * SuggestionTypeCategory constructor.
      * @param CategoryRepository $categoryRepository Empty category model used to resolve urls
      * @param StoreManagerInterface $storeManager

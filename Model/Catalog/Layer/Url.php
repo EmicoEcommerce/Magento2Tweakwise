@@ -13,7 +13,6 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\UrlStrategyFactory;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlInterface;
-use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlModel;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper as ExportHelper;
@@ -64,8 +63,6 @@ class Url
      */
     protected $urlStrategyFactory;
 
-    protected $magentoUrl;
-
     /**
      * Builder constructor.
      *
@@ -78,14 +75,12 @@ class Url
         UrlStrategyFactory $urlStrategyFactory,
         MagentoHttpRequest $request,
         CategoryRepositoryInterface $categoryRepository,
-        ExportHelper $exportHelper,
-        UrlModel $magentoUrl
+        ExportHelper $exportHelper
     ) {
         $this->urlStrategyFactory = $urlStrategyFactory;
         $this->categoryRepository = $categoryRepository;
         $this->exportHelper = $exportHelper;
         $this->request = $request;
-        $this->magentoUrl = $magentoUrl;
     }
 
     /**
@@ -142,7 +137,7 @@ class Url
                 ->getCategoryFilterSelectUrl($this->request, $item);
         }
 
-        return $this->addBaseUrl($this->getUrlStrategy()->getAttributeSelectUrl($this->request, $item));
+        return $this->getUrlStrategy()->getAttributeSelectUrl($this->request, $item);
     }
 
     /**
@@ -159,7 +154,7 @@ class Url
                 ->getCategoryFilterRemoveUrl($this->request, $item);
         }
 
-        return $this->addBaseUrl($this->getUrlStrategy()->getAttributeRemoveUrl($this->request, $item));
+        return $this->getUrlStrategy()->getAttributeRemoveUrl($this->request, $item);
     }
 
     /**
@@ -168,8 +163,8 @@ class Url
      */
     public function getClearUrl(array $activeFilterItems)
     {
-        return $this->addBaseUrl($this->getUrlStrategy()
-            ->getClearUrl($this->request, $activeFilterItems));
+        return $this->getUrlStrategy()
+            ->getClearUrl($this->request, $activeFilterItems);
     }
 
     /**
@@ -178,8 +173,8 @@ class Url
      */
     public function getFilterUrl(array $activeFilterItems)
     {
-        return $this->addBaseUrl($this->getUrlStrategy()
-            ->buildFilterUrl($this->request, $activeFilterItems));
+        return $this->getUrlStrategy()
+            ->buildFilterUrl($this->request, $activeFilterItems);
     }
 
     /**
@@ -196,19 +191,7 @@ class Url
      */
     public function getSliderUrl(Item $item)
     {
-        return $this->addBaseUrl($this->getUrlStrategy()->getSliderUrl($this->request, $item));
-    }
-
-    public function addBaseUrl($url) {
-
-        $baseUrl = $this->magentoUrl->getBaseUrl();
-        //prevent double base urls
-        $url = str_replace($baseUrl, '', $url);
-        //remove slashes to prevent double slashes
-        $baseUrl = rtrim($baseUrl, '/');
-        $url = ltrim($url, '/');
-
-        return $baseUrl . '/' . $url;
+        return $this->getUrlStrategy()->getSliderUrl($this->request, $item);
     }
 
     /**

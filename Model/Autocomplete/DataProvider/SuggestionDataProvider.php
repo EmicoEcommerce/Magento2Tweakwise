@@ -12,7 +12,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions\SuggestionsResponse;
 use Tweakwise\Magento2Tweakwise\Model\Config;
-use GuzzleHttp\Promise\Utils;
+use function GuzzleHttp\Promise\unwrap;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Search\Model\Autocomplete\ItemInterface;
 
@@ -146,7 +146,7 @@ class SuggestionDataProvider implements DataProviderInterface
         }
 
         $results = [];
-        $responses = Utils::unwrap($promises);
+        $responses = unwrap($promises);
         foreach ($responses as $key => $response) {
             if ($response instanceof AutocompleteProductResponseInterface) {
                 $results[] = $this->dataProviderHelper->getProductItems($response);

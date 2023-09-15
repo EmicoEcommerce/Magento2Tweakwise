@@ -61,11 +61,6 @@ class HashInputProvider
             if ($hash === $originalHash) {
                 $isValid = true;
             }
-        } else {
-            //hash is empty original url should also be empty
-            if (empty ($request->getParam('__tw_original_url'))) {
-                $isValid = true;
-            }
         }
 
         return $isValid;

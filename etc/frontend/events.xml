@@ -15,4 +15,8 @@
     <event name="view_block_abstract_to_html_before">
         <observer name="tweakwise-magento2tweakwise-navigation-override" instance="Tweakwise\Magento2Tweakwise\Model\Observer\NavigationHtmlOverride" />
     </event>
+
+    <event name="websiterestriction_frontend">
+        <observer name="tweakwise_feed_website_restriction" instance="Tweakwise\Magento2Tweakwise\Observer\WebsiteRestrictionObserver" />
+    </event>
 </config>

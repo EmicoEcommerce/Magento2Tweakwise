@@ -30,7 +30,7 @@ define([
                 const urlParams = new URLSearchParams(window.location.search);
                 const pageParam = urlParams.get('p');
                 if (pageParam) {
-                    $(this.element.append('<input type="hidden" name="p" value="'+ pageParam +'" />'))
+                    $(this.element.append('<input type="hidden" name="p" value="'+ parseInt(pageParam) +'" />'))
                 }
                 this.element.trigger('change');
             }

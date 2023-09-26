@@ -3,7 +3,10 @@
 /** @var \Magento\Framework\View\Element\Template $searchBannerLayout */
 
 $banners = $block->getContainerTopBanner();
-$searchBannerLayout = $this->getLayout()->createBlock("Magento\Framework\View\Element\Template");
-$searchBannerLayout->setData(['banners' => $banners]);
-$searchBannerLayout->setTemplate("Tweakwise_Magento2Tweakwise::searchbanner/search.banner.phtml");
-echo $searchBannerLayout->toHtml();
+
+if (!empty($banners)) {
+    $searchBannerLayout = $this->getLayout()->createBlock("Magento\Framework\View\Element\Template");
+    $searchBannerLayout->setData(['banners' => $banners]);
+    $searchBannerLayout->setTemplate("Tweakwise_Magento2Tweakwise::searchbanner/search.banner.phtml");
+    echo $searchBannerLayout->toHtml();
+}

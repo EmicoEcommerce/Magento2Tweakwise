@@ -4,7 +4,7 @@
 
 $banners = $block->getListTopBanner();
 
-if (empty(!$banners)) {
+if (!empty($banners)) {
     $searchBannerLayout = $this->getLayout()->createBlock("Magento\Framework\View\Element\Template");
     $searchBannerLayout->setData(['banners' => $banners]);
     $searchBannerLayout->setTemplate("Tweakwise_Magento2Tweakwise::searchbanner/search.banner.phtml");

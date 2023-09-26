@@ -13,6 +13,8 @@ use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
+use Tweakwise\Magento2Tweakwise\Model\Client\Timers;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -58,6 +60,11 @@ class Client
     protected $endpointManager;
 
     /**
+     * @var Timer
+     */
+    protected $timer;
+
+    /**
      * Client constructor.
      *
      * @param Config $config
@@ -69,10 +76,12 @@ class Client
         Config $config,
         Logger $log,
         ResponseFactory $responseFactory,
-        EndpointManager $endpointManager
+        EndpointManager $endpointManager,
+        Timer $timer
     ) {
         $this->config = $config;
         $this->log = $log;
+        $this->timer = $timer;
         $this->responseFactory = $responseFactory;
         $this->endpointManager = $endpointManager;
     }
@@ -140,17 +149,16 @@ class Client
     {
         $client = $this->getClient();
         $httpRequest = $this->createHttpRequest($tweakwiseRequest);
-        $start = microtime(true);
+        $this->timer->startTimer($tweakwiseRequest->getPath());
 
         $responsePromise = $client
             ->sendAsync($httpRequest)
             ->then(
-                function (ResponseInterface $response) use ($tweakwiseRequest, $httpRequest, $start) {
+                function (ResponseInterface $response) use ($tweakwiseRequest, $httpRequest) {
                     return $this->handleRequestSuccess(
                         $response,
                         $httpRequest,
                         $tweakwiseRequest,
-                        $start
                     );
                 },
                 function (GuzzleException $e) use ($tweakwiseRequest, $async) {
@@ -182,16 +190,15 @@ class Client
         ResponseInterface $httpResponse,
         HttpRequest $httpRequest,
         Request $tweakwiseRequest,
-        float $start
     ): Response {
-        $time = microtime(true) - $start;
+        $this->timer->endTimer($tweakwiseRequest->getPath());
         $requestUrl = (string)$httpRequest->getUri();
         $statusCode = $httpResponse->getStatusCode();
 
         $this->log->debug(
             sprintf(
                 '[Request][%.5f] %s',
-                $time,
+                $this->timer->getTime($tweakwiseRequest->getPath()),
                 $requestUrl
             )
         );

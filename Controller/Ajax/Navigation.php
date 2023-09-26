@@ -5,6 +5,7 @@ namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 use Magento\Framework\Controller\ResultFactory;
 use Tweakwise\Magento2Tweakwise\Model\AjaxNavigationResult;
 use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\InitializerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
@@ -44,6 +45,11 @@ class Navigation extends Action
     protected $hashInputProvider;
 
     /**
+     * @var Timer
+     */
+    protected $timer;
+
+    /**
      * Navigation constructor.
      * @param Context $context Request context
      * @param Config $config Tweakwise configuration provider
@@ -55,6 +61,7 @@ class Navigation extends Action
         Config $config,
         AjaxNavigationResult $ajaxNavigationResult,
         HashInputProvider $hashInputProvider,
+        Timer $timer,
         array $initializerMap
     ) {
         parent::__construct($context);
@@ -62,6 +69,7 @@ class Navigation extends Action
         $this->ajaxNavigationResult = $ajaxNavigationResult;
         $this->initializerMap = $initializerMap;
         $this->hashInputProvider = $hashInputProvider;
+        $this->timer = $timer;
     }
 
     /**

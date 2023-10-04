@@ -51,9 +51,12 @@ class Timer
      */
     public function getServerTiming($name)
     {
-        $timeTaken = ($this->timers[$name]['end'] - $this->timers[$name]['start']) * 1000;
-        $name = str_replace('/', '-', $name); //no slashes in header value
-        return sprintf('%s;dur=%f', 'TW-' . $name, $timeTaken);
+        if (isset($this->timers[$name]['start']) && isset($this->timers[$name]['end'])) {
+            $timeTaken = ($this->timers[$name]['end'] - $this->timers[$name]['start']) * 1000;
+            $name = str_replace('/', '-', $name); //no slashes in header value
+            return sprintf('%s;dur=%f', 'TW-' . $name, $timeTaken);
+        }
+        return 0;
     }
 
     /**
@@ -77,11 +80,14 @@ class Timer
     private function setHeader($name)
     {
         $currentHeader = $this->response->getHeader('Server-Timing');
+        $timing = $this->getServerTiming($name);
 
-        if (empty($currentHeader)) {
-            $this->response->setHeader('Server-Timing', $this->getServerTiming($name), false);
-        } else {
-            $this->response->setHeader('Server-Timing', $currentHeader->getFieldValue() . ', ' . $this->getServerTiming($name), true);
+        if ($timing > 0) {
+            if (empty($currentHeader)) {
+                $this->response->setHeader('Server-Timing', $timing, false);
+            } else {
+                $this->response->setHeader('Server-Timing', $currentHeader->getFieldValue() . ', ' . $timing, true);
+            }
         }
     }
 }

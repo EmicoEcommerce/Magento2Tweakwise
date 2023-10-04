@@ -19,6 +19,7 @@ use Magento\InventorySalesApi\Api\AreProductsSalableInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\SortFieldType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Block\Product\ProductList\Toolbar;
@@ -73,6 +74,13 @@ class Plugin
     public function aroundGetAvailableOrders(Toolbar $subject, Closure $proceed)
     {
         if (!$this->config->isLayeredEnabled()) {
+            if (!$this->config->isSearchEnabled() || !($this->context->getRequest() instanceof ProductSearchRequest)) {
+                return $proceed();
+            }
+        }
+
+        //page is search and search is not enabled
+        if ((!$this->config->isSearchEnabled()) && ($this->context->getRequest() instanceof ProductSearchRequest)) {
             return $proceed();
         }
 

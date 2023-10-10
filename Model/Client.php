@@ -114,7 +114,7 @@ class Client
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
 
-        if ($path === "recommendations/featured") {
+        if ($tweakwiseRequest instanceof Request\Recommendations\FeaturedRequest) {
             if ($this->config->getRecommendationsFeaturedCategory()) {
                 $tweakwiseRequest->setCategory();
             }

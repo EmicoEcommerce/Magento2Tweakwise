@@ -19,7 +19,6 @@
     <preference for="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
 
     <preference for="Magento\LayeredNavigation\Block\Navigation\State" type="Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\Navigation\State" />
-    <!--<preference for="Magento\Catalog\Block\Product\AbstractProduct" type="Tweakwise\Magento2Tweakwise\Block\product\AbstractProduct" />-->
     <preference for="Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface" type="Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\EmptyInputProvider" />
 
     <!-- Frontend plugins -->
@@ -283,11 +282,6 @@
             <argument name="recommendationsContext" xsi:type="object" shared="false">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Featured</argument>
         </arguments>
     </type>
-    <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\FeaturedRecommendation">
-        <arguments>
-            <argument name="recommendationsContext" xsi:type="object" shared="false">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Featured</argument>
-        </arguments>
-    </type>
     <type name="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin">
         <arguments>
             <argument name="context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell</argument>
@@ -391,11 +385,6 @@
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetAttributeRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
             <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\FacetAttributeRequest</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FeatureRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
-        <arguments>
-            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\FeatureRequest</argument>
         </arguments>
     </virtualType>
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">

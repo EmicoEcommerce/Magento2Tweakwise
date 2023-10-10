@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation;
 
+use Magento\Catalog\Model\Category;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
@@ -162,5 +163,23 @@ class Context
         $this->collection = null;
         $this->response = null;
         $this->request = $request;
+    }
+
+    /**
+     * @param $request
+     */
+    public function configureRequest()
+    {
+        $category = $this->_coreRegistry->registry('current_category');
+        if ($category instanceof Category) {
+            $templateId = $this->templateFinder->forCategory($category, Config::RECOMMENDATION_TYPE_FEATURED);
+            if (!$templateId) {
+                $templateId = $this->config->getRecommendationsTemplate(Config::RECOMMENDATION_TYPE_FEATURED);
+            }
+        } else {
+            $templateId = $this->config->getRecommendationsTemplate(Config::RECOMMENDATION_TYPE_FEATURED);
+        }
+
+        $this->request->setTemplate($templateId);
     }
 }

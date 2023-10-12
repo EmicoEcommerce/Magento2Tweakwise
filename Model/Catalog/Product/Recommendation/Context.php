@@ -16,6 +16,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response\RecommendationsResponse;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\Config as CatalogConfig;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Magento\Catalog\Model\Category\DataProvider;
 
 class Context
 {
@@ -66,6 +67,11 @@ class Context
     protected $config;
 
     /**
+     * @var DataProvider
+     */
+    protected $categoryDataprovider;
+
+    /**
      * Context constructor.
      * @param Client $client
      * @param RequestFactory $requestFactory
@@ -80,7 +86,8 @@ class Context
         CollectionFactory $collectionFactory,
         CatalogConfig $catalogConfig,
         Visibility $visibility,
-        Config $config
+        Config $config,
+        DataProvider $categoryDataprovider,
     ) {
         $this->client = $client;
         $this->requestFactory = $requestFactory;
@@ -88,6 +95,7 @@ class Context
         $this->catalogConfig = $catalogConfig;
         $this->visibility = $visibility;
         $this->config = $config;
+        $this->categoryDataprovider = $categoryDataprovider;
     }
 
     /**
@@ -170,7 +178,7 @@ class Context
      */
     public function configureRequest()
     {
-        $category = $this->_coreRegistry->registry('current_category');
+        $category = $this->categoryDataprovider->getCurrentCategory();
         if ($category instanceof Category) {
             $templateId = $this->templateFinder->forCategory($category, Config::RECOMMENDATION_TYPE_FEATURED);
             if (!$templateId) {

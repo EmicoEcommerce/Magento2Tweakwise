@@ -82,4 +82,13 @@ class RecommendationsResponse extends Response
 
         return $ids;
     }
+
+    public function getItemsData() {
+        $results = [];
+        foreach ($this->getItems() as $item) {
+            $results[] = $item->data;
+        }
+
+        return $results;
+    }
 }

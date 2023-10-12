@@ -38,18 +38,20 @@ class FeaturedRecommendation extends Action
     public function execute()
     {
         $json = $this->resultFactory->create('json');
+
+        $this->recommendationsContext->getRequest();
         $this->recommendationsContext->configureRequest();
 
         $result = [];
         try {
             $response = $this->recommendationsContext->getResponse();
+            $result = $response->getItemsData();
+            $json->setData(['data' => $result]);
+            return $json;
         } catch (ApiException $e) {
             if (!$e->getCode() == 404) {
                 throw $e;
             }
         }
-
-        $json->setData(['data' => $result]);
-        return $json;
     }
 }

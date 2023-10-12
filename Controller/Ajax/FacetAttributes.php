@@ -46,7 +46,8 @@ class FacetAttributes extends Action
 
         $categoryId = $this->getRequest()->getParam('category');
         $facetKey = $this->getRequest()->getParam('facetkey');
-        $facetRequest->addCategoryFilter($categoryId);
+        //remove category id for now. It can give the wrong store id for the admin which results in the wrong tncid
+        //$facetRequest->addCategoryFilter($categoryId);
         $facetRequest->addFacetKey($facetKey);
 
         $result = [];

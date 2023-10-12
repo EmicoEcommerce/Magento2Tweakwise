@@ -45,7 +45,8 @@ class Facets extends Action
         $facetRequest = $this->requestFactory->create();
 
         $categoryId = $this->getRequest()->getParam('category');
-        $facetRequest->addCategoryFilter($categoryId);
+        //remove category id for now. It can give the wrong store id for the admin which results in the wrong tncid
+        //$facetRequest->addCategoryFilter($categoryId);
 
         $response = $this->client->request($facetRequest);
         $result = [];

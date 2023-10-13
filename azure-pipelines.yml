@@ -52,5 +52,5 @@ steps:
 
 - script: |
     cd ./magento2
-    vendor/bin/phpunit --configuration ./dev/tests/integration/phpunit.xml.dist
+    vendor/bin/phpunit --configuration ./dev/tests/integration/phpunit.xml.dist vendor/tweakwise/magento2-tweakwise-export
   displayName: 'Run integration tests'

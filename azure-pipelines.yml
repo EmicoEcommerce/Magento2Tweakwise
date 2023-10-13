@@ -15,6 +15,10 @@ strategy:
       phpVersion: 8.1
       magentoVersion: community-edition=2.4.6
 
+variables:
+  COMPOSER_CACHE_DIR: $(Pipeline.Workspace)/build/cache/composer
+  COMPOSER_NO_INTERACTION: 1
+
 steps:
 - script: |
     sudo update-alternatives --set php /usr/bin/php$(phpVersion)
@@ -31,8 +35,22 @@ steps:
     mysql --version
   displayName: 'MySQL Version'
 
+- task: Cache@2
+  inputs:
+    key: 'composer | "$(Agent.OS)" | composer.lock'
+    restoreKeys: |
+      composer | "$(Agent.OS)"
+      composer
+    path: $(COMPOSER_CACHE_DIR)
+  displayName: Cache composer
+
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
   displayName: 'Set git token'
 
 - script: composer create-project --repository-url=https://repo.magento.com/ magento/project-$(magentoVersion) ./magento2
   displayName: 'Create new magento install'
+
+- script: |
+    cd ./magento2
+    php bin/magento setup:install --base-url=http://localhost --db-host=localhost --db-name=testing --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --timezone=Europe/Amsterdam --use-rewrites=1
+    displayName: 'Configure magento'

@@ -32,8 +32,9 @@ steps:
   displayName: 'MySQL Version'
 
 - script: |
-    sudo yum install opensearch
-  displayName: 'Opensearch'
+    docker pull docker.elastic.co/elasticsearch/elasticsearch:7.17.14
+    docker run -p 127.0.0.1:9200:9200 -p 127.0.0.1:9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.17.14
+  displayName: 'Elasticsearch'
 
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
   displayName: 'Set git token'
@@ -43,7 +44,7 @@ steps:
 
 - script: |
     cd ./magento2
-    php bin/magento setup:install --base-url=http://localhost --db-host=localhost --db-name=testing --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --timezone=Europe/Amsterdam --use-rewrites=1
+    php bin/magento setup:install --base-url=http://localhost --db-host=localhost --db-name=testing --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --search-engine=elasticsearch7 --timezone=Europe/Amsterdam --use-rewrites=1
     composer require tweakwise/magento2-tweakwise:dev-$(Build.SourceBranchName)
     php bin/magento setup:upgrade
   displayName: 'Configure magento'

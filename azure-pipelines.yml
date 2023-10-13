@@ -32,8 +32,8 @@ steps:
   displayName: 'MySQL Version'
 
 - script: |
-    sudo apt-get update && sudo apt-get install elasticsearch
-  displayName: 'Elasticsearch'
+    sudo yum install opensearch
+  displayName: 'Opensearch'
 
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
   displayName: 'Set git token'

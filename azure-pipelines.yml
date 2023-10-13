@@ -15,10 +15,6 @@ strategy:
       phpVersion: 8.1
       magentoVersion: community-edition=2.4.6
 
-variables:
-  COMPOSER_CACHE_DIR: $(Pipeline.Workspace)/build/cache/composer
-  COMPOSER_NO_INTERACTION: 1
-
 steps:
 - script: |
     sudo update-alternatives --set php /usr/bin/php$(phpVersion)
@@ -44,5 +40,5 @@ steps:
 - script: |
     cd ./magento2
     php bin/magento setup:install --base-url=http://localhost --db-host=localhost --db-name=testing --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --timezone=Europe/Amsterdam --use-rewrites=1
-    composer install tweakwise/magento2-tweakwise:dev-$(Build.SourceBranch)
+    composer require tweakwise/magento2-tweakwise:dev-$(Build.SourceBranchName)
   displayName: 'Configure magento'

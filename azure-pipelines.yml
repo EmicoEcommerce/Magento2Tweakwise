@@ -11,9 +11,9 @@ pool:
 
 strategy:
   matrix:
-    'php 8.1 communtity':
+    'php 8.1 communtity 2.4.6':
       phpVersion: 8.1
-      magentoVersion: community-edition
+      magentoVersion: community-edition=2.4.6
 
 steps:
 - script: |
@@ -31,6 +31,8 @@ steps:
     mysql --version
   displayName: 'MySQL Version'
 
-- script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE);
+- script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
+  displayName: 'Set git token'
 
-- script: composer create-project --repository-url=https://repo.magento.com/ magento/project-$(magentoVersion) ./
+- script: composer create-project --repository-url=https://repo.magento.com/ magento/project-$(magentoVersion) ./magento2
+  displayName: 'Create new magento install'

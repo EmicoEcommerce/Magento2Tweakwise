@@ -47,10 +47,10 @@ steps:
     php bin/magento setup:install --base-url=http://localhost --db-host=localhost --db-name=testing --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --search-engine=elasticsearch7 --timezone=Europe/Amsterdam --use-rewrites=1
     composer require tweakwise/magento2-tweakwise:dev-$(Build.SourceBranchName)
     php bin/magento deploy:mode:set developer
-    php bin/magento sampledata:deploy
     php bin/magento setup:upgrade
   displayName: 'Configure magento'
 
 - script: |
+    cd ./magento2
     vendor/bin/phpunit --configuration ./dev/tests/integration/phpunit.xml.dist
   displayName: 'Run integration tests'

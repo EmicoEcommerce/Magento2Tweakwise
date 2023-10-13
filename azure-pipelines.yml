@@ -14,9 +14,6 @@ strategy:
     'php 8.1 communtity':
       phpVersion: 8.1
       magentoVersion: community-edition
-    'php 8.2 community':
-      phpVersion: 8.2
-      magentoVersion: community-edition
 
 steps:
 - script: |
@@ -36,4 +33,4 @@ steps:
 
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE);
 
-- script: composer create-project --repository-url=https://repo.magento.com/ magento/project-$(magentoVersion) /var/www/html/testing-magento2
+- script: composer create-project --repository-url=https://repo.magento.com/ magento/project-$(magentoVersion) ./

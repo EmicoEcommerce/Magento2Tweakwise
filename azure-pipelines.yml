@@ -35,15 +35,6 @@ steps:
     mysql --version
   displayName: 'MySQL Version'
 
-- task: Cache@2
-  inputs:
-    key: 'composer | "$(Agent.OS)" | composer.lock'
-    restoreKeys: |
-      composer | "$(Agent.OS)"
-      composer
-    path: $(COMPOSER_CACHE_DIR)
-  displayName: Cache composer
-
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
   displayName: 'Set git token'
 

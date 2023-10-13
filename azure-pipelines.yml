@@ -53,3 +53,4 @@ steps:
 
 - script: |
     vendor/bin/phpunit --configuration ./dev/tests/integration/phpunit.xml.dist
+  displayName: 'Run integration tests'

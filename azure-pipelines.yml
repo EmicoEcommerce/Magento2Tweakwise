@@ -28,6 +28,7 @@ steps:
     mysql --version
   displayName: 'MySQL Version'
 
+- script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE);
 
 - script: composer install --no-interaction --prefer-dist
   displayName: 'composer install'

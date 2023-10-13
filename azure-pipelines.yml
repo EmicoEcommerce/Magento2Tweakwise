@@ -44,4 +44,5 @@ steps:
 - script: |
     cd ./magento2
     php bin/magento setup:install --base-url=http://localhost --db-host=localhost --db-name=testing --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --timezone=Europe/Amsterdam --use-rewrites=1
-    displayName: 'Configure magento'
+    composer install tweakwise/magento2-tweakwise:dev-$(Build.SourceBranch)
+  displayName: 'Configure magento'

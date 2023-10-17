@@ -14,7 +14,10 @@
     <!-- Test suites definition -->
     <testsuites>
         <testsuite name="Tweakwsie tests">
-            <directory>vendor/tweakwise/magento2-tweakwise</directory>
+            <directory>./</directory>
+        </testsuite>
+        <testsuite name="Tweakwsie export tests">
+            <directory>../../magento2-tweakwise-export</directory>
         </testsuite>
     </testsuites>
     <!-- Code coverage filters -->

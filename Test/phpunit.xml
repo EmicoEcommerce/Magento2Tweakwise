@@ -10,10 +10,7 @@
          colors="true"
          columns="max"
          beStrictAboutTestsThatDoNotTestAnything="false"
-         bootstrap="../../../../dev/tests/integration/framework/bootstrap.php"
-         stderr="true"
-         testSuiteLoaderClass="Magento\TestFramework\SuiteLoader"
-         testSuiteLoaderFile="framework/Magento/TestFramework/SuiteLoader.php">
+         bootstrap="../../../../dev/tests/unit/framework/bootstrap.php">
     <!-- Test suites definition -->
     <testsuites>
         <testsuite name="Tweakwsie tests">

@@ -9,7 +9,7 @@ return [
     [
         'command' => 'setup:config:set',
         'config' => [
-            '--queue-default-connection' => 'db',
+
         ]
     ],
     [

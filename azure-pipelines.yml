@@ -51,7 +51,7 @@ steps:
 
 - script: |
     cd ./magento2
-    cp -vf vendor/tweakwise/magento2-tweakwise/Test/setup/install-config-mysql.php dev/tests/integration/etc/
+    cp vendor/tweakwise/magento2-tweakwise/Test/setup/install-config-mysql.php dev/tests/integration/etc/
     cd dev/tests/integration
     ../../../vendor/bin/phpunit ../../../vendor/tweakwise/magento2-tweakwise-export
   displayName: 'Run export tests'

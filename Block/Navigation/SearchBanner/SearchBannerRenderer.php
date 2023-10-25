@@ -49,10 +49,13 @@ class SearchBannerRenderer extends Template
     {
         $navigationContext = $this->getData('tweakwise_navigation_context')->getNavigationContext()->getContext();
         $result = [];
+        $banners = [];
 
         if($navigationContext->showSearchBanners()) {
             $response = $navigationContext->getResponse();
-            $banners = $response->getValue('searchbanners');
+            if (!empty($response)) {
+                $banners = $response->getValue('searchbanners');
+            }
 
             if (isset($banners['searchbanner'])) {
                 $banners = $banners['searchbanner'];

@@ -196,6 +196,30 @@ class DefaultRenderer extends Template
     /**
      * @return bool
      */
+    public function isSearchable()
+    {
+        return ($this->getFacetSettings()->getBoolValue('issearchable') && $this->hasHiddenItems() );
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchPlaceholder()
+    {
+        return empty($this->getFacetSettings()->getValue('searchplaceholder')) ? '' : $this->getFacetSettings()->getValue('searchplaceholder');
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchNoResultsText()
+    {
+        return empty($this->getFacetSettings()->getValue('searchnoresultstext')) ? '' : $this->getFacetSettings()->getValue('searchnoresultstext');
+    }
+
+    /**
+     * @return bool
+     */
     public function shouldDisplayProductCountOnLayer()
     {
         return $this->getFacetSettings()->getIsNumberOfResultVisible();

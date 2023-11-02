@@ -17,6 +17,10 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 
 ?>
 <div data-mage-init='<?=$block->getJsSortConfig()?>'>
+    <?php if ($block->isSearchable()): ?>
+        <input type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $block->getSearchPlaceholder(); ?>" >
+        <div style="display: none" class="tw_search_no_results empty"><?= $block->getSearchNoResultsText(); ?></div>
+    <?php endif; ?>
     <ol class="items">
         <?php foreach ($block->getItems() as $index => $item): ?>
             <li class="item<?=$block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
@@ -63,3 +67,47 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
         <a class="less-items default-hidden"><?=__($block->getLessItemText())?></a>
     <?php endif; ?>
 </div>
+
+<script>
+    require(["jquery"], function ($) {
+        $("input[name='tw_filtersearch']").on("keyup", function() {
+
+            var value = $(this).val().toLowerCase().trim();
+            var items = $(this).parent('div').find('ol');
+            var noItems = $(this).parent('div').find('.tw_search_no_results');
+            var defaultVisibleItems = <?= $block->getMaxItemsShown(); ?>;
+
+
+            items.find('li').show().filter(function () {
+                return $(this).find('input').val().toLowerCase().trim().indexOf(value) == -1;
+            }).hide();
+
+            //hide show more/less button
+            if (value.length == 0) {
+                $(this).parent('div').find('.more-items').show();
+            } else {
+                $(this).parent('div').find('.more-items').hide();
+                $(this).parent('div').find('.less-items').hide();
+            }
+
+            if(defaultVisibleItems < items.find('li:visible').length) {
+                //more items visible then max visible items set on filter
+                var counter = -1;
+                items.find('li:visible').show().filter(function () {
+                    if ((counter) > defaultVisibleItems) {
+                        return true;
+                    }
+                    counter++;
+                    return false;
+                }).hide();
+            }
+
+            //no items found
+            if (items.find('li:visible').length < 1) {
+                noItems.show();
+            } else {
+                noItems.hide();
+            }
+        });
+    });
+</script>

@@ -198,7 +198,7 @@ class DefaultRenderer extends Template
      */
     public function isSearchable()
     {
-        return ($this->getFacetSettings()->getBoolValue('issearchable') && $this->hasHiddenItems() );
+        return ($this->getFacetSettings()->isSearchable() && $this->hasHiddenItems());
     }
 
     /**
@@ -206,7 +206,7 @@ class DefaultRenderer extends Template
      */
     public function getSearchPlaceholder()
     {
-        return empty($this->getFacetSettings()->getValue('searchplaceholder')) ? '' : $this->getFacetSettings()->getValue('searchplaceholder');
+        return $this->getFacetSettings()->getSearchPlaceholder();
     }
 
     /**
@@ -214,7 +214,7 @@ class DefaultRenderer extends Template
      */
     public function getSearchNoResultsText()
     {
-        return empty($this->getFacetSettings()->getValue('searchnoresultstext')) ? '' : $this->getFacetSettings()->getValue('searchnoresultstext');
+        return $this->getFacetSettings()->getSearchNoResultsText();
     }
 
     /**

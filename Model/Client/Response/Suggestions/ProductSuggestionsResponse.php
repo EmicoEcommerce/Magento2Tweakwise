@@ -57,6 +57,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
             $result[] = [
                 'id' => $this->helper->getStoreId($item->getId()),
                 'tweakwise_price' => (float) $item->getPrice(),
+                'tweakwise_final_price' => (float) $item->getFinalPrice(),
             ];
         }
         return $result;

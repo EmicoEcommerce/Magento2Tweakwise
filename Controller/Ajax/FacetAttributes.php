@@ -46,8 +46,16 @@ class FacetAttributes extends Action
 
         $categoryId = $this->getRequest()->getParam('category');
         $facetKey = $this->getRequest()->getParam('facetkey');
+        $filtertemplate = (int)$this->getRequest()->getParam('filtertemplate');
         $allStores = $facetRequest->getStores();
-        $facetRequest->addFacetKey($facetKey);
+
+        if (!empty($facetKey)) {
+            $facetRequest->addFacetKey($facetKey);
+        }
+
+        if (!empty($filtertemplate)) {
+            $facetRequest->addParameter('tn_ft', $filtertemplate);
+        }
 
         $result = [];
         foreach ($allStores as $store) {

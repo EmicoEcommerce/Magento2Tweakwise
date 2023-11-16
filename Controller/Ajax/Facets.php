@@ -46,7 +46,12 @@ class Facets extends Action
         $facetRequest = $this->requestFactory->create();
 
         $categoryId = $this->getRequest()->getParam('category');
+        $filtertemplate = (int) $this->getRequest()->getParam('filtertemplate');
         $allStores = $facetRequest->getStores();
+
+        if (!empty($filtertemplate)) {
+            $facetRequest->addParameter('tn_ft', $filtertemplate);
+        }
 
         foreach ($allStores as $store) {
             $facetRequest->setStore($store->getId());

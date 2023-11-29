@@ -27,17 +27,6 @@ class FacetAttributeRequest extends Request
     protected $hiddenParameters = [];
 
     /**
-     * Request constructor.
-     *
-     * @param Helper $helper
-     * @param StoreManager $storeManager
-     */
-    public function __construct(Helper $helper, StoreManager $storeManager)
-    {
-        parent::__construct($helper, $storeManager);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getResponseType()

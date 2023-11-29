@@ -16,6 +16,7 @@ use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\Serialize\Serializer\Json;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class DefaultRenderer extends Template
 {
@@ -46,6 +47,8 @@ class DefaultRenderer extends Template
      */
     protected $navigationConfig;
 
+    protected $helper;
+
     /**
      * Constructor
      *
@@ -54,6 +57,7 @@ class DefaultRenderer extends Template
      * @param NavigationConfig $navigationConfig
      * @param FilterHelper $filterHelper
      * @param Json $jsonSerializer
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
@@ -62,6 +66,7 @@ class DefaultRenderer extends Template
         NavigationConfig $navigationConfig,
         FilterHelper $filterHelper,
         Json $jsonSerializer,
+        Helper $helper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -69,6 +74,7 @@ class DefaultRenderer extends Template
         $this->filterHelper = $filterHelper;
         $this->jsonSerializer = $jsonSerializer;
         $this->navigationConfig = $navigationConfig;
+        $this->helper = $helper;
     }
 
     /**
@@ -107,13 +113,26 @@ class DefaultRenderer extends Template
      */
     public function getItems()
     {
+        $currentCategory = $this->filter->getLayer()->getCurrentCategory();
+        $storeId = $this->filter->getStoreId();
+        $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
         $items = $this->filter->getItems();
+        $type = $this->filter->getFacet()->getFacetSettings()->getSelectionType();
+
         $maxItems = $this->getMaxItemsShown();
 
         /** @var Item $item */
         foreach ($items as $index => $item) {
             $defaultShow = $index >= $maxItems;
             $item->setData('_default_hidden', $defaultShow);
+
+            if ($this->config->isCategoryViewDefault() && $type == 'link') {
+                if ($item->getAttribute()->getValue('attributeid') == $tweakwiseCategoryId) {
+                    if (!empty($item->getChildren())) {
+                        $items = $item->getChildren();
+                    }
+                }
+            }
         }
 
         return $items;
@@ -231,5 +250,13 @@ class DefaultRenderer extends Template
     public function getUrlKey()
     {
         return $this->getFacetSettings()->getUrlKey();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDefaultCategoryView()
+    {
+        return $this->config->isCategoryViewDefault();
     }
 }

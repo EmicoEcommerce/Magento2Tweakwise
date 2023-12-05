@@ -46,21 +46,45 @@ class FacetAttributes extends Action
 
         $categoryId = $this->getRequest()->getParam('category');
         $facetKey = $this->getRequest()->getParam('facetkey');
-        //remove category id for now. It can give the wrong store id for the admin which results in the wrong tncid
-        //$facetRequest->addCategoryFilter($categoryId);
-        $facetRequest->addFacetKey($facetKey);
+        $filtertemplate = (int)$this->getRequest()->getParam('filtertemplate');
+        $allStores = $facetRequest->getStores();
+
+        if (!empty($facetKey)) {
+            $facetRequest->addFacetKey($facetKey);
+        }
+
+        if (!empty($filtertemplate)) {
+            $facetRequest->addParameter('tn_ft', $filtertemplate);
+        }
 
         $result = [];
-        try {
-            $response = $this->client->request($facetRequest);
-            foreach ($response->getAttributes() as $attribute) {
-                $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
+        foreach ($allStores as $store) {
+            $facetRequest->setStore($store->getId());
+            if (!empty($categoryId)) {
+                $facetRequest->addCategoryFilter($categoryId);
             }
-        } catch (ApiException $e) {
-            if (!$e->getCode() == 404) {
-                throw $e;
+            try {
+                $response = $this->client->request($facetRequest);
+            } catch (ApiException $e) {
+                if (!$e->getCode() == 404) {
+                    throw $e;
+                }
+                continue;
+            }
+
+            if (!empty($response->getAttributes())) {
+                foreach ($response->getAttributes() as $attribute) {
+                    $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
+                }
             }
         }
+
+        $result[] = ['value' => 'tw_other', 'label' => 'Other (text field)'];
+
+        $result = array_unique($result, SORT_REGULAR);
+
+        //prevent non sequential array keys. That causes json encode to act diffrently and creates objects instead of arrays
+        $result = array_values($result);
 
         $json->setData(['data' => $result]);
         return $json;

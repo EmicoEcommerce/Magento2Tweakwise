@@ -14,9 +14,9 @@ strategy:
     'php 8.1 communtity 2.4.6':
       phpVersion: 8.1
       magentoVersion: community-edition=2.4.6
-    'php 8.2 communtity 2.4.6':
-      phpVersion: 8.2
-      magentoVersion: community-edition=2.4.6
+    #'php 8.2 communtity 2.4.6':
+    #  phpVersion: 8.2
+    #  magentoVersion: community-edition=2.4.6
 
 steps:
 - script: |
@@ -46,10 +46,11 @@ steps:
   displayName: 'Create new magento install'
 
 - script: |
+    ls
     cd ./magento2
     php bin/magento setup:install --no-interaction --base-url=http://localhost --db-host=localhost --db-name=magento_integration_tests --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --search-engine=elasticsearch7 --timezone=Europe/Amsterdam --use-rewrites=1
     composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
-    composer require tweakwise/magento2-tweakwise:dev-$(Build.SourceBranchName)
+    composer require tweakwise/magento2-tweakwise:dev-master
     composer require tweakwise/magento2-tweakwise-export:dev-master
     php bin/magento module:enable Tweakwise_Magento2TweakwiseExport
     # Install package dev dependencies. Unfortunately I do not have a generic way to do this yet

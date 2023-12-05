@@ -48,8 +48,9 @@ steps:
 - script: |
     cd ./magento2
     php bin/magento setup:install --no-interaction --base-url=http://localhost --db-host=localhost --db-name=magento_integration_tests --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --search-engine=elasticsearch7 --timezone=Europe/Amsterdam --use-rewrites=1
+    composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
     composer require tweakwise/magento2-tweakwise:dev-$(Build.SourceBranchName)
-    composer require tweakwise/magento2-tweakwise-export:dev-bugfix-fix-tests
+    composer require tweakwise/magento2-tweakwise-export:dev-master
     php bin/magento module:enable Tweakwise_Magento2TweakwiseExport
     # Install package dev dependencies. Unfortunately I do not have a generic way to do this yet
     composer require fzaninotto/faker --no-interaction

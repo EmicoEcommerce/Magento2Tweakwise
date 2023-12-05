@@ -1,0 +1,71 @@
+# PHP
+# Test and package your PHP project.
+# Add steps that run tests, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/php
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+strategy:
+  matrix:
+    'php 8.1 communtity 2.4.6':
+      phpVersion: 8.1
+      magentoVersion: community-edition=2.4.6
+    'php 8.2 communtity 2.4.6':
+      phpVersion: 8.2
+      magentoVersion: community-edition=2.4.6
+
+steps:
+- script: |
+    sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+    sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+    sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+    sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+    sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+    php -version
+  displayName: 'Use PHP version $(phpVersion)'
+
+- script: |
+    sudo systemctl start mysql.service
+    sudo mysql -u root -proot -e 'create database magento_integration_tests;'
+    mysql --version
+  displayName: 'MySQL Version'
+
+- script: |
+    docker pull docker.elastic.co/elasticsearch/elasticsearch:7.17.14
+    docker run -p 127.0.0.1:9200:9200 -p 127.0.0.1:9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.17.14 &
+  displayName: 'Elasticsearch'
+
+- script: cp -r $(Build.SourcesDirectory) ../magento2-tweakwise
+  displayName: 'Copy checkout'
+
+- script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
+  displayName: 'Set git token'
+
+- script: composer create-project --repository-url=https://repo.magento.com/ magento/project-$(magentoVersion) ./magento2
+  displayName: 'Create new magento install'
+
+- script: |
+    cd ./magento2
+    php bin/magento setup:install --no-interaction --base-url=http://localhost --db-host=localhost --db-name=magento_integration_tests --db-user=$(DB_USER) --db-password=$(DB_PASSWORD) --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=EUR --search-engine=elasticsearch7 --timezone=Europe/Amsterdam --use-rewrites=1
+    composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
+    composer require tweakwise/magento2-tweakwise
+    composer require tweakwise/magento2-tweakwise-export:dev-master
+    #overwrite tweakwise module with checkout version
+    rm -Rf ./vendor/tweakwise/magento2-tweakwise
+    cp -r $(Build.SourcesDirectory)/../magento2-tweakwise ./vendor/tweakwise/magento2-tweakwise
+    php bin/magento module:enable Tweakwise_Magento2TweakwiseExport
+    # Install package dev dependencies. Unfortunately I do not have a generic way to do this yet
+    composer require fzaninotto/faker --no-interaction
+    php bin/magento setup:upgrade --no-interaction
+  displayName: 'Configure magento'
+
+- script: |
+    cd ./magento2
+    cp vendor/tweakwise/magento2-tweakwise/Test/setup/install-config-mysql.php dev/tests/integration/etc/
+    cd dev/tests/integration
+    ../../../vendor/bin/phpunit ../../../vendor/tweakwise/magento2-tweakwise-export
+  displayName: 'Run export tests'

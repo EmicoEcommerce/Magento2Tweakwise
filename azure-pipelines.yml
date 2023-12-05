@@ -39,7 +39,7 @@ steps:
     docker run -p 127.0.0.1:9200:9200 -p 127.0.0.1:9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.17.14 &
   displayName: 'Elasticsearch'
 
-- script: cp -r $(Build.SourcesDirectory) ./magento2-tweakwise
+- script: cp -r $(Build.SourcesDirectory) ../magento2-tweakwise
   displayName: 'Copy checkout to be used later'
 
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
@@ -56,7 +56,7 @@ steps:
     composer require tweakwise/magento2-tweakwise-export:dev-master
     #overwrite tweakwise module with checkout version
     rm -Rf ./vendor/tweakwise/magento2-tweakwise
-    cp $(Build.SourcesDirectory)/magento2-tweakwise ./vendor/tweakwise/magento2-tweakwise
+    cp $(Build.SourcesDirectory)/../magento2-tweakwise ./vendor/tweakwise/magento2-tweakwise
     php bin/magento module:enable Tweakwise_Magento2TweakwiseExport
     # Install package dev dependencies. Unfortunately I do not have a generic way to do this yet
     composer require fzaninotto/faker --no-interaction

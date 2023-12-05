@@ -79,6 +79,8 @@ class FacetAttributes extends Action
             }
         }
 
+        $result[] = ['value' => 'tw_other', 'label' => 'Other (text field)'];
+
         $result = array_unique($result, SORT_REGULAR);
 
         //prevent non sequential array keys. That causes json encode to act diffrently and creates objects instead of arrays

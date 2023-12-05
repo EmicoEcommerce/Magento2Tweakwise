@@ -14,9 +14,9 @@ strategy:
     'php 8.1 communtity 2.4.6':
       phpVersion: 8.1
       magentoVersion: community-edition=2.4.6
-    #'php 8.2 communtity 2.4.6':
-    #  phpVersion: 8.2
-    #  magentoVersion: community-edition=2.4.6
+    'php 8.2 communtity 2.4.6':
+      phpVersion: 8.2
+      magentoVersion: community-edition=2.4.6
 
 steps:
 - script: |
@@ -40,7 +40,7 @@ steps:
   displayName: 'Elasticsearch'
 
 - script: cp -r $(Build.SourcesDirectory) ../magento2-tweakwise
-  displayName: 'Copy checkout to be used later'
+  displayName: 'Copy checkout'
 
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)
   displayName: 'Set git token'

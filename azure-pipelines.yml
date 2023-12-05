@@ -39,7 +39,7 @@ steps:
     docker run -p 127.0.0.1:9200:9200 -p 127.0.0.1:9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.17.14 &
   displayName: 'Elasticsearch'
 
-- script: cp $(Build.SourcesDirectory) ./magento2-tweakwise
+- script: cp -r $(Build.SourcesDirectory) ./magento2-tweakwise
   displayName: 'Copy checkout to be used later'
 
 - script: composer config $1 --auth http-basic.repo.magento.com $(MAGENTO_TOKEN_PUBLIC) $(MAGENTO_TOKEN_PRIVATE)

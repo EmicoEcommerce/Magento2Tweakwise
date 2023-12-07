@@ -140,11 +140,11 @@ class Plugin extends AbstractRecommendationPlugin
      */
     private function getShoppingcartCrosssellItems(array $cartProductIds, array $result)
     {
-        $itmes = [];
+        $items = [];
 
         if ($cartProductIds) {
             if ($this->lastAddedProduct) {
-                $itmes = $this->getShoppingcartCrosssellTweakwiseItems($this->lastAddedProduct, $result, $cartProductIds);
+                $items = $this->getShoppingcartCrosssellTweakwiseItems($this->lastAddedProduct, $result, $cartProductIds);
             }
 
             if (empty($items)) {

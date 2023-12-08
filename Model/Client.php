@@ -293,7 +293,12 @@ class Client
             return $this->doRequest($request, $async);
         } catch (ApiException $e) {
             $this->config->setTweakwiseExceptionThrown(true);
-            $this->log->throwException($e);
+            //don't log 401 messages.
+            if ($e->getCode() !== 401) {
+                $this->log->throwException($e);
+            }else {
+                throw ($e);
+            }
         } finally {
             Profiler::stop('tweakwise::request::' . $request->getPath());
         }

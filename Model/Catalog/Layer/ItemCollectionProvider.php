@@ -76,6 +76,9 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
                 return $this->originalProvider->getCollection($category);
             }
         }
+        if (!$this->config->isSearchEnabled() && ($this->navigationContext->getRequest() instanceof ProductSearchRequest)) {
+            return $this->originalProvider->getCollection($category);
+        }
 
         //no api response
         if($this->config->getTweakwiseExceptionTrown()) {

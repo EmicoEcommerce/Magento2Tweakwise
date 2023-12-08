@@ -380,7 +380,8 @@ class Config
      */
     public function isSearchBannersActive(Store $store = null)
     {
-        return (bool) $this->getStoreConfig('tweakwise/search/searchbanner', $store);
+        return (bool) $this->getStoreConfig('tweakwise/search/searchbanner', $store)
+            && $this->isSearchEnabled();
     }
 
     /**

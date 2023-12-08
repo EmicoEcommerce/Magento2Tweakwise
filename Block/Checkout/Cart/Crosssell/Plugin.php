@@ -87,16 +87,18 @@ class Plugin extends AbstractRecommendationPlugin
 
     public function aroundGetLastAddedProduct(Crosssell $crossell, Closure $proceed)
     {
-        $product = null;
-        $productId = $this->_getLastAddedProductId();
-        if ($productId) {
-            try {
-                $product = $this->productRepository->getById($productId);
-            } catch (NoSuchEntityException $e) {
-                $product = null;
+        if ($this->lastAddedProduct === null) {
+            $product = null;
+            $productId = $this->_getLastAddedProductId();
+            if ($productId) {
+                try {
+                    $product = $this->productRepository->getById($productId);
+                } catch (NoSuchEntityException $e) {
+                    $product = null;
+                }
             }
+            $this->lastAddedProduct = $product;
         }
-        $this->lastAddedProduct = $product;
 
         return $this->lastAddedProduct;
     }
@@ -108,7 +110,7 @@ class Plugin extends AbstractRecommendationPlugin
      */
     protected function _getLastAddedProductId()
     {
-        return $this->checkoutSession->getLastAddedProductId(false);
+        return $this->checkoutSession->getLastAddedProductId(true);
     }
 
     /**

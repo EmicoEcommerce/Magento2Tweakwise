@@ -6,6 +6,10 @@
 trigger:
 - master
 
+variables:
+  MAGENTO_TOKEN_PUBLIC: $(MAGENTO_TOKEN_PUBLIC)
+  MAGENTO_TOKEN_PRIVATE: $(MAGENTO_TOKEN_PRIVATE)
+
 pool:
   vmImage: ubuntu-latest
 

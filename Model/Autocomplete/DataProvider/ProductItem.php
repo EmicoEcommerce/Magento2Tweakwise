@@ -82,11 +82,17 @@ class ProductItem implements ItemInterface
         $image = $this->getImage();
 
         $price = (float) $priceInfo->getPrice('regular_price')->getValue();
+        $finalPrice = (float) $priceInfo->getPrice('final_price')->getValue();
 
         if ($productType == Grouped::TYPE_CODE || $productType == Type::TYPE_BUNDLE) {
             $tweakwisePrice = (float)$product->getData('tweakwise_price');
+            $tweakwiseFinalPrice = (float)$product->getData('tweakwise_final_price');
             if ($price < $tweakwisePrice) {
                 $price = $tweakwisePrice;
+            }
+
+            if (!empty($tweakwiseFinalPrice)) {
+                $finalPrice = $tweakwiseFinalPrice;
             }
         }
 
@@ -95,7 +101,7 @@ class ProductItem implements ItemInterface
             'url' => $product->getProductUrl(),
             'image' => $image->getImageUrl(),
             'price' => $price,
-            'final_price' => (float) $priceInfo->getPrice('final_price')->getValue(),
+            'final_price' => $finalPrice,
             'type' => 'product',
             'row_class' => 'qs-option-product',
         ];

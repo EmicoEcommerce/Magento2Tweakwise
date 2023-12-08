@@ -236,6 +236,23 @@ class Request
     }
 
     /**
+     * @param $storeId
+     * @return void
+     */
+    public function setStore($storeId)
+    {
+        $this->storeManager->setCurrentStore((int) $storeId);
+    }
+
+    /**
+     * @return array|StoreInterface[]
+     */
+    public function getStores()
+    {
+        return $this->storeManager->getStores();
+    }
+
+    /**
      * @return StoreInterface|null
      */
     protected function getStore()

@@ -67,6 +67,29 @@ class ItemType extends Type
     }
 
     /**
+     * Only works if the final_price is added on the tweakwise side. Contact tweakwise support if you want to add the final_price to the TW response
+     * @return int
+     */
+    public function getFinalPrice()
+    {
+        $attributes = $this->getDataValue('attributes');
+        if (!empty($attributes['attribute'])) {
+            foreach ($attributes['attribute'] as $attribute) {
+                //only one result
+                if (!is_array($attribute)) {
+                    $attribute = $attributes['attribute'];
+                }
+
+                if (isset($attribute['name']) && $attribute['name'] === 'final_price' && isset($attribute['values']['value'])) {
+                    return (float)($attribute['values']['value']);
+                }
+            }
+        }
+
+        return (float) 0;
+    }
+
+    /**
      * @return string
      */
     public function getBrand()

@@ -19,10 +19,6 @@ class ToolbarInputProvider implements FilterFormInputProviderInterface
         Toolbar::PAGE_PARM_NAME
     ];
 
-    public const TOOLBAR_INPUTS_NO_ENCODING = [
-        Toolbar::ORDER_PARAM_NAME
-    ];
-
     /**
      * @var MagentoHttpRequest
      */
@@ -45,10 +41,6 @@ class ToolbarInputProvider implements FilterFormInputProviderInterface
         $input = [];
         foreach (self::TOOLBAR_INPUTS as $toolbarInput) {
             if ($toolbarInputValue = $this->request->getParam($toolbarInput)) {
-                if (in_array($toolbarInput, self::TOOLBAR_INPUTS_NO_ENCODING)) {
-                    $input[$toolbarInput] = $toolbarInputValue;
-                    continue;
-                }
                 $input[$toolbarInput] = filter_var($toolbarInputValue, FILTER_SANITIZE_ENCODED);
             }
         }

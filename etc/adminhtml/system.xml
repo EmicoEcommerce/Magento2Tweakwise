@@ -90,8 +90,8 @@
                     </depends>
                 </field>
                 <field id="default_category_view" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Default Category View</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <label>Category View</label>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\CategoryView</source_model>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="default_link_renderer">0</field>

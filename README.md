@@ -65,8 +65,8 @@ Below is a rundown of all configuration options
     If Language is set to English then in the example above tweakwise might suggest 'Beds'.
 4) Searchbanners enabled: Show searchbanners in the search results. The searchbanners need to be configured in tweakwise.
 
-#### Personal Merchandising
-1) Enabled: Use personal Merchandising (Yes/No) This is only available if you use ajax filtering.
+#### Merchandising Builder
+1) Enabled: Use Merchandising Builder (Yes/No) This is only available if you use ajax filtering.
 2) Cookie name: The cookie which holds the tweakwise profile id, this cookie is (usually) set with a tracking script. The value of this cookie will be added to the tweakwise request, the response will contain a personalized sort order for that particular customer.
 
 Note that enabling these settings has consequences for performance. Using this feature means that all category pages have personalized content. As such, it is no longer possible cache navigation responses where this profile cookie name has been used.

@@ -358,8 +358,6 @@ class PathSlugStrategy implements
         if (empty($currentFilterPath)) {
             $urlParts = parse_url($currentUrl);
 
-            $test = strpos($urlParts['path'], $newFilterPath);
-
             if (strpos($urlParts['path'], $newFilterPath) === false) {
                 $url = $urlParts['path'] . $newFilterPath;
             } else {

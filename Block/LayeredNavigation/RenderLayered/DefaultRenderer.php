@@ -113,29 +113,53 @@ class DefaultRenderer extends Template
      */
     public function getItems()
     {
-        $currentCategory = $this->filter->getLayer()->getCurrentCategory();
-        $storeId = $this->filter->getStoreId();
-        $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
         $items = $this->filter->getItems();
         $type = $this->filter->getFacet()->getFacetSettings()->getSelectionType();
-
         $maxItems = $this->getMaxItemsShown();
+
+        if ($this->config->isCategoryViewDefault() && $type == 'link') {
+            $result = $this->findCurrentCategory($items);
+            if (!empty($result)) {
+                $items = $result;
+            }
+        }
 
         /** @var Item $item */
         foreach ($items as $index => $item) {
             $defaultShow = $index >= $maxItems;
             $item->setData('_default_hidden', $defaultShow);
+        }
 
-            if ($this->config->isCategoryViewDefault() && $type == 'link') {
-                if ($item->getAttribute()->getValue('attributeid') == $tweakwiseCategoryId) {
-                    if (!empty($item->getChildren())) {
-                        $items = $item->getChildren();
-                    }
+        return $items;
+    }
+
+    /**
+     * @param $items
+     * @return array
+     */
+    private function findCurrentCategory($items) {
+        $storeId = $this->filter->getStoreId();
+        $currentCategory = $this->filter->getLayer()->getCurrentCategory();
+        $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
+
+        foreach ($items as $index => $item) {
+            if ($item->getAttribute()->getValue('attributeid') == $tweakwiseCategoryId) {
+                if (!empty($item->getChildren())) {
+                    return $item->getChildren();
+                } else {
+                    //current category is the lowest level. Return all items on the same level
+                    return $items;
+                }
+            } elseif (!empty($item->getChildren())) {
+                //check if children are the current category
+                $result = $this->findCurrentCategory($item->getChildren());
+                if (!empty($result)) {
+                    return $result;
                 }
             }
         }
 
-        return $items;
+        return [];
     }
 
     /**

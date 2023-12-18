@@ -6,7 +6,6 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Eav\Api\AttributeRepositoryInterface;
-use Magento\Eav\Model\Entity\Attribute\Source\SourceInterface;
 use Magento\Eav\Model\Entity\Attribute\Source\Table;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Swatches\Model\SwatchAttributeCodes;

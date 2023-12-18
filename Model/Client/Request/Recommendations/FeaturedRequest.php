@@ -8,12 +8,9 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations;
 
-use Magento\Catalog\Helper\Category;
-use Magento\Catalog\Model\Layer;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManager;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
-use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\RecommendationsResponse;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;

@@ -14,7 +14,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
-use Tweakwise\Magento2Tweakwise\Model\Client\Timers;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;

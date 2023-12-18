@@ -10,7 +10,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 
 /**

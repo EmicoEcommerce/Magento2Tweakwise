@@ -2,7 +2,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\Navigation;
 
-use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;

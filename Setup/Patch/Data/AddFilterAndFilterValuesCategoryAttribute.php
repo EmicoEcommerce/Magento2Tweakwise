@@ -5,7 +5,6 @@ namespace Tweakwise\Magento2Tweakwise\Setup\Patch\Data;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
-use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;

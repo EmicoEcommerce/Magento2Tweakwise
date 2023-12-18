@@ -9,7 +9,6 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
 use Magento\Store\Model\StoreManager;
-use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetAttributesResponse;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;

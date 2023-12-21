@@ -332,6 +332,18 @@
                     <validate>validate-number</validate>
                 </field>
             </group>
+
+            <group id="export_settings" translate="label" type="text" sortOrder="4000" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Export Tweakwise settings</label>
+                <field id="export_settings" translate="label,comment" type="label" sortOrder="301" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Export Tweakwise settings</label>
+                    <frontend_model>Tweakwise\Magento2Tweakwise\Block\Config\Form\Field\ExportTweakwiseSettings</frontend_model>
+                    <comment>Exports al Tweakwise settings, except invironment specific settings.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
         </section>
     </system>
 </config>

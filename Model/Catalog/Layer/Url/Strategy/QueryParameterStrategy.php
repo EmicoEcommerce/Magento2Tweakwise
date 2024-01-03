@@ -418,6 +418,12 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
         $sortOrder = $this->getSortOrder($request);
         if ($sortOrder) {
+            //fix spaces/special chars in sort order and add the correct value to the request
+            $sortOrder = urldecode($sortOrder);
+            $query = $request->getQuery();
+            $query->set(SELF::PARAM_ORDER, $sortOrder);
+            $request->setQuery($query);
+            
             $navigationRequest->setOrder($sortOrder);
         }
 

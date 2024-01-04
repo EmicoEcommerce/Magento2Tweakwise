@@ -539,19 +539,13 @@ class PathSlugStrategy implements
         );
 
         /*
-         We explode the url so that we can capture its parts and find the double values in order to remove them.
-         This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
-         These two are the only unique parts in this situation and so need to be removed.
-         */
-
-
-        /*
         Make sure we dont have any double slashes, add the current filter path to the category url to maintain
         the currently selected filters.
         */
         $filterSlugPath = $this->buildFilterSlugPath($this->getActiveFilters());
-
-        $url.= '/' . trim($filterSlugPath, '/');
+        if (!empty($filterSlugPath)) {
+            $url.= '/' . trim($filterSlugPath, '/');
+        }
 
         /*
          We explode the url so that we can capture its parts and find the double values in order to remove them.
@@ -561,20 +555,20 @@ class PathSlugStrategy implements
 
         $explode = explode('/', $url);
 
-        $lastpart = null;
-
-        if (is_array($explode)) {
-            $url = implode('/', array_unique($explode));
+        // Filter out consecutive duplicate values
+        $filteredParts = [];
+        $prevPart = null;
+        foreach ($explode as $part) {
+            if ($part !== $prevPart) {
+                $filteredParts[] = $part;
+            }
+            $prevPart = $part;
         }
 
-        if (is_array($explode)) {
-            $lastpart = end($explode);
-        }
+        $url = implode('/', $filteredParts);
 
-        if ($lastpart === "") {
-            //last part of the url was an slash, and needs te be re-added
-            $url .= '/';
-        }
+        //remove double slashes with exception for the protocol
+        $url = preg_replace('#(?<!:)//+#', '/', $url);
 
         return $url;
     }

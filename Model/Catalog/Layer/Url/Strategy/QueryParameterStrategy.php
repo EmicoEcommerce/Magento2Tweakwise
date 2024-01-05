@@ -141,6 +141,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             self::PARAM_MODE,
             self::PARAM_PAGE,
             self::PARAM_ORDER,
+            self::PARAM_CATEGORY,
         ];
 
         foreach ($selectedFilters as $filter => $value) {

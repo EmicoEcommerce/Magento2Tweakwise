@@ -152,6 +152,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         $params['_query'] = $query;
         $params['_escape'] = false;
 
+        //remove p=1 from url
+        if (!empty($params['_query']['p']) &&  ($params['_query']['p'] === "1")) {
+            unset($params['_query']['p']);
+        }
+
         if ($originalUrl = $request->getQuery('__tw_original_url')) {
 
             if (!empty($request->getParam('q'))){
@@ -418,6 +423,12 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
         $sortOrder = $this->getSortOrder($request);
         if ($sortOrder) {
+            //fix spaces/special chars in sort order and add the correct value to the request
+            $sortOrder = urldecode($sortOrder);
+            $query = $request->getQuery();
+            $query->set(SELF::PARAM_ORDER, $sortOrder);
+            $request->setQuery($query);
+            
             $navigationRequest->setOrder($sortOrder);
         }
 

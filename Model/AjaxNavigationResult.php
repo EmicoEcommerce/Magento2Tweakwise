@@ -95,7 +95,8 @@ class AjaxNavigationResult extends Layout
     public function render(HttpResponseInterface $response)
     {
         $html = $this->getLayout()->getOutput();
-        $html = preg_replace('/\s+/', ' ', $html);
+        //dont use \s. This causes javascript to break on comments because newlines are removed
+        $html = preg_replace('/\t+/', ' ', $html);
         $url  = $this->getResponseUrl();
 
         $responseData = $this->serializer->serialize(['url' => $url, 'html' => $html]);

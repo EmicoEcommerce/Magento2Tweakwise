@@ -357,7 +357,13 @@ class PathSlugStrategy implements
 
         if (empty($currentFilterPath)) {
             $urlParts = parse_url($currentUrl);
-            $url = $urlParts['path'] . $newFilterPath;
+
+            if (strpos($urlParts['path'], $newFilterPath) === false) {
+                $url = $urlParts['path'] . $newFilterPath;
+            } else {
+                //filter path already exists in url
+                $url = $urlParts['path'];
+            }
             if (isset($urlParts['query'])) {
                 $url .= '?' . $urlParts['query'];
             }

@@ -10,13 +10,8 @@ namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar;
 
 
 use Closure;
-use Magento\Catalog\Model\CategoryFactory;
-use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
-use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\InventorySalesApi\Api\AreProductsSalableInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;

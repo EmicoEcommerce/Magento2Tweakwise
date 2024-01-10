@@ -2,9 +2,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType;
 
-use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use Magento\Framework\UrlInterface;
 
 /**
  * Class SuggestionTypeSearch

@@ -8,10 +8,8 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 
-use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 /**
  * Class RecommendationsResponse

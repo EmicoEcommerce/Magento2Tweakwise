@@ -11,7 +11,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Config\Source;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
-use Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\TemplateResponse;
 use Magento\Framework\Data\OptionSourceInterface;
 
 class Facet implements OptionSourceInterface

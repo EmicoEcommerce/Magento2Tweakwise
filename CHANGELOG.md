@@ -155,3 +155,14 @@ Bug fix for installer when using an db prefix
 - Fix bug in last item added to shoppingcart, should be removed after reading
 - Disable searchbanners when search is disabled
 - Items misspelled causing a lookup to Tweakwise not to be used
+
+## 5.7.5
+- Resolved an XSS security vulnerability linked to product sorting.
+- Fixed an issue causing JavaScript errors with the hyva theme and ajax navigation.
+- Enhanced SEO by removing 'p1' from URLs; this issue specifically affected the query parameter strategy for URLs.
+- Rectified a bug causing an undefined index in active filters while using the ALP module.
+- Addressed a problem where 404 errors were logged in Magento when_ a product, no longer available in Tweakwise (e.g., out of stock), still had recommendations called. This change prevents such 404 errors from being logged.
+- Fixed an issue causing double filter values in URLs. This occurred when activating a filter while personal merchandising was active, resulting in incorrect filter URLs with doubled values.
+- Improved handling of double values in URL filters. Now, only consecutive double values, such as '/category/category, are removed. This also removes unwanted double slashes in the url.
+- Cleaned up unused imports
+- Prevented category ID from being added to the URL during certain category searches, ensuring URL consistency

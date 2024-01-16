@@ -166,3 +166,8 @@ Bug fix for installer when using an db prefix
 - Improved handling of double values in URL filters. Now, only consecutive double values, such as '/category/category, are removed. This also removes unwanted double slashes in the url.
 - Cleaned up unused imports
 - Prevented category ID from being added to the URL during certain category searches, ensuring URL consistency
+
+## 5.8.0
+The category view in Magento differs from the way it is presented in Tweakwise Demoshop, which we considered to be the desired behavior. The difference is related to the way how (sub)category levels are shown. 
+
+We've added a setting in which you can define whether to use the old/existing way of presenting, or whether you want to use the desired way of presenting. The setting 'category view' which you can find under "Stores->Catalog->Tweakwise->Layered Navigation->Category View" is set default to 'simple'. This represents the old way of presenting and nothing will change if you do not touch this setting. If the setting is changed to 'extended', the category view is changed to the same view as the Tweakise demoshop

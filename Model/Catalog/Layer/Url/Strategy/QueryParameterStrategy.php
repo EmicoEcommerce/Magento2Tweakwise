@@ -222,8 +222,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     {
         $category = $this->strategyHelper->getCategoryFromItem($item);
         if (!$this->getSearch($request)) {
-            $categoryUrl = $category->getUrl();
-            $categoryUrlPath = \parse_url($categoryUrl, PHP_URL_PATH);
+            $categoryUrlPath = str_replace($this->url->getBaseUrl(), '', $category->getUrl());
 
             $url = $this->url->getDirectUrl(
                 sprintf(
@@ -234,19 +233,6 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
                     ]
                 )
             );
-
-
-            /*
-             We explode the url so that we can capture its parts and find the double values in order to remove them.
-             This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
-             These two are the only unique parts in this situation and so need to be removed.
-             */
-
-            $explode = explode('/', $url);
-
-            if (is_array($explode)) {
-                $url = implode('/', array_unique($explode));
-            }
 
             $url = str_replace($this->url->getBaseUrl(), '', $url);
 
@@ -429,7 +415,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $query = $request->getQuery();
             $query->set(SELF::PARAM_ORDER, $sortOrder);
             $request->setQuery($query);
-            
+
             $navigationRequest->setOrder($sortOrder);
         }
 

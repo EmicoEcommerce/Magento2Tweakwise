@@ -63,6 +63,7 @@ class InstallData implements InstallDataInterface
         $this->ensureUpsellTemplateAttribute($eavSetup);
         $this->ensureFeaturedTemplateAttribute($eavSetup);
         $this->updateNavigatorBaseUrl();
+        $this->setDefaultCategoryView();
 
         $setup->endSetup();
     }
@@ -139,5 +140,13 @@ class InstallData implements InstallDataInterface
     protected function updateNavigatorBaseUrl()
     {
         $this->writer->save('tweakwise/general/server_url', 'https://gateway.tweakwisenavigator.com/');
+    }
+
+    /**
+     * Set default category view for new installs only
+     */
+    protected function setDefaultCategoryView()
+    {
+        $this->writer->save('tweakwise/layered/default_category_view', 1);
     }
 }

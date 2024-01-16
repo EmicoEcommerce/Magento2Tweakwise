@@ -24,19 +24,4 @@ class ProductSearchRequest extends ProductNavigationRequest implements SearchReq
      * {@inheritDoc}
      */
     protected $path = 'navigation-search';
-
-    /**
-     * ProductSearchRequest constructor.
-     * @param Helper $helper
-     * @param StoreManager $storeManager
-     * @param Config $config
-     */
-    public function __construct(
-        Helper $helper,
-        StoreManager $storeManager,
-        Config $config
-    ) {
-        parent::__construct($helper, $storeManager);
-        $this->config = $config;
-    }
 }

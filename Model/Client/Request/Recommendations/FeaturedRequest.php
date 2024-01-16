@@ -14,6 +14,7 @@ use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\RecommendationsResponse;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class FeaturedRequest extends Request
 {
@@ -29,10 +30,10 @@ class FeaturedRequest extends Request
 
     protected $registery;
 
-    public function __construct(Helper $helper, StoreManager $storeManager, Registry $registry)
+    public function __construct(Helper $helper, StoreManager $storeManager, Registry $registry, Config $config)
     {
         $this->registery = $registry;
-        parent::__construct($helper, $storeManager);
+        parent::__construct($helper, $storeManager, $config);
     }
 
     /**

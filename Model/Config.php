@@ -599,4 +599,13 @@ class Config
         }
         return $salt;
     }
+
+    /**
+     * @param Store|null $store
+     * @return int
+     */
+    public function isCategoryViewDefault(Store $store = null)
+    {
+        return $this->getStoreConfig('tweakwise/layered/default_category_view', $store);
+    }
 }

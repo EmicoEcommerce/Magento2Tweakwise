@@ -20,21 +20,6 @@ class ProductSuggestionsRequest extends Request implements SearchRequestInterfac
     protected $path = 'suggestions/products';
 
     /**
-     * ProductSuggestionRequest constructor.
-     * @param Helper $helper
-     * @param StoreManager $storeManager
-     * @param Config $config
-     */
-    public function __construct(
-        Helper $helper,
-        StoreManager $storeManager,
-        Config $config
-    ) {
-        parent::__construct($helper, $storeManager);
-        $this->config = $config;
-    }
-
-    /**
      * @return string
      */
     public function getResponseType()

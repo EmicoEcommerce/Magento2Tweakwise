@@ -50,6 +50,11 @@ class ItemRenderer extends LinkRenderer
      */
     public function hasChildren()
     {
+        //link view should never show children. To be backwards compatible this only happens if the default linkrenderer is enabled.
+        if ($this->hasDefaultCategoryView()) {
+            return false;
+        }
+
         return $this->item->hasChildren();
     }
 

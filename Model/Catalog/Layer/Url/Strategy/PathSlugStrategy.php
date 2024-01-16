@@ -535,7 +535,7 @@ class PathSlugStrategy implements
         }
 
         $category = $this->strategyHelper->getCategoryFromItem($item);
-        $categoryUrlPath = \parse_url($category->getUrl(), PHP_URL_PATH);
+        $categoryUrlPath = str_replace($this->magentoUrl->getBaseUrl(), '', $category->getUrl());
 
         $url = $this->magentoUrl->getDirectUrl(
             sprintf(
@@ -552,26 +552,6 @@ class PathSlugStrategy implements
         if (!empty($filterSlugPath)) {
             $url.= '/' . trim($filterSlugPath, '/');
         }
-
-        /*
-         We explode the url so that we can capture its parts and find the double values in order to remove them.
-         This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
-         These two are the only unique parts in this situation and so need to be removed.
-         */
-
-        $explode = explode('/', $url);
-
-        // Filter out consecutive duplicate values
-        $filteredParts = [];
-        $prevPart = null;
-        foreach ($explode as $part) {
-            if ($part !== $prevPart) {
-                $filteredParts[] = $part;
-            }
-            $prevPart = $part;
-        }
-
-        $url = implode('/', $filteredParts);
 
         //remove double slashes with exception for the protocol
         $url = preg_replace('#(?<!:)//+#', '/', $url);

@@ -235,9 +235,9 @@ class Request
         $tweakwiseIdMapper = function (int $categoryId) use ($storeId) {
             //don't add prefix for root category 1.
             if ($categoryId === 1) {
-                return $categoryId;
+                return '';
             }
-            
+
             return $this->helper->getTweakwiseId($storeId, $categoryId);
         };
         $tweakwiseIds = array_map($tweakwiseIdMapper, $categoryIds);

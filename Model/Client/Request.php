@@ -233,7 +233,12 @@ class Request
         $categoryIds = array_map('intval', $categoryIds);
         $storeId = (int) $this->getStoreId();
         $tweakwiseIdMapper = function (int $categoryId) use ($storeId) {
-            return $this->helper->getTweakwiseId($storeId, $categoryId);
+            //don't add prefix for root category 1.
+            if ($categoryId !== 1) {
+                return $this->helper->getTweakwiseId($storeId, $categoryId);
+            } else {
+                return $categoryId;
+            }
         };
         $tweakwiseIds = array_map($tweakwiseIdMapper, $categoryIds);
         $this->setParameter('tn_cid', implode('-', $tweakwiseIds));

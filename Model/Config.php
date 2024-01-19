@@ -606,6 +606,11 @@ class Config
      */
     public function isCategoryViewDefault(Store $store = null)
     {
-        return $this->getStoreConfig('tweakwise/layered/default_category_view', $store);
+        $cateogryViewExtended = $this->getStoreConfig('tweakwise/layered/default_category_view', $store);
+
+        if ($cateogryViewExtended !== "1") {
+            return 0;
+        }
+        return 1;
     }
 }

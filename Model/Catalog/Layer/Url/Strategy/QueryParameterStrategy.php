@@ -229,12 +229,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
                 sprintf(
                     '%s/',
                     trim($categoryUrlPath, '/'),
-                    [
-                        '_query' => $this->getAttributeFilters($request)
-                    ]
-                )
+                ),
+                [
+                    '_query' => $this->getAttributeFilters($request)
+                ]
             );
-
 
             /*
              We explode the url so that we can capture its parts and find the double values in order to remove them.
@@ -429,7 +428,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $query = $request->getQuery();
             $query->set(SELF::PARAM_ORDER, $sortOrder);
             $request->setQuery($query);
-            
+
             $navigationRequest->setOrder($sortOrder);
         }
 

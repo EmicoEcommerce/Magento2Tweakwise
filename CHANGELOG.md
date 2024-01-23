@@ -171,3 +171,9 @@ Bug fix for installer when using an db prefix
 The category view in Magento differs from the way it is presented in Tweakwise Demoshop, which we considered to be the desired behavior. The difference is related to the way how (sub)category levels are shown. 
 
 We've added a setting in which you can define whether to use the old/existing way of presenting, or whether you want to use the desired way of presenting. The setting 'category view' which you can find under "Stores->Catalog->Tweakwise->Layered Navigation->Category View" is set default to 'simple'. This represents the old way of presenting and nothing will change if you do not touch this setting. If the setting is changed to 'extended', the category view is changed to the same view as the Tweakise demoshop
+
+## 5.8.1
+- Resolved an issue where the category filter was not considering the current applied filter, specifically when the query parameter strategy was enabled.
+- Fixed a bug where sending the root category in Tweakwise requests resulted in 500 errors.
+- Addressed an issue where a page reload caused the URL to be incorrect, preventing filters from deactivating.
+- Implemented a check to verify if an item is a Tweakwise filter, preventing 500 errors when the Tweakwise API doesn't respond.

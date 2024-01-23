@@ -31,8 +31,8 @@ class CategoryView implements OptionSourceInterface
     protected function buildOptions()
     {
         return [
-            ['value' => self::EXTENDED, 'label' => __('Extended')],
             ['value' => self::SIMPLE, 'label' => __('Simple (deprecated)')],
+            ['value' => self::EXTENDED, 'label' => __('Extended')],
         ];
     }
 

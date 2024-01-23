@@ -80,8 +80,10 @@ class FilterHelper
     public function shouldPageBeIndexable(): bool
     {
         foreach ($this->getActiveFilterItems() as $item) {
-            if (!$this->shouldFilterBeIndexable($item)) {
-                return false;
+            if ($item instanceof Item) {
+                if (!$this->shouldFilterBeIndexable($item)) {
+                    return false;
+                }
             }
         }
 

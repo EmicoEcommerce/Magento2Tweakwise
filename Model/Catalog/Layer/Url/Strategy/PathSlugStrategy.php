@@ -549,9 +549,8 @@ class PathSlugStrategy implements
         the currently selected filters.
         */
         $filterSlugPath = $this->buildFilterSlugPath($this->getActiveFilters());
-        if (!empty($filterSlugPath)) {
-            $url.= '/' . trim($filterSlugPath, '/');
-        }
+
+        $url.= '/' . trim($filterSlugPath, '/');
 
         /*
          We explode the url so that we can capture its parts and find the double values in order to remove them.

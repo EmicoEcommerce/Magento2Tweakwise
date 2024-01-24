@@ -314,7 +314,16 @@ class PathSlugStrategy implements
             return str_replace($this->magentoUrl->getBaseUrl(), '', $url);
         }
 
-        return $this->getCurrentUrl($request);
+        $url = $this->getCurrentUrl($request);
+
+        $filterPath = $this->buildFilterSlugPath($this->getActiveFilters());
+
+        //remove active filters from url,this causes the url to be wrong on page refresh
+        if (strpos($url, $filterPath) !== false) {
+            $url = str_replace($filterPath, '', $url);
+        }
+
+        return $url;
     }
 
     /**

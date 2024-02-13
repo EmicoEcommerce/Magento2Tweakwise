@@ -47,6 +47,9 @@ class FacetAttributesResponse extends Response
     }
 
     public function getAttributes(){
-        return $this->data['attributes'];
+        if (isset($this->data['attributes'])) {
+            return $this->data['attributes'];
+        }
+        return [];
     }
 }

@@ -79,6 +79,11 @@ class Plugin
             return $proceed();
         }
 
+        if (empty($this->context->getResponse())) {
+            //no response from TW
+            return $proceed();
+        }
+
         /** @var SortFieldType[] $sortFields */
         $sortFields = $this->context->getResponse()->getProperties()->getSortFields();
 

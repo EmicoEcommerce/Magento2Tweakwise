@@ -28,6 +28,7 @@ define([
                 && ($.mage.cookies.get(this.options.cookieName) !== null);
             if (reload) {
                 this.element.trigger('change');
+                this.element.find('.js-btn-filter').first().trigger('click');
             }
         }
     });

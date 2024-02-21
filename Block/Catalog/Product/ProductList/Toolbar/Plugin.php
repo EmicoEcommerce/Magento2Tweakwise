@@ -80,7 +80,6 @@ class Plugin
         }
 
         if (empty($this->context->getResponse())) {
-            //no response from TW
             return $proceed();
         }
 

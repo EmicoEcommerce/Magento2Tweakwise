@@ -22,6 +22,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Magento\Search\Helper\Data;
 
 class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, CategoryUrlInterface
 {
@@ -90,6 +91,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     protected $layerUrl;
 
     /**
+     * @var Data
+     */
+    private Data $searchConfig;
+
+    /**
      * Magento constructor.
      *
      * @param UrlModel $url
@@ -102,13 +108,15 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         StrategyHelper $strategyHelper,
         CookieManagerInterface $cookieManager,
         TweakwiseConfig $config,
-        Url $layerUrl
+        Url $layerUrl,
+        Data $searchConfig
     ) {
         $this->url = $url;
         $this->strategyHelper = $strategyHelper;
         $this->cookieManager = $cookieManager;
         $this->tweakwiseConfig = $config;
         $this->layerUrl = $layerUrl;
+        $this->searchConfig = $searchConfig;
     }
 
     /**
@@ -508,7 +516,19 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected function getSearch(MagentoHttpRequest $request)
     {
-        return $request->getQuery(self::PARAM_SEARCH);
+        $searchLength = 100;
+        $search = $request->getQuery(self::PARAM_SEARCH);
+        $maxQueryLength = $this->searchConfig->getMaxQueryLength();
+
+        if ($maxQueryLength) {
+            if ($maxQueryLength < $searchLength) {
+                $searchLength = $maxQueryLength;
+            }
+        }
+
+        $search = mb_substr((string) $search, 0, $searchLength);
+
+        return $search;
     }
 
     /**

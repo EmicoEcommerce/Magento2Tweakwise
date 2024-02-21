@@ -79,6 +79,10 @@ class Plugin
             return $proceed();
         }
 
+        if (!$this->context->getResponse()) {
+            return $proceed();
+        }
+
         /** @var SortFieldType[] $sortFields */
         $sortFields = $this->context->getResponse()->getProperties()->getSortFields();
 

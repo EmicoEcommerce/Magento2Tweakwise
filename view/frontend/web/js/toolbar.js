@@ -72,6 +72,7 @@ define([
 
             input.attr('value', paramValue);
             form.trigger('change');
+            form.find('.js-btn-filter').first().trigger('click');
             $('html, body').animate({scrollTop: 0}, 0);
         }
 

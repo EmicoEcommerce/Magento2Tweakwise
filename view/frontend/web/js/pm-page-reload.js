@@ -1,7 +1,7 @@
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
- * @copyright Copyright (c) 2017-2023 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -27,11 +27,6 @@ define([
                 && this.options.cookieName
                 && ($.mage.cookies.get(this.options.cookieName) !== null);
             if (reload) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const pageParam = urlParams.get('p');
-                if (pageParam) {
-                    $(this.element.append('<input type="hidden" name="p" value="'+ parseInt(pageParam) +'" />'))
-                }
                 this.element.trigger('change');
             }
         }

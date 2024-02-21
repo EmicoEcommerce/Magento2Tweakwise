@@ -79,7 +79,7 @@ class Plugin
             return $proceed();
         }
 
-        if (!$this->context->getResponse()) {
+        if (empty($this->context->getResponse())) {
             return $proceed();
         }
 

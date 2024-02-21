@@ -249,6 +249,10 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
             $url = str_replace($this->url->getBaseUrl(), '', $url);
 
+            if ($this->tweakwiseConfig->getUseDefaultLinkRenderer()) {
+                $url = '/' . $url;
+            }
+
             return $url;
         }
 

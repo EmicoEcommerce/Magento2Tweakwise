@@ -177,3 +177,14 @@ We've added a setting in which you can define whether to use the old/existing wa
 - Fixed a bug where sending the root category in Tweakwise requests resulted in 500 errors.
 - Addressed an issue where a page reload caused the URL to be incorrect, preventing filters from deactivating.
 - Implemented a check to verify if an item is a Tweakwise filter, preventing 500 errors when the Tweakwise API doesn't respond.
+
+
+## 5.8.2
+- Resolved an issue where the incorrect parent category was utilized while navigating a category tree that is three levels deep.
+- Resolved an issue where the filter parameter remained in the URL after deactivating the filter. 
+- Resolved an issue where, with the URL pathslug strategy enabled, selecting a filter on a category page would lead to an incorrect URL upon refreshing the page and selecting another filter. 
+- Bugfix implemented to address the duplication of category names in the default Magento renderer.
+- Implemented query length limitation for search to prevent a 500 error. 
+- Implemented a preventive measure to avoid errors when no attribute values are present for ALP facet requests. 
+- Resolved the issue with personal merchandising and pagination not functioning correctly when utilising the filter form.
+- Implemented measures to prevent a 500 error in the search when Tweakwise is inaccessible or down.

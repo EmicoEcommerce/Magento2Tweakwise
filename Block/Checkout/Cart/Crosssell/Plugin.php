@@ -248,6 +248,7 @@ class Plugin extends AbstractRecommendationPlugin
      */
     protected function _getCartProducts()
     {
+        $products = [];
         foreach ($this->getQuote()->getAllItems() as $quoteItem) {
             /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
             $product = $quoteItem->getProduct();
@@ -276,6 +277,8 @@ class Plugin extends AbstractRecommendationPlugin
         if (!empty($cartItems)) {
             $collection = $this->removeCartItems($collection, $cartItems);
         }
+
+        $items = [];
 
         foreach ($collection as $item) {
             $items[] = $item;

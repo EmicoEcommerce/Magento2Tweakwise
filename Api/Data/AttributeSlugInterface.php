@@ -16,4 +16,9 @@ interface AttributeSlugInterface
      * @return string
      */
     public function getSlug(): string;
+
+    /**
+     * @return void
+     */
+    public function setSlug(string $slug): void;
 }

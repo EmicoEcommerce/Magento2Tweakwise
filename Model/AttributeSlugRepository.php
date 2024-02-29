@@ -76,8 +76,30 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
     public function save(AttributeSlugInterface $attributeSlug): AttributeSlugInterface
     {
         try {
-            /** @var AttributeSlug $attributeSlug */
-            $this->resource->save($attributeSlug);
+            //check for existing slugs with the same slug
+            try {
+                /** @var AttributeSlug $existingSlug */
+                $existingSlug = $this->findBySlug($attributeSlug->getSlug());
+
+                //slug exists, check if it is not the current attribute saved
+                if ($attributeSlug->getAttribute() != $existingSlug->getAttribute()) {
+                    $newSlug = $attributeSlug->getSlug();
+                    $newSlug .= '-';
+                    while ($newSlug === $this->findBySlug($newSlug)->getSlug()) {
+                        $newSlug .= '-';
+                    }
+                }
+                /** @var AttributeSlug $attributeSlug */
+                $this->resource->save($attributeSlug);
+
+            } catch (NoSuchEntityException $exception) {
+                //slug doesnt exist. Save value
+                if (isset($newSlug)) {
+                    $attributeSlug->setSlug($newSlug);
+                }
+                /** @var AttributeSlug $attributeSlug */
+                $this->resource->save($attributeSlug);
+            }
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(__(
                 'Could not save the page: %1',
@@ -135,5 +157,23 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             throw new NoSuchEntityException(__('No slug found for attribute "%s".', $attribute));
         }
         return $attributeSlug;
+    }
+
+
+    /**
+     * @param string $slug
+     * @return AttributeSlugInterface
+     * @throws NoSuchEntityException
+     */
+    public function findBySlug(string $slug): AttributeSlugInterface
+    {
+        $attributeSlug = $this->entityFactory->create();
+        $collection = $attributeSlug->getCollection();
+        $collection->addFieldToFilter('slug', $slug);
+        $collection->load();
+        if (!$collection->getSize()) {
+            throw new NoSuchEntityException(__('No slug found for attribute "%s".', $slug));
+        }
+        return $collection->getFirstItem();
     }
 }

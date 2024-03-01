@@ -82,11 +82,12 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                 $existingSlug = $this->findBySlug($attributeSlug->getSlug());
 
                 //slug exists, check if it is not the current attribute saved
-                if ($attributeSlug->getAttribute() != $existingSlug->getAttribute()) {
+                if ($attributeSlug->getAttribute() !== $existingSlug->getAttribute()) {
                     $newSlug = $attributeSlug->getSlug();
-                    $newSlug .= '-';
+                    $counter = 0;
                     while ($newSlug === $this->findBySlug($newSlug)->getSlug()) {
-                        $newSlug .= '-';
+                        $counter++;
+                        $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
                     }
                 }
                 /** @var AttributeSlug $attributeSlug */
@@ -167,13 +168,14 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
      */
     public function findBySlug(string $slug): AttributeSlugInterface
     {
-        $attributeSlug = $this->entityFactory->create();
-        $collection = $attributeSlug->getCollection();
-        $collection->addFieldToFilter('slug', $slug);
-        $collection->load();
+        $collection = $this->collectionFactory->create()
+            ->addFieldToFilter('slug', $slug);
         if (!$collection->getSize()) {
-            throw new NoSuchEntityException(__('No slug found for attribute "%s".', $slug));
+            throw new NoSuchEntityException(__('No slug found for attribute "%1".', $slug));
         }
-        return $collection->getFirstItem();
+
+        /** @var AttributeSlug $attributeSlug */
+        $attributeSlug = $collection->getFirstItem();
+        return $attributeSlug;
     }
 }

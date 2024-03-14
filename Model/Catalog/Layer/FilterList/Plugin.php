@@ -61,7 +61,12 @@ class Plugin
             }
         }
 
-        //no api responseA
+        //page is search and search is not enabled
+        if (!$this->config->isSearchEnabled() && ($layer instanceof Layer\Search)) {
+            return $proceed($layer);
+        }
+
+        //no api response
         if($this->config->getTweakwiseExceptionTrown()) {
             return $proceed($layer);
         }

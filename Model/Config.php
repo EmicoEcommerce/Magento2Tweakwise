@@ -380,7 +380,8 @@ class Config
      */
     public function isSearchBannersActive(Store $store = null)
     {
-        return (bool) $this->getStoreConfig('tweakwise/search/searchbanner', $store);
+        return (bool) $this->getStoreConfig('tweakwise/search/searchbanner', $store)
+            && $this->isSearchEnabled();
     }
 
     /**
@@ -597,5 +598,14 @@ class Config
             $this->cacheTypeList->cleanType('config');
         }
         return $salt;
+    }
+
+    /**
+     * @param Store|null $store
+     * @return int
+     */
+    public function isCategoryViewDefault(Store $store = null)
+    {
+        return $this->getStoreConfig('tweakwise/layered/default_category_view', $store);
     }
 }

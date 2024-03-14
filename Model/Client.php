@@ -14,7 +14,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
-use Tweakwise\Magento2Tweakwise\Model\Client\Timers;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -293,7 +292,12 @@ class Client
             return $this->doRequest($request, $async);
         } catch (ApiException $e) {
             $this->config->setTweakwiseExceptionThrown(true);
-            $this->log->throwException($e);
+            //don't log 404 messages.
+            if ($e->getCode() !== 404) {
+                $this->log->throwException($e);
+            }else {
+                throw ($e);
+            }
         } finally {
             Profiler::stop('tweakwise::request::' . $request->getPath());
         }

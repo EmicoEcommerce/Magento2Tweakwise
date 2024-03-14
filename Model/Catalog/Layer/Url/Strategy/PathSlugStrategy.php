@@ -314,7 +314,16 @@ class PathSlugStrategy implements
             return str_replace($this->magentoUrl->getBaseUrl(), '', $url);
         }
 
-        return $this->getCurrentUrl($request);
+        $url = $this->getCurrentUrl($request);
+
+        $filterPath = $this->buildFilterSlugPath($this->getActiveFilters());
+
+        //remove active filters from url,this causes the url to be wrong on page refresh
+        if (strpos($url, $filterPath) !== false) {
+            $url = str_replace($filterPath, '', $url);
+        }
+
+        return $url;
     }
 
     /**
@@ -357,7 +366,13 @@ class PathSlugStrategy implements
 
         if (empty($currentFilterPath)) {
             $urlParts = parse_url($currentUrl);
-            $url = $urlParts['path'] . $newFilterPath;
+
+            if (strpos($urlParts['path'], $newFilterPath) === false) {
+                $url = $urlParts['path'] . $newFilterPath;
+            } else {
+                //filter path already exists in url
+                $url = $urlParts['path'];
+            }
             if (isset($urlParts['query'])) {
                 $url .= '?' . $urlParts['query'];
             }
@@ -539,13 +554,6 @@ class PathSlugStrategy implements
         );
 
         /*
-         We explode the url so that we can capture its parts and find the double values in order to remove them.
-         This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
-         These two are the only unique parts in this situation and so need to be removed.
-         */
-
-
-        /*
         Make sure we dont have any double slashes, add the current filter path to the category url to maintain
         the currently selected filters.
         */
@@ -561,20 +569,20 @@ class PathSlugStrategy implements
 
         $explode = explode('/', $url);
 
-        $lastpart = null;
-
-        if (is_array($explode)) {
-            $url = implode('/', array_unique($explode));
+        // Filter out consecutive duplicate values
+        $filteredParts = [];
+        $prevPart = null;
+        foreach ($explode as $part) {
+            if ($part !== $prevPart) {
+                $filteredParts[] = $part;
+            }
+            $prevPart = $part;
         }
 
-        if (is_array($explode)) {
-            $lastpart = end($explode);
-        }
+        $url = implode('/', $filteredParts);
 
-        if ($lastpart === "") {
-            //last part of the url was an slash, and needs te be re-added
-            $url .= '/';
-        }
+        //remove double slashes with exception for the protocol
+        $url = preg_replace('#(?<!:)//+#', '/', $url);
 
         return $url;
     }

@@ -22,6 +22,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Magento\Search\Helper\Data;
 
 class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, CategoryUrlInterface
 {
@@ -90,6 +91,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     protected $layerUrl;
 
     /**
+     * @var Data
+     */
+    private Data $searchConfig;
+
+    /**
      * Magento constructor.
      *
      * @param UrlModel $url
@@ -102,13 +108,15 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         StrategyHelper $strategyHelper,
         CookieManagerInterface $cookieManager,
         TweakwiseConfig $config,
-        Url $layerUrl
+        Url $layerUrl,
+        Data $searchConfig
     ) {
         $this->url = $url;
         $this->strategyHelper = $strategyHelper;
         $this->cookieManager = $cookieManager;
         $this->tweakwiseConfig = $config;
         $this->layerUrl = $layerUrl;
+        $this->searchConfig = $searchConfig;
     }
 
     /**
@@ -141,6 +149,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             self::PARAM_MODE,
             self::PARAM_PAGE,
             self::PARAM_ORDER,
+            self::PARAM_CATEGORY,
         ];
 
         foreach ($selectedFilters as $filter => $value) {
@@ -151,6 +160,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
         $params['_query'] = $query;
         $params['_escape'] = false;
+
+        //remove p=1 from url
+        if (!empty($params['_query']['p']) &&  ($params['_query']['p'] === "1")) {
+            unset($params['_query']['p']);
+        }
 
         if ($originalUrl = $request->getQuery('__tw_original_url')) {
 
@@ -223,12 +237,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
                 sprintf(
                     '%s/',
                     trim($categoryUrlPath, '/'),
-                    [
-                        '_query' => $this->getAttributeFilters($request)
-                    ]
-                )
+                ),
+                [
+                    '_query' => $this->getAttributeFilters($request)
+                ]
             );
-
 
             /*
              We explode the url so that we can capture its parts and find the double values in order to remove them.
@@ -243,6 +256,10 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             }
 
             $url = str_replace($this->url->getBaseUrl(), '', $url);
+
+            if ($this->tweakwiseConfig->getUseDefaultLinkRenderer()) {
+                $url = '/' . $url;
+            }
 
             return $url;
         }
@@ -418,6 +435,12 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
         $sortOrder = $this->getSortOrder($request);
         if ($sortOrder) {
+            //fix spaces/special chars in sort order and add the correct value to the request
+            $sortOrder = urldecode($sortOrder);
+            $query = $request->getQuery();
+            $query->set(SELF::PARAM_ORDER, $sortOrder);
+            $request->setQuery($query);
+
             $navigationRequest->setOrder($sortOrder);
         }
 
@@ -493,7 +516,19 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     protected function getSearch(MagentoHttpRequest $request)
     {
-        return $request->getQuery(self::PARAM_SEARCH);
+        $searchLength = 100;
+        $search = $request->getQuery(self::PARAM_SEARCH);
+        $maxQueryLength = $this->searchConfig->getMaxQueryLength();
+
+        if ($maxQueryLength) {
+            if ($maxQueryLength < $searchLength) {
+                $searchLength = $maxQueryLength;
+            }
+        }
+
+        $search = mb_substr((string) $search, 0, $searchLength);
+
+        return $search;
     }
 
     /**

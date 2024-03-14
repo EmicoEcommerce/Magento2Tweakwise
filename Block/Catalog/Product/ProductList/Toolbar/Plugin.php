@@ -10,15 +10,11 @@ namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar;
 
 
 use Closure;
-use Magento\Catalog\Model\CategoryFactory;
-use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
-use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\InventorySalesApi\Api\AreProductsSalableInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\SortFieldType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Block\Product\ProductList\Toolbar;
@@ -73,6 +69,17 @@ class Plugin
     public function aroundGetAvailableOrders(Toolbar $subject, Closure $proceed)
     {
         if (!$this->config->isLayeredEnabled()) {
+            if (!$this->config->isSearchEnabled() || !($this->context->getRequest() instanceof ProductSearchRequest)) {
+                return $proceed();
+            }
+        }
+
+        //page is search and search is not enabled
+        if ((!$this->config->isSearchEnabled()) && ($this->context->getRequest() instanceof ProductSearchRequest)) {
+            return $proceed();
+        }
+
+        if (empty($this->context->getResponse())) {
             return $proceed();
         }
 

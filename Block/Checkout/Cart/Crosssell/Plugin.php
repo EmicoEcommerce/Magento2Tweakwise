@@ -87,16 +87,18 @@ class Plugin extends AbstractRecommendationPlugin
 
     public function aroundGetLastAddedProduct(Crosssell $crossell, Closure $proceed)
     {
-        $product = null;
-        $productId = $this->_getLastAddedProductId();
-        if ($productId) {
-            try {
-                $product = $this->productRepository->getById($productId);
-            } catch (NoSuchEntityException $e) {
-                $product = null;
+        if ($this->lastAddedProduct === null) {
+            $product = null;
+            $productId = $this->_getLastAddedProductId();
+            if ($productId) {
+                try {
+                    $product = $this->productRepository->getById($productId);
+                } catch (NoSuchEntityException $e) {
+                    $product = null;
+                }
             }
+            $this->lastAddedProduct = $product;
         }
-        $this->lastAddedProduct = $product;
 
         return $this->lastAddedProduct;
     }
@@ -108,7 +110,7 @@ class Plugin extends AbstractRecommendationPlugin
      */
     protected function _getLastAddedProductId()
     {
-        return $this->checkoutSession->getLastAddedProductId(false);
+        return $this->checkoutSession->getLastAddedProductId(true);
     }
 
     /**
@@ -140,11 +142,11 @@ class Plugin extends AbstractRecommendationPlugin
      */
     private function getShoppingcartCrosssellItems(array $cartProductIds, array $result)
     {
-        $itmes = [];
+        $items = [];
 
         if ($cartProductIds) {
             if ($this->lastAddedProduct) {
-                $itmes = $this->getShoppingcartCrosssellTweakwiseItems($this->lastAddedProduct, $result, $cartProductIds);
+                $items = $this->getShoppingcartCrosssellTweakwiseItems($this->lastAddedProduct, $result, $cartProductIds);
             }
 
             if (empty($items)) {
@@ -246,6 +248,7 @@ class Plugin extends AbstractRecommendationPlugin
      */
     protected function _getCartProducts()
     {
+        $products = [];
         foreach ($this->getQuote()->getAllItems() as $quoteItem) {
             /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
             $product = $quoteItem->getProduct();
@@ -274,6 +277,8 @@ class Plugin extends AbstractRecommendationPlugin
         if (!empty($cartItems)) {
             $collection = $this->removeCartItems($collection, $cartItems);
         }
+
+        $items = [];
 
         foreach ($collection as $item) {
             $items[] = $item;

@@ -5,7 +5,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class SearchInputProvider implements FilterFormInputProviderInterface
 {

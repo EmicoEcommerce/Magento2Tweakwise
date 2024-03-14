@@ -15,6 +15,7 @@ use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Framework\Pricing\Helper\Data as PriceHelper;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\Serialize\Serializer\Json;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class SliderRenderer extends DefaultRenderer
 {
@@ -42,6 +43,7 @@ class SliderRenderer extends DefaultRenderer
      * @param FilterHelper $filterHelper
      * @param Template\Context $context
      * @param Json $jsonSerializer
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
@@ -52,6 +54,7 @@ class SliderRenderer extends DefaultRenderer
         FilterHelper $filterHelper,
         Template\Context $context,
         Json $jsonSerializer,
+        Helper $helper,
         array $data = []
     ) {
         parent::__construct(
@@ -60,6 +63,7 @@ class SliderRenderer extends DefaultRenderer
             $navigationConfig,
             $filterHelper,
             $jsonSerializer,
+            $helper,
             $data
         );
         $this->priceHelper = $priceHelper;

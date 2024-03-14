@@ -12,7 +12,7 @@
         <section id="tweakwise">
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
-                <comment>Tweakwise version v5.7.3</comment>
+                <comment>Tweakwise version v5.8.3</comment>
                 <field id="authentication_key" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Authentication key</label>
                     <comment>Provided by Tweakwise (8 alphanumeric characters)</comment>
@@ -87,6 +87,14 @@
                     <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\UrlStrategy</source_model>
                     <depends>
                         <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="default_category_view" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Category View</label>
+                    <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\CategoryView</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="default_link_renderer">0</field>
                     </depends>
                 </field>
             </group>
@@ -217,7 +225,7 @@
                 <depends>
                     <field id="tweakwise/layered/ajax_filters">1</field>
                 </depends>
-                <label>Personal Merchandising</label>
+                <label>Merchandising Builder</label>
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

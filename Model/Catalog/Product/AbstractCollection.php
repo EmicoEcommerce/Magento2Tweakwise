@@ -8,30 +8,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
-use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
-use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
-use Magento\Catalog\Model\Category;
-use Magento\Catalog\Model\Indexer\Product\Flat\State;
-use Magento\Catalog\Model\Product\OptionFactory;
-use Magento\Catalog\Model\ResourceModel\Helper as CatalogResourceHelper;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
-use Magento\Catalog\Model\ResourceModel\Url;
-use Magento\Customer\Api\GroupManagementInterface;
-use Magento\Customer\Model\Session;
-use Magento\Eav\Model\Config as EavConfig;
-use Magento\Eav\Model\EntityFactory as EavEntityFactory;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
-use Magento\Framework\Data\Collection\EntityFactory as CollectionEntityFactory;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\Event\ManagerInterface;
-use Magento\Framework\Module\Manager;
-use Magento\Framework\Stdlib\DateTime;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use Magento\Framework\Validator\UniversalFactory;
-use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
 use Zend_Db_Select;
 
 abstract class AbstractCollection extends ProductCollection

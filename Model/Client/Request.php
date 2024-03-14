@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManager;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class Request
 {
@@ -43,15 +44,21 @@ class Request
     protected $helper;
 
     /**
+     * @var Config
+     */
+    protected $config;
+    /**
      * Request constructor.
      *
      * @param Helper $helper
      * @param StoreManager $storeManager
+     * @param Config $config
      */
-    public function __construct(Helper $helper, StoreManager $storeManager)
+    public function __construct(Helper $helper, StoreManager $storeManager, Config $config)
     {
         $this->helper = $helper;
         $this->storeManager = $storeManager;
+        $this->config = $config;
     }
 
     /**
@@ -179,8 +186,34 @@ class Request
             $ids[] = $category;
             return $this->addCategoryPathFilter($ids);
         }
-        /** @var Category $category */
-        $parentIsRoot = in_array(
+
+        if($this->config->isCategoryViewDefault()) {
+            /** @var Category $category */
+            $parentIsRoot = $category;
+            while ($this->isCategoryRoot($parentIsRoot) === false) {
+                $ids[] = (int)$parentIsRoot->getParentId();
+                $parentIsRoot = $parentIsRoot->getParentCategory();
+            }
+            $ids[] = (int)$parentIsRoot->getParentId();
+
+            $ids = array_reverse($ids);
+        } else {
+            /** @var Category $category */
+            $parentIsRoot = $this->isCategoryRoot($category);
+
+            if (!$parentIsRoot) {
+                // Parent category is added so that category menu is retained on the deepest category level
+                $ids[] = (int) $category->getParentId();
+            }
+        }
+
+        $ids[] = (int) $category->getId();
+
+        return $this->addCategoryPathFilter($ids);
+    }
+
+    private function isCategoryRoot($category) {
+        return  in_array(
             (int) $category->getParentId(),
             [
                 0,
@@ -189,13 +222,6 @@ class Request
             ],
             true
         );
-        if (!$parentIsRoot) {
-            // Parent category is added so that category menu is retained on the deepest category level
-            $ids[] = (int) $category->getParentId();
-        }
-        $ids[] = (int) $category->getId();
-
-        return $this->addCategoryPathFilter($ids);
     }
 
     /**
@@ -207,6 +233,11 @@ class Request
         $categoryIds = array_map('intval', $categoryIds);
         $storeId = (int) $this->getStoreId();
         $tweakwiseIdMapper = function (int $categoryId) use ($storeId) {
+            //don't add prefix for root category 1.
+            if ($categoryId === 1) {
+                return '';
+            }
+
             return $this->helper->getTweakwiseId($storeId, $categoryId);
         };
         $tweakwiseIds = array_map($tweakwiseIdMapper, $categoryIds);
@@ -233,6 +264,23 @@ class Request
 
         $categoryPath = array_map($magentoIdMapper, explode('-', $categoryPath));
         return implode('-', $categoryPath);
+    }
+
+    /**
+     * @param $storeId
+     * @return void
+     */
+    public function setStore($storeId)
+    {
+        $this->storeManager->setCurrentStore((int) $storeId);
+    }
+
+    /**
+     * @return array|StoreInterface[]
+     */
+    public function getStores()
+    {
+        return $this->storeManager->getStores();
     }
 
     /**

@@ -5,7 +5,6 @@ namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 
@@ -41,18 +40,37 @@ class Facets extends Action
 
     public function execute()
     {
+        $result = [];
         $json = $this->resultFactory->create('json');
         $facetRequest = $this->requestFactory->create();
 
         $categoryId = $this->getRequest()->getParam('category');
-        //remove category id for now. It can give the wrong store id for the admin which results in the wrong tncid
-        //$facetRequest->addCategoryFilter($categoryId);
+        $filtertemplate = (int) $this->getRequest()->getParam('filtertemplate');
+        $allStores = $facetRequest->getStores();
 
-        $response = $this->client->request($facetRequest);
-        $result = [];
-        foreach ($response->getFacets() as $facet) {
-            $result[] = ['value' => $facet->getFacetSettings()->getUrlKey(), 'label' => $facet->getFacetSettings()->getTitle()];
+        if (!empty($filtertemplate)) {
+            $facetRequest->addParameter('tn_ft', $filtertemplate);
         }
+
+        foreach ($allStores as $store) {
+            $facetRequest->setStore($store->getId());
+            if (!empty($categoryId)) {
+                $facetRequest->addCategoryFilter($categoryId);
+            }
+
+            $response = $this->client->request($facetRequest);
+
+            foreach ($response->getFacets() as $facet) {
+                $result[] = ['value' => $facet->getFacetSettings()->getUrlKey(), 'label' => $facet->getFacetSettings()->getTitle()];
+            }
+        }
+
+        $result[] = ['value' => 'tw_other', 'label' => 'Other (text field)'];
+
+        $result = array_unique($result, SORT_REGULAR);
+
+        //prevent non sequential array keys. That causes json encode to act differently and creates objects instead of arrays
+        $result = array_values($result);
 
         $json->setData(['data' => $result]);
         return $json;

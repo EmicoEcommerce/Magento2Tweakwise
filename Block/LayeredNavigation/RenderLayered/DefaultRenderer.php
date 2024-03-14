@@ -16,6 +16,7 @@ use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\Serialize\Serializer\Json;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class DefaultRenderer extends Template
 {
@@ -46,6 +47,8 @@ class DefaultRenderer extends Template
      */
     protected $navigationConfig;
 
+    protected $helper;
+
     /**
      * Constructor
      *
@@ -54,6 +57,7 @@ class DefaultRenderer extends Template
      * @param NavigationConfig $navigationConfig
      * @param FilterHelper $filterHelper
      * @param Json $jsonSerializer
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
@@ -62,6 +66,7 @@ class DefaultRenderer extends Template
         NavigationConfig $navigationConfig,
         FilterHelper $filterHelper,
         Json $jsonSerializer,
+        Helper $helper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -69,6 +74,7 @@ class DefaultRenderer extends Template
         $this->filterHelper = $filterHelper;
         $this->jsonSerializer = $jsonSerializer;
         $this->navigationConfig = $navigationConfig;
+        $this->helper = $helper;
     }
 
     /**
@@ -108,7 +114,15 @@ class DefaultRenderer extends Template
     public function getItems()
     {
         $items = $this->filter->getItems();
+        $type = $this->filter->getFacet()->getFacetSettings()->getSelectionType();
         $maxItems = $this->getMaxItemsShown();
+
+        if ($this->config->isCategoryViewDefault() && $type == 'link') {
+            $result = $this->findCurrentCategory($items);
+            if (!empty($result)) {
+                $items = $result;
+            }
+        }
 
         /** @var Item $item */
         foreach ($items as $index => $item) {
@@ -117,6 +131,35 @@ class DefaultRenderer extends Template
         }
 
         return $items;
+    }
+
+    /**
+     * @param $items
+     * @return array
+     */
+    private function findCurrentCategory($items) {
+        $storeId = $this->filter->getStoreId();
+        $currentCategory = $this->filter->getLayer()->getCurrentCategory();
+        $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
+
+        foreach ($items as $index => $item) {
+            if ($item->getAttribute()->getValue('attributeid') == $tweakwiseCategoryId) {
+                if (!empty($item->getChildren())) {
+                    return $item->getChildren();
+                } else {
+                    //current category is the lowest level. Return all items on the same level
+                    return $items;
+                }
+            } elseif (!empty($item->getChildren())) {
+                //check if children are the current category
+                $result = $this->findCurrentCategory($item->getChildren());
+                if (!empty($result)) {
+                    return $result;
+                }
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -255,5 +298,13 @@ class DefaultRenderer extends Template
     public function getUrlKey()
     {
         return $this->getFacetSettings()->getUrlKey();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDefaultCategoryView()
+    {
+        return $this->config->isCategoryViewDefault();
     }
 }

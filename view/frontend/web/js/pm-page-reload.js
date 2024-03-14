@@ -33,6 +33,7 @@ define([
                     $(this.element.append('<input type="hidden" name="p" value="'+ parseInt(pageParam) +'" />'))
                 }
                 this.element.trigger('change');
+                this.element.find('.js-btn-filter').first().trigger('click');
             }
         }
     });

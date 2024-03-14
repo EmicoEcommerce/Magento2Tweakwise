@@ -10,7 +10,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 
 /**
@@ -25,19 +24,4 @@ class ProductSearchRequest extends ProductNavigationRequest implements SearchReq
      * {@inheritDoc}
      */
     protected $path = 'navigation-search';
-
-    /**
-     * ProductSearchRequest constructor.
-     * @param Helper $helper
-     * @param StoreManager $storeManager
-     * @param Config $config
-     */
-    public function __construct(
-        Helper $helper,
-        StoreManager $storeManager,
-        Config $config
-    ) {
-        parent::__construct($helper, $storeManager);
-        $this->config = $config;
-    }
 }

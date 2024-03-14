@@ -2,7 +2,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
-use Magento\Framework\Controller\ResultFactory;
 use Tweakwise\Magento2Tweakwise\Model\AjaxNavigationResult;
 use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\InitializerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
@@ -12,9 +11,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
-use Magento\Framework\Exception\InputException;
 
 /**
  * Class Navigation

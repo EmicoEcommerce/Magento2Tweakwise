@@ -9,10 +9,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\ConfigAttributeProcessService;
 use Magento\Catalog\Model\Layer\Resolver;
-use Magento\Catalog\Model\Product;
-use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Framework\Api\AttributeInterface;
-use Magento\Framework\Exception\LocalizedException;
 
 class FilterHelper
 {
@@ -83,8 +80,10 @@ class FilterHelper
     public function shouldPageBeIndexable(): bool
     {
         foreach ($this->getActiveFilterItems() as $item) {
-            if (!$this->shouldFilterBeIndexable($item)) {
-                return false;
+            if ($item instanceof Item) {
+                if (!$this->shouldFilterBeIndexable($item)) {
+                    return false;
+                }
             }
         }
 

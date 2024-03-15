@@ -7,4 +7,9 @@
     <description>PHPCS</description>
     <!--<exclude-pattern>path/to/exclude/*</exclude-pattern>-->
     <rule ref="YouweMagento2"/>
+
+    <!-- Commenting -->
+    <rule ref="Generic.Commenting.DocComment">
+        <exclude name="Generic.Commenting.DocComment.NonParamGroup"/>
+    </rule>
 </ruleset>

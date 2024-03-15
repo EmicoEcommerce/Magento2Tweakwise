@@ -115,3 +115,7 @@ We do not actively drop support for versions below this range and will implement
 That being said if we can do a massive simplification of code at the cost of dropping support for version 2.3.Y we will do so.
 We also refer to the magento software lifecycle: https://magento.com/sites/default/files/magento-software-lifecycle-policy.pdf.
 Note that 2.3 is End Of Life.
+
+## Contributors
+If you want to create a pull request as a contributor, use the guidelines of semantic-release. semantic-release automates the whole package release workflow including: determining the next version number, generating the release notes, and publishing the package.
+By adhering to the commit message format, a release is automatically created with the commit messages as release notes. Follow the guidelines as described in: https://github.com/semantic-release/semantic-release?tab=readme-ov-file#commit-message-format.

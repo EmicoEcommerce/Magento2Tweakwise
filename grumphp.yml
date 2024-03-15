@@ -88,9 +88,3 @@ grumphp:
       exclude: '%phpmd.exclude%'
       ruleset: '%phpmd.ruleset%'
       triggered_by: '%phpmd.triggered_by%'
-
-    phpstan:
-      autoload_file: '%phpstan.autoload_file%'
-      configuration: '%phpstan.configuration%'
-      level: '%phpstan.level%'
-      triggered_by: '%phpstan.triggered_by%'

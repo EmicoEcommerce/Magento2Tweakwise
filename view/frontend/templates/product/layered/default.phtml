@@ -19,7 +19,7 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 <div data-mage-init='<?=$block->getJsSortConfig()?>'>
     <?php if ($block->isSearchable()): ?>
         <input data-max-visible="<?=  $block->getMaxItemsShown()?>" type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $block->getSearchPlaceholder(); ?>" >
-        <div style="display: none" class="tw_search_no_results empty"><?= $block->getSearchNoResultsText(); ?></div>
+        <div style="display: none" class="search_no_results"><?= $block->getSearchNoResultsText(); ?></div>
     <?php endif; ?>
     <ol class="items">
         <?php foreach ($block->getItems() as $index => $item): ?>

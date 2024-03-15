@@ -79,30 +79,23 @@ define([
             var filterInput = this.element.find('.tw_filtersearch');
             var value = filterInput.val().toLowerCase().trim();
             var items = filterInput.parent('div').find('ol');
-            var noItems = filterInput.parent('div').find('.tw_search_no_results');
+            var noItems = filterInput.parent('div').find('.no_search_results');
             var defaultVisibleItems = filterInput.data('max-visible');
             var counter = -1;
             var filterElement = 'li'
 
-            if (items.length == 0) {
+            if (items.length === 0) {
                 //swatch
                 items = filterInput.parent('div');
                 filterElement = 'a';
                 defaultVisibleItems = 100;
             }
 
-
             items.find(filterElement).show().filter(function () {
-                //dont hide selected values
-                if ($(this).find('input').is(":checked")) {
-                    counter++;
-                    return false;
-                }
-                console.log($(this).find('input').val());
-                return $(this).find('input').val().toLowerCase().trim().indexOf(value) == -1;
+                return $(this).find('input').val().toLowerCase().trim().indexOf(value) === -1;
             }).hide();
 
-            if(defaultVisibleItems < items.find(filterElement +':visible').length) {
+            if (defaultVisibleItems < items.find(filterElement +':visible').length) {
                 //more items visible then max visible items set on filter
                 items.find(filterElement + ':visible').show().filter(function () {
                     if ((counter) > defaultVisibleItems) {
@@ -120,9 +113,8 @@ define([
                 noItems.hide();
             }
 
-
             //hide show more/less button
-            if (value.length == 0) {
+            if (value.length === 0) {
                 filterInput.parent('div').find('.more-items').show();
             } else {
                 filterInput.parent('div').find('.more-items').hide();

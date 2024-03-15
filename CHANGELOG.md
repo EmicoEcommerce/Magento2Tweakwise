@@ -188,3 +188,7 @@ We've added a setting in which you can define whether to use the old/existing wa
 - Implemented a preventive measure to avoid errors when no attribute values are present for ALP facet requests. 
 - Resolved the issue with personal merchandising and pagination not functioning correctly when utilising the filter form.
 - Implemented measures to prevent a 500 error in the search when Tweakwise is inaccessible or down.
+
+## 5.8.3
+- Implemented prevention of duplicate attribute slug values. Previously, attribute values with variations in their representations, such as Black and Black", resulted in duplicate entries in the tweakwise_attribute_slug table. This duplication could disrupt filter functionality if the incorrect value was retrieved. This pull request addresses the issue by appending a unique identifier ("-") followed by a number to each slug, ensuring their uniqueness. Note that attributes with previously duplicated slug values will require re-saving to activate this fix.
+- Resolved a notice issue pertaining to missing variables when the shopping cart is empty. Previously, certain sections of the application would trigger notices due to uninitialized variables when the cart was empty.

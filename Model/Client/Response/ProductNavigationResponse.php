@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,16 +15,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\RedirectType;
 
-/**
- * Class ProductNavigationResponse
- *
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Response
- *
- * @method PropertiesType getProperties();
- * @method ItemType[] getItems();
- * @method FacetType[] getFacets();
- * @method RedirectType[] getRedirects();
- */
 class ProductNavigationResponse extends Response
 {
     /**
@@ -112,6 +103,7 @@ class ProductNavigationResponse extends Response
         foreach ($this->getItems() as $item) {
             $ids[] = $this->helper->getStoreId($item->getId());
         }
+
         return $ids;
     }
 }

@@ -9,7 +9,6 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 /**
  * Class PreparePostDataResolver
- * @package Tweakwise\Magento2Tweakwise\MagentoCompat
  * Unfortunately class \Magento\Catalog\ViewModel\Product\Listing\PreparePostData
  * does not exist in magento 2.3 but is used in magento 2.4.
  * Magento_Catalog::product/list/items.phtml line 265 wants a PreparePostData from the block rendering the template
@@ -43,6 +42,7 @@ class PreparePostDataFactory
 
     /**
      * @return mixed|null
+     * phpcs:disable Magento2.PHP.LiteralNamespaces.LiteralClassUsage
      */
     public function getPreparePostData(): ?ArgumentInterface
     {

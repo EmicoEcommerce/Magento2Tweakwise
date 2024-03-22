@@ -116,6 +116,7 @@ abstract class SuggestionTypeAbstract extends Type implements SuggestionTypeInte
         if (!$twCategoryIds) {
             return [];
         }
+
         $twCategoryIds = explode('-', $twCategoryIds);
 
         $categoryIds = array_map(

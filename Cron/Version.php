@@ -5,10 +5,6 @@ namespace Tweakwise\Magento2Tweakwise\Cron;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Composer\ComposerInformation;
 
-/**
- * Class Version
- * @package Tweakwise\Magento2Tweakwise\Cron
- */
 class Version
 {
     /**
@@ -36,6 +32,7 @@ class Version
 
     /**
      * Update Tweakwise version number to config table
+     * phpcs:disable Generic.Files.LineLength.TooLong
      */
     public function execute()
     {

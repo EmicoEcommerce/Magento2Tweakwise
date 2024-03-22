@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -19,7 +20,7 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 class FeaturedRequest extends Request
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'recommendations/featured';
 
@@ -67,7 +68,8 @@ class FeaturedRequest extends Request
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
+     * @throws ApiException
      */
     public function getPathSuffix()
     {

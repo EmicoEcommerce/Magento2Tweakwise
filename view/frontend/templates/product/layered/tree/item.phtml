@@ -7,13 +7,16 @@
  */
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRenderer\ItemRenderer;
 
-/** @var $block ItemRenderer */
+/**
+ * @var $block ItemRenderer
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
 $item = $block->getItem();
 ?>
 <li class="item">
     <a href="<?=$block->getCategoryUrl($item)?>">
         <?=$block->getItemPrefix()?>
-        <?=$block->escapeHtml($item->getLabel())?>
+        <?=$escaper->escapeHtml($item->getLabel())?>
         <?=$block->getItemPostfix()?>
 
         <?php if ($block->shouldDisplayProductCountOnLayer()): ?>

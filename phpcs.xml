@@ -11,5 +11,11 @@
     <!-- Commenting -->
     <rule ref="Generic.Commenting.DocComment">
         <exclude name="Generic.Commenting.DocComment.NonParamGroup"/>
+        <exclude name="Generic.Commenting.DocComment.SpacingAfterTagGroup"/>
+    </rule>
+
+    <!-- PhpUnit -->
+    <rule ref="GlobalPhpUnit.Coverage.CoversTag">
+        <exclude name="GlobalPhpUnit.Coverage.CoversTag.CoversTagMissing"/>
     </rule>
 </ruleset>

@@ -26,14 +26,16 @@ class RemoveTweakwiseSlugsBeforeSaveAttribute implements ObserverInterface
     public function __construct(
         AttributeSlugRepositoryInterface $attributeSlugRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder
-    )
-    {
+    ) {
         $this->attributeSlugRepository = $attributeSlugRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
      * @param Observer $observer
+     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
+     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+     * @SuppressWarnings(PHPMD.EmptyCatchBlock)
      */
     public function execute(Observer $observer)
     {
@@ -46,7 +48,8 @@ class RemoveTweakwiseSlugsBeforeSaveAttribute implements ObserverInterface
                 $this->attributeSlugRepository
                     ->delete($this->attributeSlugRepository->findByAttribute($option->getLabel()))
                 ;
-            } catch (NoSuchEntityException $exception) {}
+            } catch (NoSuchEntityException $exception) {
+            }
         }
     }
 }

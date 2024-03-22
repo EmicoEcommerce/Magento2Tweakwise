@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -80,7 +81,11 @@ class ItemType extends Type
                     $attribute = $attributes['attribute'];
                 }
 
-                if (isset($attribute['name']) && $attribute['name'] === 'final_price' && isset($attribute['values']['value'])) {
+                if (
+                    isset($attribute['name']) &&
+                    $attribute['name'] === 'final_price' &&
+                    isset($attribute['values']['value'])
+                ) {
                     return (float)($attribute['values']['value']);
                 }
             }

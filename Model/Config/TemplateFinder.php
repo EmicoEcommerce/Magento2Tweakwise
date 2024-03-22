@@ -41,6 +41,8 @@ class TemplateFinder
      * @param Product $product
      * @param string $type
      * @return int|string
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function forProduct(Product $product, $type)
     {
@@ -81,7 +83,7 @@ class TemplateFinder
         //try template for other categories of the product
         $categoryIds = $product->getCategoryIds();
 
-        foreach($categoryIds as $categoryId) {
+        foreach ($categoryIds as $categoryId) {
             $category = $this->categoryRepository->get($categoryId);
             $templateId = $this->forCategory($category, $type);
 

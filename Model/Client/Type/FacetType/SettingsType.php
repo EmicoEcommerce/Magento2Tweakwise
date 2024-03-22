@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -20,17 +21,17 @@ class SettingsType extends Type
     /**
      * Source type from attributes
      */
-    const SOURCE_CATEGORY = 'CATEGORY';
-    const SOURCE_FEED = 'FEED';
+    public const SOURCE_CATEGORY = 'CATEGORY';
+    public const SOURCE_FEED = 'FEED';
 
     /**
      * Tweakwise selection types
      */
-    const SELECTION_TYPE_LINK = 'link';
-    const SELECTION_TYPE_SLIDER = 'slider';
-    const SELECTION_TYPE_CHECKBOX = 'checkbox';
-    const SELECTION_TYPE_COLOR = 'color';
-    const SELECTION_TYPE_TREE = 'tree';
+    public const SELECTION_TYPE_LINK = 'link';
+    public const SELECTION_TYPE_SLIDER = 'slider';
+    public const SELECTION_TYPE_CHECKBOX = 'checkbox';
+    public const SELECTION_TYPE_COLOR = 'color';
+    public const SELECTION_TYPE_TREE = 'tree';
 
     /**
      * @return string
@@ -51,6 +52,7 @@ class SettingsType extends Type
 
     /**
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsMultipleSelect()
     {
@@ -83,6 +85,7 @@ class SettingsType extends Type
 
     /**
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsCollapsible()
     {
@@ -91,6 +94,7 @@ class SettingsType extends Type
 
     /**
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsCollapsed()
     {
@@ -99,6 +103,7 @@ class SettingsType extends Type
 
     /**
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsInfoVisible()
     {
@@ -152,6 +157,7 @@ class SettingsType extends Type
 
     /**
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsVisible()
     {
@@ -175,6 +181,7 @@ class SettingsType extends Type
         if (!empty($prefix)) {
             return (string) $prefix;
         }
+
         return null;
     }
 
@@ -187,6 +194,7 @@ class SettingsType extends Type
         if (!empty($postfix)) {
             return (string) $postfix;
         }
+
         return null;
     }
 
@@ -199,6 +207,7 @@ class SettingsType extends Type
         if (!empty($cssClass)) {
             return (string) $cssClass;
         }
+
         return null;
     }
 }

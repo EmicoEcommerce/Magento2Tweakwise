@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -110,6 +111,7 @@ class UrlModel extends MagentoUrl
 
             $newParams[$param] = $value;
         }
+
         $this->_queryParamsResolver->setQueryParams($newParams);
 
         return parent::_getQuery($escape);

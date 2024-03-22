@@ -15,7 +15,7 @@ class ProductSuggestionsRequest extends Request implements SearchRequestInterfac
     use SearchRequestTrait;
 
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'suggestions/products';
 

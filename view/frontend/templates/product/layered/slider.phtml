@@ -7,7 +7,10 @@
  */
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer;
 
-/** @var $block SliderRenderer */
+/**
+ * @var $block SliderRenderer
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
 $itemPrefix = $block->getItemPrefix();
 $itemPostfix = $block->getItemPostfix();
 $urlKey = $block->getUrlKey();
@@ -31,7 +34,7 @@ $disabledSliderUrlInputValue = sprintf('%s-%s', $minValue, $maxValue);
             <span class="postfix"><?= $itemPostfix ?></span>
         </span>
     </div>
-    <div class="slider" data-mage-init="<?=$block->escapeHtmlAttr($block->getJsSliderConfig())?>"></div>
+    <div class="slider" data-mage-init="<?=$escaper->escapeHtmlAttr($block->getJsSliderConfig())?>"></div>
     <div class="labels">
         <span class="current-min-value">
             <span class="prefix"><?= $itemPrefix ?></span>

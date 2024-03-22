@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,13 +12,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\Recommendati
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\Recommendation\OptionType;
 
-/**
- * Class OptionsResponse
- *
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\Recommendation
- *
- * @method OptionType[] getRecommendations();
- */
 class OptionsResponse extends Response
 {
     /**

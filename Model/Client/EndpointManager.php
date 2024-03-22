@@ -90,6 +90,8 @@ class EndpointManager
 
     /**
      * Update the downtime flag if appropriate
+     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
+     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
      */
     public function handleConnectException(): void
     {

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable Magento2.Legacy.InstallUpgrade.ObsoleteInstallSchemaScript
 
 namespace Tweakwise\Magento2Tweakwise\Setup;
 

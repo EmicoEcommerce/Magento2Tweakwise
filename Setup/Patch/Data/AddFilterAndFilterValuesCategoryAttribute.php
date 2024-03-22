@@ -9,6 +9,9 @@ use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 class AddFilterAndFilterValuesCategoryAttribute implements DataPatchInterface
 {
     /**
@@ -75,7 +78,6 @@ class AddFilterAndFilterValuesCategoryAttribute implements DataPatchInterface
             ]
         );
     }
-
 
     /**
      * {@inheritdoc}

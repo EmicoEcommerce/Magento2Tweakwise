@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -9,7 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
-use Zend_Db_Select;
+use Magento\Framework\DB\Select;
 
 abstract class AbstractCollection extends ProductCollection
 {
@@ -40,7 +41,7 @@ abstract class AbstractCollection extends ProductCollection
     protected function clearFilters()
     {
         $select = $this->getSelect();
-        $select->setPart(Zend_Db_Select::WHERE, []);
+        $select->setPart(Select::WHERE, []);
         $this->_pageSize = null;
         $this->_curPage = null;
         return $this;
@@ -59,6 +60,7 @@ abstract class AbstractCollection extends ProductCollection
                 $result[$productId] = $this->_items[$productId];
             }
         }
+
         $this->_items = $result;
         return $this;
     }

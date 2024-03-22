@@ -8,7 +8,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\SortTemplateRespon
 class SortTemplateRequest extends Request
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'catalog/sorttemplates';
 

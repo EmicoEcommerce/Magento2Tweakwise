@@ -89,6 +89,7 @@ class SwatchAttributeResolver
                 $resolvedOptions = $matchingAttributeOptions;
                 break;
             }
+
             if ($matchingAttributeOptions > $hits) {
                 $hits = $matchingAttributeOptions;
                 $targetSwatchAttribute = $swatchConfiguration['attribute'];
@@ -133,11 +134,13 @@ class SwatchAttributeResolver
                 continue;
             }
 
-            if (!$swatchAttribute->usesSource() || !($source = $swatchAttribute->getSource())) {
+            if (!$swatchAttribute->usesSource() || !$swatchAttribute->getSource()) {
                 // We cannot resolve an attribute without source.
                 continue;
             }
+
             /** @var Table $source */
+            $source = $swatchAttribute->getSource();
             $options = $source->getAllOptions(true, false);
 
             $optionLabels = array_column($options, 'label');

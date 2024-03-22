@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -7,7 +8,6 @@
  */
 
 namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar;
-
 
 use Closure;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
@@ -90,6 +90,7 @@ class Plugin
         foreach ($sortFields as $field) {
             $result[$field->getUrlValue()] = $field->getDisplayTitle();
         }
+
         return $result;
     }
 
@@ -109,12 +110,13 @@ class Plugin
 
         return json_encode($options);
     }
+
     /**
      * Update toolbar count if store is in single source mode
      * Used in the commerce version
      *
      * @param Toolbar $subject
-     * @param int $result
+     * @param callable $proceed
      * @return int
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @throws LocalizedException
@@ -134,8 +136,7 @@ class Plugin
             }
         }
 
-        if (!isset($result))
-        {
+        if (!isset($result)) {
             return $proceed();
         }
 

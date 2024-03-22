@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,7 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer;
 
-use Tweakwise\Magento2Tweakwise\Exception\TweakwiseException;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\CollectionFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -72,16 +73,23 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
     public function getCollection(Category $category)
     {
         if (!$this->config->isLayeredEnabled()) {
-            if (!$this->config->isSearchEnabled() || !($this->navigationContext->getRequest() instanceof ProductSearchRequest)) {
+            if (
+                !$this->config->isSearchEnabled() ||
+                !($this->navigationContext->getRequest() instanceof ProductSearchRequest)
+            ) {
                 return $this->originalProvider->getCollection($category);
             }
         }
-        if (!$this->config->isSearchEnabled() && ($this->navigationContext->getRequest() instanceof ProductSearchRequest)) {
+
+        if (
+            !$this->config->isSearchEnabled() &&
+            ($this->navigationContext->getRequest() instanceof ProductSearchRequest)
+        ) {
             return $this->originalProvider->getCollection($category);
         }
 
         //no api response
-        if($this->config->getTweakwiseExceptionTrown()) {
+        if ($this->config->getTweakwiseExceptionTrown()) {
             return $this->originalProvider->getCollection($category);
         }
 
@@ -97,7 +105,7 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
             $collection->clear();
 
             return $collection;
-        } catch (TweakwiseException $e) {
+        } catch (TweakwiseExceptionInterface $e) {
             $this->log->critical($e);
             $this->config->setTweakwiseExceptionThrown();
 

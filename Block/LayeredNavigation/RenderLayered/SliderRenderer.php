@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -20,7 +21,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 class SliderRenderer extends DefaultRenderer
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/slider.phtml';
 

@@ -8,12 +8,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionTypeGroup;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionTypeGroupFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
-/**
- * Class SuggestionsResponse
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions
- *
- * @method SuggestionTypeGroup[] getGroups();
- */
 class SuggestionsResponse extends Response
 {
     /**

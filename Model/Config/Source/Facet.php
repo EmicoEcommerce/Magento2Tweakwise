@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -51,8 +52,12 @@ class Facet implements OptionSourceInterface
         /** @var Client\Response\FacetResponse $response */
         $response = $this->client->request($request);
         foreach ($response->getFacets() as $facet) {
-            $result[] = ['value' => $facet->getFacetSettings()->getUrlKey(), 'label' => $facet->getFacetSettings()->getTitle()];
+            $result[] = [
+                'value' => $facet->getFacetSettings()->getUrlKey(),
+                'label' => $facet->getFacetSettings()->getTitle()
+            ];
         }
+
         return $result;
     }
 
@@ -67,8 +72,10 @@ class Facet implements OptionSourceInterface
             } catch (ApiException $e) {
                 $options = [];
             }
+
             $this->options = $options;
         }
+
         return $this->options;
     }
 }

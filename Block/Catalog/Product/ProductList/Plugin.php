@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,10 +12,10 @@ namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList;
 class Plugin
 {
     /**
-    * Retrieve additional blocks html
-    *
-    * @return string
-    */
+     * Retrieve additional blocks html
+     *
+     * @return string
+     */
     public function afterGetAdditionalHtml($subject, $result)
     {
         $searchBanner = $subject->getBlockHtml('navigation.search.banner.products.top');

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Model;
@@ -8,6 +9,7 @@ class ConfigAttributeProcessService
     /**
      * @param string|null $filterList
      * @return array
+     * phpcs:disable Magento2.Functions.StaticFunction.StaticFunction
      */
     public static function extractFilterValuesWhitelist(?string $filterList = null): array
     {
@@ -25,10 +27,11 @@ class ConfigAttributeProcessService
         $return = [];
         foreach ($filterListExploded as $listItem) {
             $item = explode('=', trim($listItem)) ?: null;
-            
+
             if ($item === null || !isset($item[0]) || !isset($item[1])) {
                 continue;
             }
+
             $return[$item[0]][] = $item[1];
         }
 
@@ -38,6 +41,7 @@ class ConfigAttributeProcessService
     /**
      * @param string|null $filterList
      * @return array
+     * phpcs:disable Magento2.Functions.StaticFunction.StaticFunction
      */
     public static function extractFilterWhitelist(?string $filterList = null): array
     {

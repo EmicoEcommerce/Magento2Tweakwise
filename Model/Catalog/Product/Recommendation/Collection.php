@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -63,8 +64,7 @@ class Collection extends AbstractCollection
         GroupManagementInterface $groupManagement,
         RecommendationsResponse $response,
         AdapterInterface $connection = null
-    )
-    {
+    ) {
         parent::__construct(
             $entityFactory,
             $logger,

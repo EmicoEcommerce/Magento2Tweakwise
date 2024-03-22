@@ -13,9 +13,6 @@ use Magento\Framework\Api\AttributeInterface;
 
 class FilterHelper
 {
-    /**
-     *
-     */
     public const TWEAKWISE_CATEGORY_FILTER_NAME = 'categorie';
 
     /**
@@ -43,8 +40,7 @@ class FilterHelper
         Resolver $layerResolver,
         Tweakwise $filterList,
         Config $config
-    )
-    {
+    ) {
         $this->layerResolver = $layerResolver;
         $this->tweakwiseFilterList = $filterList;
         $this->config = $config;
@@ -64,7 +60,8 @@ class FilterHelper
             return true;
         }
 
-        if (!$this->exceedsMaxAllowedFacets() &&
+        if (
+            !$this->exceedsMaxAllowedFacets() &&
             $this->isFilterItemInWhiteList($item) &&
             $this->isFilterValueItemInWhiteList($item)
         ) {

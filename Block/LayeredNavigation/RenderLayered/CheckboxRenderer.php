@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,7 +12,7 @@ namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 class CheckboxRenderer extends DefaultRenderer
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/checkbox.phtml';
 }

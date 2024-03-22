@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
+use Magento\Framework\Serialize\SerializerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Encryption\Encryptor;
@@ -24,21 +25,34 @@ class HashInputProvider
     protected $config;
 
     /**
+     * @var SerializerInterface
+     */
+    private SerializerInterface $serializer;
+
+    /**
      * ToolbarInputProvider constructor.
      * @param MagentoHttpRequest $request
+     * @param Config $config
+     * @param Encryptor $encryptor
+     * @param SerializerInterface $serializer
      */
-    public function __construct(MagentoHttpRequest $request, Config $config, Encryptor $encryptor)
-    {
+    public function __construct(
+        MagentoHttpRequest $request,
+        Config $config,
+        Encryptor $encryptor,
+        SerializerInterface $serializer
+    ) {
         $this->request = $request;
         $this->config = $config;
         $this->encryptor = $encryptor;
+        $this->serializer = $serializer;
     }
 
     public function getHash($input)
     {
         $input['salt'] = $this->getSalt();
 
-        return $this->encryptor->hash(serialize($input));
+        return $this->encryptor->hash($this->serializer->serialize($input));
     }
 
     protected function getSalt()
@@ -63,7 +77,7 @@ class HashInputProvider
             }
         } else {
             //hash is empty original url should also be empty
-            if (empty ($request->getParam('__tw_original_url'))) {
+            if (empty($request->getParam('__tw_original_url'))) {
                 $isValid = true;
             }
         }

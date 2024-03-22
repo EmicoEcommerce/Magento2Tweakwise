@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -46,7 +47,8 @@ class ProductRequest extends FeaturedRequest
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
+     * @throws ApiException
      */
     public function getPathSuffix()
     {

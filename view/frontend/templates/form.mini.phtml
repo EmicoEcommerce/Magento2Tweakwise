@@ -6,9 +6,17 @@
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-/** @var $block \Tweakwise\Magento2Tweakwise\Block\Autocomplete\FormMini */
+/**
+ * @var $block \Tweakwise\Magento2Tweakwise\Block\Autocomplete\FormMini
+ * @var $escaper Escaper
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ * phpcs:disable Magento2.Legacy.PhtmlTemplate.TextJavascriptTypeFound
+ */
+
+use Magento\Framework\Escaper;
+
 ?>
-<script id="autocomplete-item-template" type="text/x-magento-template" data-url="<?=$block->getAjaxUrl()?>">
+<script id="autocomplete-item-template" type="text/x-magento-template" data-url="<?=$escaper->escapeUrl($block->getAjaxUrl())?>">
     <% if (data.type === 'product') { %>
         <li class="<%- data.row_class %> product-item" id="qs-option-<%- data.index %>" data-url="<%- data.url %>" role="option">
             <% if (data.image) { %>

@@ -6,12 +6,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 
-/**
- * Class ProductSuggestionsResponse
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions
- *
- * @method ItemType[] getItems();
- */
 class ProductSuggestionsResponse extends Response implements AutocompleteProductResponseInterface
 {
     /**
@@ -44,6 +38,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
         foreach ($this->getItems() as $item) {
             $ids[] = $this->helper->getStoreId($item->getId());
         }
+
         return $ids;
     }
 
@@ -60,6 +55,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
                 'tweakwise_final_price' => (float) $item->getFinalPrice(),
             ];
         }
+
         return $result;
     }
 }

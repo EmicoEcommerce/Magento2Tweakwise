@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
+use InvalidArgumentException;
 use Tweakwise\Magento2Tweakwise\Model\AjaxNavigationResult;
 use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\InitializerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
@@ -16,11 +17,9 @@ use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
 /**
  * Class Navigation
  * Handles ajax filtering requests for category pages
- * @package Tweakwise\Magento2Tweakwise\Controller\Ajax
  */
 class Navigation extends Action
 {
-
     /**
      * @var Config
      */
@@ -48,9 +47,11 @@ class Navigation extends Action
 
     /**
      * Navigation constructor.
-     * @param Context $context Request context
-     * @param Config $config Tweakwise configuration provider
+     * @param Context $context
+     * @param Config $config
      * @param AjaxNavigationResult $ajaxNavigationResult
+     * @param HashInputProvider $hashInputProvider
+     * @param Timer $timer
      * @param array $initializerMap
      */
     public function __construct(
@@ -89,13 +90,13 @@ class Navigation extends Action
 
         //form is modified, don't accept the request. Should only happen in an xss attack
         if (!$hashIsValid) {
-            throw new \InvalidArgumentException('Incorrect/modified form parameters');
+            throw new InvalidArgumentException('Incorrect/modified form parameters');
         }
 
         $type = $request->getParam('__tw_ajax_type');
 
         if (!isset($this->initializerMap[$type])) {
-            throw new \InvalidArgumentException('No ajax navigation result handler found for ' . $type);
+            throw new InvalidArgumentException('No ajax navigation result handler found for ' . $type);
         }
 
         $this->initializerMap[$type]->initializeAjaxResult(

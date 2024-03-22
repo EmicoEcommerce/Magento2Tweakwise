@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -16,8 +17,6 @@ use Magento\Catalog\Model\Layer\Filter\Item as MagentoItem;
 
 /**
  * Class Item extends Magento\Catalog\Model\Layer\Filter\Item only for the type hint in Magento\Swatches\Block\LayeredNavigation\RenderLayered
- *
- * @package Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter
  */
 class Item extends MagentoItem
 {
@@ -58,7 +57,7 @@ class Item extends MagentoItem
     }
 
     /**
-     *
+     * @return void
      */
     public function __clone()
     {

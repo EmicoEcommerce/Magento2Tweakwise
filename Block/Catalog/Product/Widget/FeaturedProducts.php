@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -13,14 +14,6 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
 use Magento\Widget\Block\BlockInterface;
 
-/**
- * Class FeaturedProducts
- *
- * @package Tweakwise\Magento2Tweakwise\Block\Catalog\Product\Widget
- * @method int getRuleId();
- * @method string getDisplayType();
- * @method bool getCanItemsAddToCart();
- */
 class FeaturedProducts extends Featured implements BlockInterface
 {
     /**
@@ -41,7 +34,7 @@ class FeaturedProducts extends Featured implements BlockInterface
     }
 
     /**
-     * @param $request
+     * @param FeaturedRequest $request
      */
     protected function configureRequest(FeaturedRequest $request)
     {

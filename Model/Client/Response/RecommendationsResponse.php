@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,11 +12,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 
-/**
- * Class RecommendationsResponse
- *
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Response
- */
 class RecommendationsResponse extends Response
 {
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -17,5 +18,4 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
  */
 class LabelType extends Type
 {
-
 }

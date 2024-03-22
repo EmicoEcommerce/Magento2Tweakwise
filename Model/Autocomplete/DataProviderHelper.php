@@ -105,6 +105,9 @@ class DataProviderHelper
     /**
      * @return Category
      * @noinspection PhpIncompatibleReturnTypeInspection
+     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
+     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+     * @SuppressWarnings(PHPMD.EmptyCatchBlock)
      */
     public function getCategory()
     {
@@ -131,10 +134,15 @@ class DataProviderHelper
         $productCollection = $this->productCollectionFactory->create();
         $productCollection->setStore($this->storeManager->getStore());
         $productCollection->addAttributeToFilter('entity_id', ['in' => $response->getProductIds()]);
-        $productCollection->addFieldToFilter('visibility', ['in' => [
+        $productCollection->addFieldToFilter(
+            'visibility',
+            [
+            'in' => [
             Visibility::VISIBILITY_BOTH,
             Visibility::VISIBILITY_IN_SEARCH
-        ]]);
+            ]
+            ]
+        );
         $this->collectionFilter->filter($productCollection, $this->getCategory());
 
         $result = [];

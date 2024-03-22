@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,14 +12,10 @@ namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\Tree
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRenderer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 
-/**
- * Class ItemRenderer
- * @package Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRenderer
- */
 class ItemRenderer extends TreeRenderer
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/tree/item.phtml';
 

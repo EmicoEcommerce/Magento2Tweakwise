@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -113,6 +114,7 @@ class RecommendationOption extends AbstractSource
             } catch (ApiException $e) {
                 $options = [];
             }
+
             $this->options = $options;
         }
 

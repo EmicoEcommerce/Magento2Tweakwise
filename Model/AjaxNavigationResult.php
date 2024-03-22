@@ -13,7 +13,6 @@ use Magento\Framework\View\Result\Layout;
 
 /**
  * Class AjaxNavigationResponse
- * @package Tweakwise\Magento2Tweakwise\Model
  */
 class AjaxNavigationResult extends Layout
 {

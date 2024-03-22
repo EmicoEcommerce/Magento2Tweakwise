@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,7 +15,6 @@ use Magento\Framework\Model\AbstractModel;
 
 class AttributeSlug extends AbstractModel implements AttributeSlugInterface
 {
-
     protected $_eventPrefix = 'tweakwise_attributeslug';
 
     /**

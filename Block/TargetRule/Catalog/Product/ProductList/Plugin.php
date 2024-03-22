@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -55,7 +56,6 @@ abstract class Plugin
     /**
      * Plugin constructor.
      *
-     * @param string $type
      * @param Config $config
      * @param Registry $registry
      * @param Context $context
@@ -121,6 +121,7 @@ abstract class Plugin
 
     /**
      * @return Collection
+     * @throws InvalidArgumentException
      */
     protected function getCollection()
     {

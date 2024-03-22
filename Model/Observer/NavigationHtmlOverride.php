@@ -17,7 +17,6 @@ use Magento\LayeredNavigation\Block\Navigation;
 
 /**
  * Class NavigationHtmlOverride
- * @package Tweakwise\Magento2Tweakwise\Model\Observer
  *
  * Change template of the navigation block.
  * Changing the template depends on configuration so this could not be done in layout, also since the original definition

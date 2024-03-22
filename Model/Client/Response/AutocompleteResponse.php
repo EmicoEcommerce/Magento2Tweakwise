@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -87,6 +88,7 @@ class AutocompleteResponse extends Response implements AutocompleteProductRespon
         foreach ($this->getItems() as $item) {
             $ids[] = $this->helper->getStoreId($item->getId());
         }
+
         return $ids;
     }
 
@@ -97,13 +99,13 @@ class AutocompleteResponse extends Response implements AutocompleteProductRespon
     {
         $result = [];
         foreach ($this->getItems() as $item) {
-
             $result[] = [
                 'id' => $this->helper->getStoreId($item->getId()),
                 'tweakwise_price' => (float) $item->getPrice(),
                 'tweakwise_final_price' => (float) $item->getFinalPrice(),
             ];
         }
+
         return $result;
     }
 }

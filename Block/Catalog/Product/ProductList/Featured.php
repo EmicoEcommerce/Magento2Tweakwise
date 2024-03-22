@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -23,13 +24,6 @@ use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Url\Helper\Data;
 
-/**
- * Class Featured
- *
- * @package Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList
- *
- * @method string getRenderLocation();
- */
 class Featured extends ListProduct
 {
     /**
@@ -122,6 +116,7 @@ class Featured extends ListProduct
         if (!$this->getData('view_model') && $this->preparePostDataFactory->getPreparePostData()) {
             $this->setData('view_model', $this->preparePostDataFactory->getPreparePostData());
         }
+
         try {
             $this->_getProductCollection();
         } catch (ApiException $e) {
@@ -159,7 +154,7 @@ class Featured extends ListProduct
     }
 
     /**
-     * @param $request
+     * @param FeaturedRequest $request
      */
     protected function configureRequest(FeaturedRequest $request)
     {

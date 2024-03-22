@@ -8,9 +8,6 @@ use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
 
 class SearchInputProvider implements FilterFormInputProviderInterface
 {
-    /**
-     *
-     */
     public const TYPE = 'search';
 
     /**
@@ -60,7 +57,8 @@ class SearchInputProvider implements FilterFormInputProviderInterface
             'q' => $this->getSearchTerm()
         ];
 
-        if ($categoryFilter = $this->getCategoryFilter()) {
+        $categoryFilter = $this->getCategoryFilter();
+        if ($categoryFilter) {
             $parameters[FilterHelper::TWEAKWISE_CATEGORY_FILTER_NAME] = $categoryFilter;
         }
 

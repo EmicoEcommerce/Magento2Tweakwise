@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -10,5 +11,4 @@ namespace Tweakwise\Magento2Tweakwise\Exception;
 
 class ApiException extends RuntimeException
 {
-
 }

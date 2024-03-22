@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -53,6 +54,7 @@ class FacetAttribute implements OptionSourceInterface
         foreach ($response->getAttributes() as $attribute) {
             $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
         }
+
         return $result;
     }
 
@@ -67,8 +69,10 @@ class FacetAttribute implements OptionSourceInterface
             } catch (ApiException $e) {
                 $options = [];
             }
+
             $this->options = $options;
         }
+
         return $this->options;
     }
 }

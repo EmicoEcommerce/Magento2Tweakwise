@@ -5,10 +5,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Catalog\Model\Product\ProductList\Toolbar;
 
-/**
- * Class ToolbarInputProvider
- * @package Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider
- */
 class ToolbarInputProvider implements FilterFormInputProviderInterface
 {
     public const TOOLBAR_INPUTS = [
@@ -40,7 +36,8 @@ class ToolbarInputProvider implements FilterFormInputProviderInterface
     {
         $input = [];
         foreach (self::TOOLBAR_INPUTS as $toolbarInput) {
-            if ($toolbarInputValue = $this->request->getParam($toolbarInput)) {
+            $toolbarInputValue = $this->request->getParam($toolbarInput);
+            if ($toolbarInputValue) {
                 $input[$toolbarInput] = filter_var($toolbarInputValue, FILTER_SANITIZE_ENCODED);
             }
         }

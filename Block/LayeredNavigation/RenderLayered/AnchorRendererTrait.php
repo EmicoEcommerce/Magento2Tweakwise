@@ -23,6 +23,7 @@ trait AnchorRendererTrait
         foreach ($anchorAttributes as $anchorAttribute => $anchorAttributeValue) {
             $attributeHtml[] = sprintf('%s="%s"', $anchorAttribute, $anchorAttributeValue);
         }
+
         return implode(' ', $attributeHtml);
     }
 

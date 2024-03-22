@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,6 +9,8 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Serialize\SerializerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface;
@@ -24,6 +27,9 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 use Magento\Search\Helper\Data;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, CategoryUrlInterface
 {
     /**
@@ -96,12 +102,20 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     private Data $searchConfig;
 
     /**
+     * @var SerializerInterface
+     */
+    private SerializerInterface $serializer;
+
+    /**
      * Magento constructor.
      *
      * @param UrlModel $url
      * @param StrategyHelper $strategyHelper
      * @param CookieManagerInterface $cookieManager
      * @param TweakwiseConfig $config
+     * @param Url $layerUrl
+     * @param Data $searchConfig
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         UrlModel $url,
@@ -109,7 +123,8 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         CookieManagerInterface $cookieManager,
         TweakwiseConfig $config,
         Url $layerUrl,
-        Data $searchConfig
+        Data $searchConfig,
+        SerializerInterface $serializer
     ) {
         $this->url = $url;
         $this->strategyHelper = $strategyHelper;
@@ -117,6 +132,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         $this->tweakwiseConfig = $config;
         $this->layerUrl = $layerUrl;
         $this->searchConfig = $searchConfig;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -162,13 +178,13 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         $params['_escape'] = false;
 
         //remove p=1 from url
-        if (!empty($params['_query']['p']) &&  ($params['_query']['p'] === "1")) {
+        if (!empty($params['_query']['p']) && ($params['_query']['p'] === "1")) {
             unset($params['_query']['p']);
         }
 
-        if ($originalUrl = $request->getQuery('__tw_original_url')) {
-
-            if (!empty($request->getParam('q'))){
+        $originalUrl = $request->getQuery('__tw_original_url');
+        if ($originalUrl) {
+            if (!empty($request->getParam('q'))) {
                 $params['_query']['q'] = $request->getParam('q');
             }
 
@@ -217,6 +233,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             if (!is_array($data)) {
                 $data = [$data];
             }
+
             return array_map('strval', $data);
         }
 
@@ -224,7 +241,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     }
 
     /**
-     * {@inheritdoc}
+     * @param MagentoHttpRequest $request
+     * @param Item $item
+     * @return string
+     * @throws NoSuchEntityException
+     * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
      */
     public function getCategoryFilterSelectUrl(MagentoHttpRequest $request, Item $item): string
     {
@@ -313,7 +334,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
             $queryParams = [];
             foreach ($values as $key => $value) {
-                $queryParams[] = '__VALUE.'.$key.'__';
+                $queryParams[] = '__VALUE.' . $key . '__';
             }
 
             $query = [$urlKey => $queryParams];
@@ -321,17 +342,19 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $query = [$urlKey => '__VALUE.0__'];
         }
 
-        $hash = sha1(serialize($query));
+        $hash = sha1($this->serializer->serialize($query));
         if (!isset($this->queryUrlCache[$hash])) {
             $this->queryUrlCache[$hash] = $this->getCurrentQueryUrl($request, $query);
         }
+
         $queryUrl = $this->queryUrlCache[$hash];
 
         if (!$settings->getIsMultipleSelect()) {
             $values[] = $value;
         }
+
         foreach ($values as $key => $value) {
-            $queryUrl = str_replace('__VALUE.'.$key.'__', $value, $queryUrl);
+            $queryUrl = str_replace('__VALUE.' . $key . '__', $value, $queryUrl);
         }
 
         return $queryUrl;
@@ -404,6 +427,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
             $result[$attribute] = $value;
         }
+
         return $result;
     }
 
@@ -418,10 +442,17 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     }
 
     /**
-     * {@inheritdoc}
+     * @param MagentoHttpRequest $request
+     * @param ProductNavigationRequest $navigationRequest
+     * @return FilterApplierInterface
+     * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function apply(MagentoHttpRequest $request, ProductNavigationRequest $navigationRequest): FilterApplierInterface
-    {
+    public function apply(
+        MagentoHttpRequest $request,
+        ProductNavigationRequest $navigationRequest
+    ): FilterApplierInterface {
         $attributeFilters = $this->getAttributeFilters($request);
         foreach ($attributeFilters as $attribute => $values) {
             if (!is_array($values)) {
@@ -438,7 +469,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             //fix spaces/special chars in sort order and add the correct value to the request
             $sortOrder = urldecode($sortOrder);
             $query = $request->getQuery();
-            $query->set(SELF::PARAM_ORDER, $sortOrder);
+            $query->set(self::PARAM_ORDER, $sortOrder);
             $request->setQuery($query);
 
             $navigationRequest->setOrder($sortOrder);
@@ -457,7 +488,10 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
         // Add this only for ajax requests
         $path = $request->getPathInfo();
-        if ($this->tweakwiseConfig->isPersonalMerchandisingActive() && ($request->isAjax() || $path === '/tweakwise/ajax/navigation/')) {
+        if (
+            $this->tweakwiseConfig->isPersonalMerchandisingActive() &&
+            ($request->isAjax() || $path === '/tweakwise/ajax/navigation/')
+        ) {
             $profileKey = $this->cookieManager->getCookie(
                 $this->tweakwiseConfig->getPersonalMerchandisingCookieName(),
                 null
@@ -544,9 +578,10 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     /**
      * @return string
      */
-    public function getOriginalUrl(MagentoHttpRequest $request) : string
+    public function getOriginalUrl(MagentoHttpRequest $request): string
     {
-        if ($originalUrl = $request->getQuery('__tw_original_url')) {
+        $originalUrl = $request->getQuery('__tw_original_url');
+        if ($originalUrl) {
             $urlArray = explode('/', $originalUrl);
             $newOriginalUrl = '';
             foreach ($urlArray as $url) {
@@ -568,9 +603,11 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             if ($sort) {
                 $query['product_list_order'] = $sort;
             }
+
             if ($limit) {
                 $query['product_list_limit'] = $limit;
             }
+
             if ($mode) {
                 $query['product_list_mode'] = $mode;
             }
@@ -583,7 +620,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         return $this->getCurrentUrl($request);
     }
 
-    private function getCurrentUrl(MagentoHttpRequest $request) : string
+    private function getCurrentUrl(MagentoHttpRequest $request): string
     {
         $url = $request->getOriginalPathInfo();
 

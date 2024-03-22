@@ -21,22 +21,27 @@ class AutocompleteDataProvider implements DataProviderInterface
      * @var DataProviderHelper
      */
     protected $dataProviderHelper;
+
     /**
      * @var Config
      */
     protected $config;
+
     /**
      * @var Client
      */
     protected $client;
+
     /**
      * @var StoreManagerInterface
      */
     protected $storeManager;
+
     /**
      * @var RequestFactory
      */
     protected $autocompleteRequestFactory;
+
     /**
      * @var ProductCollectionFactory
      */
@@ -46,10 +51,12 @@ class AutocompleteDataProvider implements DataProviderInterface
      * @var CollectionFilter
      */
     protected $collectionFilter;
+
     /**
      * @var ProductItemFactory
      */
     protected $productItemFactory;
+
     /**
      * @var SuggestionItemFactory
      */
@@ -137,6 +144,7 @@ class AutocompleteDataProvider implements DataProviderInterface
         foreach ($response->getSuggestions() as $suggestion) {
             $result[] = $this->suggestionItemFactory->create(['suggestion' => $suggestion]);
         }
+
         return $result;
     }
 }

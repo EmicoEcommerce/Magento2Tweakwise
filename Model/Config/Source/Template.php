@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -57,6 +58,7 @@ class Template implements OptionSourceInterface
         foreach ($response->getTemplates() as $template) {
             $result[] = ['value' => $template->getTemplateId(), 'label' => $template->getName()];
         }
+
         return $result;
     }
 
@@ -71,8 +73,10 @@ class Template implements OptionSourceInterface
             } catch (ApiException $e) {
                 $options = [];
             }
+
             $this->options = $options;
         }
+
         return $this->options;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -49,7 +50,11 @@ class CatalogSearchRedirect implements ObserverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Observer $observer
+     * @return void
+     * @throws \Exception
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function execute(Observer $observer)
     {
@@ -66,9 +71,9 @@ class CatalogSearchRedirect implements ObserverInterface
             return;
         }
 
-        try{
+        try {
             $redirects = $this->context->getResponse()->getRedirects();
-        }catch (ApiException $e) {
+        } catch (ApiException $e) {
             //no api response
             return;
         }

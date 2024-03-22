@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,7 +15,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\Recommendation\Opt
 class FeaturedRequest extends Request
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'catalog/recommendation/featured';
 

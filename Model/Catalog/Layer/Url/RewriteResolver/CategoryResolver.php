@@ -12,7 +12,6 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 class CategoryResolver implements RewriteResolverInterface
 {
-
     /**
      * @var UrlFinderInterface
      */
@@ -93,6 +92,7 @@ class CategoryResolver implements RewriteResolverInterface
             $lastPathPart .= '/' . $pathPart;
             $paths[] = $lastPathPart;
         }
+
         $paths = array_reverse($paths);
 
         // Take category url suffix into account.

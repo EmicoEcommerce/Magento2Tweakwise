@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -16,6 +17,7 @@ use Magento\Checkout\Block\Cart\Crosssell;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context as RecommendationsContext;
 use Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\AbstractRecommendationPlugin;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
@@ -66,8 +68,7 @@ class Plugin extends AbstractRecommendationPlugin
         Session $checkoutSession,
         RecommendationsContext $recommendationsContext,
         ?ProductRepositoryInterface $productRepository = null
-    )
-    {
+    ) {
         $this->productRepository = $productRepository;
         $this->checkoutSession  = $checkoutSession;
         $this->recommendationsContext = $recommendationsContext;
@@ -94,6 +95,7 @@ class Plugin extends AbstractRecommendationPlugin
     /**
      * Get the last added product before running the default getItems because the last added products gets deleted from the session
      *
+     * @param Crosssell $crosssell
      * @param Closure $proceed
      * @return array
      */
@@ -124,6 +126,7 @@ class Plugin extends AbstractRecommendationPlugin
                 $product = null;
             }
         }
+
         return $product;
     }
 
@@ -139,7 +142,7 @@ class Plugin extends AbstractRecommendationPlugin
 
     /**
      * @param Crosssell $crosssell
-     * @param $result
+     * @param array $result
      * @return array
      */
     public function afterGetItems(Crosssell $crosssell, $result)
@@ -166,7 +169,11 @@ class Plugin extends AbstractRecommendationPlugin
 
         if ($cartProductIds) {
             if ($this->lastAddedProduct) {
-                $items = $this->getShoppingcartCrosssellTweakwiseItems($this->lastAddedProduct, $result, $cartProductIds);
+                $items = $this->getShoppingcartCrosssellTweakwiseItems(
+                    $this->lastAddedProduct,
+                    $result,
+                    $cartProductIds
+                );
             }
 
             if (empty($items)) {
@@ -197,7 +204,8 @@ class Plugin extends AbstractRecommendationPlugin
      * @param array $cartItems
      * @return array
      */
-    private function getShoppingcartCrosssellTweakwiseItems (ProductInterface $product, array $result, array $cartItems) {
+    private function getShoppingcartCrosssellTweakwiseItems(ProductInterface $product, array $result, array $cartItems)
+    {
         $items = [];
 
         //show featured products
@@ -235,19 +243,20 @@ class Plugin extends AbstractRecommendationPlugin
     }
 
     /**
-     * @param $collection
-     * @param $filteredProducts
-     * @return void
+     * @param Collection $collection
+     * @param array $cartItems
+     * @return array
      */
     protected function removeCartItems($collection, $cartItems)
     {
         $items = $collection->getItems();
 
-        if(!empty($cartItems)) {
+        if (!empty($cartItems)) {
             foreach ($cartItems as $cartItem) {
                 unset($items[$cartItem]);
             }
         }
+
         return $items;
     }
 

@@ -16,75 +16,77 @@ use Magento\Eav\Setup\EavSetupFactory;
  */
 class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
 {
-	/**
-	 * @var ModuleDataSetupInterface
-	 */
-	private ModuleDataSetupInterface $moduleDataSetup;
+    /**
+     * @var ModuleDataSetupInterface
+     */
+    private ModuleDataSetupInterface $moduleDataSetup;
 
     /**
      * @var EavSetupFactory
      */
-	private EavSetupFactory $eavSetupFactory;
+    private EavSetupFactory $eavSetupFactory;
 
-	/**
-	 * @param ModuleDataSetupInterface $moduleDataSetup
-     * @param
-	 */
-	public function __construct(
-		ModuleDataSetupInterface $moduleDataSetup,
+    /**
+     * @param ModuleDataSetupInterface $moduleDataSetup
+     * @param EavSetupFactory $eavSetupFactory
+     */
+    public function __construct(
+        ModuleDataSetupInterface $moduleDataSetup,
         EavSetupFactory $eavSetupFactory
-	)
-	{
+    ) {
         $this->eavSetupFactory = $eavSetupFactory;
-		$this->moduleDataSetup = $moduleDataSetup;
-	}
+        $this->moduleDataSetup = $moduleDataSetup;
+    }
 
-	/**
-	 * Do Upgrade.
-	 *
-	 * @return void
-	 */
-	public function apply()
-	{
-		$this->moduleDataSetup->getConnection()->startSetup();
+    /**
+     * Do Upgrade.
+     *
+     * @return void
+     */
+    public function apply()
+    {
+        $this->moduleDataSetup->getConnection()->startSetup();
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
 
-		$this->ensureShoppingcartCrosssellTemplateAttribute($eavSetup);
+        $this->ensureShoppingcartCrosssellTemplateAttribute($eavSetup);
 
-		$this->moduleDataSetup->getConnection()->endSetup();
-	}
+        $this->moduleDataSetup->getConnection()->endSetup();
+    }
 
-	/**
-	 * Get aliases (previous names) for the patch.
-	 *
-	 * @return string[]
-	 */
-	public function getAliases()
-	{
-		return [];
-	}
+    /**
+     * Get aliases (previous names) for the patch.
+     *
+     * @return string[]
+     */
+    public function getAliases()
+    {
+        return [];
+    }
 
-	/**
-	 * Get array of patches that have to be executed prior to this.
-	 *
-	 * Example of implementation:
-	 *
-	 * [
-	 *      \Vendor_Name\Module_Name\Setup\Patch\Patch1::class,
-	 *      \Vendor_Name\Module_Name\Setup\Patch\Patch2::class
-	 * ]
-	 *
-	 * @return string[]
-	 */
-	public static function getDependencies()
-	{
-		return [];
-	}
+    /**
+     * Get array of patches that have to be executed prior to this.
+     *
+     * Example of implementation:
+     *
+     * [
+     *      \Vendor_Name\Module_Name\Setup\Patch\Patch1::class,
+     *      \Vendor_Name\Module_Name\Setup\Patch\Patch2::class
+     * ]
+     *
+     * @return string[]
+     */
+    public static function getDependencies()
+    {
+        return [];
+    }
 
     protected function ensureShoppingcartCrosssellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE,
+                [
                 'type' => 'int',
                 'label' => 'Shoppingcart crosssell template',
                 'input' => 'select',
@@ -93,9 +95,13 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
                 'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product',
-            ]);
+                ]
+            );
 
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE,
+                [
                 'type' => 'varchar',
                 'label' => 'Shoppincart crosssell code',
                 'input' => 'text',
@@ -103,14 +109,18 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
                 'sort_order' => 55,
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
-            ]);
+                ]
+            );
         }
     }
 
     protected function ensureCrosssellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_CROSSSELL_TEMPLATE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_CROSSSELL_TEMPLATE,
+                [
                 'type' => 'int',
                 'label' => 'Crosssell template',
                 'input' => 'select',
@@ -119,9 +129,13 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
                 'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product',
-            ]);
+                ]
+            );
 
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_CROSSSELL_GROUP_CODE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_CROSSSELL_GROUP_CODE,
+                [
                 'type' => 'varchar',
                 'label' => 'Crosssell group code',
                 'input' => 'text',
@@ -129,14 +143,18 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
                 'sort_order' => 25,
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
-            ]);
+                ]
+            );
         }
     }
 
     protected function ensureUpsellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_UPSELL_TEMPLATE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_UPSELL_TEMPLATE,
+                [
                 'type' => 'int',
                 'label' => 'Upsell template',
                 'input' => 'select',
@@ -145,9 +163,13 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
                 'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product',
-            ]);
+                ]
+            );
 
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_UPSELL_GROUP_CODE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_UPSELL_GROUP_CODE,
+                [
                 'type' => 'varchar',
                 'label' => 'Upsell group code',
                 'input' => 'text',
@@ -155,13 +177,17 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
                 'sort_order' => 35,
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
-            ]);
+                ]
+            );
         }
     }
 
     protected function ensureFeaturedTemplateAttribute(EavSetup $eavSetup)
     {
-        $eavSetup->addAttribute(Category::ENTITY, Config::ATTRIBUTE_FEATURED_TEMPLATE, [
+        $eavSetup->addAttribute(
+            Category::ENTITY,
+            Config::ATTRIBUTE_FEATURED_TEMPLATE,
+            [
             'type' => 'int',
             'label' => 'Featured products template',
             'input' => 'select',
@@ -170,6 +196,7 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
             'global' => ScopedAttributeInterface::SCOPE_STORE,
             'group' => 'Tweakwise',
             'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured',
-        ]);
+            ]
+        );
     }
 }

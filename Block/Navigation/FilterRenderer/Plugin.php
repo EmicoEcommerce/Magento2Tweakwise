@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -79,12 +80,13 @@ class Plugin
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @param FilterRenderer $subject
      * @param Closure $proceed
      * @param FilterInterface $filter
      * @return mixed
      * @throws \Magento\Framework\Exception\LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundRender(FilterRenderer $subject, Closure $proceed, FilterInterface $filter)
     {
@@ -94,7 +96,11 @@ class Plugin
 
         if (!$this->config->isLayeredEnabled()) {
             $request = $subject->getRequest();
-            if (!$this->config->isSearchEnabled() || (($request->getModuleName() !== 'catalogsearch') && (stripos($request->getParam('__tw_original_url'), 'catalogsearch')) === false)) {
+            if (
+                !$this->config->isSearchEnabled() ||
+                (($request->getModuleName() !== 'catalogsearch') &&
+                    (stripos($request->getParam('__tw_original_url'), 'catalogsearch')) === false)
+            ) {
                 return $proceed($filter);
             }
         }
@@ -111,7 +117,13 @@ class Plugin
         $block = $this->layout->createBlock($blockType);
 
         if (!$block instanceof DefaultRenderer && !$block instanceof RenderLayered) {
-            $this->log->error(sprintf('Invalid renderer block type %s not instanceof %s', $blockType, DefaultRenderer::class));
+            $this->log->error(
+                sprintf(
+                    'Invalid renderer block type %s not instanceof %s',
+                    $blockType,
+                    DefaultRenderer::class
+                )
+            );
             return $proceed($filter);
         }
 

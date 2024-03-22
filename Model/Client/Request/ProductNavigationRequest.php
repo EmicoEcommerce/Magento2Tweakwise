@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -16,16 +17,16 @@ class ProductNavigationRequest extends Request
     /**
      * Maximum number of products returned for one request
      */
-    const MAX_PRODUCTS = 1000;
+    private const MAX_PRODUCTS = 1000;
 
     /**
      * Sort order directions
      */
-    const SORT_ASC = 'ASC';
-    const SORT_DESC = 'DESC';
+    private const SORT_ASC = 'ASC';
+    private const SORT_DESC = 'DESC';
 
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'navigation';
 
@@ -55,7 +56,7 @@ class ProductNavigationRequest extends Request
 
     /**
      * @param string $attribute
-     * @param $value
+     * @param int $value
      */
     public function addHiddenParameter(string $attribute, $value)
     {
@@ -95,6 +96,7 @@ class ProductNavigationRequest extends Request
         if ($limit === 'all') {
             $limit = self::MAX_PRODUCTS;
         }
+
         $limit = min($limit, self::MAX_PRODUCTS);
         $this->setParameter('tn_ps', $limit);
         return $this;

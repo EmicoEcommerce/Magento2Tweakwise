@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -21,6 +22,9 @@ use Magento\Store\Model\Store;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class Config
 {
     /**
@@ -42,7 +46,8 @@ class Config
     public const ATTRIBUTE_CROSSSELL_GROUP_CODE = 'tweakwise_crosssell_group_code';
     public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_TEMPLATE = 'tweakwise_shoppingcart_crosssell_template';
     public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_GROUP_CODE = 'tweakwise_shoppingcart_crosssell_group_code';
-    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_FEATURED_TEMPLATE = 'tweakwise_shoppingcart_crosssell_featured_template';
+    public const ATTRIBUTE_SHOPPINGCART_CROSSSELL_FEATURED_TEMPLATE =
+        'tweakwise_shoppingcart_crosssell_featured_template';
     public const ATTRIBUTE_FILTER_WHITELIST = 'tweakwise_filter_whitelist';
     public const ATTRIBUTE_FILTER_VALUES_WHITELIST = 'tweakwise_filter_values_whitelist';
 
@@ -115,9 +120,14 @@ class Config
      * @param TypeListInterface $cacheTypeList
      * @throws LocalizedException
      */
-
-    public function __construct(ScopeConfigInterface $config, Json $jsonSerializer, RequestInterface $request, State $state, WriterInterface $configWriter, TypeListInterface $cacheTypeList)
-    {
+    public function __construct(
+        ScopeConfigInterface $config,
+        Json $jsonSerializer,
+        RequestInterface $request,
+        State $state,
+        WriterInterface $configWriter,
+        TypeListInterface $cacheTypeList
+    ) {
         $this->config = $config;
         $this->jsonSerializer = $jsonSerializer;
         $this->request = $request;
@@ -198,6 +208,7 @@ class Config
     /**
      * @param Store|null $store
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getCategoryAsLink(Store $store = null)
     {
@@ -207,6 +218,7 @@ class Config
     /**
      * @param Store|null $store
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getHideSingleOptions(Store $store = null)
     {
@@ -216,6 +228,7 @@ class Config
     /**
      * @param Store|null $store
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getUseDefaultLinkRenderer(Store $store = null)
     {
@@ -253,9 +266,9 @@ class Config
             $arguments = array_filter($arguments);
             $this->parsedFilterArguments = $arguments;
         }
+
         return $this->parsedFilterArguments;
     }
-
 
     /**
      * @param Store|null $store
@@ -276,6 +289,7 @@ class Config
         if (empty($urlStrategy)) {
             $urlStrategy = QueryParameterStrategy::class;
         }
+
         return $urlStrategy;
     }
 
@@ -307,7 +321,8 @@ class Config
      */
     public function isAutocompleteProductsEnabled(Store $store = null)
     {
-        return (bool)($this->getStoreConfig('tweakwise/autocomplete/show_products', $store) && !$this->isSuggestionsAutocomplete());
+        return (bool)($this->getStoreConfig('tweakwise/autocomplete/show_products', $store) &&
+            !$this->isSuggestionsAutocomplete());
     }
 
     /**
@@ -316,7 +331,8 @@ class Config
      */
     public function isAutocompleteSuggestionsEnabled(Store $store = null)
     {
-        return (bool)($this->getStoreConfig('tweakwise/autocomplete/show_suggestions', $store) && !$this->isSuggestionsAutocomplete());
+        return (bool)($this->getStoreConfig('tweakwise/autocomplete/show_suggestions', $store) &&
+            !$this->isSuggestionsAutocomplete());
     }
 
     /**
@@ -405,7 +421,6 @@ class Config
     }
 
     /**
-     * @param string $type
      * @param Store|null $store
      * @return string
      */
@@ -513,9 +528,10 @@ class Config
     }
 
     /**
-     * @param Store|null $store
      * @param string $path
-     * @return mixed|null|string
+     * @param Store|null $store
+     * @return mixed|string|null
+     * @throws LocalizedException
      */
     protected function getStoreConfig(string $path, Store $store = null)
     {
@@ -527,14 +543,14 @@ class Config
         $scopeId = null;
 
         //only get the parameters from the url in the admin
-        if($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
+        if ($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
             $scopeId = $this->request->getParam('store', null);
             if (!empty($this->request->getParam('website', null))) {
                 $scope = ScopeInterface::SCOPE_WEBSITE;
                 $scopeId = $this->request->getParam('website', null);
             }
 
-            if($scopeId === null) {
+            if ($scopeId === null) {
                 $scope = 'default';
             }
         }
@@ -544,6 +560,7 @@ class Config
 
     /**
      * @param string $type
+     * @throws InvalidArgumentException
      */
     protected function validateRecommendationType($type)
     {
@@ -567,14 +584,16 @@ class Config
             return;
         }
 
-        throw new InvalidArgumentException(sprintf(
-            '$type can be only of type string value: %s, %s, %s',
-            self::RECOMMENDATION_TYPE_UPSELL,
-            self::RECOMMENDATION_TYPE_CROSSSELL,
-            self::RECOMMENDATION_TYPE_FEATURED,
-            self:: RECCOMENDATION_TYPE_SHOPPINGCART,
-            self::RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED,
-        ));
+        throw new InvalidArgumentException(
+            sprintf(
+                '$type can be only of type string value: %s, %s, %s',
+                self::RECOMMENDATION_TYPE_UPSELL,
+                self::RECOMMENDATION_TYPE_CROSSSELL,
+                self::RECOMMENDATION_TYPE_FEATURED,
+                self:: RECCOMENDATION_TYPE_SHOPPINGCART,
+                self::RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED,
+            )
+        );
     }
 
     /**
@@ -588,7 +607,7 @@ class Config
     /**
      * @return string
      */
-    public function getSalt() : string
+    public function getSalt(): string
     {
         $salt =  $this->getStoreConfig('tweakwise/general/salt' ?: null);
         if (empty($salt)) {
@@ -597,6 +616,7 @@ class Config
             //clear config cache
             $this->cacheTypeList->cleanType('config');
         }
+
         return $salt;
     }
 

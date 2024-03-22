@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -27,8 +28,7 @@ use Magento\Store\Model\StoreManager;
  * @see \Magento\Catalog\Model\Layer\Filter\AbstractFilter
  * only for the type hint in
  * @see \Magento\Swatches\Block\LayeredNavigation\RenderLayered
- *
- * @package Tweakwise\Magento2Tweakwise\Model\Catalog\Layer
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Filter extends AbstractFilter implements FilterInterface
 {
@@ -38,7 +38,7 @@ class Filter extends AbstractFilter implements FilterInterface
     protected $requestVar;
 
     /**
-     * @var
+     * @var array
      */
     protected $items;
 
@@ -193,6 +193,7 @@ class Filter extends AbstractFilter implements FilterInterface
         foreach ($items as $item) {
             $this->addItem($item);
         }
+
         return $this;
     }
 
@@ -214,6 +215,7 @@ class Filter extends AbstractFilter implements FilterInterface
             if (!$item->isActive()) {
                 continue;
             }
+
             $hasChildren = $item->getChildren();
             if (!$hasChildren) {
                 $result[] = $item;
@@ -267,6 +269,7 @@ class Filter extends AbstractFilter implements FilterInterface
         if ($this->storeId === null) {
             $this->storeId = $this->storeManager->getStore()->getId();
         }
+
         return $this->storeId;
     }
 
@@ -287,6 +290,7 @@ class Filter extends AbstractFilter implements FilterInterface
         if ($this->websiteId === null) {
             $this->websiteId = $this->storeManager->getStore()->getWebsiteId();
         }
+
         return $this->websiteId;
     }
 
@@ -335,6 +339,7 @@ class Filter extends AbstractFilter implements FilterInterface
         foreach ($attributeType->getChildren() as $childAttributeType) {
             $children[] = $this->createItem($childAttributeType);
         }
+
         $item->setChildren($children);
 
         return $item;
@@ -366,6 +371,7 @@ class Filter extends AbstractFilter implements FilterInterface
         foreach ($this->facet->getAttributes() as $attribute) {
             $this->addItem($attribute);
         }
+
         return $this;
     }
 
@@ -387,6 +393,7 @@ class Filter extends AbstractFilter implements FilterInterface
 
             $this->optionLabelValueMap = $map;
         }
+
         return $this->optionLabelValueMap;
     }
 
@@ -408,6 +415,7 @@ class Filter extends AbstractFilter implements FilterInterface
 
             $this->optionLabelItemMap = $map;
         }
+
         return $this->optionLabelItemMap;
     }
 

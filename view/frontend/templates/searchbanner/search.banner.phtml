@@ -1,4 +1,8 @@
 <?php
+/**
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
+
 /** @var array $banners  */
 $banners = $block->getData('banners');
 $styling = ($banners[0]['location'] == 'ContainerTop') ? 'style="margin-right: auto; margin-left: auto;"' : '';

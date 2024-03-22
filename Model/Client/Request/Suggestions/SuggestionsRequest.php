@@ -15,7 +15,7 @@ class SuggestionsRequest extends Request implements SearchRequestInterface
     use SearchRequestTrait;
 
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'suggestions';
 

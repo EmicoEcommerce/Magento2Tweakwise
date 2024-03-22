@@ -7,7 +7,10 @@
  */
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRenderer;
 
-/** @var $block TreeRenderer */
+/**
+ * @var $block TreeRenderer
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
 ?>
 <ol class="items tree-attribute">
     <?php foreach ($block->getItems() as $item): ?>

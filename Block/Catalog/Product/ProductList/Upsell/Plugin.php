@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -35,6 +36,7 @@ class Plugin extends AbstractRecommendationPlugin
         if (!$this->config->isRecommendationsEnabled(Config::RECOMMENDATION_TYPE_UPSELL)) {
             return $proceed();
         }
+
         if (!$this->templateFinder->forProduct($subject->getProduct(), $this->getType())) {
             return $proceed();
         }

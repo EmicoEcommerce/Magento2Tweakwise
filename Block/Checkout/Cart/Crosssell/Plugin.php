@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -18,6 +19,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\AbstractRecommendationPlugin;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\ProductRequest;
@@ -61,8 +63,7 @@ class Plugin extends AbstractRecommendationPlugin
         TemplateFinder $templateFinder,
         Session $checkoutSession,
         ?ProductRepositoryInterface $productRepository = null
-    )
-    {
+    ) {
         $this->productRepository = $productRepository;
         $this->checkoutSession  = $checkoutSession;
         $this->productRepository = $productRepository
@@ -97,6 +98,7 @@ class Plugin extends AbstractRecommendationPlugin
                     $product = null;
                 }
             }
+
             $this->lastAddedProduct = $product;
         }
 
@@ -115,7 +117,7 @@ class Plugin extends AbstractRecommendationPlugin
 
     /**
      * @param Crosssell $crosssell
-     * @param $result
+     * @param array $result
      * @return array
      */
     public function afterGetItemCollection(Crosssell $crosssell, $result)
@@ -146,7 +148,11 @@ class Plugin extends AbstractRecommendationPlugin
 
         if ($cartProductIds) {
             if ($this->lastAddedProduct) {
-                $items = $this->getShoppingcartCrosssellTweakwiseItems($this->lastAddedProduct, $result, $cartProductIds);
+                $items = $this->getShoppingcartCrosssellTweakwiseItems(
+                    $this->lastAddedProduct,
+                    $result,
+                    $cartProductIds
+                );
             }
 
             if (empty($items)) {
@@ -177,7 +183,8 @@ class Plugin extends AbstractRecommendationPlugin
      * @param array $cartItems
      * @return array
      */
-    private function getShoppingcartCrosssellTweakwiseItems (ProductInterface $product, array $result, array $cartItems) {
+    private function getShoppingcartCrosssellTweakwiseItems(ProductInterface $product, array $result, array $cartItems)
+    {
         $items = [];
 
         //show featured products
@@ -215,19 +222,20 @@ class Plugin extends AbstractRecommendationPlugin
     }
 
     /**
-     * @param $collection
-     * @param $filteredProducts
-     * @return void
+     * @param Collection $collection
+     * @param array $cartItems
+     * @return array
      */
     protected function removeCartItems($collection, $cartItems)
     {
         $items = $collection->getItems();
 
-        if(!empty($cartItems)) {
+        if (!empty($cartItems)) {
             foreach ($cartItems as $cartItem) {
                 unset($items[$cartItem]);
             }
         }
+
         return $items;
     }
 

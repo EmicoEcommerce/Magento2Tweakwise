@@ -33,7 +33,7 @@ trait SearchRequestTrait
     abstract protected function getStore();
 
     /**
-     * @param $category CategoryInterface|int
+     * @param CategoryInterface|int $category
      */
     abstract protected function addCategoryFilter($category);
 
@@ -48,7 +48,7 @@ trait SearchRequestTrait
     }
 
     /**
-     *
+     * @return void
      */
     protected function setDefaultCategory(): void
     {
@@ -73,7 +73,7 @@ trait SearchRequestTrait
     }
 
     /**
-     *
+     * @return void
      */
     protected function setSearchLanguage(): void
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,14 +12,10 @@ namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer\ItemRenderer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 
-/**
- * Class LinkRenderer
- * @package Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered
- */
 class LinkRenderer extends DefaultRenderer
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/link.phtml';
 

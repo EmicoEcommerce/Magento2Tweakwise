@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -9,7 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
 use Closure;
-use Tweakwise\Magento2Tweakwise\Exception\TweakwiseException;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -82,7 +83,7 @@ class Plugin
 
         try {
             return $item->getUrl();
-        } catch (TweakwiseException $e) {
+        } catch (TweakwiseExceptionInterface $e) {
             $this->log->critical($e);
             $this->config->setTweakwiseExceptionThrown();
 

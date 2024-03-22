@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer;
 
+use Exception;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Client;
@@ -141,11 +143,14 @@ class NavigationContext
         if (!$this->request) {
             $this->request = $this->requestFactory->create();
         }
+
         return $this->request;
     }
 
     /**
-     * @return ProductNavigationResponse
+     * @return ProductNavigationResponse|null
+     * @throws Exception
+     * @throws ApiException
      */
     public function getResponse(): ProductNavigationResponse|null
     {
@@ -155,9 +160,9 @@ class NavigationContext
             $this->initializeRequest($request);
 
             if (!$this->config->getTweakwiseExceptionTrown()) {
-                try{
+                try {
                     $this->response = $this->client->request($request);
-                }catch (ApiException $e) {
+                } catch (ApiException $e) {
                     //no api response
                     throw $e;
                 }
@@ -170,7 +175,7 @@ class NavigationContext
     /**
      * @return bool
      */
-    public function showSearchBanners() : bool
+    public function showSearchBanners(): bool
     {
         return $this->config->isSearchBannersActive();
     }
@@ -203,7 +208,7 @@ class NavigationContext
     }
 
     /**
-     * @param $attributeCodes
+     * @param array $attributeCodes
      * @return Attribute[]
      */
     public function getFilterAttributeMap(array $attributeCodes = null): array
@@ -213,6 +218,7 @@ class NavigationContext
             foreach ($this->productAttributes->getAttributesToExport($attributeCodes) as $attribute) {
                 $map[$attribute->getData('attribute_code')] = $attribute;
             }
+
             $this->filterAttributeMap = $map;
         }
 

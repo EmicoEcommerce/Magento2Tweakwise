@@ -12,7 +12,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 /**
  * Class Navigation
  * Handles ajax filtering requests for category pages
- * @package Tweakwise\Magento2Tweakwise\Controller\Ajax
  */
 class FacetAttributes extends Action
 {
@@ -31,8 +30,12 @@ class FacetAttributes extends Action
      */
     private RequestFactory $requestFactory;
 
-    public function __construct(Context $context, JsonFactory $jsonFactory, RequestFactory $requestFactory, Client $client)
-    {
+    public function __construct(
+        Context $context,
+        JsonFactory $jsonFactory,
+        RequestFactory $requestFactory,
+        Client $client
+    ) {
         parent::__construct($context);
         $this->jsonFactory = $jsonFactory;
         $this->requestFactory = $requestFactory;
@@ -63,12 +66,14 @@ class FacetAttributes extends Action
             if (!empty($categoryId)) {
                 $facetRequest->addCategoryFilter($categoryId);
             }
+
             try {
                 $response = $this->client->request($facetRequest);
             } catch (ApiException $e) {
                 if (!$e->getCode() == 404) {
                     throw $e;
                 }
+
                 continue;
             }
 

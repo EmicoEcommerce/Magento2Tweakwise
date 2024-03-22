@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,7 +15,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteResponse;
 class AutocompleteRequest extends Request
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'autocomplete';
 
@@ -78,6 +79,7 @@ class AutocompleteRequest extends Request
         if ($maxResult == 0) {
             $maxResult = null;
         }
+
         $this->setParameter('tn_maxresults', $maxResult);
     }
 }

@@ -7,7 +7,10 @@
  */
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer\ItemRenderer;
 
-/** @var $block ItemRenderer */
+/**
+ * @var $block ItemRenderer
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
 $item = $block->getItem();
 $hasHiddenItems = $block->hasHiddenItems();
 $hasAlternateSortOrder = $block->hasAlternateSortOrder();
@@ -19,7 +22,7 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
 >
     <a href="<?=$block->getCategoryUrl($item)?>">
         <?=$block->getItemPrefix()?>
-        <?=$block->escapeHtml($item->getLabel())?>
+        <?=$escaper->escapeHtml($item->getLabel())?>
         <?=$block->getItemPostfix()?>
 
         <?php if ($block->shouldDisplayProductCountOnLayer()): ?>

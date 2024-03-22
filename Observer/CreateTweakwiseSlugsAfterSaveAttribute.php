@@ -18,8 +18,7 @@ class CreateTweakwiseSlugsAfterSaveAttribute implements ObserverInterface
      */
     public function __construct(
         FilterSlugManager $filterSlugManager
-    )
-    {
+    ) {
         $this->filterSlugManager = $filterSlugManager;
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -135,6 +136,7 @@ class FilterSlugManager
 
             throw new UnexpectedValueException(sprintf('No attribute found for slug "%s"', $slug));
         }
+
         return $attribute;
     }
 
@@ -146,6 +148,7 @@ class FilterSlugManager
         if ($this->lookupTable === null) {
             $this->lookupTable = $this->loadLookupTable();
         }
+
         return $this->lookupTable;
     }
 
@@ -161,10 +164,12 @@ class FilterSlugManager
             foreach ($attributeSlugs->getItems() as $attributeSlug) {
                 $lookupTable[$attributeSlug->getAttribute()] = $attributeSlug->getSlug();
             }
+
             $this->cache->save($this->serializer->serialize($lookupTable), self::CACHE_KEY);
         } else {
             $lookupTable = $this->serializer->unserialize($lookupTable);
         }
+
         return $lookupTable;
     }
 }

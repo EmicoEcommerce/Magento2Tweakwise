@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -71,11 +72,14 @@ class CatalogLastPageRedirect implements ObserverInterface
             return;
         }
 
-        $url = $this->actionContext->getUrl()->getUrl('*/*/*', [
+        $url = $this->actionContext->getUrl()->getUrl(
+            '*/*/*',
+            [
             '_current' => true,
             '_use_rewrite' => true,
             '_query' => ['p' => $lastPage]
-        ]);
+            ]
+        );
 
         $response->setRedirect($url);
     }

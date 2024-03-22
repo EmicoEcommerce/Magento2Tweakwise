@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -10,6 +11,9 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
 
 use BadMethodCallException;
 
+/**
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
+ */
 class Type
 {
     /**
@@ -55,6 +59,7 @@ class Type
         if (isset(self::$_underscoreCache[$name])) {
             return self::$_underscoreCache[$name];
         }
+
         $result = strtolower(trim(preg_replace('/([A-Z]|[0-9]+)/', "_$1", $name), '_'));
         self::$_underscoreCache[$name] = $result;
         return $result;
@@ -69,6 +74,7 @@ class Type
         if (isset(self::$_capitalizeCache[$key])) {
             return self::$_capitalizeCache[$key];
         }
+
         $result = str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
         self::$_capitalizeCache[$key] = $result;
         return $result;
@@ -117,6 +123,7 @@ class Type
     /**
      * @param string $key
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getBoolValue($key)
     {
@@ -153,6 +160,7 @@ class Type
      * @param string $method
      * @param array $args
      * @return mixed
+     * @throws BadMethodCallException
      */
     public function __call($method, $args)
     {

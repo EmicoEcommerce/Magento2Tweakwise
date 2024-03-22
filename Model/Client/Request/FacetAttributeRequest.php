@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -16,7 +17,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 class FacetAttributeRequest extends Request
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'facets';
 
@@ -33,7 +34,8 @@ class FacetAttributeRequest extends Request
         return FacetAttributesResponse::class;
     }
 
-    public function addFacetKey($facetKey) {
+    public function addFacetKey($facetKey)
+    {
         $this->setPath($this->path . '/' . $facetKey . '/attributes');
     }
 }

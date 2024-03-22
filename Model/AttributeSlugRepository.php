@@ -91,14 +91,15 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                         $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
                     }
                 }
+
                 /** @var AttributeSlug $attributeSlug */
                 $this->resource->save($attributeSlug);
-
             } catch (NoSuchEntityException $exception) {
                 //slug doesnt exist. Save value
                 if (isset($newSlug)) {
                     $attributeSlug->setSlug($newSlug);
                 }
+
                 /** @var AttributeSlug $attributeSlug */
                 $this->resource->save($attributeSlug);
             }
@@ -169,7 +170,6 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
 
         return $attributeSlug;
     }
-
 
     /**
      * @param string $slug

@@ -64,10 +64,10 @@ class SuggestionDataProvider implements DataProviderInterface
      * @param CookieManagerInterface $cookieManager
      * @param DataProviderHelper $dataProviderHelper
      * @param SuggestionGroupItemFactory $suggestionGroupItemFactory
-     * @param Request $request
      * @param RequestFactory $productSuggestionRequestFactory
      * @param RequestFactory $suggestionRequestFactory
      * @param Client $client
+     * @param Request $request
      */
     public function __construct(
         Config $config,
@@ -151,6 +151,7 @@ class SuggestionDataProvider implements DataProviderInterface
             if ($response instanceof AutocompleteProductResponseInterface) {
                 $results[] = $this->dataProviderHelper->getProductItems($response);
             }
+
             if ($response instanceof SuggestionsResponse) {
                 $results[] = $this->getSuggestionGroups($response);
             }

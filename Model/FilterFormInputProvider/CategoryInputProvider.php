@@ -14,7 +14,6 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 
-
 class CategoryInputProvider implements FilterFormInputProviderInterface
 {
     public const TYPE = 'category';
@@ -130,7 +129,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
     /**
      * @return string
      */
-    public function getOriginalUrl() : string
+    public function getOriginalUrl(): string
     {
         return $this->layerUrl->getUrlStrategy()->getOriginalUrl($this->request);
     }
@@ -148,7 +147,8 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      */
     protected function getCategory()
     {
-        if ($currentCategory = $this->registry->registry('current_category')) {
+        $currentCategory = $this->registry->registry('current_category');
+        if ($currentCategory) {
             return $currentCategory;
         }
 

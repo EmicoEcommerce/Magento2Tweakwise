@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:disable Magento2.Legacy.InstallUpgrade.ObsoleteInstallScript
+
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.

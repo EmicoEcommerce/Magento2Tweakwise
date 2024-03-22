@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -42,6 +43,7 @@ class CrosssellTemplateType implements OptionSourceInterface
         if (!$this->options) {
             $this->options = $this->buildOptions();
         }
+
         return $this->options;
     }
 }

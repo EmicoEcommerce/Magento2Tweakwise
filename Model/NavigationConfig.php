@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
+use InvalidArgumentException;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface;
@@ -19,7 +20,6 @@ use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
  * @see \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRenderer
  * @see \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SwatchRenderer
  * @see \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer
- * @package Tweakwise\Magento2Tweakwise\Model
  */
 class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInterface
 {
@@ -94,14 +94,15 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
     }
 
     /**
-     * @inheritDoc
+     * @return array|string[]
+     * @throws InvalidArgumentException
      */
     public function getFilterFormInput(): array
     {
         //check request for modified values
         if (!$this->hashInputProvider->validateHash($this->request)) {
             //form is modified, don't accept the request. Should only happen in an xss attack
-            throw new \InvalidArgumentException('Incorrect/modified form parameters');
+            throw new InvalidArgumentException('Incorrect/modified form parameters');
         }
 
         $filterFormInput = $this->filterFormInputProvider->getFilterFormInput();
@@ -138,6 +139,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 $navigationFormConfig['tweakwiseNavigationForm']['ajaxCache'] = false;
             }
         }
+
         return $this->jsonSerializer->serialize($navigationFormConfig);
     }
 

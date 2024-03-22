@@ -7,7 +7,6 @@ namespace Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductLi
  * We need this class to
  *
  * Class UpsellPlugin
- * @package Tweakwise\Magento2Tweakwise\Block\TargetRule\Catalog\Product\ProductList
  */
 class UpsellPlugin extends Plugin
 {

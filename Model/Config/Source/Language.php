@@ -37,6 +37,9 @@ class Language implements OptionSourceInterface
      * Return array of options as value-label pairs
      *
      * @return array
+     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
+     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+     * @SuppressWarnings(PHPMD.EmptyCatchBlock)
      */
     public function toOptionArray()
     {
@@ -60,7 +63,8 @@ class Language implements OptionSourceInterface
                     'value' => $language['key']
                 ];
             }
-        } catch (ApiException $e) { }
+        } catch (ApiException $e) {
+        }
 
         return $options;
     }

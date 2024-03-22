@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -17,10 +18,6 @@ use Magento\Catalog\Model\Product\Type;
 use Magento\Search\Model\Autocomplete\ItemInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 
-/**
- * Class ProductItem
- * @package Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider
- */
 class ProductItem implements ItemInterface
 {
     /**

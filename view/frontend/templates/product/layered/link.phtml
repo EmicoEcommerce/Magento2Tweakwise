@@ -7,7 +7,10 @@
  */
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRenderer;
 
-/** @var $block \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer */
+/**
+ * @var $block \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
 $hasHiddenItems = $block->hasHiddenItems();
 ?>
 <div data-mage-init='<?=$block->getJsSortConfig()?>'>

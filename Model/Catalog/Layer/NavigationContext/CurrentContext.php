@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -30,12 +31,19 @@ class CurrentContext
 
     /**
      * @return NavigationContext
+     * @throws RuntimeException
      */
     public function getContext()
     {
         if (!$this->context) {
-            throw new RuntimeException(sprintf('Navigation context not set, initialize a version of %s first.', NavigationContext::class));
+            throw new RuntimeException(
+                sprintf(
+                    'Navigation context not set, initialize a version of %s first.',
+                    NavigationContext::class
+                )
+            );
         }
+
         return $this->context;
     }
 

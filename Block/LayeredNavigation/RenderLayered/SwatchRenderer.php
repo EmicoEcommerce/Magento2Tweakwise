@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
+use RuntimeException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
@@ -99,16 +101,21 @@ class SwatchRenderer extends RenderLayered
             $attributeModel->loadByCode(Product::ENTITY, $attributeCode);
             $this->filter->setAttributeModel($attributeModel);
         }
+
         $this->setSwatchFilter($filter);
     }
 
     /**
      * @return array
+     * @throws RuntimeException
+     * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getSwatchData()
     {
         if (false === $this->eavAttribute instanceof Attribute) {
-            throw new \RuntimeException('Magento_Swatches: RenderLayered: Attribute has not been set.');
+            throw new RuntimeException('Magento_Swatches: RenderLayered: Attribute has not been set.');
         }
 
         $swatchData = [];
@@ -123,7 +130,6 @@ class SwatchRenderer extends RenderLayered
         }
 
         if (empty($swatchData)) {
-
             // We have a derived swatch filter.
             $swatchAttributeData = $this->swatchAttributeResolver->getSwatchData($this->filter);
             // There was no attribute to be found
@@ -146,7 +152,6 @@ class SwatchRenderer extends RenderLayered
 
                     $filterItems[$item->getLabel()] = $item;
                 }
-
 
                 $attributeOptions = [];
                 foreach ($attribute->getOptions() as $option) {

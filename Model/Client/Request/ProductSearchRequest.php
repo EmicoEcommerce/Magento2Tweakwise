@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -12,16 +13,12 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManager;
 
-/**
- * Class ProductSearchRequest
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Request
- */
 class ProductSearchRequest extends ProductNavigationRequest implements SearchRequestInterface
 {
     use SearchRequestTrait;
 
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'navigation-search';
 }

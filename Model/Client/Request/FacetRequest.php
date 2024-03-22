@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,7 +15,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetResponse;
 class FacetRequest extends Request
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $path = 'facets';
 

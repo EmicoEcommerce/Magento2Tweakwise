@@ -211,6 +211,10 @@ define([
         _ajaxHandler: function (event) {
             event.preventDefault();
 
+            if(event.target.name == 'tw_filtersearch') {
+                return;
+            }
+
             if (this.currentXhr) {
                 this.currentXhr.abort();
             }

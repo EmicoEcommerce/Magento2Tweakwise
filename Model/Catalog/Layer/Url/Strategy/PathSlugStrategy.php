@@ -378,7 +378,11 @@ class PathSlugStrategy implements
             }
         } else {
             // Replace filter path in current URL with the new filter combination path
-            $url = str_replace($currentFilterPath, $newFilterPath, $currentUrl);
+            if (strpos($currentUrl, $currentFilterPath) !== false) {
+                $url = str_replace($currentFilterPath, $newFilterPath, $currentUrl);
+            } else {
+                $url = $currentUrl . '/' . $newFilterPath;
+            }
         }
         $categoryUrlSuffix = $this->scopeConfig->getValue(
             CategoryUrlPathGenerator::XML_PATH_CATEGORY_URL_SUFFIX,

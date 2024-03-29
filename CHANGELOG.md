@@ -1,3 +1,15 @@
+# [6.0.0-beta.1](https://github.com/EmicoEcommerce/Magento2Tweakwise/compare/v5.8.3...v6.0.0-beta.1) (2024-03-29)
+
+
+### Performance Improvements
+
+* Applied phpcs and phpmd rules ([9a499fd](https://github.com/EmicoEcommerce/Magento2Tweakwise/commit/9a499fdb5a1fb420a6dd4e24eb985d7d87029172))
+
+
+### BREAKING CHANGES
+
+* Code is refactored based on phpcs and phpmd rules.
+
 <h1>Changelog</h1>
 
 ## 5.0.0

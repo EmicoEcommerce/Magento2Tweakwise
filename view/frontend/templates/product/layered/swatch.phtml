@@ -15,7 +15,7 @@
      data-mage-init='{"tweakwiseNavigationSort":[]}'>
     <?php if ($block->isSearchable()): ?>
         <input data-max-visible="<?=  $block->getMaxItemsShown()?>" type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $block->getSearchPlaceholder(); ?>" >
-        <div style="display: none" class="no_search_results"><?= $block->getSearchNoResultsText(); ?></div>
+        <div style="display: none" class="search_no_results"><?= $block->getSearchNoResultsText(); ?></div>
     <?php endif; ?>
     <div class="swatch-attribute-options clearfix">
         <?php foreach ($swatchData['options'] as $option => $label): ?>

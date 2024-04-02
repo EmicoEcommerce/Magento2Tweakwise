@@ -79,10 +79,11 @@ define([
             var filterInput = this.element.find('.tw_filtersearch');
             var value = filterInput.val().toLowerCase().trim();
             var items = filterInput.parent('div').find('ol');
-            var noItems = filterInput.parent('div').find('.no_search_results');
+            var noItems = filterInput.parent('div').find('.search_no_results');
             var defaultVisibleItems = filterInput.data('max-visible');
-            var counter = -1;
-            var filterElement = 'li'
+            var filterElement = 'li';
+            var moreItems = filterInput.parent('div').find('.more-items');
+            var lessItems = filterInput.parent('div').find('.less-items');
 
             if (items.length === 0) {
                 //swatch
@@ -91,34 +92,22 @@ define([
                 defaultVisibleItems = 100;
             }
 
-            items.find(filterElement).show().filter(function () {
+            var filterItems = items.find(filterElement);
+
+            filterItems.show().filter(function () {
                 return $(this).find('input').val().toLowerCase().trim().indexOf(value) === -1;
             }).hide();
 
-            if (defaultVisibleItems < items.find(filterElement +':visible').length) {
-                //more items visible then max visible items set on filter
-                items.find(filterElement + ':visible').show().filter(function () {
-                    if ((counter) > defaultVisibleItems) {
-                        return true;
-                    }
-                    counter++;
-                    return false;
-                }).hide();
-            }
+            //more items visible than max visible items
+            filterItems.filter(':visible').slice(defaultVisibleItems).hide();
 
-            //no items found
-            if (items.find(filterElement + ':visible').length < 1) {
-                noItems.show();
-            } else {
-                noItems.hide();
-            }
-
-            //hide show more/less button
+            noItems.toggle(filterItems.filter(':visible').length < 1);
             if (value.length === 0) {
-                filterInput.parent('div').find('.more-items').show();
+                moreItems.show();
+                lessItems.hide();
             } else {
-                filterInput.parent('div').find('.more-items').hide();
-                filterInput.parent('div').find('.less-items').hide();
+                moreItems.hide();
+                lessItems.hide();
             }
         },
     });

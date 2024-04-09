@@ -1,3 +1,10 @@
+# [6.0.0-beta.2](https://github.com/EmicoEcommerce/Magento2Tweakwise/compare/v6.0.0-beta.1...v6.0.0-beta.2) (2024-04-09)
+
+
+### Features
+
+* searchable filters ([#166](https://github.com/EmicoEcommerce/Magento2Tweakwise/issues/166)) ([bebd6c6](https://github.com/EmicoEcommerce/Magento2Tweakwise/commit/bebd6c67b101878cc7086da9df6341eb76caa07d))
+
 # [6.0.0-beta.1](https://github.com/EmicoEcommerce/Magento2Tweakwise/compare/v5.8.3...v6.0.0-beta.1) (2024-03-29)
 
 

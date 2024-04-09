@@ -210,6 +210,7 @@ class SettingsType extends Type
 
         return null;
     }
+
     /**
      * @return bool
      */

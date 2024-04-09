@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -128,6 +129,7 @@ class Tweakwise
                 if ($this->shouldHideActiveFilterItem($activeFilterItem, $request)) {
                     continue;
                 }
+
                 $layer->getState()->addFilter($activeFilterItem);
             }
         }

@@ -57,7 +57,7 @@ abstract class AbstractRecommendationPlugin
     /**
      * @return string
      */
-    protected abstract function getType();
+    abstract protected function getType();
 
     /**
      * @param ProductRequest $request
@@ -75,6 +75,7 @@ abstract class AbstractRecommendationPlugin
 
     /**
      * @return Collection
+     * @throws InvalidArgumentException
      */
     protected function getCollection()
     {

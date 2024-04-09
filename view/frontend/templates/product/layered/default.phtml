@@ -7,7 +7,11 @@
  */
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRenderer;
 
-/** @var $block DefaultRenderer */
+/**
+ * @var $block DefaultRenderer
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
+
 $hasHiddenItems = $block->hasHiddenItems();
 $hasAlternateSortOrder = $block->hasAlternateSortOrder();
 $showCheckBox = $block->showCheckbox();
@@ -17,6 +21,10 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 
 ?>
 <div data-mage-init='<?=$block->getJsSortConfig()?>'>
+    <?php if ($block->isSearchable()): ?>
+        <input data-max-visible="<?=  $block->getMaxItemsShown()?>" type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $block->getSearchPlaceholder(); ?>" >
+        <div style="display: none" class="search_no_results"><?= $block->getSearchNoResultsText(); ?></div>
+    <?php endif; ?>
     <ol class="items">
         <?php foreach ($block->getItems() as $index => $item): ?>
             <li class="item<?=$block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
@@ -31,14 +39,14 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
                         <input id="<?=$cssId?>"
                                name="<?=$item->getFilter()->getFacet()->getFacetSettings()->getUrlKey()?>[]"
                                type="checkbox" <?=($item->isSelected() ? 'checked="checked"' : '')?>
-                               value="<?=$block->escapeHtmlAttr($item->getLabel())?>"
+                               value="<?=$escaper->escapeHtmlAttr($item->getLabel())?>"
                         >
 
                         <label for="<?=$cssId?>">
-                            <?=$prefix . $block->escapeHtml($item->getLabel()) . $postfix?>
+                            <?=$prefix . $escaper->escapeHtml($item->getLabel()) . $postfix?>
                         </label>
                     <?php else: ?>
-                        <?=$prefix . $block->escapeHtml($item->getLabel()) . $postfix?>
+                        <?=$prefix . $escaper->escapeHtml($item->getLabel()) . $postfix?>
                     <?php endif; ?>
 
                     <?php if ($shouldDisplayProductCountLayer): ?>

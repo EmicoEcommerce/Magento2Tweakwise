@@ -7,11 +7,6 @@ use Magento\CatalogSearch\Controller\Result\Index;
 use Magento\Search\Model\Query;
 use Magento\Search\Model\QueryFactory;
 
-/**
- * Class Plugin
- *
- * @package Tweakwise\Magento2Tweakwise\Model\CatalogSearch\Controller\Result\Index
- */
 class Plugin
 {
     /**
@@ -27,7 +22,7 @@ class Plugin
     /**
      * Plugin constructor.
      *
-     * @param Config $config Tweakwise Config object used to query search settings
+     * @param Config $config
      * @param QueryFactory $queryFactory
      */
     public function __construct(Config $config, QueryFactory $queryFactory)
@@ -40,7 +35,7 @@ class Plugin
      * If search is tweakwise search is enabled we do
      * not redirect to a magento redirect
      *
-     * @param Index $subject Original Controller interceptor
+     * @param Index $subject
      *
      * @return mixed
      */

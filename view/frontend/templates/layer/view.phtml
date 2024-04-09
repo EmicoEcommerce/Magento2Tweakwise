@@ -10,7 +10,10 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 use Magento\LayeredNavigation\Block\Navigation;
 
-/** @var $block Navigation */
+/**
+ * @var $block Navigation
+ * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ */
 
 if (!$block->canShowBlock()) return;
 ?>
@@ -77,7 +80,7 @@ if (!$block->canShowBlock()) return;
                     <?php endif; ?>
                     <?php if ($renderFilterButton): ?>
                         <div class="show-items-link">
-                            <button type="button" class="btn btn-primary btn-block js-btn-filter"><?=__(sprintf('Show <span>%s</span> items', $this->getLayer()->getProductCount())); ?></button>
+                            <button type="button" class="btn btn-primary btn-block js-btn-filter"><?=__(sprintf('Show <span>%s</span> items', $block->getLayer()->getProductCount())); ?></button>
                         </div>
                     <?php endif;?>
                 <?php endforeach; ?>

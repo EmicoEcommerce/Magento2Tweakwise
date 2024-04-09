@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:disable Magento2.Legacy.InstallUpgrade.ObsoleteInstallDataScript
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -46,7 +47,10 @@ class InstallData implements InstallDataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param ModuleDataSetupInterface $setup
+     * @param ModuleContextInterface $context
+     * @return void
+     * phpcs:disable Generic.Files.LineLength.TooLong
      */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -55,8 +59,8 @@ class InstallData implements InstallDataInterface
         $table = $setup->getConnection()->getTableName('core_config_data');
 
         //rename settings from old module
-        $setup->getConnection()->query('update '. $table .' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy"');
-        $setup->getConnection()->query('update '. $table .' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy"');
+        $setup->getConnection()->query('update ' . $table . ' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\QueryParameterStrategy"');
+        $setup->getConnection()->query('update ' . $table . ' SET value = "Tweakwise\\\\Magento2Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy" WHERE value = "Emico\\\\Tweakwise\\\\Model\\\\Catalog\\\\Layer\\\\Url\\\\Strategy\\\\PathSlugStrategy"');
 
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
         $this->ensureCrosssellTemplateAttribute($eavSetup);
@@ -71,7 +75,10 @@ class InstallData implements InstallDataInterface
     protected function ensureCrosssellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_CROSSSELL_TEMPLATE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_CROSSSELL_TEMPLATE,
+                [
                 'type' => 'int',
                 'label' => 'Crosssell template',
                 'input' => 'select',
@@ -80,9 +87,13 @@ class InstallData implements InstallDataInterface
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
                 'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product',
-            ]);
+                ]
+            );
 
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_CROSSSELL_GROUP_CODE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_CROSSSELL_GROUP_CODE,
+                [
                 'type' => 'varchar',
                 'label' => 'Crosssell group code',
                 'input' => 'text',
@@ -90,14 +101,18 @@ class InstallData implements InstallDataInterface
                 'sort_order' => 10,
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
-            ]);
+                ]
+            );
         }
     }
 
     protected function ensureUpsellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_UPSELL_TEMPLATE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_UPSELL_TEMPLATE,
+                [
                 'type' => 'int',
                 'label' => 'Upsell template',
                 'input' => 'select',
@@ -106,9 +121,13 @@ class InstallData implements InstallDataInterface
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
                 'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product',
-            ]);
+                ]
+            );
 
-            $eavSetup->addAttribute($entityType, Config::ATTRIBUTE_UPSELL_GROUP_CODE, [
+            $eavSetup->addAttribute(
+                $entityType,
+                Config::ATTRIBUTE_UPSELL_GROUP_CODE,
+                [
                 'type' => 'varchar',
                 'label' => 'Upsell group code',
                 'input' => 'text',
@@ -116,13 +135,17 @@ class InstallData implements InstallDataInterface
                 'sort_order' => 10,
                 'global' => ScopedAttributeInterface::SCOPE_STORE,
                 'group' => 'Tweakwise',
-            ]);
+                ]
+            );
         }
     }
 
     protected function ensureFeaturedTemplateAttribute(EavSetup $eavSetup)
     {
-        $eavSetup->addAttribute(Category::ENTITY, Config::ATTRIBUTE_FEATURED_TEMPLATE, [
+        $eavSetup->addAttribute(
+            Category::ENTITY,
+            Config::ATTRIBUTE_FEATURED_TEMPLATE,
+            [
             'type' => 'int',
             'label' => 'Featured products template',
             'input' => 'select',
@@ -131,7 +154,8 @@ class InstallData implements InstallDataInterface
             'global' => ScopedAttributeInterface::SCOPE_STORE,
             'group' => 'Tweakwise',
             'source' => 'Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Featured',
-        ]);
+            ]
+        );
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -12,7 +13,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
 
 /**
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Response
  * @method FacetType[] getFacets();
  */
 class FacetResponse extends Response
@@ -32,7 +32,10 @@ class FacetResponse extends Response
             }
 
             //remove tree, link and slider facets
-            if ($value->getFacetSettings()->getSelectionType() === 'checkbox' || ($value->getFacetSettings()->getSelectionType() === 'color')) {
+            if (
+                $value->getFacetSettings()->getSelectionType() === 'checkbox' ||
+                ($value->getFacetSettings()->getSelectionType() === 'color')
+            ) {
                 $values[] = $value;
             }
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -90,23 +91,27 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                         $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
                     }
                 }
+
                 /** @var AttributeSlug $attributeSlug */
                 $this->resource->save($attributeSlug);
-
             } catch (NoSuchEntityException $exception) {
                 //slug doesnt exist. Save value
                 if (isset($newSlug)) {
                     $attributeSlug->setSlug($newSlug);
                 }
+
                 /** @var AttributeSlug $attributeSlug */
                 $this->resource->save($attributeSlug);
             }
         } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__(
-                'Could not save the page: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotSaveException(
+                __(
+                    'Could not save the page: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return $attributeSlug;
     }
 
@@ -128,7 +133,9 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param AttributeSlugInterface $attributeSlug
+     * @return bool
+     * @throws CouldNotDeleteException
      */
     public function delete(AttributeSlugInterface $attributeSlug): bool
     {
@@ -136,11 +143,14 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             /** @var AttributeSlug $attributeSlug */
             $this->resource->delete($attributeSlug);
         } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(__(
-                'Could not delete the Page: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotDeleteException(
+                __(
+                    'Could not delete the Page: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return true;
     }
 
@@ -157,9 +167,9 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
         if (!$attributeSlug->getAttribute()) {
             throw new NoSuchEntityException(__('No slug found for attribute "%s".', $attribute));
         }
+
         return $attributeSlug;
     }
-
 
     /**
      * @param string $slug

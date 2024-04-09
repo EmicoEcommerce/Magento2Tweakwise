@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -40,8 +41,13 @@ class FormMini extends Template
      * @param Context $context
      * @param array $data
      */
-    public function __construct(Config $config, LocaleFormat $localeFormat, Registry $registry, Context $context, array $data = [])
-    {
+    public function __construct(
+        Config $config,
+        LocaleFormat $localeFormat,
+        Registry $registry,
+        Context $context,
+        array $data = []
+    ) {
         parent::__construct($context, $data);
 
         $this->config = $config;

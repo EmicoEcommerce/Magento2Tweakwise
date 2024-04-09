@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -34,6 +35,9 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface as MagentoUrlInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class PathSlugStrategy implements
     UrlInterface,
     RouteMatchingInterface,
@@ -203,6 +207,7 @@ class PathSlugStrategy implements
                 unset($filters[$key]);
             }
         }
+
         $attribute = clone $item->getAttribute();
         $attribute->setValue('title', '{{from}}-{{to}}');
         $filters[] = new Item($item->getFilter(), $attribute, $this->urlFactory->create());
@@ -229,8 +234,10 @@ class PathSlugStrategy implements
      * @param ProductNavigationRequest $navigationRequest
      * @return $this
      */
-    public function apply(MagentoHttpRequest $request, ProductNavigationRequest $navigationRequest): FilterApplierInterface
-    {
+    public function apply(
+        MagentoHttpRequest $request,
+        ProductNavigationRequest $navigationRequest
+    ): FilterApplierInterface {
         // Order / pagination etc. is still done with query parameters. Also apply this using the queryParameter strategy
         $this->queryParameterStrategy->apply($request, $navigationRequest);
         $filterPath = $request->getParam(self::REQUEST_FILTER_PATH);
@@ -250,6 +257,7 @@ class PathSlugStrategy implements
                 } catch (UnexpectedValueException $exception) {
                     $attribute = $part;
                 }
+
                 $navigationRequest->addAttributeFilter($facet, $attribute);
             }
         }
@@ -270,6 +278,7 @@ class PathSlugStrategy implements
         if (!\is_array($filters)) {
             return [];
         }
+
         $this->activeFilters = $filters;
         return $this->activeFilters;
     }
@@ -280,7 +289,8 @@ class PathSlugStrategy implements
      */
     public function getOriginalUrl(MagentoHttpRequest $request): string
     {
-        if ($twOriginalUrl = $request->getParam('__tw_original_url')) {
+        $twOriginalUrl = $request->getParam('__tw_original_url');
+        if ($twOriginalUrl) {
             // This seems ugly, perhaps there is another way?
             $query = [];
             // Add page and sort
@@ -289,7 +299,8 @@ class PathSlugStrategy implements
             $limit = $request->getParam('product_list_limit');
             $mode = $request->getParam('product_list_mode');
 
-            if ($page &&
+            if (
+                $page &&
                 (int) $page > 1 &&
                 count($this->getActiveFilters()) < 1
             ) {
@@ -299,9 +310,11 @@ class PathSlugStrategy implements
             if ($sort) {
                 $query['product_list_order'] = $sort;
             }
+
             if ($limit) {
                 $query['product_list_limit'] = $limit;
             }
+
             if ($mode) {
                 $query['product_list_mode'] = $mode;
             }
@@ -356,6 +369,7 @@ class PathSlugStrategy implements
      * @param MagentoHttpRequest $request
      * @param array $filters
      * @return string
+     * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
      */
     public function buildFilterUrl(MagentoHttpRequest $request, array $filters = []): string
     {
@@ -373,6 +387,7 @@ class PathSlugStrategy implements
                 //filter path already exists in url
                 $url = $urlParts['path'];
             }
+
             if (isset($urlParts['query'])) {
                 $url .= '?' . $urlParts['query'];
             }
@@ -384,6 +399,7 @@ class PathSlugStrategy implements
                 $url = $currentUrl . '/' . $newFilterPath;
             }
         }
+
         $categoryUrlSuffix = $this->scopeConfig->getValue(
             CategoryUrlPathGenerator::XML_PATH_CATEGORY_URL_SUFFIX,
             'store'
@@ -422,6 +438,7 @@ class PathSlugStrategy implements
             } else {
                 $slug = $this->filterSlugManager->getSlugForFilterItem($filterItem);
             }
+
             $path .= $urlKey . '/' . $slug . '/';
         }
 
@@ -463,6 +480,7 @@ class PathSlugStrategy implements
         foreach ($this->rewriteResolvers as $rewriteResolver) {
             $rewrites[] = $rewriteResolver->getRewrites($request);
         }
+
         $rewrites = array_merge([], ...$rewrites);
 
         if (empty($rewrites)) {
@@ -491,7 +509,7 @@ class PathSlugStrategy implements
         }
 
         $filterPathParts = explode('/', trim($filterPath, '/'));
-        if ((count($filterPathParts) %2) !== 0) {
+        if ((count($filterPathParts) % 2) !== 0) {
             /* In this case we dont have an even amount of path segments,
             This cannot correspond to a filter in this model since the filters
             are constructed as filterName/filterValue for each filter, note the two components
@@ -499,6 +517,7 @@ class PathSlugStrategy implements
             */
             return false;
         }
+
         // Set the filter params part of the URL as a separate request param.
         // The request param filter_path is used to query tweakwise.
         $request->setParam(self::REQUEST_FILTER_PATH, $filterPath);
@@ -525,6 +544,7 @@ class PathSlugStrategy implements
             if (strlen($requestPath) <= strlen($fileExtension)) {
                 continue;
             }
+
             if (strpos($requestPath, $fileExtension, -\strlen($fileExtension)) !== false) {
                 return true;
             }
@@ -538,6 +558,7 @@ class PathSlugStrategy implements
      * @param Item $item
      * @return string
      * @throws NoSuchEntityException
+     * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
      */
     public function getCategoryFilterSelectUrl(
         MagentoHttpRequest $request,
@@ -563,7 +584,7 @@ class PathSlugStrategy implements
         */
         $filterSlugPath = $this->buildFilterSlugPath($this->getActiveFilters());
 
-        $url.= '/' . trim($filterSlugPath, '/');
+        $url .= '/' . trim($filterSlugPath, '/');
 
         /*
          We explode the url so that we can capture its parts and find the double values in order to remove them.
@@ -580,6 +601,7 @@ class PathSlugStrategy implements
             if ($part !== $prevPart) {
                 $filteredParts[] = $part;
             }
+
             $prevPart = $part;
         }
 

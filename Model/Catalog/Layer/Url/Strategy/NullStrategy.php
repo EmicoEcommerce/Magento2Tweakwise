@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -34,8 +35,10 @@ class NullStrategy implements RouteMatchingInterface, UrlInterface, FilterApplie
      * @param ProductNavigationRequest $navigationRequest
      * @return $this
      */
-    public function apply(MagentoHttpRequest $request, ProductNavigationRequest $navigationRequest): FilterApplierInterface
-    {
+    public function apply(
+        MagentoHttpRequest $request,
+        ProductNavigationRequest $navigationRequest
+    ): FilterApplierInterface {
         return $this;
     }
 
@@ -102,10 +105,11 @@ class NullStrategy implements RouteMatchingInterface, UrlInterface, FilterApplie
     {
         return '';
     }
+
     /**
      * @return string
      */
-    public function getOriginalUrl(MagentoHttpRequest $request) : string
+    public function getOriginalUrl(MagentoHttpRequest $request): string
     {
         return '';
     }

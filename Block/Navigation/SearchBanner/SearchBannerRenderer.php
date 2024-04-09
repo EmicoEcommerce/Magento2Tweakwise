@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -51,7 +52,7 @@ class SearchBannerRenderer extends Template
         $result = [];
         $banners = [];
 
-        if($navigationContext->showSearchBanners()) {
+        if ($navigationContext->showSearchBanners()) {
             $response = $navigationContext->getResponse();
             if (!empty($response)) {
                 $banners = $response->getValue('searchbanners');
@@ -69,7 +70,6 @@ class SearchBannerRenderer extends Template
                 }
             }
         }
-
 
         return $result;
     }

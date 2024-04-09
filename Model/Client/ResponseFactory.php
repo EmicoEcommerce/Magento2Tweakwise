@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -36,6 +37,7 @@ class ResponseFactory
      * @param Request $request
      * @param array $data
      * @return Response
+     * @throws UnexpectedValueException
      */
     public function create(Request $request, array $data)
     {

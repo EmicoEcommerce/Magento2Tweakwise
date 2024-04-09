@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -23,7 +24,7 @@ class DefaultRenderer extends Template
     use AnchorRendererTrait;
 
     /**
-     * {@inheritDoc}
+     * @var string
      */
     protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/default.phtml';
 
@@ -134,10 +135,11 @@ class DefaultRenderer extends Template
     }
 
     /**
-     * @param $items
+     * @param array $items
      * @return array
      */
-    private function findCurrentCategory($items) {
+    private function findCurrentCategory($items)
+    {
         $storeId = $this->filter->getStoreId();
         $currentCategory = $this->filter->getLayer()->getCurrentCategory();
         $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
@@ -234,6 +236,30 @@ class DefaultRenderer extends Template
         }
 
         return 'Minder filters tonen';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSearchable()
+    {
+        return ($this->getFacetSettings()->isSearchable() && $this->hasHiddenItems());
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchPlaceholder()
+    {
+        return $this->getFacetSettings()->getSearchPlaceholder();
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchNoResultsText()
+    {
+        return $this->getFacetSettings()->getSearchNoResultsText();
     }
 
     /**

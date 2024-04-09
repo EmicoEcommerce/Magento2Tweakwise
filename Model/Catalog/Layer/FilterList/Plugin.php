@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -10,7 +11,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList;
 
 use Closure;
 use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2Tweakwise\Exception\TweakwiseException;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\AbstractFilter;
@@ -67,13 +68,13 @@ class Plugin
         }
 
         //no api response
-        if($this->config->getTweakwiseExceptionTrown()) {
+        if ($this->config->getTweakwiseExceptionTrown()) {
             return $proceed($layer);
         }
 
         try {
             return $this->tweakwiseFilterList->getFilters($layer);
-        } catch (TweakwiseException $e) {
+        } catch (TweakwiseExceptionInterface $e) {
             $this->log->critical($e);
             $this->config->setTweakwiseExceptionThrown();
 

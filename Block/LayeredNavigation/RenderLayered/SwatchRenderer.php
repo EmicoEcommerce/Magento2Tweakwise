@@ -217,4 +217,28 @@ class SwatchRenderer extends RenderLayered
     {
         return $this->getFacetSettings()->getIsNumberOfResultVisible();
     }
+
+    /**
+     * @return bool
+     */
+    public function isSearchable()
+    {
+        return $this->getFacetSettings()->isSearchable();
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchPlaceholder()
+    {
+        return $this->filter->getFacet()->getFacetSettings()->getSearchPlaceholder();
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchNoResultsText()
+    {
+        return $this->filter->getFacet()->getFacetSettings()->getSearchNoResultsText();
+    }
 }

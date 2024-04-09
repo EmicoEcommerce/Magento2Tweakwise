@@ -210,4 +210,27 @@ class SettingsType extends Type
 
         return null;
     }
+    /**
+     * @return bool
+     */
+    public function isSearchable()
+    {
+        return ($this->getBoolValue('issearchable'));
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchPlaceholder()
+    {
+        return empty($this->getValue('searchplaceholder')) ? '' : $this->getValue('searchplaceholder');
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getSearchNoResultsText()
+    {
+        return empty($this->getValue('searchnoresultstext')) ? '' : $this->getValue('searchnoresultstext');
+    }
 }

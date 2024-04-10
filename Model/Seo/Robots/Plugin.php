@@ -30,7 +30,7 @@ class Plugin
 
     /**
      * @param PageConfig $config
-     * @param $result
+     * @param string $result
      * @return string
      */
     public function afterGetRobots(PageConfig $config, $result)

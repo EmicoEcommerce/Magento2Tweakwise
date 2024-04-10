@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -10,7 +11,6 @@ namespace Tweakwise\Magento2Tweakwise\Exception;
 
 use RuntimeException as BaseRuntimeException;
 
-class RuntimeException extends BaseRuntimeException implements TweakwiseException
+class RuntimeException extends BaseRuntimeException implements TweakwiseExceptionInterface
 {
-
 }

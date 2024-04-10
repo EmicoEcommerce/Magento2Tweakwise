@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise  (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -15,10 +16,6 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Class UrlStrategyFactory
- * @package Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy
- */
 class UrlStrategyFactory
 {
     /**
@@ -54,7 +51,8 @@ class UrlStrategyFactory
         $urlStrategy = $this->config->getUrlStrategy();  //path of query
         $implementation = $this->objectManager->get($urlStrategy);
 
-        if ($implementation instanceof UrlInterface
+        if (
+            $implementation instanceof UrlInterface
             && !$implementation->isAllowed()
         ) {
             return $this->objectManager->get($interface);

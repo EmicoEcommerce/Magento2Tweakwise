@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -23,5 +24,8 @@ interface FilterApplierInterface
      * @param ProductNavigationRequest $navigationRequest
      * @return $this
      */
-    public function apply(MagentoHttpRequest $request, ProductNavigationRequest $navigationRequest): FilterApplierInterface;
+    public function apply(
+        MagentoHttpRequest $request,
+        ProductNavigationRequest $navigationRequest
+    ): FilterApplierInterface;
 }

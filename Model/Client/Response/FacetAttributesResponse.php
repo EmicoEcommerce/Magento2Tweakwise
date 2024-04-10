@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,9 +12,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\AttributeType;
 
-/**
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Response
- */
 class FacetAttributesResponse extends Response
 {
     /**
@@ -34,22 +32,23 @@ class FacetAttributesResponse extends Response
 
             if (isset($attributes[0])) {
                 $this->data['attributes'] = $value->getValue('attribute');
-            }else {
+            } else {
                 //only one result
                 $this->data['attributes'][] = $value->getValue('attribute');
             }
 
             return $this->data['attributes'];
-
         }
 
         return $this;
     }
 
-    public function getAttributes(){
+    public function getAttributes()
+    {
         if (isset($this->data['attributes'])) {
             return $this->data['attributes'];
         }
+
         return [];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -13,8 +14,6 @@ use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 
 /**
  * Interface UrlInterface implementation should handle both category url's and
- *
- *
  */
 interface UrlInterface
 {

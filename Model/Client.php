@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -167,6 +168,7 @@ class Client
                         $this->endpointManager->handleConnectException();
                         return $this->doRequest($tweakwiseRequest, $async);
                     }
+
                     throw new ApiException($e->getMessage(), $e->getCode(), $e);
                 }
             );
@@ -182,8 +184,8 @@ class Client
      * @param ResponseInterface $httpResponse
      * @param HttpRequest $httpRequest
      * @param Request $tweakwiseRequest
-     * @param float $start
      * @return Response
+     * @throws ApiException
      */
     public function handleRequestSuccess(
         ResponseInterface $httpResponse,
@@ -271,6 +273,7 @@ class Client
             foreach ($value as $element) {
                 $values[] = $this->xmlToArrayValue($element);
             }
+
             return $values;
         }
 
@@ -295,7 +298,7 @@ class Client
             //don't log 404 messages.
             if ($e->getCode() !== 404) {
                 $this->log->throwException($e);
-            }else {
+            } else {
                 throw ($e);
             }
         } finally {

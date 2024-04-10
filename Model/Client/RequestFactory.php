@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -42,6 +43,7 @@ class RequestFactory
      *
      * @param array $parameters
      * @return Request
+     * @throws InvalidArgumentException
      */
     public function create(array $parameters = [])
     {

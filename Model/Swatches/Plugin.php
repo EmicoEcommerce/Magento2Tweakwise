@@ -12,7 +12,7 @@ class Plugin
      * @param callable $proceed
      * @param Product $parentProduct
      * @param array $attributes
-     * @return
+     * @return bool|Product
      */
     public function aroundLoadVariationByFallback(
         Data $subject,

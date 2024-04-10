@@ -25,7 +25,7 @@ class Timer
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return void
      */
     public function startTimer($name)
@@ -36,7 +36,7 @@ class Timer
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return void
      */
     public function endTimer($name)
@@ -46,7 +46,7 @@ class Timer
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return string
      */
     public function getServerTiming($name)
@@ -56,11 +56,12 @@ class Timer
             $name = str_replace('/', '-', $name); //no slashes in header value
             return sprintf('%s;dur=%f', 'TW-' . $name, $timeTaken);
         }
+
         return 0;
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return int|mixed
      */
     public function getTime($name)
@@ -74,7 +75,7 @@ class Timer
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return void
      */
     private function setHeader($name)

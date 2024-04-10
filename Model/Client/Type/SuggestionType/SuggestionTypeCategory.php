@@ -38,7 +38,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
 
     /**
      * SuggestionTypeCategory constructor.
-     * @param CategoryRepository $categoryRepository Empty category model used to resolve urls
+     * @param CategoryRepository $categoryRepository
      * @param StoreManagerInterface $storeManager
      * @param UrlInterface $url
      * @param Helper $exportHelper
@@ -111,6 +111,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
         if ($categoryId === $this->getStoreRootCategory()) {
             return '';
         }
+
         $category = $this->categoryRepository->get($categoryId);
         return $category->getUrl();
     }

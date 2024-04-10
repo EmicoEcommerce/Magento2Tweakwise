@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -24,8 +25,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Class Url will later implement logic to use implementation selected in configuration.
- *
- * @package Tweakwise\Magento2Tweakwise\Model\Catalog\Layer
  */
 class Url
 {
@@ -168,8 +167,10 @@ class Url
      */
     public function getClearUrl(array $activeFilterItems)
     {
-        return $this->addBaseUrl($this->getUrlStrategy()
-            ->getClearUrl($this->request, $activeFilterItems));
+        return $this->addBaseUrl(
+            $this->getUrlStrategy()
+            ->getClearUrl($this->request, $activeFilterItems)
+        );
     }
 
     /**
@@ -178,8 +179,10 @@ class Url
      */
     public function getFilterUrl(array $activeFilterItems)
     {
-        return $this->addBaseUrl($this->getUrlStrategy()
-            ->buildFilterUrl($this->request, $activeFilterItems));
+        return $this->addBaseUrl(
+            $this->getUrlStrategy()
+            ->buildFilterUrl($this->request, $activeFilterItems)
+        );
     }
 
     /**
@@ -199,7 +202,8 @@ class Url
         return $this->addBaseUrl($this->getUrlStrategy()->getSliderUrl($this->request, $item));
     }
 
-    public function addBaseUrl($url) {
+    public function addBaseUrl($url)
+    {
 
         $baseUrl = $this->magentoUrl->getBaseUrl();
         //prevent double base urls

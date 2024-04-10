@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -47,6 +48,7 @@ class Request
      * @var Config
      */
     protected $config;
+
     /**
      * Request constructor.
      *
@@ -111,7 +113,7 @@ class Request
                     $this->parameters[$parameter] = $this->parameters[$parameter] . $separator . $value;
                 }
             }
-        } else if ($value !== null) {
+        } elseif ($value !== null) {
             $this->parameters[$parameter] = (string) $value;
         }
 
@@ -187,13 +189,14 @@ class Request
             return $this->addCategoryPathFilter($ids);
         }
 
-        if($this->config->isCategoryViewDefault()) {
+        if ($this->config->isCategoryViewDefault()) {
             /** @var Category $category */
             $parentIsRoot = $category;
             while ($this->isCategoryRoot($parentIsRoot) === false) {
                 $ids[] = (int)$parentIsRoot->getParentId();
                 $parentIsRoot = $parentIsRoot->getParentCategory();
             }
+
             $ids[] = (int)$parentIsRoot->getParentId();
 
             $ids = array_reverse($ids);
@@ -212,7 +215,8 @@ class Request
         return $this->addCategoryPathFilter($ids);
     }
 
-    private function isCategoryRoot($category) {
+    private function isCategoryRoot($category)
+    {
         return  in_array(
             (int) $category->getParentId(),
             [
@@ -250,7 +254,8 @@ class Request
      */
     public function getCategoryPathFilter()
     {
-        if (!$categoryPath = $this->getParameter('tn_cid')) {
+        $categoryPath = $this->getParameter('tn_cid');
+        if (!$categoryPath) {
             return null;
         }
 
@@ -267,7 +272,7 @@ class Request
     }
 
     /**
-     * @param $storeId
+     * @param string|int $storeId
      * @return void
      */
     public function setStore($storeId)

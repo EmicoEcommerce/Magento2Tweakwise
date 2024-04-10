@@ -5,7 +5,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 interface SearchRequestInterface
 {
     /**
-     * @param string $query The search query, this will be added to the tweakwise request as 'tn_q'
+     * @param string $query
      */
     public function setSearch(string $query): void;
 }

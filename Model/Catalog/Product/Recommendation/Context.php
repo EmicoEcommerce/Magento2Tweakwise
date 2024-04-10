@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -18,7 +19,6 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class Context
 {
-
     /**
      * @var Client
      */
@@ -157,8 +157,8 @@ class Context
      * @param FeaturedRequest $request
      * @return void
      */
-
-    public function setRequest(FeaturedRequest $request) {
+    public function setRequest(FeaturedRequest $request)
+    {
         $this->collection = null;
         $this->response = null;
         $this->request = $request;

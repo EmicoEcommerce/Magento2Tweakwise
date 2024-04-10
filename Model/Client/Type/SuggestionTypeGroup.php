@@ -7,7 +7,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeF
 
 /**
  * Class SuggestionGroupType
- * @package Tweakwise\Magento2Tweakwise\Model\Client\Type
  *
  * @method string|null getName()
  * @method setName(string $name);

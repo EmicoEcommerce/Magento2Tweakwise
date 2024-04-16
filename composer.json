@@ -3,7 +3,7 @@
     "license": "OSL-3.0",
     "description": "Magento 2 module for Tweakwise integration",
     "require": {
-        "php": ">=8.0 <8.3",
+        "php": ">=8.0",
         "ext-json": "*",
         "ext-pcre": "*",
         "ext-simplexml": "*",

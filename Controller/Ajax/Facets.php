@@ -78,7 +78,11 @@ class Facets extends Action
         //prevent non sequential array keys. That causes json encode to act differently and creates objects instead of arrays
         $result = array_values($result);
 
+        //set access control headers, for when the admin is on another domain
+        $json->setHeader('Access-Control-Allow-Origin', '*');
+        $json->setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
         $json->setData(['data' => $result]);
+
         return $json;
     }
 }

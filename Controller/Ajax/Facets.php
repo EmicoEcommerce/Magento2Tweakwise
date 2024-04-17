@@ -80,7 +80,10 @@ class Facets extends Action
 
         //set access control headers, for when the admin is on another domain
         $json->setHeader('Access-Control-Allow-Origin', '*');
-        $json->setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
+        $json->setHeader(
+            'Access-Control-Allow-Headers',
+            'Content-Type, Access-Control-Allow-Headers,Authorization, X-Requested-With'
+        );
         $json->setData(['data' => $result]);
 
         return $json;

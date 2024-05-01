@@ -16,9 +16,16 @@
 use Magento\Framework\Escaper;
 
 ?>
-<script id="autocomplete-item-template" type="text/x-magento-template" data-url="<?=$escaper->escapeUrl($block->getAjaxUrl())?>">
+<script
+    id="autocomplete-item-template"
+    type="text/x-magento-template"
+    data-url="<?=$escaper->escapeUrl($block->getAjaxUrl())?>">
     <% if (data.type === 'product') { %>
-        <li class="<%- data.row_class %> product-item" id="qs-option-<%- data.index %>" data-url="<%- data.url %>" role="option">
+        <li
+            class="<%- data.row_class %> product-item"
+            id="qs-option-<%- data.index %>"
+            data-url="<%- data.url %>"
+            role="option">
             <% if (data.image) { %>
                 <img class="qs-option-image" src="<%- data.image %>" alt="<%- data.title %>">
             <% } %>

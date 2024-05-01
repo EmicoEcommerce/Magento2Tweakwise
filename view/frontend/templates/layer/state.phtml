@@ -30,8 +30,8 @@ use Magento\Framework\Escaper;
         data-count="<?= /* @noEscape */ count($_filters) ?>"><?= $escaper->escapeHtml(__('Now Shopping by')) ?>
     </strong>
     <ol class="items">
-        <?php foreach ($_filters as $_filter) : ?>
-            <?php if ($_filter instanceof Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item) : ?>
+        <?php foreach ($_filters as $_filter): ?>
+            <?php if ($_filter instanceof Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item): ?>
                 <li class="item">
                     <span class="filter-label"><?= $escaper->escapeHtml(__($_filter->getName())) ?></span>
                     <span
@@ -45,8 +45,7 @@ use Magento\Framework\Escaper;
                     <a class="action remove" href="<?= $escaper->escapeUrl($_filter->getRemoveUrl()) ?>"
                        data-js-filter-id="<?=$block->getActiveFilterCssId($_filter)?>"
                        title="<?= /* @noEscape */ $escaper->escapeHtmlAttr(
-                           __('Remove')
-                       ) . " " . $currentFilterName ?>">
+                           __('Remove')) . " " . $currentFilterName ?>">
                         <span><?= $escaper->escapeHtml(__('Remove This Item')) ?></span>
                     </a>
                 </li>

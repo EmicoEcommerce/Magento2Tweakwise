@@ -15,7 +15,9 @@ use Magento\LayeredNavigation\Block\Navigation;
  * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
  */
 
-if (!$block->canShowBlock()) return;
+if (!$block->canShowBlock()) {
+    return;
+}
 ?>
 
 <?php $filters = $block->getFilters(); /** @var $filters Filter[] */ ?>
@@ -27,7 +29,13 @@ if (!$block->canShowBlock()) return;
 <?php $hasFilters = count($filters) > 0; ?>
 <div class="block filter<?=(!$hasFilters ? ' filter-no-options' : '')?>"
      id="layered-filter-block"
-     data-mage-init='{"collapsible":{"openedState": "active", "collapsible": true, "active": false, "collateral": { "openedState": "filter-active", "element": "body" } }}'>
+     data-mage-init='{
+        "collapsible":{
+            "openedState": "active", "collapsible": true, "active": false, "collateral": {
+                "openedState": "filter-active", "element": "body"
+            }
+        }
+    }'>
     <?php $filtered = count($block->getLayer()->getState()->getFilters()) ?>
     <div class="block-title filter-title" data-count="<?=$filtered?>">
         <strong data-role="title"><?=__('Shop By')?></strong>
@@ -38,12 +46,19 @@ if (!$block->canShowBlock()) return;
 
         <?php if ($block->getLayer()->getState()->getFilters()): ?>
             <div class="block-actions filter-actions">
-                <a href="<?=$escaper->escapeUrl($block->getClearUrl()) ?>" class="action clear filter-clear"><span><?=__('Clear All')?></span></a>
+                <a
+                    href="<?=$escaper->escapeUrl($block->getClearUrl()) ?>"
+                    class="action clear filter-clear"><span><?=__('Clear All')?></span>
+                </a>
             </div>
         <?php endif; ?>
 
         <?php if ($hasFilters): ?>
-            <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?=__('Shopping Options') ?></strong>
+            <strong
+                role="heading"
+                aria-level="2"
+                class="block-subtitle filter-subtitle"><?=__('Shopping Options') ?>
+            </strong>
             <div class="filter-options" id="narrow-by-list" data-role="content">
                 <?php foreach ($tweakwiseNavigationConfig->getFilterFormInput() as $name => $value):?>
                     <?php // These are tweakwise system parameters which are needed for ajax navigation ?>
@@ -53,8 +68,11 @@ if (!$block->canShowBlock()) return;
                     <?php if ($filter->isCollapsible()): ?>
                         <?php $filterActive = $filter->isDefaultCollapsed() ? 'false' : '[0]'; ?>
                         <div class="collapsible-container <?=$filter->getCssClass()?>"
-                             data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": <?=$filterActive?>}}'
-                        >
+                             data-mage-init='{
+                                "accordion":{
+                                    "openedState": "active", "collapsible": true, "active": <?=$filterActive?>
+                                }
+                            }'>
                             <div data-role="collapsible" class="filter-options-item">
                                 <div data-role="title" class="filter-options-title">
                                     <?=__($filter->getName())?>
@@ -64,7 +82,9 @@ if (!$block->canShowBlock()) return;
                                         <span class="tooltip" data-tooltip="<?=$tooltip?>"><span>i</span></span>
                                     <?php endif; ?>
                                 </div>
-                                <?php $filterContentStyle = $filter->isDefaultCollapsed() ? ' style="display: none;"' : ''?>
+                                <?php
+                                    $filterContentStyle = $filter->isDefaultCollapsed() ? ' style="display: none;"' : ''
+                                ?>
                                 <div data-role="content" class="filter-options-content"<?=$filterContentStyle?>>
                                     <?=$block->getChildBlock('renderer')->render($filter) ?>
                                 </div>
@@ -72,7 +92,9 @@ if (!$block->canShowBlock()) return;
                         </div>
                     <?php else: ?>
                         <div class="filter-options-item">
-                            <div class="filter-options-title filter-options-title-non-collapsible"><?=__($filter->getName())?></div>
+                            <div class="filter-options-title filter-options-title-non-collapsible">
+                                <?=__($filter->getName())?>
+                            </div>
                             <div class="filter-options-content">
                                 <?=$block->getChildBlock('renderer')->render($filter) ?>
                             </div>
@@ -80,7 +102,9 @@ if (!$block->canShowBlock()) return;
                     <?php endif; ?>
                     <?php if ($renderFilterButton): ?>
                         <div class="show-items-link">
-                            <button type="button" class="btn btn-primary btn-block js-btn-filter"><?=__(sprintf('Show <span>%s</span> items', $block->getLayer()->getProductCount())); ?></button>
+                            <button type="button" class="btn btn-primary btn-block js-btn-filter">
+                                <?=__(sprintf('Show <span>%s</span> items', $block->getLayer()->getProductCount())); ?>
+                            </button>
                         </div>
                     <?php endif;?>
                 <?php endforeach; ?>

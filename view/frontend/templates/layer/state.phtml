@@ -18,20 +18,30 @@ use Magento\Framework\Escaper;
 ?>
 <?php /** @var Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item[] $_filters */ ?>
 <?php $_filters = $block->getActiveFilters() ?>
-<?php if (!empty($_filters)) : ?>
-<div class="filter-current" data-mage-init='{"collapsible":{"openedState": "active", "collapsible": true, "active": false }}'>
-    <strong class="block-subtitle filter-current-subtitle"
-            role="heading"
-            aria-level="2"
-            data-role="title"
-            data-count="<?= /* @noEscape */ count($_filters) ?>"><?= $escaper->escapeHtml(__('Now Shopping by')) ?></strong>
+<?php if (!empty($_filters)): ?>
+<div
+    class="filter-current"
+    data-mage-init='{"collapsible":{"openedState": "active", "collapsible": true, "active": false }}'>
+    <strong
+        class="block-subtitle filter-current-subtitle"
+        role="heading"
+        aria-level="2"
+        data-role="title"
+        data-count="<?= /* @noEscape */ count($_filters) ?>"><?= $escaper->escapeHtml(__('Now Shopping by')) ?>
+    </strong>
     <ol class="items">
-        <?php foreach ($_filters as $_filter) : ?>
-            <?php if ($_filter instanceof Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item) : ?>
+        <?php foreach ($_filters as $_filter): ?>
+            <?php if ($_filter instanceof Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item): ?>
                 <li class="item">
                     <span class="filter-label"><?= $escaper->escapeHtml(__($_filter->getName())) ?></span>
-                    <span class="filter-value"><?= $escaper->escapeHtml($block->stripTags($_filter->getLabel())) ?></span>
-                    <?php $currentFilterName = $escaper->escapeHtmlAttr(__($_filter->getName()) . " " . $block->stripTags($_filter->getLabel())); ?>
+                    <span
+                        class="filter-value"><?= $escaper->escapeHtml($block->stripTags($_filter->getLabel())) ?>
+                    </span>
+                    <?php
+                        $currentFilterName = $escaper->escapeHtmlAttr(
+                            __($_filter->getName()) . " " . $block->stripTags($_filter->getLabel())
+                        );
+                    ?>
                     <a class="action remove" href="<?= $escaper->escapeUrl($_filter->getRemoveUrl()) ?>"
                        data-js-filter-id="<?=$block->getActiveFilterCssId($_filter)?>"
                        title="<?= /* @noEscape */ $escaper->escapeHtmlAttr(__('Remove')) . " " . $currentFilterName ?>">

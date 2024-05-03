@@ -17,7 +17,7 @@ use Magento\Search\Model\Autocomplete\ItemInterface;
 use Magento\Search\Model\Query;
 use Magento\Search\Model\QueryFactory;
 use Magento\Store\Model\StoreManagerInterface;
-use \Magento\Catalog\Model\Config as CatalogConfig;
+use Magento\Catalog\Model\Config as CatalogConfig;
 
 class DataProviderHelper
 {

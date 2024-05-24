@@ -69,6 +69,8 @@ class Config
      */
     public const FALLBACK_SERVER_URL = 'https://gateway.tweakwisenavigator.com';
 
+    private const PRODUCT_CARD_LIFETIME_XML_PATH = 'tweakwise/personal_merchandising/product_card_lifetime';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -627,5 +629,13 @@ class Config
     public function isCategoryViewDefault(Store $store = null)
     {
         return $this->getStoreConfig('tweakwise/layered/default_category_view', $store);
+    }
+
+    /**
+     * @return int
+     */
+    public function getProductCardLifetime(): int
+    {
+        return (int) $this->config->getValue(self::PRODUCT_CARD_LIFETIME_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
 }

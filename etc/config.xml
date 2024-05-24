@@ -40,6 +40,9 @@ cid
                 <enabled>0</enabled>
                 <template/>
             </search>
+            <personal_merchandising>
+                <product_card_lifetime>3600</product_card_lifetime>
+            </personal_merchandising>
             <recommendations>
                 <crosssell_enabled>0</crosssell_enabled>
                 <crosssell_template />

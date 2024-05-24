@@ -19,5 +19,16 @@
                 </arguments>
             </block>
         </referenceContainer>
+        <referenceBlock name="category.products.list">
+            <arguments>
+                <argument name="view_model_product_list_item" xsi:type="object">
+                    Tweakwise\Magento2Tweakwise\ViewModel\ProductListItem
+                </argument>
+            </arguments>
+            <block class="Magento\Catalog\Block\Product\AbstractProduct"
+                   name="tweakwise.catalog.product.list.item"
+                   template="Tweakwise_Magento2Tweakwise::product/list/item.phtml"
+                   ifconfig="tweakwise/personal_merchandising/enabled"/>
+        </referenceBlock>
     </body>
 </page>

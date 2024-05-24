@@ -36,7 +36,6 @@ define([
                 var requestUrl = ajaxOptions.url;
                 // If there's an ongoing AJAX request, abort it if it is an search request and if the new request is an search request
                 if (this.currentRequest && requestUrl.indexOf('search/ajax') !== -1) {
-
                     this.currentRequest.abort();
                     // Store the jqXHR object of the new AJAX request
                     this.currentRequest = jqXHR;

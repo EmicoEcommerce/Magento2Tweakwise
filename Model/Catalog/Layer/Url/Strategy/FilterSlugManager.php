@@ -111,6 +111,11 @@ class FilterSlugManager
                 continue;
             }
 
+            $this->getLookupTable();
+            if (isset($this->lookupTable[$option->getLabel()])) {
+                continue;
+            }
+
             $attributeSlugEntity = $this->attributeSlugFactory->create();
             $attributeSlugEntity->setAttribute($option->getLabel());
             $attributeSlugEntity->setSlug($this->translitUrl->filter($option->getLabel()));

@@ -9,6 +9,11 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList;
 
+use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterFactory;
@@ -62,7 +67,10 @@ class Tweakwise
         FilterFactory $filterFactory,
         CurrentContext $context,
         Config $config,
-        AttributeFactory $attributeFactory
+        AttributeFactory $attributeFactory,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly CategoryRepositoryInterface $categoryRepository,
+        private readonly RequestInterface $request
     ) {
         $this->filterFactory = $filterFactory;
         $this->context = $context;
@@ -85,12 +93,13 @@ class Tweakwise
 
     /**
      * @param Layer $layer
+     * @throws NoSuchEntityException
      */
     protected function initFilters(Layer $layer)
     {
         $request = $this->context->getRequest();
         if (!$request->hasParameter('tn_cid')) {
-            $request->addCategoryFilter($layer->getCurrentCategory());
+            $request->addCategoryFilter($this->getCurrentCategory($layer));
         }
 
         $facets = $this->context->getResponse()->getFacets();
@@ -181,5 +190,33 @@ class Tweakwise
         $attributeModel->setAttributeCode($attributeName);
 
         return $attributeModel;
+    }
+
+    /**
+     * @param Layer $layer
+     * @return CategoryInterface
+     * @throws NoSuchEntityException
+     */
+    private function getCurrentCategory(Layer $layer): CategoryInterface
+    {
+        $layerCurrentCategory = $layer->getCurrentCategory();
+
+        if (
+            !$this->config->isPersonalMerchandisingActive() ||
+            $layerCurrentCategory->getId() !== $this->storeManager->getStore()->getRootCategoryId()
+        ) {
+            return $layerCurrentCategory;
+        }
+
+        $requestCurrentCategoryId = $this->request->getParam('cc_id');
+        if ($requestCurrentCategoryId) {
+            try {
+                return $this->categoryRepository->get($requestCurrentCategoryId);
+            } catch (NoSuchEntityException $exception) {
+                return $layerCurrentCategory;
+            }
+        }
+
+        return $layerCurrentCategory;
     }
 }

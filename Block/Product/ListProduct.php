@@ -9,6 +9,7 @@ use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\ListProduct as MagentoListProduct;
 use Magento\Catalog\Helper\Output as OutputHelper;
 use Magento\Catalog\Model\Layer\Resolver;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\CookieManagerInterface;
@@ -35,6 +36,7 @@ class ListProduct extends MagentoListProduct
      * @param Cache $cacheHelper
      * @param Registry $registry
      * @param DesignInterface $viewDesign
+     * @param RequestInterface $request
      * @param array $data
      * @param OutputHelper|null $outputHelper
      */
@@ -49,6 +51,7 @@ class ListProduct extends MagentoListProduct
         private readonly Cache $cacheHelper,
         private readonly Registry $registry,
         private readonly DesignInterface $viewDesign,
+        private readonly RequestInterface $request,
         array $data = [],
         ?OutputHelper $outputHelper = null
     ) {
@@ -96,18 +99,19 @@ class ListProduct extends MagentoListProduct
             return parent::getUrl($route, $params);
         }
 
-        $additionalParams = [];
+        $queryParams = [];
         $profileKey = $this->getProfileKey();
         if ($profileKey) {
-            $additionalParams['tn_pk'] = $profileKey;
+            $queryParams['tn_pk'] = $profileKey;
         }
 
         $category = $this->registry->registry('current_category');
         if ($category) {
-            $additionalParams['cc_id'] = $category->getId();
+            $queryParams['cc_id'] = $category->getId();
         }
 
-        $params = array_merge($additionalParams, $params);
+        $queryParams = array_merge($this->request->getParams(), $queryParams);
+        $params['_query'] = $queryParams;
 
         return parent::getUrl($route, $params);
     }

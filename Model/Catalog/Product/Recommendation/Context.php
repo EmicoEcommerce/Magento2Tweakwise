@@ -112,7 +112,7 @@ class Context
 
         $template = $this->request->getTemplate();
 
-        if (!is_int($this->request->getTemplate())) {
+        if (!is_numeric($this->request->getTemplate())) {
             //grouped item
             $limit = $this->config->getLimitGroupCodeItems();
             if (!empty($limit) && $limit > 0) {

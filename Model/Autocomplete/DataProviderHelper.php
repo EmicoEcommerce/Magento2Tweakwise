@@ -17,6 +17,7 @@ use Magento\Search\Model\Autocomplete\ItemInterface;
 use Magento\Search\Model\Query;
 use Magento\Search\Model\QueryFactory;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\Config as CatalogConfig;
 
 class DataProviderHelper
 {
@@ -61,6 +62,11 @@ class DataProviderHelper
     protected $productItemFactory;
 
     /**
+     * @var CatalogConfig
+     */
+    protected $catalogConfig;
+
+    /**
      * AutocompleteDataProvider constructor
      * @param Config $config
      * @param QueryFactory $queryFactory
@@ -79,7 +85,8 @@ class DataProviderHelper
         HttpRequest $request,
         ProductCollectionFactory $productCollectionFactory,
         CollectionFilter $collectionFilter,
-        ProductItemFactory $productItemFactory
+        ProductItemFactory $productItemFactory,
+        CatalogConfig $catalogConfig
     ) {
         $this->config = $config;
         $this->queryFactory = $queryFactory;
@@ -89,6 +96,7 @@ class DataProviderHelper
         $this->productCollectionFactory = $productCollectionFactory;
         $this->collectionFilter = $collectionFilter;
         $this->productItemFactory = $productItemFactory;
+        $this->catalogConfig = $catalogConfig;
     }
 
     /**
@@ -143,7 +151,16 @@ class DataProviderHelper
             ]
             ]
         );
-        $this->collectionFilter->filter($productCollection, $this->getCategory());
+
+        $category = $this->getCategory();
+
+        $productCollection->addAttributeToSelect($this->catalogConfig->getProductAttributes())
+            ->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents()
+            ->addUrlRewrite($category->getId());
+
+        $productCollection->addCategoryFilter($category);
 
         $result = [];
         foreach ($response->getProductData() as $item) {

@@ -32,7 +32,7 @@ class AttributeSlug extends AbstractModel implements AttributeSlugInterface
      */
     public function getAttribute(): ?string
     {
-        return $this->getData(self::ATTRIBUTE);
+        return strtolower($this->getData(self::ATTRIBUTE));
     }
 
     /**

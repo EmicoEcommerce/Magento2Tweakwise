@@ -69,9 +69,9 @@ Below is a rundown of all configuration options
 1) Enabled: Use Merchandising Builder (Yes/No) This is only available if you use ajax filtering.
 2) Cookie name: The cookie which holds the tweakwise profile id, this cookie is (usually) set with a tracking script. The value of this cookie will be added to the tweakwise request, the response will contain a personalized sort order for that particular customer.
 
-Note that enabling these settings has consequences for performance. Using this feature means that all category pages have personalized content. As such, it is no longer possible cache navigation responses where this profile cookie name has been used.
-If a category page is cached in varnish (which it usually is) the varnish version is still served, however we reload the product list via ajax to get the personalized sort order. We do not add the profile cookie to non-ajax navigation requests, this is done so that normal requests can still be cached by varnish. 
-This means that the user is greeted by a loader. The product list is reloaded if and only if the following conditions are met:
+Note that Varnish must be enabled for this functionality to work correctly. Varnish is recommended by Magento anyway. The big advantage of Varnish Cache is of course the gain in speed. In addition, it ensures a lower load on the server and thus increases peak resistance.
+Using this feature means that all category pages have personalized content. As such, it is no longer possible cache navigation responses where this profile cookie name has been used.
+The product list is loaded via the merchandising builder only if the following conditions are met:
 
 1) Personal merchandising setting is enabled
 2) Cookie name setting has a value

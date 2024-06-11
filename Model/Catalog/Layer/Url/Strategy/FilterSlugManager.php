@@ -81,7 +81,7 @@ class FilterSlugManager
     public function getSlugForFilterItem(Item $filterItem): string
     {
         $lookupTable = $this->getLookupTable();
-        $attribute = $filterItem->getAttribute()->getTitle();
+        $attribute = strtolower($filterItem->getAttribute()->getTitle());
 
         if (isset($lookupTable[$attribute])) {
             return $lookupTable[$attribute];

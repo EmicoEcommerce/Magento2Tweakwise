@@ -12,6 +12,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\PageCache\Model\Config;
 use Magento\Store\Model\StoreManagerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config as TweakwiseConfig;
 
 class Cache
 {
@@ -25,13 +26,15 @@ class Cache
      * @param Session $customerSession
      * @param RequestInterface $request
      * @param ScopeConfigInterface $scopeConfig
+     * @param TweakwiseConfig $config
      */
     public function __construct(
         private readonly StoreManagerInterface $storeManager,
-        private readonly CacheInterface $cache,
-        private readonly Session $customerSession,
-        private readonly RequestInterface $request,
-        private readonly ScopeConfigInterface $scopeConfig
+        private readonly CacheInterface        $cache,
+        private readonly Session               $customerSession,
+        private readonly RequestInterface      $request,
+        private readonly ScopeConfigInterface  $scopeConfig,
+        private readonly TweakwiseConfig       $config
     ) {
     }
 
@@ -73,6 +76,14 @@ class Cache
     public function isVarnishEnabled(): bool
     {
         return $this->scopeConfig->getValue(Config::XML_PAGECACHE_TYPE) === (string) Config::VARNISH;
+    }
+
+    /**
+     * @return bool
+     */
+    public function personalMerchandisingCanBeApplied(): bool
+    {
+        return $this->isVarnishEnabled() && $this->config->isPersonalMerchandisingActive();
     }
 
     /**

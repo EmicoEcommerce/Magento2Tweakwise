@@ -32,6 +32,7 @@ class Plugin extends AbstractRecommendationPlugin
      */
     public function aroundGetItems(Related $subject, Closure $proceed)
     {
+        // TODO: TJEU IS DIT CROSSELL? ANDERS CACHING IN TEMPLATES INBOUWEN
         if (!$this->config->isRecommendationsEnabled(Config::RECOMMENDATION_TYPE_CROSSSELL)) {
             return $proceed();
         }

@@ -1,0 +1,219 @@
+<?php
+
+use Magento\Catalog\ViewModel\Product\Listing\PreparePostData;
+use Magento\Framework\App\ActionInterface;
+use Tweakwise\Magento2Tweakwise\ViewModel\ProductListItem;
+
+/* @var $block \Magento\Catalog\Block\Product\AbstractProduct */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<?php
+switch ($type = $block->getType()) {
+
+    case 'related-rule':
+        if ($exist = $block->hasItems()) {
+            $type = 'related';
+            $class = $type;
+
+            $image = 'related_products_list';
+            $title = __('Related Products');
+            $items = $block->getAllItems();
+            $limit = $block->getPositionLimit();
+            $shuffle = (int) $block->isShuffled();
+            $isWeightedRandom = (int) $block->getRotation()->isWeightedRandom($block->getProductListType());
+            $canItemsAddToCart = $block->canItemsAddToCart();
+
+            $showAddTo = true;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+        }
+        break;
+
+    case 'related':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Related $block */
+        if ($exist = $block->getItems()->getSize()) {
+            $type = 'related';
+            $class = $type;
+
+            $image = 'related_products_list';
+            $title = __('Related Products');
+            $items = $block->getItems();
+            $limit = 0;
+            $shuffle = 0;
+            $isWeightedRandom = 0;
+            $canItemsAddToCart = $block->canItemsAddToCart();
+
+            $showAddTo = true;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+        }
+        break;
+
+    case 'upsell-rule':
+        if ($exist = $block->hasItems()) {
+            $type = 'upsell';
+            $class = $type;
+
+            $image = 'upsell_products_list';
+            $title = __('We found other products you might like!');
+            $items = $block->getAllItems();
+            $limit = $block->getPositionLimit();
+            $shuffle = (int) $block->isShuffled();
+            $isWeightedRandom = (int) $block->getRotation()->isWeightedRandom($block->getProductListType());
+
+            $showAddTo = false;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'upsell':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Upsell $block */
+        if ($exist = count($block->getItemCollection()->getItems())) {
+            $type = 'upsell';
+            $class = $type;
+
+            $image = 'upsell_products_list';
+            $title = __('We found other products you might like!');
+            $items = $block->getItemCollection()->getItems();
+            $limit = $block->getItemLimit('upsell');
+            $shuffle = 0;
+            $isWeightedRandom = 0;
+
+            $showAddTo = false;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'crosssell-rule':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Crosssell $block */
+        if ($exist = $block->hasItems()) {
+            $type = 'crosssell';
+            $class = $type;
+
+            $image = 'cart_cross_sell_products';
+            $title = __('More Choices:');
+            $items = $block->getItemCollection();
+
+            $showAddTo = true;
+            $showCart = true;
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'crosssell':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Crosssell $block */
+        if ($exist = count($block->getItems())) {
+            $type = 'crosssell';
+            $class = $type;
+
+            $image = 'cart_cross_sell_products';
+            $title = __('More Choices:');
+            $items = $block->getItems();
+
+            $showAddTo = true;
+            $showCart = true;
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'new':
+        if ($exist = $block->getProductCollection()) {
+            $type = 'new';
+            $mode = 'grid';
+            $type = $type . ' ' . $mode;
+
+            $class = 'widget' . ' ' . $type;
+
+            $image = 'new_products_content_widget_grid';
+            $title = __('New Products');
+            $items = $exist;
+
+            $showAddTo = true;
+            $showCart = true;
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $description = ($mode == 'list') ? true : false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    default:
+        $exist = null;
+}
+$_item = null;
+
+/** @var ProductListItem $productListItemViewModel */
+$productListItemViewModel = $block->getData('view_model_product_list_item');
+?>
+
+<?php if ($exist):?>
+
+    <?php if ($type == 'related' || $type == 'upsell'):?>
+        <?php if ($type == 'related'):?>
+<div class="block <?= $block->escapeHtmlAttr($class) ?>"
+     data-mage-init='{"relatedProducts":{"relatedCheckbox":".related.checkbox"}}'
+     data-limit="<?= $block->escapeHtmlAttr($limit) ?>"
+     data-shuffle="<?= /* @noEscape */ $shuffle ?>"
+     data-shuffle-weighted="<?= /* @noEscape */ $isWeightedRandom ?>">
+    <?php else:?>
+    <div class="block <?= $block->escapeHtmlAttr($class) ?>"
+         data-mage-init='{"upsellProducts":{}}'
+         data-limit="<?= $block->escapeHtmlAttr($limit) ?>"
+         data-shuffle="<?= /* @noEscape */ $shuffle ?>"
+         data-shuffle-weighted="<?= /* @noEscape */ $isWeightedRandom ?>">
+        <?php endif; ?>
+        <?php else:?>
+        <div class="block <?= $block->escapeHtmlAttr($class) ?>">
+            <?php endif; ?>
+            <div class="block-title title">
+                <strong id="block-<?= $block->escapeHtmlAttr($class) ?>-heading" role="heading"
+                        aria-level="2"><?= $block->escapeHtml($title) ?></strong>
+            </div>
+            <div class="block-content content" aria-labelledby="block-<?= $block->escapeHtmlAttr($class) ?>-heading">
+                <?php if ($type == 'related' && $canItemsAddToCart):?>
+                    <div class="block-actions">
+                        <?= $block->escapeHtml(__('Check items to add to the cart or')) ?>
+                        <button type="button" class="action select"
+                                data-role="select-all"><span><?= $block->escapeHtml(__('select all')) ?></span></button>
+                    </div>
+                <?php endif; ?>
+                <div class="products wrapper grid products-grid products-<?= $block->escapeHtmlAttr($type) ?>">
+                    <ol class="products list items product-items">
+                        <?php foreach ($items as $_item):?>
+                            <?= $productListItemViewModel->getItemHtml(
+                                $_item,
+                                $block,
+                                $mode,
+                                $templateType,
+                                'category_page_grid',
+                                $description
+                            ); ?>
+                        <?php endforeach ?>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <?php if (!$block->isRedirectToCartEnabled() && $_item):?>
+            <script type="text/x-magento-init">
+            {
+                "[data-role=tocart-form], .form.map.checkout": {
+                    "catalogAddToCart": {
+                        "product_sku": "<?= $block->escapeJs($_item->getSku()) ?>"
+                    }
+                }
+            }
+            </script>
+        <?php endif;?>
+        <?php endif;?>

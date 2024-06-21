@@ -47,8 +47,7 @@ class ProductListItem implements ArgumentInterface
         bool $showDescription
     ): string {
         if (
-            !$this->cacheHelper->isVarnishEnabled() ||
-            !$this->config->isPersonalMerchandisingActive() ||
+            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $this->cacheHelper->isTweakwiseAjaxRequest()
         ) {
             return $this->getItemHtmlWithRenderer(

@@ -72,8 +72,7 @@ class ListProduct extends MagentoListProduct
     protected function getCacheLifetime()
     {
         if (
-            !$this->cacheHelper->isVarnishEnabled() ||
-            !$this->tweakwiseConfig->isPersonalMerchandisingActive() ||
+            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $this->cacheHelper->isTweakwiseAjaxRequest()
         ) {
             return parent::getCacheLifetime();
@@ -92,8 +91,7 @@ class ListProduct extends MagentoListProduct
     public function getUrl($route = '', $params = [])
     {
         if (
-            !$this->cacheHelper->isVarnishEnabled() ||
-            !$this->tweakwiseConfig->isPersonalMerchandisingActive() ||
+            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $route !== 'page_cache/block/esi'
         ) {
             return parent::getUrl($route, $params);
@@ -122,8 +120,7 @@ class ListProduct extends MagentoListProduct
     public function getTemplate()
     {
         if (
-            !$this->cacheHelper->isVarnishEnabled() ||
-            !$this->tweakwiseConfig->isPersonalMerchandisingActive() ||
+            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $this->isHyvaTheme()
         ) {
             return parent::getTemplate();

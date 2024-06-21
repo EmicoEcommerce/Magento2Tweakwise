@@ -33,6 +33,7 @@ class Plugin extends AbstractRecommendationPlugin
      */
     public function aroundGetItemCollection(Upsell $subject, Closure $proceed)
     {
+        // TODO: TJEU CACHING IN TEMPLATES INBOUWEN
         if (!$this->config->isRecommendationsEnabled(Config::RECOMMENDATION_TYPE_UPSELL)) {
             return $proceed();
         }

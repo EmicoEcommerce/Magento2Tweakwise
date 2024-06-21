@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation;
 
+use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
@@ -72,6 +73,7 @@ class Context
      * @param CatalogConfig $catalogConfig
      * @param Visibility $visibility
      * @param Config $config
+     * @param CookieManagerInterface $cookieManager
      */
     public function __construct(
         Client $client,
@@ -79,7 +81,8 @@ class Context
         CollectionFactory $collectionFactory,
         CatalogConfig $catalogConfig,
         Visibility $visibility,
-        Config $config
+        Config $config,
+        private readonly CookieManagerInterface $cookieManager
     ) {
         $this->client = $client;
         $this->requestFactory = $requestFactory;
@@ -96,6 +99,10 @@ class Context
     {
         if (!$this->request) {
             $this->request = $this->requestFactory->create();
+        }
+
+        if ($this->config->isPersonalMerchandisingActive()) {
+            $this->setProfileKeyInRequest();
         }
 
         return $this->request;
@@ -162,5 +169,22 @@ class Context
         $this->collection = null;
         $this->response = null;
         $this->request = $request;
+    }
+
+    /**
+     * @return void
+     */
+    private function setProfileKeyInRequest(): void
+    {
+        $profileKey = $this->cookieManager->getCookie(
+            $this->config->getPersonalMerchandisingCookieName(),
+            null
+        );
+
+        if (!$profileKey) {
+            return;
+        }
+
+        $this->request->setProfileKey($profileKey);
     }
 }

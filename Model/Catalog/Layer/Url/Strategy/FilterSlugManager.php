@@ -132,7 +132,7 @@ class FilterSlugManager
      */
     public function getAttributeBySlug(string $slug): string
     {
-        $attribute = array_search($slug, $this->getLookupTable(), true);
+        $attribute = array_search($slug, $this->getLookupTable(), false);
         if ($attribute === false) {
             // Check if slug matched the pattern for a slider filter (i.e. 80-120).
             if (preg_match('/^\d+-\d+$/', $slug)) {

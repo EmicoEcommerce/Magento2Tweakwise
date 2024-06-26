@@ -50,7 +50,7 @@ class ProductNavigationRequest extends Request
      */
     public function addAttributeFilter(string $attribute, $value)
     {
-        $this->addParameter('tn_fk_' . $attribute, $value);
+        $this->addParameter('tn_fk_' . $attribute, trim($value));
         return $this;
     }
 

@@ -105,6 +105,10 @@ class SuggestionDataProvider implements DataProviderInterface
     public function getItems()
     {
         $query = $this->dataProviderHelper->getQuery();
+        if (empty($query)) {
+            return [];
+        }
+
         $category = $this->dataProviderHelper->getCategory();
         $promises = [];
 

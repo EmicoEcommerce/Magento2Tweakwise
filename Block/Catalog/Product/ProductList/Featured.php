@@ -24,7 +24,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Url\Helper\Data;
-use Tweakwise\Magento2Tweakwise\ViewModel\ProductListItem;
+use Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem;
 
 class Featured extends ListProduct
 {
@@ -61,7 +61,7 @@ class Featured extends ListProduct
      * @param Config $config
      * @param PreparePostDataFactory $preparePostDataFactory
      * @param Cache $cacheHelper
-     * @param ProductListItem $productListItemViewModel
+     * @param LinkedProductListItem $linkedProductListItemViewModel
      * @param array $data
      * @internal param CategoryRepositoryInterface $categoryRepository
      * @internal param Data $urlHelper
@@ -80,7 +80,7 @@ class Featured extends ListProduct
         Config $config,
         PreparePostDataFactory $preparePostDataFactory,
         private readonly Cache $cacheHelper,
-        private readonly ProductListItem $productListItemViewModel,
+        private readonly LinkedProductListItem $linkedProductListItemViewModel,
         array $data = []
     ) {
         parent::__construct(
@@ -150,7 +150,7 @@ class Featured extends ListProduct
         }
 
         if ($this->cacheHelper->personalMerchandisingCanBeApplied()) {
-            $this->setData('view_model_product_list_item', $this->productListItemViewModel);
+            $this->setData('view_model_linked_product_list_item', $this->linkedProductListItemViewModel);
         }
 
         try {

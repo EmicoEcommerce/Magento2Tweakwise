@@ -87,6 +87,15 @@ class Cache
     }
 
     /**
+     * @param RequestInterface $request
+     * @return bool
+     */
+    public function isEsiRequest(RequestInterface $request): bool
+    {
+        return str_contains($request->getRequestUri(), 'page_cache/block/esi');
+    }
+
+    /**
      * @param int $productId
      * @return string
      * @throws NoSuchEntityException

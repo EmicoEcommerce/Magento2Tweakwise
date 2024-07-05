@@ -23,4 +23,6 @@
     </type>
     <preference for="Magento\Catalog\Block\Product\ListProduct"
                 type="Tweakwise\Magento2Tweakwise\Block\Product\ListProduct"/>
+    <preference for="Magento\Catalog\Block\Product\ProductList\Upsell"
+                type="Tweakwise\Magento2Tweakwise\Block\Product\ProductList\Upsell"/>
 </config>

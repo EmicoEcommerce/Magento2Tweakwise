@@ -49,7 +49,7 @@ class LinkedProductListItem implements ArgumentInterface
         }
 
         $productId = (int) $product->getId();
-        $cardType = $params['card_type'];
+        $cardType = str_replace(' ', '_', $params['card_type']);
         if (!$this->cacheHelper->load($productId, $cardType)) {
             $itemHtml = $this->getItemHtmlWithRenderer(
                 $product,

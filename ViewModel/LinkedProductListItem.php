@@ -49,20 +49,21 @@ class LinkedProductListItem implements ArgumentInterface
         }
 
         $productId = (int) $product->getId();
-        if (!$this->cacheHelper->load($productId)) {
+        $cardType = $params['card_type'];
+        if (!$this->cacheHelper->load($productId, $cardType)) {
             $itemHtml = $this->getItemHtmlWithRenderer(
                 $product,
                 $parentBlock,
                 $params
             );
-            $this->cacheHelper->save($itemHtml, $productId);
+            $this->cacheHelper->save($itemHtml, $productId, $cardType);
         }
 
         return sprintf(
-            '<esi:include src="/%s?product_id=%s&type=%s" />',
+            '<esi:include src="/%s?product_id=%s&card_type=%s" />',
             Cache::PRODUCT_CARD_PATH,
             $productId,
-            $parentBlock->getType()
+            $cardType
         );
     }
 
@@ -87,7 +88,7 @@ class LinkedProductListItem implements ArgumentInterface
         $itemRendererBlock
             ->setData('item', $product)
             ->setData('parent_block', $parentBlock)
-            ->setData('type', $params['type'])
+            ->setData('type', $params['card_type'])
             ->setData('image', $params['image'])
             ->setData('template_type', $params['template_type'])
             ->setData('can_items_add_to_cart', $params['can_items_add_to_cart'])

@@ -40,26 +40,28 @@ class Cache
 
     /**
      * @param int $productId
+     * @param string $cardType
      * @return string
-     * @throws NoSuchEntityException
      * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function load(int $productId): string
+    public function load(int $productId, string $cardType = 'default'): string
     {
-        $result = $this->cache->load($this->getCacheKey($productId));
+        $result = $this->cache->load($this->getCacheKey($productId, $cardType));
         return $result ? $result : '';
     }
 
     /**
      * @param string $data
      * @param int $productId
+     * @param string $cardType
      * @return void
-     * @throws NoSuchEntityException
      * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function save(string $data, int $productId): void
+    public function save(string $data, int $productId, string $cardType = 'default'): void
     {
-        $this->cache->save($data, $this->getCacheKey($productId));
+        $this->cache->save($data, $this->getCacheKey($productId, $cardType));
     }
 
     /**
@@ -97,15 +99,23 @@ class Cache
 
     /**
      * @param int $productId
+     * @param string $cardType
      * @return string
-     * @throws NoSuchEntityException
      * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    private function getCacheKey(int $productId): string
+    private function getCacheKey(int $productId, string $cardType): string
     {
         $storeId = $this->storeManager->getStore()->getId();
         $customerGroupId = $this->customerSession->getCustomerGroupId();
 
-        return sprintf('%s_%s_%s_%s', $storeId, $customerGroupId, $productId, self::REDIS_CACHE_KEY);
+        return sprintf(
+            '%s_%s_%s_%s_%s',
+            $storeId,
+            $customerGroupId,
+            $productId,
+            $cardType,
+            self::REDIS_CACHE_KEY
+        );
     }
 }

@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
+use Magento\Framework\Phrase;
 use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Exception\UnexpectedValueException;
@@ -112,7 +113,12 @@ class FilterSlugManager
             }
 
             $this->getLookupTable();
-            if (isset($this->lookupTable[$option->getLabel()])) {
+            $optionLabel = $option->getLabel();
+            if ($optionLabel instanceof Phrase) {
+                $optionLabel = $optionLabel->render();
+            }
+
+            if (isset($this->lookupTable[$optionLabel])) {
                 continue;
             }
 

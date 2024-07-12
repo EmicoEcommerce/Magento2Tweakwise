@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Block\Product\ProductList;
 
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\ProductList\Related as MagentoRelated;
 use Magento\Catalog\Model\Product\Visibility as ProductVisibility;
 use Magento\Checkout\Model\ResourceModel\Cart as CartResourceModel;
 use Magento\Checkout\Model\Session as CheckoutSession;
-use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Module\Manager;
-use Magento\Framework\Registry;
-use Tweakwise\Magento2Tweakwise\Helper\Cache;
 
 class Related extends MagentoRelated
 {
@@ -24,10 +20,7 @@ class Related extends MagentoRelated
      * @param ProductVisibility $catalogProductVisibility
      * @param CheckoutSession $checkoutSession
      * @param Manager $moduleManager
-     * @param Cache $cacheHelper
-     * @param RequestInterface $request
-     * @param ProductRepositoryInterface $productRepository
-     * @param Registry $registry
+     * @param Linked $linked
      * @param array $data
      */
     public function __construct(
@@ -36,10 +29,7 @@ class Related extends MagentoRelated
         ProductVisibility $catalogProductVisibility,
         CheckoutSession $checkoutSession,
         Manager $moduleManager,
-        private readonly Cache $cacheHelper,
-        private readonly RequestInterface $request,
-        private readonly ProductRepositoryInterface $productRepository,
-        private readonly Registry $registry,
+        private readonly Linked $linked,
         array $data = []
     ) {
         parent::__construct(
@@ -57,13 +47,12 @@ class Related extends MagentoRelated
      */
     protected function getCacheLifetime()
     {
-        if (!$this->cacheHelper->personalMerchandisingCanBeApplied()) {
-            return parent::getCacheLifetime();
+        $linkedResult = $this->linked->getCacheLifetime($this);
+        if ($linkedResult) {
+            return $linkedResult;
         }
 
-        $this->setData('ttl', Cache::PRODUCT_LIST_TTL);
-        $this->setData('cache_lifetime', Cache::PRODUCT_LIST_TTL);
-        return $this->getData('cache_lifetime');
+        return parent::getCacheLifetime();
     }
 
     /**
@@ -71,11 +60,12 @@ class Related extends MagentoRelated
      */
     public function getTemplate()
     {
-        if (!$this->cacheHelper->personalMerchandisingCanBeApplied()) {
-            return parent::getTemplate();
+        $linkedResult = $this->linked->getTemplate();
+        if ($linkedResult) {
+            return $linkedResult;
         }
 
-        return 'Tweakwise_Magento2Tweakwise::product/list/items.phtml';
+        return parent::getTemplate();
     }
 
     /**
@@ -84,12 +74,7 @@ class Related extends MagentoRelated
      */
     protected function _prepareData()
     {
-        if ($this->cacheHelper->isEsiRequest($this->request) && !$this->getProduct()) {
-            $productId = $this->request->getParam('product_id');
-            $product = $this->productRepository->getById($productId);
-            $this->registry->register('product', $product);
-            $this->setData('product', $product);
-        }
+        $this->linked->prepareData($this);
 
         return parent::_prepareData();
     }
@@ -101,16 +86,10 @@ class Related extends MagentoRelated
      */
     public function getUrl($route = '', $params = [])
     {
-        if (
-            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
-            $route !== 'page_cache/block/esi'
-        ) {
-            return parent::getUrl($route, $params);
+        $linkedResult = $this->linked->getUrl($this, $route, $params);
+        if ($linkedResult) {
+            $params = $linkedResult;
         }
-
-        $params['_query'] = [
-            'product_id' => $this->getProduct()->getId()
-        ];
 
         return parent::getUrl($route, $params);
     }

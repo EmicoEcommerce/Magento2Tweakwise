@@ -116,7 +116,8 @@ class Featured extends ListProduct
      */
     public function getTemplate()
     {
-        if (!$this->cacheHelper->personalMerchandisingCanBeApplied()) {
+        // TODO: Get product cards in slider from Varnish
+        if (!$this->cacheHelper->personalMerchandisingCanBeApplied() || $this->cacheHelper->isHyvaTheme()) {
             return parent::getTemplate();
         }
 

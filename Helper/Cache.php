@@ -10,6 +10,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\View\DesignInterface;
 use Magento\PageCache\Model\Config;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config as TweakwiseConfig;
@@ -21,12 +22,18 @@ class Cache
     private const REDIS_CACHE_KEY = 'product_card';
 
     /**
+     * @var bool|null
+     */
+    private ?bool $isHyvaTheme = null;
+
+    /**
      * @param StoreManagerInterface $storeManager
      * @param CacheInterface $cache
      * @param Session $customerSession
      * @param RequestInterface $request
      * @param ScopeConfigInterface $scopeConfig
      * @param TweakwiseConfig $config
+     * @param DesignInterface $viewDesign
      */
     public function __construct(
         private readonly StoreManagerInterface $storeManager,
@@ -34,7 +41,8 @@ class Cache
         private readonly Session               $customerSession,
         private readonly RequestInterface      $request,
         private readonly ScopeConfigInterface  $scopeConfig,
-        private readonly TweakwiseConfig       $config
+        private readonly TweakwiseConfig       $config,
+        private readonly DesignInterface       $viewDesign
     ) {
     }
 
@@ -95,6 +103,28 @@ class Cache
     public function isEsiRequest(RequestInterface $request): bool
     {
         return str_contains($request->getRequestUri(), 'page_cache/block/esi');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHyvaTheme(): bool
+    {
+        if ($this->isHyvaTheme === null) {
+            $theme = $this->viewDesign->getDesignTheme();
+            while ($theme) {
+                if (strpos($theme->getCode(), 'Hyva/') === 0) {
+                    $this->isHyvaTheme = true;
+                    return $this->isHyvaTheme;
+                }
+
+                $theme = $theme->getParentTheme();
+            }
+
+            $this->isHyvaTheme = false;
+        }
+
+        return $this->isHyvaTheme;
     }
 
     /**

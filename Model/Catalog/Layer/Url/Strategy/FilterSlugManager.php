@@ -112,7 +112,7 @@ class FilterSlugManager
             }
 
             $this->getLookupTable();
-            if (isset($this->lookupTable[$option->getLabel()])) {
+            if (isset($this->lookupTable[strtolower($option->getLabel())])) {
                 continue;
             }
 

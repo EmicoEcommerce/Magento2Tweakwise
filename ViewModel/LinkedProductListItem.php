@@ -12,7 +12,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 
-class ProductListItem implements ArgumentInterface
+class LinkedProductListItem implements ArgumentInterface
 {
     /**
      * @param LayoutInterface $layout
@@ -27,10 +27,7 @@ class ProductListItem implements ArgumentInterface
     /**
      * @param Product $product
      * @param AbstractBlock $parentBlock
-     * @param string $viewMode
-     * @param string $templateType
-     * @param string $imageDisplayArea
-     * @param bool $showDescription
+     * @param array $params
      * @return string
      * @throws LocalizedException
      * @throws NoSuchEntityException
@@ -38,10 +35,7 @@ class ProductListItem implements ArgumentInterface
     public function getItemHtml(
         Product $product,
         AbstractBlock $parentBlock,
-        string $viewMode,
-        string $templateType,
-        string $imageDisplayArea,
-        bool $showDescription
+        array $params
     ): string {
         if (
             !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
@@ -50,62 +44,56 @@ class ProductListItem implements ArgumentInterface
             return $this->getItemHtmlWithRenderer(
                 $product,
                 $parentBlock,
-                $viewMode,
-                $templateType,
-                $imageDisplayArea,
-                $showDescription
+                $params
             );
         }
 
         $productId = (int) $product->getId();
-        if (!$this->cacheHelper->load($productId)) {
+        $cardType = str_replace(' ', '_', $params['card_type']);
+        if (!$this->cacheHelper->load($productId, $cardType)) {
             $itemHtml = $this->getItemHtmlWithRenderer(
                 $product,
                 $parentBlock,
-                $viewMode,
-                $templateType,
-                $imageDisplayArea,
-                $showDescription
+                $params
             );
-            $this->cacheHelper->save($itemHtml, $productId);
+            $this->cacheHelper->save($itemHtml, $productId, $cardType);
         }
 
-        return sprintf('<esi:include src="/%s?product_id=%s" />', Cache::PRODUCT_CARD_PATH, $productId);
+        return sprintf(
+            '<esi:include src="/%s?product_id=%s&card_type=%s" />',
+            Cache::PRODUCT_CARD_PATH,
+            $productId,
+            $cardType
+        );
     }
 
     /**
      * @param Product $product
      * @param AbstractBlock $parentBlock
-     * @param string $viewMode
-     * @param string $templateType
-     * @param string $imageDisplayArea
-     * @param bool $showDescription
+     * @param array $params
      * @return string
      */
     private function getItemHtmlWithRenderer(
         Product $product,
         AbstractBlock $parentBlock,
-        string $viewMode,
-        string $templateType,
-        string $imageDisplayArea,
-        bool $showDescription
+        array $params
     ): string {
         /** @var AbstractBlock $itemRendererBlock */
-        $itemRendererBlock = $this->layout->getBlock('tweakwise.catalog.product.list.item');
+        $itemRendererBlock = $this->layout->getBlock('tweakwise.catalog.linked.product.list.item');
 
         if (! $itemRendererBlock) {
             return '';
         }
 
         $itemRendererBlock
-            ->setData('product', $product)
+            ->setData('item', $product)
             ->setData('parent_block', $parentBlock)
-            ->setData('view_mode', $viewMode)
-            ->setData('image_display_area', $imageDisplayArea)
-            ->setData('show_description', $showDescription)
-            ->setData('pos', $parentBlock->getPositioned())
-            ->setData('output_helper', $parentBlock->getData('outputHelper'))
-            ->setData('template_type', $templateType);
+            ->setData('type', $params['card_type'])
+            ->setData('image', $params['image'])
+            ->setData('template_type', $params['template_type'])
+            ->setData('can_items_add_to_cart', $params['can_items_add_to_cart'])
+            ->setData('show_add_to', $params['show_add_to'])
+            ->setData('show_cart', $params['show_cart']);
 
         return $itemRendererBlock->toHtml();
     }

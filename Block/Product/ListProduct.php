@@ -84,7 +84,7 @@ class ListProduct extends MagentoListProduct
     {
         if (
             !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
-            !$this->cacheHelper->isEsiRequest($this->request)
+            $route !== 'page_cache/block/esi'
         ) {
             return parent::getUrl($route, $params);
         }

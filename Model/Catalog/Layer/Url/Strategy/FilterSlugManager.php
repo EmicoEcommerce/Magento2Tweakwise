@@ -90,6 +90,11 @@ class FilterSlugManager
 
         $slug = $this->translitUrl->filter($attribute);
 
+        if (empty($slug)) {
+            //should never happen, but just in case we return the attribute
+            return $attribute;
+        }
+
         /** @var AttributeSlug $attributeSlugEntity */
         $attributeSlugEntity = $this->attributeSlugFactory->create();
         $attributeSlugEntity->setAttribute($attribute);

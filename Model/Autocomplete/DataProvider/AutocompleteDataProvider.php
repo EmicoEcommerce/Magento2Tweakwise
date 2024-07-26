@@ -111,6 +111,10 @@ class AutocompleteDataProvider implements DataProviderInterface
     public function getItems()
     {
         $query = $this->dataProviderHelper->getQuery();
+        if (empty($query)) {
+            return [];
+        }
+
         $config = $this->config;
 
         /** @var AutocompleteRequest $request */

@@ -14,17 +14,11 @@ use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Url\Helper\Data;
-use Magento\Framework\View\DesignInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 
 class ListProduct extends MagentoListProduct
 {
-    /**
-     * @var bool|null
-     */
-    private ?bool $isHyvaTheme = null;
-
     /**
      * @param Context $context
      * @param PostHelper $postDataHelper
@@ -35,7 +29,6 @@ class ListProduct extends MagentoListProduct
      * @param CookieManagerInterface $cookieManager
      * @param Cache $cacheHelper
      * @param Registry $registry
-     * @param DesignInterface $viewDesign
      * @param RequestInterface $request
      * @param array $data
      * @param OutputHelper|null $outputHelper
@@ -50,7 +43,6 @@ class ListProduct extends MagentoListProduct
         private readonly CookieManagerInterface $cookieManager,
         private readonly Cache $cacheHelper,
         private readonly Registry $registry,
-        private readonly DesignInterface $viewDesign,
         private readonly RequestInterface $request,
         array $data = [],
         ?OutputHelper $outputHelper = null
@@ -72,8 +64,7 @@ class ListProduct extends MagentoListProduct
     protected function getCacheLifetime()
     {
         if (
-            !$this->cacheHelper->isVarnishEnabled() ||
-            !$this->tweakwiseConfig->isPersonalMerchandisingActive() ||
+            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $this->cacheHelper->isTweakwiseAjaxRequest()
         ) {
             return parent::getCacheLifetime();
@@ -92,8 +83,7 @@ class ListProduct extends MagentoListProduct
     public function getUrl($route = '', $params = [])
     {
         if (
-            !$this->cacheHelper->isVarnishEnabled() ||
-            !$this->tweakwiseConfig->isPersonalMerchandisingActive() ||
+            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $route !== 'page_cache/block/esi'
         ) {
             return parent::getUrl($route, $params);
@@ -122,9 +112,8 @@ class ListProduct extends MagentoListProduct
     public function getTemplate()
     {
         if (
-            !$this->cacheHelper->isVarnishEnabled() ||
-            !$this->tweakwiseConfig->isPersonalMerchandisingActive() ||
-            $this->isHyvaTheme()
+            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
+            $this->cacheHelper->isHyvaTheme()
         ) {
             return parent::getTemplate();
         }
@@ -141,27 +130,5 @@ class ListProduct extends MagentoListProduct
             $this->tweakwiseConfig->getPersonalMerchandisingCookieName(),
             null
         );
-    }
-
-    /**
-     * @return bool
-     */
-    private function isHyvaTheme(): bool
-    {
-        if ($this->isHyvaTheme === null) {
-            $theme = $this->viewDesign->getDesignTheme();
-            while ($theme) {
-                if (strpos($theme->getCode(), 'Hyva/') === 0) {
-                    $this->isHyvaTheme = true;
-                    return $this->isHyvaTheme;
-                }
-
-                $theme = $theme->getParentTheme();
-            }
-
-            $this->isHyvaTheme = false;
-        }
-
-        return $this->isHyvaTheme;
     }
 }

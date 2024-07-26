@@ -101,6 +101,11 @@ class ProductListItem implements ArgumentInterface
             return '';
         }
 
+        $detailsRenderers = $parentBlock->getChildBlock('details.renderers');
+        if ($detailsRenderers) {
+            $itemRendererBlock->setChild('details.renderers', $detailsRenderers);
+        }
+
         $itemRendererBlock
             ->setData('product', $product)
             ->setData('parent_block', $parentBlock)

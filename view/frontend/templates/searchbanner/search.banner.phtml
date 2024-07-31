@@ -1,7 +1,4 @@
 <?php
-/**
- * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
- */
 
 /** @var array $banners  */
 $banners = $block->getData('banners');
@@ -10,9 +7,9 @@ $styling = ($banners[0]['location'] == 'ContainerTop') ? 'style="margin-right: a
 <div class="searchbanners" <?= $styling ?>>
     <?php foreach ($banners as $banner): ?>
         <?php if (!empty($banner['clickurl'])): ?>
-            <a href="<?=$banner['clickurl'];?>" type="<?=$banner['clicktarget'];?>">
+            <a href="<?= $block->escapeUrl($banner['clickurl']); ?>" type="<?= $block->escapeHtmlAttr($banner['clicktarget']); ?>">
         <?php endif; ?>
-                <img class="searchbanner <?=strtolower($banner['type']);?>" src="<?=$banner['imageurl'] ?>">
+        <img class="searchbanner <?= strtolower($block->escapeHtmlAttr($banner['type'])); ?>" src="<?= $block->escapeUrl($banner['imageurl']); ?>">
         <?php if (!empty($banner['clickurl'])): ?>
             </a>
         <?php endif; ?>

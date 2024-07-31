@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
+use Magento\Framework\Phrase;
 use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Exception\UnexpectedValueException;
@@ -89,6 +90,11 @@ class FilterSlugManager
 
         $slug = $this->translitUrl->filter($attribute);
 
+        if (empty($slug)) {
+            //should never happen, but just in case we return the attribute
+            return $attribute;
+        }
+
         /** @var AttributeSlug $attributeSlugEntity */
         $attributeSlugEntity = $this->attributeSlugFactory->create();
         $attributeSlugEntity->setAttribute($attribute);
@@ -112,7 +118,12 @@ class FilterSlugManager
             }
 
             $this->getLookupTable();
-            if (isset($this->lookupTable[$option->getLabel()])) {
+            $optionLabel = $option->getLabel();
+            if ($optionLabel instanceof Phrase) {
+                $optionLabel = $optionLabel->render();
+            }
+
+            if (isset($this->lookupTable[strtolower($option->getLabel())])) {
                 continue;
             }
 
@@ -132,7 +143,7 @@ class FilterSlugManager
      */
     public function getAttributeBySlug(string $slug): string
     {
-        $attribute = array_search($slug, $this->getLookupTable(), true);
+        $attribute = array_search($slug, $this->getLookupTable(), false);
         if ($attribute === false) {
             // Check if slug matched the pattern for a slider filter (i.e. 80-120).
             if (preg_match('/^\d+-\d+$/', $slug)) {

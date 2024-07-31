@@ -65,7 +65,8 @@ $showDescription = $block->getData('show_description');
                                   action="<?= $escaper->escapeUrl($postParams['action']) ?>"
                                   data-mage-init='{"catalogAddToCart": {}}'
                                   method="post">
-                                <?php $options = $parentBlock->getData('viewModel')->getOptionsData($_product); ?>
+                                <?php $viewModel = $parentBlock->getData('viewModel'); ?>
+                                <?php $options = $viewModel ? $viewModel->getOptionsData($_product) : []; ?>
                                 <?php foreach ($options as $optionItem): ?>
                                     <input type="hidden"
                                            name="<?= $escaper->escapeHtml($optionItem['name']) ?>"

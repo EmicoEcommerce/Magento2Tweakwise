@@ -36,7 +36,8 @@ class SuggestionGroupItem implements ItemInterface
     {
         $result = [
             'type' => 'suggestion_group',
-            'title' => $this->group->getName()
+            'title' => $this->group->getName(),
+            'subtype' => $this->group->getType(),
         ];
         foreach ($this->group->getSuggestions() as $suggestion) {
             $suggestionUrl = $suggestion->getUrl();

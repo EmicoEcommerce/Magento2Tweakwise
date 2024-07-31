@@ -46,6 +46,14 @@ class SuggestionTypeGroup extends Type
     }
 
     /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
      * @param SuggestionTypeAbstract[]|array[] $suggestions
      * @return $this
      */

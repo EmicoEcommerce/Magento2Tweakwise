@@ -11,6 +11,7 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
+use Tweakwise\Magento2Tweakwise\Model\Visual;
 
 class ProductListItem implements ArgumentInterface
 {
@@ -25,7 +26,7 @@ class ProductListItem implements ArgumentInterface
     }
 
     /**
-     * @param Product $product
+     * @param Product|Visual $item
      * @param AbstractBlock $parentBlock
      * @param string $viewMode
      * @param string $templateType
@@ -36,7 +37,7 @@ class ProductListItem implements ArgumentInterface
      * @throws NoSuchEntityException
      */
     public function getItemHtml(
-        Product $product,
+        Product|Visual $item,
         AbstractBlock $parentBlock,
         string $viewMode,
         string $templateType,
@@ -48,7 +49,7 @@ class ProductListItem implements ArgumentInterface
             $this->cacheHelper->isTweakwiseAjaxRequest()
         ) {
             return $this->getItemHtmlWithRenderer(
-                $product,
+                $item,
                 $parentBlock,
                 $viewMode,
                 $templateType,
@@ -57,16 +58,21 @@ class ProductListItem implements ArgumentInterface
             );
         }
 
-        $productId = (int) $product->getId();
+        $productId = (int) $item->getId();
         if (!$this->cacheHelper->load($productId)) {
-            $itemHtml = $this->getItemHtmlWithRenderer(
-                $product,
-                $parentBlock,
-                $viewMode,
-                $templateType,
-                $imageDisplayArea,
-                $showDescription
-            );
+            if ($item instanceof Visual) {
+                $itemHtml = $this->getVisualHtml($item);
+            } else {
+                $itemHtml = $this->getItemHtmlWithRenderer(
+                    $item,
+                    $parentBlock,
+                    $viewMode,
+                    $templateType,
+                    $imageDisplayArea,
+                    $showDescription
+                );
+            }
+
             $this->cacheHelper->save($itemHtml, $productId);
         }
 
@@ -113,5 +119,23 @@ class ProductListItem implements ArgumentInterface
             ->setData('template_type', $templateType);
 
         return $itemRendererBlock->toHtml();
+    }
+
+    /**
+     * @param Visual $visual
+     * @return string
+     */
+    private function getVisualHtml(Visual $visual): string
+    {
+        /** @var AbstractBlock $visualRendererBlock */
+        $visualRendererBlock = $this->layout->getBlock('tweakwise.catalog.product.list.visual');
+
+        if (! $visualRendererBlock) {
+            return '';
+        }
+
+        $visualRendererBlock->setData('visual', $visual);
+
+        return $visualRendererBlock->toHtml();
     }
 }

@@ -9,11 +9,15 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
+use Exception;
+use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType;
+use Tweakwise\Magento2Tweakwise\Api\Data\VisualInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Indexer\Product\Flat\State;
 use Magento\Catalog\Model\Product\OptionFactory;
+use Tweakwise\Magento2Tweakwise\Model\VisualFactory;
 use Magento\Catalog\Model\ResourceModel\Helper as CatalogResourceHelper;
 use Magento\Catalog\Model\ResourceModel\Url;
 use Magento\Customer\Api\GroupManagementInterface;
@@ -41,7 +45,28 @@ class Collection extends AbstractCollection
     protected $navigationContext;
 
     /**
-     * {@inheritdoc}
+     * @param CollectionEntityFactory $entityFactory
+     * @param LoggerInterface $logger
+     * @param FetchStrategyInterface $fetchStrategy
+     * @param ManagerInterface $eventManager
+     * @param EavConfig $eavConfig
+     * @param ResourceConnection $resource
+     * @param EavEntityFactory $eavEntityFactory
+     * @param CatalogResourceHelper $resourceHelper
+     * @param UniversalFactory $universalFactory
+     * @param StoreManagerInterface $storeManager
+     * @param Manager $moduleManager
+     * @param State $catalogProductFlatState
+     * @param ScopeConfigInterface $scopeConfig
+     * @param OptionFactory $productOptionFactory
+     * @param Url $catalogUrl
+     * @param TimezoneInterface $localeDate
+     * @param Session $customerSession
+     * @param DateTime $dateTime
+     * @param GroupManagementInterface $groupManagement
+     * @param NavigationContext $navigationContext
+     * @param VisualFactory $visualFactory
+     * @param AdapterInterface|null $connection
      */
     public function __construct(
         CollectionEntityFactory $entityFactory,
@@ -64,6 +89,7 @@ class Collection extends AbstractCollection
         DateTime $dateTime,
         GroupManagementInterface $groupManagement,
         NavigationContext $navigationContext,
+        private readonly VisualFactory $visualFactory,
         AdapterInterface $connection = null
     ) {
         parent::__construct(
@@ -138,8 +164,37 @@ class Collection extends AbstractCollection
         parent::_afterLoad();
 
         $this->applyCollectionSizeValues();
+        $this->addVisuals();
 
         return $this;
+    }
+
+    /**
+     * @return void
+     */
+    protected function addVisuals(): void
+    {
+        try {
+            $response = $this->navigationContext->getResponse();
+        } catch (Exception $e) {
+            return;
+        }
+
+        foreach ($response->getItems() as $item) {
+            if ($item->getValue('type') !== ItemType::VISUAL->value) {
+                continue;
+            }
+
+            /** @var VisualInterface $visual */
+            $visual = $this->visualFactory->create();
+            $visual->setId($item->getValue('itemno'));
+            $visual->setTitle($item->getTitle());
+            $visual->setImageUrl($item->getImage());
+            $visual->setUrl($item->getUrl());
+            $itemPosition = array_search($item, $response->getItems());
+
+            array_splice($this->_items, $itemPosition, 0, [$visual]);
+        }
     }
 
     /**

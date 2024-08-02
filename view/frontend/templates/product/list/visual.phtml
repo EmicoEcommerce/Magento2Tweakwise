@@ -1,0 +1,22 @@
+<?php
+
+use Magento\Catalog\Block\Product\AbstractProduct;
+use Magento\Framework\Escaper;
+use Tweakwise\Magento2Tweakwise\Model\Visual;
+
+/**
+ * @var AbstractProduct $block
+ * @var Escaper $escaper *
+ */
+
+/** @var Visual $visual */
+$visual = $block->getData('visual');
+if (!$visual) {
+    return;
+}
+?>
+<a href="<?= $escaper->escapeUrl($visual->getUrl()) ?>">
+    <li class="item product product-item" style="background-image: url('<?= $escaper->escapeUrl($visual->getImageUrl()) ?>')">
+        <p><?= $escaper->escapeHtml($visual->getTitle()) ?></p>
+    </li>
+</a>

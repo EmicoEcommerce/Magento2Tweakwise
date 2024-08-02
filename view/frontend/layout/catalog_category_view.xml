@@ -33,6 +33,10 @@
                    name="tweakwise.catalog.product.list.item"
                    template="Tweakwise_Magento2Tweakwise::product/list/item.phtml"
                    ifconfig="tweakwise/personal_merchandising/enabled"/>
+            <block class="Magento\Catalog\Block\Product\AbstractProduct"
+                   name="tweakwise.catalog.product.list.visual"
+                   template="Tweakwise_Magento2Tweakwise::product/list/visual.phtml"
+                   ifconfig="tweakwise/personal_merchandising/enabled"/>
         </referenceBlock>
     </body>
 </page>

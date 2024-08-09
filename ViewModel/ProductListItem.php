@@ -44,10 +44,15 @@ class ProductListItem implements ArgumentInterface
         string $imageDisplayArea,
         bool $showDescription
     ): string {
+        $isVisual = $item instanceof Visual;
         if (
             !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $this->cacheHelper->isTweakwiseAjaxRequest()
         ) {
+            if ($isVisual) {
+                return $this->getVisualHtml($item);
+            }
+
             return $this->getItemHtmlWithRenderer(
                 $item,
                 $parentBlock,
@@ -60,7 +65,7 @@ class ProductListItem implements ArgumentInterface
 
         $productId = (int) $item->getId();
         if (!$this->cacheHelper->load($productId)) {
-            if ($item instanceof Visual) {
+            if ($isVisual) {
                 $itemHtml = $this->getVisualHtml($item);
             } else {
                 $itemHtml = $this->getItemHtmlWithRenderer(

@@ -68,7 +68,8 @@ class FacetType extends Type
     /**
      * @return array
      */
-    public function getBuckets(): array {
+    public function getBuckets(): array
+    {
         //only return buckets if there is more than one bucket
         if (isset($this->data['buckets']['bucket'][0]) && is_array($this->data['buckets']['bucket'][0])) {
             return $this->data['buckets']['bucket'];
@@ -80,10 +81,12 @@ class FacetType extends Type
     /**
      * @return array
      */
-    public function getClickpoints(): array {
-        if (isset($this->data['clickpoints']['clickpoint'][0]) && is_array($this->data['clickpoints']['clickpoint'][0])) {
+    public function getClickpoints(): array
+    {
+        if (isset($this->data['clickpoints']['clickpoint'][0])
+            && is_array($this->data['clickpoints']['clickpoint'][0])) {
             return $this->data['clickpoints']['clickpoint'];
-        } else if (isset($this->data['clickpoints']['clickpoint'])) {
+        } elseif (isset($this->data['clickpoints']['clickpoint'])) {
             return $this->data['clickpoints'];
         }
         return [];

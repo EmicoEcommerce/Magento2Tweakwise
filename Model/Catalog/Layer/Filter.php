@@ -182,7 +182,7 @@ class Filter extends AbstractFilter implements FilterInterface
     /**
      * @return array
      */
-    public function getBuckets() : array
+    public function getBuckets(): array
     {
         if (!$this->buckets) {
             $this->initBuckets();
@@ -395,7 +395,7 @@ class Filter extends AbstractFilter implements FilterInterface
     /**
      * @return void
      */
-    protected function initBuckets() : void
+    protected function initBuckets(): void
     {
         $this->buckets = $this->facet->getBuckets();
     }

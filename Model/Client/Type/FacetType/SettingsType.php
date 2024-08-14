@@ -238,7 +238,7 @@ class SettingsType extends Type
     /**
      * @return bool
      */
-    public function containsBuckets() : bool
+    public function containsBuckets(): bool
     {
         return $this->getBoolValue('containsbuckets');
     }
@@ -246,7 +246,7 @@ class SettingsType extends Type
     /**
      * @return bool
      */
-    public function containsClickpoints() : bool
+    public function containsClickpoints(): bool
     {
         return $this->getBoolValue('containsclickpoints');
     }

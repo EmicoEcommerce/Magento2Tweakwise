@@ -85,6 +85,7 @@ class SliderRenderer extends DefaultRenderer
 
         return (float) $items[$index]->getLabel();
     }
+
     /**
      * @return int
      */
@@ -192,7 +193,7 @@ class SliderRenderer extends DefaultRenderer
     /**
      * @return array
      */
-    public function getBuckets() : array
+    public function getBuckets(): array
     {
         if ($this->containsBuckets()) {
             return $this->filter->getFacet()->getBuckets();
@@ -201,7 +202,7 @@ class SliderRenderer extends DefaultRenderer
         return [];
     }
 
-    public function getClickPoints() : array
+    public function getClickPoints(): array
     {
         if ($this->containsClickpoints()) {
             return $this->filter->getFacet()->getClickpoints();
@@ -210,7 +211,7 @@ class SliderRenderer extends DefaultRenderer
         return [];
     }
 
-    public function getBucketHightFactor() : float
+    public function getBucketHightFactor(): float
     {
         $maxRelativeRange = 1;
         if ($this->containsBuckets()) {
@@ -231,7 +232,7 @@ class SliderRenderer extends DefaultRenderer
         return $bucketHightFactor;
     }
 
-    public function getTotalrange() : float
+    public function getTotalrange(): float
     {
         return ($this->getMaxValue() - $this->getMinValue());
     }

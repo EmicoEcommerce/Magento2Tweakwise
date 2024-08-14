@@ -32,7 +32,7 @@ $clickpointCounter = 0;
             <?php
             $bucketHightFactor = $block->getBucketHightFactor();
             ?>
-            <?php foreach($block->getBuckets() as $bucket): ?>
+            <?php foreach ($block->getBuckets() as $bucket): ?>
                 <?php
                 $rangeMin = floor($bucket['rangemin']);
                 $rangeMax = ceil($bucket['rangemax']);
@@ -52,7 +52,7 @@ $clickpointCounter = 0;
             $totalClickpointsRange = $totalRange + ($totalClickpoints * 2);
         ?>
         <div class="indicators">
-            <?php foreach($block->getClickpoints() as $clickpoint): ?>
+            <?php foreach ($block->getClickpoints() as $clickpoint): ?>
                 <?php
                 $clickpointWidth = 10 * $clickpointCounter;
                 $clickpointPosition = floor((($clickpoint['value'] - $minValue) / $totalClickpointsRange) * 100);

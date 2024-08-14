@@ -234,4 +234,20 @@ class SettingsType extends Type
     {
         return empty($this->getValue('searchnoresultstext')) ? '' : $this->getValue('searchnoresultstext');
     }
+
+    /**
+     * @return bool
+     */
+    public function containsBuckets() : bool
+    {
+        return $this->getBoolValue('containsbuckets');
+    }
+
+    /**
+     * @return bool
+     */
+    public function containsClickpoints() : bool
+    {
+        return $this->getBoolValue('containsclickpoints');
+    }
 }

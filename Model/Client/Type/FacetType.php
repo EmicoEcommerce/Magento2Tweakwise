@@ -83,7 +83,8 @@ class FacetType extends Type
      */
     public function getClickpoints(): array
     {
-        if (isset($this->data['clickpoints']['clickpoint'][0])
+        if (
+            isset($this->data['clickpoints']['clickpoint'][0])
             && is_array($this->data['clickpoints']['clickpoint'][0])
         ) {
             return $this->data['clickpoints']['clickpoint'];

@@ -4,20 +4,8 @@ namespace Tweakwise\Magento2Tweakwise\Api\Data;
 
 interface VisualInterface
 {
-    public const TITLE = 'title';
     public const IMAGE_URL = 'image';
     public const URL = 'url';
-
-    /**
-     * @return string
-     */
-    public function getTitle(): string;
-
-    /**
-     * @param string $title
-     * @return self
-     */
-    public function setTitle(string $title): self;
 
     /**
      * @return string

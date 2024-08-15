@@ -10,23 +10,6 @@ class Visual extends Product implements VisualInterface
     /**
      * @return string
      */
-    public function getTitle(): string
-    {
-        return $this->getData(self::TITLE);
-    }
-
-    /**
-     * @param string $title
-     * @return VisualInterface
-     */
-    public function setTitle(string $title): VisualInterface
-    {
-        return $this->setData(self::TITLE, $title);
-    }
-
-    /**
-     * @return string
-     */
     public function getImageUrl(): string
     {
         return $this->getData(self::IMAGE_URL);

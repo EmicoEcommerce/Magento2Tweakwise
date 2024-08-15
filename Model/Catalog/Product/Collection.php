@@ -194,7 +194,6 @@ class Collection extends AbstractCollection
             /** @var VisualInterface $visual */
             $visual = $this->visualFactory->create();
             $visual->setId($item->getValue('itemno'));
-            $visual->setTitle($item->getTitle());
             $visual->setImageUrl($item->getImage());
             $visual->setUrl($item->getUrl());
             $itemPosition = array_search($item, $response->getItems());

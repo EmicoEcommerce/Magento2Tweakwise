@@ -42,7 +42,7 @@ use Magento\Framework\Escaper;
                     <% } else { %>
                         <span class="special-price">
                             <span class="price-container">
-                                <span class="price-label"><?=__('Special Price')?></span>
+                                <span class="price-label"><?=$escaper->escapeHtml(__('Special Price'))?></span>
                                 <span class="price-wrapper">
                                     <span class="price"><%= autocompleteFormatPrice(data.final_price) %></span>
                                 </span>
@@ -51,7 +51,7 @@ use Magento\Framework\Escaper;
 
                         <span class="old-price sly-old-price">
                             <span class="price-container">
-                                <span class="price-label"><?=__('Regular Price')?></span>
+                                <span class="price-label"><?=$escaper->escapeHtml(__('Regular Price'))?></span>
                                 <span class="price-wrapper">
                                     <span class="price"><%= autocompleteFormatPrice(data.price) %></span>
                                 </span>
@@ -87,7 +87,7 @@ use Magento\Framework\Escaper;
 <script type="text/javascript">
     require(['Magento_Catalog/js/price-utils'], function(priceUtils){
         window['autocompleteFormatPrice'] = function(price) {
-            return priceUtils.formatPrice(price, <?=$block->getJsonPriceFormat()?>);
+            return priceUtils.formatPrice(price, <?=$escaper->escapeJs($block->getJsonPriceFormat())?>);
         };
     });
 </script>

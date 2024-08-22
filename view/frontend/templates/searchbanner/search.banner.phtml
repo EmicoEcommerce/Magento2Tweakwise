@@ -1,10 +1,15 @@
 <?php
 
+use Magento\Framework\Escaper;
+
 /** @var array $banners  */
+/** @var \Magento\Framework\View\Element\Template $block */
+/** @var \Magento\Framework\Escaper $escaper */
+
 $banners = $block->getData('banners');
-$styling = ($banners[0]['location'] == 'ContainerTop') ? 'style="margin-right: auto; margin-left: auto;"' : '';
+$styling = ($banners[0]['location'] == 'ContainerTop') ? 'margin-right: auto; margin-left: auto;' : '';
 ?>
-<div class="searchbanners" <?=  $styling ?>>
+<div class="searchbanners" style="<?= $escaper->escapeHtmlAttr($styling) ?>">
     <?php foreach ($banners as $banner): ?>
         <?php if (!empty($banner['clickurl'])): ?>
             <a href="<?= $escaper->escapeUrl($banner['clickurl']); ?>" type="<?= $escaper->escapeHtmlAttr($banner['clicktarget']); ?>">

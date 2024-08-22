@@ -23,7 +23,7 @@ $currentMaxValue = $block->getCurrentMaxValue();
 $sliderUrlInputValue = sprintf('%s-%s', $currentMinValue, $currentMaxValue);
 $disabledSliderUrlInputValue = sprintf('%s-%s', $minValue, $maxValue);
 ?>
-<div class="slider-attribute" id="attribute-slider-<?=$block->getCssId()?>">
+<div class="slider-attribute" id="attribute-slider-<?=$escaper->escapeHtmlAttr($block->getCssId())?>">
     <div class="labels">
         <span class="min-value">
             <span class="prefix"><?= $itemPrefix ?></span>

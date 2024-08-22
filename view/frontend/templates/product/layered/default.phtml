@@ -22,15 +22,15 @@ $postfix = $block->getItemPostfix();
 $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 
 ?>
-<div data-mage-init='<?=$block->getJsSortConfig()?>'>
+<div data-mage-init='<?=$escaper->escapeHtmlAttr($block->getJsSortConfig())?>'>
     <?php if ($block->isSearchable()): ?>
         <input
-            data-max-visible="<?=  $block->getMaxItemsShown()?>"
+            data-max-visible="<?= $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>"
             type="text"
             class="tw_filtersearch js-skip-submit"
             name="tw_filtersearch"
-            placeholder="<?= $block->getSearchPlaceholder(); ?>" >
-        <div style="display: none" class="search_no_results"><?= $block->getSearchNoResultsText(); ?></div>
+            placeholder="<?= $escaper->escapeHtmlAttr($block->getSearchPlaceholder()); ?>" >
+        <div style="display: none" class="search_no_results"><?= $escaper->escapeHtml($block->getSearchNoResultsText()); ?></div>
     <?php endif; ?>
     <ol class="items">
         <?php foreach ($block->getItems() as $index => $item): ?>
@@ -61,9 +61,9 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
                             <?=htmlentities($item->getCount())?>
                             <span class="filter-count-label">
                                 <?php if ($item->getCount() === 1):?>
-                                    <?=__('item')?>
+                                    <?=$escaper->escapeHtml(__('item'))?>
                                 <?php else:?>
-                                    <?=__('items')?>
+                                    <?=$escaper->escapeHtml(__('items'))?>
                                 <?php endif;?>
                             </span>
                         </span>
@@ -74,7 +74,7 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
     </ol>
 
     <?php if ($hasHiddenItems): ?>
-        <a class="more-items"><?=__($block->getMoreItemText())?></a>
-        <a class="less-items default-hidden"><?=__($block->getLessItemText())?></a>
+        <a class="more-items"><?=$escaper->escapeHtml(__($block->getMoreItemText()))?></a>
+        <a class="less-items default-hidden"><?=$escaper->escapeHtml(__($block->getLessItemText()))?></a>
     <?php endif; ?>
 </div>

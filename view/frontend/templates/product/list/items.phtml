@@ -167,14 +167,14 @@ $linkedProductListItemViewModel = $block->getData('view_model_linked_product_lis
 <div class="block <?= $escaper->escapeHtmlAttr($class) ?>"
      data-mage-init='{"relatedProducts":{"relatedCheckbox":".related.checkbox"}}'
      data-limit="<?= $escaper->escapeHtmlAttr($limit) ?>"
-     data-shuffle="<?= /* @noEscape */ $shuffle ?>"
-     data-shuffle-weighted="<?= /* @noEscape */ $isWeightedRandom ?>">
+     data-shuffle="<?=  $shuffle ?>"
+     data-shuffle-weighted="<?=  $isWeightedRandom ?>">
     <?php else:?>
     <div class="block <?= $escaper->escapeHtmlAttr($class) ?>"
          data-mage-init='{"upsellProducts":{}}'
          data-limit="<?= $escaper->escapeHtmlAttr($limit) ?>"
-         data-shuffle="<?= /* @noEscape */ $shuffle ?>"
-         data-shuffle-weighted="<?= /* @noEscape */ $isWeightedRandom ?>">
+         data-shuffle="<?=  $shuffle ?>"
+         data-shuffle-weighted="<?=  $isWeightedRandom ?>">
         <?php endif; ?>
         <?php else:?>
         <div class="block <?= $escaper->escapeHtmlAttr($class) ?>">

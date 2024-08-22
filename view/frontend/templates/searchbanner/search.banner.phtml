@@ -4,7 +4,7 @@
 $banners = $block->getData('banners');
 $styling = ($banners[0]['location'] == 'ContainerTop') ? 'style="margin-right: auto; margin-left: auto;"' : '';
 ?>
-<div class="searchbanners" <?= /* @noEscape */ $styling ?>>
+<div class="searchbanners" <?=  $styling ?>>
     <?php foreach ($banners as $banner): ?>
         <?php if (!empty($banner['clickurl'])): ?>
             <a href="<?= $escaper->escapeUrl($banner['clickurl']); ?>" type="<?= $escaper->escapeHtmlAttr($banner['clicktarget']); ?>">

@@ -27,8 +27,8 @@ $showDescription = $block->getData('show_description');
 ?>
 <li class="item product product-item">
     <div class="product-item-info"
-         id="product-item-info_<?= /* @noEscape */ $_product->getId() ?>"
-         data-container="product-<?= /* @noEscape */ $viewMode ?>">
+         id="product-item-info_<?=  $_product->getId() ?>"
+         data-container="product-<?=  $viewMode ?>">
         <?php
         $productImage = $block->getImage($_product, $imageDisplayArea);
         if ($pos != null) {
@@ -47,11 +47,11 @@ $showDescription = $block->getData('show_description');
             <strong class="product name product-item-name">
                 <a class="product-item-link"
                    href="<?= $escaper->escapeUrl($_product->getProductUrl()) ?>">
-                    <?=/* @noEscape */ $_helper->productAttribute($_product, $_product->getName(), 'name')?>
+                    <?= $_helper->productAttribute($_product, $_product->getName(), 'name')?>
                 </a>
             </strong>
             <?= $block->getReviewsSummaryHtml($_product, $templateType) ?>
-            <?= /* @noEscape */ $block->getProductPrice($_product) ?>
+            <?=  $block->getProductPrice($_product) ?>
 
             <?= $block->getProductDetailsHtml($_product) ?>
 
@@ -74,11 +74,11 @@ $showDescription = $block->getData('show_description');
                                 <?php endforeach; ?>
                                 <input type="hidden"
                                        name="product"
-                                       value="<?= /* @noEscape */ $postParams['data']['product'] ?>">
+                                       value="<?=  $postParams['data']['product'] ?>">
                                 <input type="hidden"
-                                       name="<?= /* @noEscape */ Action::PARAM_NAME_URL_ENCODED ?>"
+                                       name="<?=  Action::PARAM_NAME_URL_ENCODED ?>"
                                        value="<?=
-                                       /* @noEscape */ $postParams['data'][Action::PARAM_NAME_URL_ENCODED]
+                                        $postParams['data'][Action::PARAM_NAME_URL_ENCODED]
                                         ?>">
                                 <?= $block->getBlockHtml('formkey') ?>
                                 <button type="submit"
@@ -99,7 +99,7 @@ $showDescription = $block->getData('show_description');
                         <?php endif; ?>
                     </div>
                     <?= ($pos && strpos($pos, $viewMode . '-primary')) ?
-                        /* @noEscape */ $secureRenderer->renderStyleAsTag(
+                         $secureRenderer->renderStyleAsTag(
                             $position,
                             'product-item-info_' . $_product->getId() . ' div.actions-primary'
                         ) : '' ?>
@@ -109,20 +109,20 @@ $showDescription = $block->getData('show_description');
                         <?php endif; ?>
                     </div>
                     <?= ($pos && strpos($pos, $viewMode . '-secondary')) ?
-                        /* @noEscape */ $secureRenderer->renderStyleAsTag(
+                         $secureRenderer->renderStyleAsTag(
                             $position,
                             'product-item-info_' . $_product->getId() . ' div.actions-secondary'
                         ) : '' ?>
                 </div>
                 <?php if ($showDescription): ?>
                     <div class="product description product-item-description">
-                        <?= /* @noEscape */ $_helper->productAttribute(
+                        <?=  $_helper->productAttribute(
                             $_product,
                             $_product->getShortDescription(),
                             'short_description'
                         ) ?>
                         <a href="<?= $escaper->escapeUrl($_product->getProductUrl()) ?>"
-                           title="<?= /* @noEscape */ $_productNameStripped ?>"
+                           title="<?=  $_productNameStripped ?>"
                            class="action more"><?= $escaper->escapeHtml(__('Learn More')) ?></a>
                     </div>
                 <?php endif; ?>
@@ -130,7 +130,7 @@ $showDescription = $block->getData('show_description');
         </div>
     </div>
     <?= ($pos && strpos($pos, $viewMode . '-actions')) ?
-        /* @noEscape */ $secureRenderer->renderStyleAsTag(
+         $secureRenderer->renderStyleAsTag(
             $position,
             'product-item-info_' . $_product->getId() . ' div.product-item-actions'
         ) : '' ?>

@@ -100,7 +100,7 @@ class DefaultRenderer extends Template
      */
     public function getCategoryUrl(Item $item): string
     {
-        $catUrl = $this->escapeUrl($item->getUrl());
+        $catUrl = $item->getUrl();
 
         if (strpos($catUrl, $this->getBaseUrl()) === false) {
             $catUrl = $this->getBaseUrl() . $item->getUrl();
@@ -283,7 +283,7 @@ class DefaultRenderer extends Template
      */
     public function getItemPrefix()
     {
-        return $this->escapeHtml($this->getFacetSettings()->getPrefix());
+        return $this->getFacetSettings()->getPrefix();
     }
 
     /**
@@ -291,7 +291,7 @@ class DefaultRenderer extends Template
      */
     public function getItemPostfix()
     {
-        return $this->escapeHtml($this->getFacetSettings()->getPostfix());
+        return $this->getFacetSettings()->getPostfix();
     }
 
     /**

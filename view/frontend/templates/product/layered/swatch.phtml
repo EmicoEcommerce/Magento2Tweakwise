@@ -7,6 +7,10 @@
 // @codingStandardsIgnoreFile
 
 /** @var $block \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SwatchRenderer */
+/** @var $escaper Escaper */
+
+use Magento\Framework\Escaper;
+
 ?>
 <?php $swatchData = $block->getSwatchData(); ?>
 <div class="swatch-attribute swatch-layered <?=  $swatchData['attribute_code'] ?>"

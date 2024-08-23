@@ -56,7 +56,7 @@ $parentBlock = $block->getData('parent_block');
                 <?= $parentBlock->escapeHtml($_item->getName()) ?></a>
         </strong>
 
-        <?=  $escaper->escapeHtml($parentBlock->getProductPrice($_item)) ?>
+        <?=  /* @noEscape */$parentBlock->getProductPrice($_item) ?>
 
         <?php if ($templateType):?>
             <?= $parentBlock->getReviewsSummaryHtml($_item, $templateType) ?>

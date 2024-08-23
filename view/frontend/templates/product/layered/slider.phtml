@@ -60,23 +60,23 @@ $disabledSliderUrlInputValue = sprintf('%s-%s', $minValue, $maxValue);
             >
         </div>
         <div class="slider-max-wrapper">
-            <label for="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"><?=$escaper->escapeHtml(__('To'))?></label>
+            <label for="<?= $urlKey ?>-max"><?=__('To')?></label>
             <input type="text"
                    class="slider-max js-skip-submit"
-                   id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
-                   name="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
-                   value="<?= $escaper->escapeHtmlAttr($currentMaxValue) ?>"
+                   id="<?= $urlKey ?>-max"
+                   name="<?= $urlKey ?>-max"
+                   value="<?= $currentMaxValue ?>"
             >
         </div>
         <input type="hidden"
-               data-disabled-input="<?= $escaper->escapeHtmlAttr($disabledSliderUrlInputValue)?>"
+               data-disabled-input="<?=$disabledSliderUrlInputValue?>"
                <?php if ($sliderUrlInputValue === $disabledSliderUrlInputValue):?>
                disabled="disabled"
                <?php endif;?>
-               id="<?=$escaper->escapeHtmlAttr($block->getCssId())?>"
+               id="<?=$block->getCssId()?>"
                class="slider-url-value"
-               name="<?= $escaper->escapeHtmlAttr($urlKey) ?>"
-               value="<?=$escaper->escapeHtmlAttr($sliderUrlInputValue)?>"
+               name="<?= $urlKey ?>"
+               value="<?=$sliderUrlInputValue?>"
         >
     </div>
 </div>

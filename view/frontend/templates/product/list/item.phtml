@@ -51,7 +51,7 @@ $showDescription = $block->getData('show_description');
                 </a>
             </strong>
             <?= /* @noEscape */$block->getReviewsSummaryHtml($_product, $templateType) ?>
-            <?=  $escaper->escapeHtml($block->getProductPrice($_product)) ?>
+            <?= /* @noEscape */$block->getProductPrice($_product) ?>
 
             <?= /* @noEscape */$block->getProductDetailsHtml($_product) ?>
 

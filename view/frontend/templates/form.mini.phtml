@@ -87,7 +87,7 @@ use Magento\Framework\Escaper;
 <script type="text/javascript">
     require(['Magento_Catalog/js/price-utils'], function(priceUtils){
         window['autocompleteFormatPrice'] = function(price) {
-            return priceUtils.formatPrice(price, <?=$escaper->escapeJs($block->getJsonPriceFormat())?>);
+            return priceUtils.formatPrice(price, <?= /* @noEscape */($block->getJsonPriceFormat())?>);
         };
     });
 </script>

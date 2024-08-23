@@ -41,7 +41,7 @@ if (!$block->canShowBlock()) {
         <strong data-role="title"><?=$escaper->escapeHtml(__('Shop By'))?></strong>
     </div>
     <div class="block-content filter-content">
-        <form id="facet-filter-form" <?= $escaper->escapeHtmlAttr($jsFormConfig ? sprintf('data-mage-init=\'%s\'', $jsFormConfig) : '')?>>
+        <form id="facet-filter-form" <?= /* @noEscape */ $jsFormConfig ? sprintf('data-mage-init=\'%s\'', $jsFormConfig) : ''?>>
         <?=$block->getChildHtml('state');?>
 
         <?php if ($block->getLayer()->getState()->getFilters()): ?>

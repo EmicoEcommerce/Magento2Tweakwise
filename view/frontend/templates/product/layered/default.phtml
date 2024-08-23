@@ -36,15 +36,15 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
         <?php foreach ($block->getItems() as $index => $item): ?>
             <li class="item<?=$block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
                 <?php if ($hasHiddenItems && $hasAlternateSortOrder):?>
-                    data-alternate-sort="<?=$item->getAlternateSortOrder();?>"
-                    data-original-sort="<?=$index;?>"
+                    data-alternate-sort="<?=$escaper->escapeHtmlAttr($item->getAlternateSortOrder());?>"
+                    data-original-sort="<?=$escaper->escapeHtmlAttr($index);?>"
                 <?php endif;?>
             >
                 <a <?=$block->renderAnchorHtmlTagAttributes($item);?>>
                     <?php $cssId = $item->getCssId();?>
                     <?php if ($showCheckBox): ?>
-                        <input id="<?=$cssId?>"
-                               name="<?=$item->getFilter()->getFacet()->getFacetSettings()->getUrlKey()?>[]"
+                        <input id="<?=$escaper->escapeHtmlAttr($cssId)?>"
+                               name="<?=$escaper->escapeHtmlAttr($item->getFilter()->getFacet()->getFacetSettings()->getUrlKey())?>[]"
                                type="checkbox" <?=($item->isSelected() ? 'checked="checked"' : '')?>
                                value="<?=$escaper->escapeHtmlAttr($item->getLabel())?>"
                         >
@@ -58,7 +58,7 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 
                     <?php if ($shouldDisplayProductCountLayer): ?>
                         <span class="count">
-                            <?=htmlentities($item->getCount())?>
+                            <?= $escaper->escapeHtml($item->getCount())?>
                             <span class="filter-count-label">
                                 <?php if ($item->getCount() === 1):?>
                                     <?=$escaper->escapeHtml(__('item'))?>

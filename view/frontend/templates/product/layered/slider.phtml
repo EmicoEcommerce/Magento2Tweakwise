@@ -26,57 +26,57 @@ $disabledSliderUrlInputValue = sprintf('%s-%s', $minValue, $maxValue);
 <div class="slider-attribute" id="attribute-slider-<?=$escaper->escapeHtmlAttr($block->getCssId())?>">
     <div class="labels">
         <span class="min-value">
-            <span class="prefix"><?= $itemPrefix ?></span>
-            <?=$block->renderValue($minValue)?>
-            <span class="postfix"><?= $itemPostfix ?></span>
+            <span class="prefix"><?= $escaper->escapeHtml($itemPrefix) ?></span>
+            <?= $escaper->escapeHtml($block->renderValue($minValue))?>
+            <span class="postfix"><?= $escaper->escapeHtml($itemPostfix) ?></span>
         </span>
         <span class="max-value">
-            <span class="prefix"><?= $itemPrefix ?></span>
-            <?=$block->renderValue($maxValue)?>
-            <span class="postfix"><?= $itemPostfix ?></span>
+            <span class="prefix"><?= $escaper->escapeHtml($itemPrefix) ?></span>
+            <?= $escaper->escapeHtml($block->renderValue($maxValue))?>
+            <span class="postfix"><?= $escaper->escapeHtml($itemPostfix) ?></span>
         </span>
     </div>
     <div class="slider" data-mage-init="<?=$escaper->escapeHtmlAttr($block->getJsSliderConfig())?>"></div>
     <div class="labels">
         <span class="current-min-value">
-            <span class="prefix"><?= $itemPrefix ?></span>
-            <?= $block->renderValue($currentMinValue)?>
-            <span class="postfix"><?= $itemPostfix ?></span>
+            <span class="prefix"><?= $escaper->escapeHtml($itemPrefix) ?></span>
+            <?= $escaper->escapeHtml($block->renderValue($currentMinValue))?>
+            <span class="postfix"><?= $escaper->escapeHtml($itemPostfix) ?></span>
         </span>
         <span class="current-max-value">
-            <span class="prefix"><?= $itemPrefix ?></span>
-            <?=$block->renderValue($currentMaxValue)?>
-            <span class="postfix"><?= $itemPostfix ?></span>
+            <span class="prefix"><?= $escaper->escapeHtml($itemPrefix) ?></span>
+            <?= $escaper->escapeHtml($block->renderValue($currentMaxValue))?>
+            <span class="postfix"><?= $escaper->escapeHtml($itemPostfix) ?></span>
         </span>
     </div>
     <div class="slider-inputs">
         <div class="slider-min-wrapper">
-            <label for="<?= $urlKey ?>-min"><?=__('From')?></label>
+            <label for="<?= $escaper->escapeUrl($urlKey) ?>-min"><?= $escaper->escapeHtml(__('From'))?></label>
             <input type="text"
                    class="slider-min js-skip-submit"
-                   id="<?= $urlKey ?>-min"
-                   name="<?= $urlKey ?>-min"
-                   value="<?= $currentMinValue ?>"
+                   id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-min"
+                   name="<?= $escaper->escapeHtmlAttr($urlKey) ?>-min"
+                   value="<?= $escaper->escapeHtmlAttr($currentMinValue) ?>"
             >
         </div>
         <div class="slider-max-wrapper">
-            <label for="<?= $urlKey ?>-max"><?=__('To')?></label>
+            <label for="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"><?=__('To')?></label>
             <input type="text"
                    class="slider-max js-skip-submit"
-                   id="<?= $urlKey ?>-max"
-                   name="<?= $urlKey ?>-max"
-                   value="<?= $currentMaxValue ?>"
+                   id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
+                   name="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
+                   value="<?= $escaper->escapeHtmlAttr($currentMaxValue) ?>"
             >
         </div>
         <input type="hidden"
-               data-disabled-input="<?=$disabledSliderUrlInputValue?>"
+               data-disabled-input="<?= $escaper->escapeHtmlAttr($disabledSliderUrlInputValue)?>"
                <?php if ($sliderUrlInputValue === $disabledSliderUrlInputValue):?>
                disabled="disabled"
                <?php endif;?>
-               id="<?=$block->getCssId()?>"
+               id="<?=$escaper->escapeHtmlAttr($block->getCssId())?>"
                class="slider-url-value"
-               name="<?= $urlKey ?>"
-               value="<?=$sliderUrlInputValue?>"
+               name="<?= $escaper->escapeHtmlAttr($urlKey) ?>"
+               value="<?=$escaper->escapeHtmlAttr($sliderUrlInputValue)?>"
         >
     </div>
 </div>

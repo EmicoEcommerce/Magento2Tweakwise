@@ -16,19 +16,19 @@ use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRender
 $item = $block->getItem();
 ?>
 <li class="item">
-    <a href="<?=$block->getCategoryUrl($item)?>">
-        <?=$block->getItemPrefix()?>
+    <a href="<?=$escaper->escapeUrl($block->getCategoryUrl($item))?>">
+        <?=$escaper->escapeHtml($block->getItemPrefix())?>
         <?=$escaper->escapeHtml($item->getLabel())?>
-        <?=$block->getItemPostfix()?>
+        <?=$escaper->escapeHtml($block->getItemPostfix())?>
 
         <?php if ($block->shouldDisplayProductCountOnLayer()): ?>
             <span class="count">
-                <?=htmlentities($item->getCount())?>
+                <?= $escaper->escapeHtml($item->getCount())?>
                 <span class="filter-count-label">
                     <?php if ($item->getCount() == 1):?>
-                        <?=__('item')?>
+                        <?= $escaper->escapeHtml(__('item'))?>
                     <?php else:?>
-                        <?=__('items')?>
+                        <?= $escaper->escapeHtml(__('items'))?>
                     <?php endif;?>
                 </span>
             </span>
@@ -38,7 +38,7 @@ $item = $block->getItem();
     <?php if ($block->hasChildren()): ?>
         <ol class="items child-items">
             <?php foreach ($item->getChildren() as $child): ?>
-                <? $block->renderTreeItem($child)?>
+                <? /* @noEscape */$block->renderTreeItem($child)?>
             <?php endforeach; ?>
         </ol>
     <?php endif; ?>

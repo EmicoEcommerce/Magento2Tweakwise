@@ -22,19 +22,19 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
         data-alternate-sort="<?=$item->getAlternateSortOrder();?>"
     <?php endif;?>
 >
-    <a href="<?=$block->getCategoryUrl($item)?>">
-        <?=$block->getItemPrefix()?>
+    <a href="<?=$escaper->escapeUrl($block->getCategoryUrl($item))?>">
+        <?=$escaper->escapeHtmlAttr($block->getItemPrefix())?>
         <?=$escaper->escapeHtml($item->getLabel())?>
-        <?=$block->getItemPostfix()?>
+        <?=$escaper->escapeHtmlAttr($block->getItemPostfix())?>
 
         <?php if ($block->shouldDisplayProductCountOnLayer()): ?>
             <span class="count">
-                <?=htmlentities($item->getCount())?>
+                <?=$escaper->escapeHtml($item->getCount())?>
                 <span class="filter-count-label">
                     <?php if ($item->getCount() == 1):?>
-                        <?=__('item')?>
+                        <?=$escaper->escapeHtml(__('item'))?>
                     <?php else:?>
-                        <?=__('items')?>
+                        <?=$escaper->escapeHtml(__('items'))?>
                     <?php endif;?>
                 </span>
             </span>

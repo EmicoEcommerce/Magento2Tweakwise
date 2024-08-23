@@ -41,7 +41,7 @@ if (!$block->canShowBlock()) {
         <strong data-role="title"><?=$escaper->escapeHtml(__('Shop By'))?></strong>
     </div>
     <div class="block-content filter-content">
-        <form id="facet-filter-form" <?=($jsFormConfig ? sprintf('data-mage-init=\'%s\'', $jsFormConfig) : '')?>>
+        <form id="facet-filter-form" <?= $escaper->escapeHtmlAttr($jsFormConfig ? sprintf('data-mage-init=\'%s\'', $jsFormConfig) : '')?>>
         <?=$block->getChildHtml('state');?>
 
         <?php if ($block->getLayer()->getState()->getFilters()): ?>
@@ -57,34 +57,34 @@ if (!$block->canShowBlock()) {
             <strong
                 role="heading"
                 aria-level="2"
-                class="block-subtitle filter-subtitle"><?=__('Shopping Options') ?>
+                class="block-subtitle filter-subtitle"><?=$escaper->escapeHtml(__('Shopping Options')) ?>
             </strong>
             <div class="filter-options" id="narrow-by-list" data-role="content">
                 <?php foreach ($tweakwiseNavigationConfig->getFilterFormInput() as $name => $value):?>
                     <?php // These are tweakwise system parameters which are needed for ajax navigation ?>
-                    <input type="hidden" name="<?=$name?>" value="<?=$value?>">
+                    <input type="hidden" name="<?=$escaper->escapeHtmlAttr($name)?>" value="<?=$escaper->escapeHtmlAttr($value)?>">
                 <?php endforeach;?>
                 <?php foreach ($filters as $filter): ?>
                     <?php if ($filter->isCollapsible()): ?>
                         <?php $filterActive = $filter->isDefaultCollapsed() ? 'false' : '[0]'; ?>
-                        <div class="collapsible-container <?=$filter->getCssClass()?>"
+                        <div class="collapsible-container <?=$escaper->escapeHtmlAttr($filter->getCssClass())?>"
                              data-mage-init='{
                                 "accordion":{
-                                    "openedState": "active", "collapsible": true, "active": <?=$filterActive?>
+                                    "openedState": "active", "collapsible": true, "active": <?=$escaper->escapeHtmlAttr($filterActive)?>
                                 }
                             }'>
                             <div data-role="collapsible" class="filter-options-item">
                                 <div data-role="title" class="filter-options-title">
-                                    <?=__($filter->getName())?>
+                                    <?=$escaper->escapeHtml(__($filter->getName()))?>
                                     <?php $tooltip = $filter->getTooltip(); ?>
                                     <?php if ($tooltip): ?>
-                                        <span class="tooltip" data-tooltip="<?=$tooltip?>"><span>i</span></span>
+                                        <span class="tooltip" data-tooltip="<?=$escaper->escapeHtmlAttr($tooltip)?>"><span>i</span></span>
                                     <?php endif; ?>
                                 </div>
                                 <?php
-                                    $filterContentStyle = $filter->isDefaultCollapsed() ? ' style="display: none;"' : ''
+                                    $filterContentStyle = $filter->isDefaultCollapsed() ? 'display: none;' : ''
                                 ?>
-                                <div data-role="content" class="filter-options-content"<?=$filterContentStyle?>>
+                                <div data-role="content" class="filter-options-content" style="<?= $escaper->escapeHtmlAttr($filterContentStyle)?>">
                                     <?=$block->getChildBlock('renderer')->render($filter) ?>
                                 </div>
                             </div>

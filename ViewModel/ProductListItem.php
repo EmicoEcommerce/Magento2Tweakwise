@@ -63,8 +63,8 @@ class ProductListItem implements ArgumentInterface
             );
         }
 
-        $productId = (int) $item->getId();
-        if (!$this->cacheHelper->load($productId)) {
+        $itemId = (string) $item->getId();
+        if (!$this->cacheHelper->load($itemId)) {
             if ($isVisual) {
                 $itemHtml = $this->getVisualHtml($item);
             } else {
@@ -78,10 +78,10 @@ class ProductListItem implements ArgumentInterface
                 );
             }
 
-            $this->cacheHelper->save($itemHtml, $productId);
+            $this->cacheHelper->save($itemHtml, $itemId);
         }
 
-        return sprintf('<esi:include src="/%s?product_id=%s" />', Cache::PRODUCT_CARD_PATH, $productId);
+        return sprintf('<esi:include src="/%s?item_id=%s" />', Cache::PRODUCT_CARD_PATH, $itemId);
     }
 
     /**

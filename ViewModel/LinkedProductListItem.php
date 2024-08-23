@@ -48,7 +48,7 @@ class LinkedProductListItem implements ArgumentInterface
             );
         }
 
-        $productId = (int) $product->getId();
+        $productId = (string) $product->getId();
         $cardType = str_replace(' ', '_', $params['card_type']);
         if (!$this->cacheHelper->load($productId, $cardType)) {
             $itemHtml = $this->getItemHtmlWithRenderer(
@@ -60,7 +60,7 @@ class LinkedProductListItem implements ArgumentInterface
         }
 
         return sprintf(
-            '<esi:include src="/%s?product_id=%s&card_type=%s" />',
+            '<esi:include src="/%s?item_id=%s&card_type=%s" />',
             Cache::PRODUCT_CARD_PATH,
             $productId,
             $cardType

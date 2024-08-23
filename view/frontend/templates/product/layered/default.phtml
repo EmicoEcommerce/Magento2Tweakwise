@@ -53,7 +53,7 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
                             <?=$escaper->escapeHtml($prefix . $item->getLabel() . $postfix)?>
                         </label>
                     <?php else: ?>
-                        <?= $escaper->escapeHtml($prefix . $item->getLabel()) . $postfix)?>
+                        <?= $escaper->escapeHtml($prefix . $item->getLabel() . $postfix)?>
                     <?php endif; ?>
 
                     <?php if ($shouldDisplayProductCountLayer): ?>

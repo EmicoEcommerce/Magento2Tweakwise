@@ -60,7 +60,7 @@ $disabledSliderUrlInputValue = sprintf('%s-%s', $minValue, $maxValue);
             >
         </div>
         <div class="slider-max-wrapper">
-            <label for="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"><?=__('To')?></label>
+            <label for="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"><?=$escaper->escapeHtml(__('To'))?></label>
             <input type="text"
                    class="slider-max js-skip-submit"
                    id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"

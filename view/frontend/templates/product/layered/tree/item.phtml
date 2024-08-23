@@ -38,7 +38,7 @@ $item = $block->getItem();
     <?php if ($block->hasChildren()): ?>
         <ol class="items child-items">
             <?php foreach ($item->getChildren() as $child): ?>
-                <? /* @noEscape */$block->renderTreeItem($child)?>
+                <?php /* @noEscape */$block->renderTreeItem($child)?>
             <?php endforeach; ?>
         </ol>
     <?php endif; ?>

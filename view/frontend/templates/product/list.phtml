@@ -46,7 +46,7 @@ $productListItemViewModel = $block->getData('view_model_product_list_item');
      */
     $pos = $block->getPositioned();
     ?>
-    <div class="products wrapper <?=  $viewMode ?> products-<?=  $viewMode ?>">
+    <div class="products wrapper <?=  $escaper->escapeHtmlAttr($viewMode) ?> products-<?=  $escaper->escapeHtmlAttr($viewMode) ?>">
         <ol class="products list items product-items">
             <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
             <?php foreach ($_productCollection as $_product): ?>

@@ -33,17 +33,17 @@ $parentBlock = $block->getData('parent_block');
 <?php endif; ?>
 <?php if ($type == 'related' || $type == 'upsell'):?>
     <li class="item product product-item"
-    id="product-item_<?=  $_item->getId() ?>"
+    id="product-item_<?= $escaper->escapeHtmlAttr($_item->getId()) ?>"
     data-shuffle-group="<?= $parentBlock->escapeHtmlAttr($_item->getPriority()) ?>" >
-    <?=  $secureRenderer->renderStyleAsTag(
+    <?= /* @noEscape */$secureRenderer->renderStyleAsTag(
         'display:none;',
         'li#product-item_' . $_item->getId()
     ) ?>
 <?php else:?>
     <li class="item product product-item">
 <?php endif; ?>
-<div class="product-item-info <?=  $available ?>">
-    <?=  '<!-- ' . $image . '-->' ?>
+<div class="product-item-info <?= $escaper->escapeHtmlAttr($available) ?>">
+    <?=  '<!-- ' . $escaper->escapeHtmlAttr($image) . '-->' ?>
     <a href="<?= $parentBlock->escapeUrl($parentBlock->getProductUrl($_item)) ?>"
        class="product photo product-item-photo">
         <?= $parentBlock->getImage($_item, $image)->toHtml() ?>
@@ -56,7 +56,7 @@ $parentBlock = $block->getData('parent_block');
                 <?= $parentBlock->escapeHtml($_item->getName()) ?></a>
         </strong>
 
-        <?=  $parentBlock->getProductPrice($_item) ?>
+        <?=  $escaper->escapeHtml($parentBlock->getProductPrice($_item)) ?>
 
         <?php if ($templateType):?>
             <?= $parentBlock->getReviewsSummaryHtml($_item, $templateType) ?>

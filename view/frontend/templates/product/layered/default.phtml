@@ -49,11 +49,11 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
                                value="<?=$escaper->escapeHtmlAttr($item->getLabel())?>"
                         >
 
-                        <label for="<?=$cssId?>">
-                            <?=$prefix . $escaper->escapeHtml($item->getLabel()) . $postfix?>
+                        <label for="<?= $escaper->escapeHtmlAttr($cssId)?>">
+                            <?=$escaper->escapeHtml($prefix . $item->getLabel() . $postfix)?>
                         </label>
                     <?php else: ?>
-                        <?=$prefix . $escaper->escapeHtml($item->getLabel()) . $postfix?>
+                        <?= $escaper->escapeHtml($prefix . $item->getLabel()) . $postfix)?>
                     <?php endif; ?>
 
                     <?php if ($shouldDisplayProductCountLayer): ?>

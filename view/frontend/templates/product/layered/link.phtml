@@ -15,16 +15,16 @@ use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRender
  */
 $hasHiddenItems = $block->hasHiddenItems();
 ?>
-<div data-mage-init='<?=$block->getJsSortConfig()?>'>
+<div data-mage-init='<?= $escaper->escapeHtmlAttr($block->getJsSortConfig())?>'>
     <ol class="items link-attribute">
         <?php foreach ($block->getItems() as $item): ?>
-            <?=$block->renderLinkItem($item)?>
+            <?= /* @noEscape */$block->renderLinkItem($item)?>
         <?php endforeach; ?>
     </ol>
 
     <?php if ($hasHiddenItems): ?>
-        <a class="more-items"><?=__($block->getMoreItemText())?></a>
-        <a class="less-items default-hidden"><?=__($block->getLessItemText())?></a>
+        <a class="more-items"><?=$escaper->escapeHtml(__($block->getMoreItemText()))?></a>
+        <a class="less-items default-hidden"><?=$escaper->escapeHtml(__($block->getLessItemText()))?></a>
     <?php endif; ?>
 </div>
 

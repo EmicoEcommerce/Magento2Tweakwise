@@ -27,8 +27,8 @@ $showDescription = $block->getData('show_description');
 ?>
 <li class="item product product-item">
     <div class="product-item-info"
-         id="product-item-info_<?=  $_product->getId() ?>"
-         data-container="product-<?=  $viewMode ?>">
+         id="product-item-info_<?=  $escaper->escapeHtmlAttr($_product->getId()) ?>"
+         data-container="product-<?=  $escaper->escapeHtmlAttr($viewMode) ?>">
         <?php
         $productImage = $block->getImage($_product, $imageDisplayArea);
         if ($pos != null) {
@@ -47,13 +47,13 @@ $showDescription = $block->getData('show_description');
             <strong class="product name product-item-name">
                 <a class="product-item-link"
                    href="<?= $escaper->escapeUrl($_product->getProductUrl()) ?>">
-                    <?= $_helper->productAttribute($_product, $_product->getName(), 'name')?>
+                    <?= $escaper->escapeHtml($_helper->productAttribute($_product, $_product->getName(), 'name'))?>
                 </a>
             </strong>
-            <?= $block->getReviewsSummaryHtml($_product, $templateType) ?>
-            <?=  $block->getProductPrice($_product) ?>
+            <?= /* @noEscape */$block->getReviewsSummaryHtml($_product, $templateType) ?>
+            <?=  $escaper->escapeHtml($block->getProductPrice($_product)) ?>
 
-            <?= $block->getProductDetailsHtml($_product) ?>
+            <?= /* @noEscape */$block->getProductDetailsHtml($_product) ?>
 
             <div class="product-item-inner">
                 <div class="product actions product-item-actions">
@@ -61,7 +61,7 @@ $showDescription = $block->getData('show_description');
                         <?php if ($_product->isSaleable()):?>
                             <?php $postParams = $parentBlock->getAddToCartPostParams($_product); ?>
                             <form data-role="tocart-form"
-                                  data-product-sku="<?= $escaper->escapeHtml($_product->getSku()) ?>"
+                                  data-product-sku="<?= $escaper->escapeHtmlAttr($_product->getSku()) ?>"
                                   action="<?= $escaper->escapeUrl($postParams['action']) ?>"
                                   data-mage-init='{"catalogAddToCart": {}}'
                                   method="post">
@@ -69,16 +69,16 @@ $showDescription = $block->getData('show_description');
                                 <?php $options = $viewModel ? $viewModel->getOptionsData($_product) : []; ?>
                                 <?php foreach ($options as $optionItem): ?>
                                     <input type="hidden"
-                                           name="<?= $escaper->escapeHtml($optionItem['name']) ?>"
-                                           value="<?= $escaper->escapeHtml($optionItem['value']) ?>">
+                                           name="<?= $escaper->escapeHtmlAttr($optionItem['name']) ?>"
+                                           value="<?= $escaper->escapeHtmlAttr($optionItem['value']) ?>">
                                 <?php endforeach; ?>
                                 <input type="hidden"
                                        name="product"
-                                       value="<?=  $postParams['data']['product'] ?>">
+                                       value="<?= $escaper->escapeHtmlAttr($postParams['data']['product']) ?>">
                                 <input type="hidden"
-                                       name="<?=  Action::PARAM_NAME_URL_ENCODED ?>"
+                                       name="<?=  $escaper->escapeHtmlAttr(Action::PARAM_NAME_URL_ENCODED) ?>"
                                        value="<?=
-                                        $postParams['data'][Action::PARAM_NAME_URL_ENCODED]
+                                        $escaper->escapeHtmlAttr($postParams['data'][Action::PARAM_NAME_URL_ENCODED])
                                         ?>">
                                 <?= $block->getBlockHtml('formkey') ?>
                                 <button type="submit"
@@ -99,7 +99,7 @@ $showDescription = $block->getData('show_description');
                         <?php endif; ?>
                     </div>
                     <?= ($pos && strpos($pos, $viewMode . '-primary')) ?
-                         $secureRenderer->renderStyleAsTag(
+                         /* @noEscape */$secureRenderer->renderStyleAsTag(
                             $position,
                             'product-item-info_' . $_product->getId() . ' div.actions-primary'
                         ) : '' ?>
@@ -109,28 +109,28 @@ $showDescription = $block->getData('show_description');
                         <?php endif; ?>
                     </div>
                     <?= ($pos && strpos($pos, $viewMode . '-secondary')) ?
-                         $secureRenderer->renderStyleAsTag(
+                         /* @noEscape */$secureRenderer->renderStyleAsTag(
                             $position,
                             'product-item-info_' . $_product->getId() . ' div.actions-secondary'
                         ) : '' ?>
                 </div>
                 <?php if ($showDescription): ?>
                     <div class="product description product-item-description">
-                        <?=  $_helper->productAttribute(
+                        <?=  /* @noEscape */ $_helper->productAttribute(
                             $_product,
                             $_product->getShortDescription(),
                             'short_description'
                         ) ?>
                         <a href="<?= $escaper->escapeUrl($_product->getProductUrl()) ?>"
-                           title="<?=  $_productNameStripped ?>"
-                           class="action more"><?= $escaper->escapeHtml(__('Learn More')) ?></a>
+                           title="<?=  $escaper->escapeHtmlAttr($_productNameStripped) ?>"
+                           class="action more"><?= $escaper->escapeHtmlAttr(__('Learn More')) ?></a>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
     <?= ($pos && strpos($pos, $viewMode . '-actions')) ?
-         $secureRenderer->renderStyleAsTag(
+         /* @noEscape */$secureRenderer->renderStyleAsTag(
             $position,
             'product-item-info_' . $_product->getId() . ' div.product-item-actions'
         ) : '' ?>

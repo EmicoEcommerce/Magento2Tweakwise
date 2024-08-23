@@ -85,24 +85,24 @@ if (!$block->canShowBlock()) {
                                     $filterContentStyle = $filter->isDefaultCollapsed() ? 'display: none;' : ''
                                 ?>
                                 <div data-role="content" class="filter-options-content" style="<?= $escaper->escapeHtmlAttr($filterContentStyle)?>">
-                                    <?=$block->getChildBlock('renderer')->render($filter) ?>
+                                    <?= /* @noEscape */ $block->getChildBlock('renderer')->render($filter) ?>
                                 </div>
                             </div>
                         </div>
                     <?php else: ?>
                         <div class="filter-options-item">
                             <div class="filter-options-title filter-options-title-non-collapsible">
-                                <?=__($filter->getName())?>
+                                <?=$escaper->escapeHtml(__($filter->getName()))?>
                             </div>
                             <div class="filter-options-content">
-                                <?=$block->getChildBlock('renderer')->render($filter) ?>
+                                <?= /* @noEscape */$block->getChildBlock('renderer')->render($filter) ?>
                             </div>
                         </div>
                     <?php endif; ?>
                     <?php if ($renderFilterButton): ?>
                         <div class="show-items-link">
                             <button type="button" class="btn btn-primary btn-block js-btn-filter">
-                                <?=__(sprintf('Show <span>%s</span> items', $block->getLayer()->getProductCount())); ?>
+                                <?= $escaper->escapeHtml(__(sprintf('Show <span>%s</span> items', $block->getLayer()->getProductCount()))); ?>
                             </button>
                         </div>
                     <?php endif;?>

@@ -19,7 +19,7 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
 ?>
 <li class="item<?=$block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
     <?php if ($hasHiddenItems && $hasAlternateSortOrder):?>
-        data-alternate-sort="<?=$item->getAlternateSortOrder();?>"
+        data-alternate-sort="<?= $escaper->escapeHtmlAttr($item->getAlternateSortOrder());?>"
     <?php endif;?>
 >
     <a href="<?=$escaper->escapeUrl($block->getCategoryUrl($item))?>">
@@ -44,7 +44,7 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
     <?php if ($block->hasChildren()): ?>
         <ol class="items child-items">
             <?php foreach ($block->getChildren() as $child): ?>
-                <?=$block->renderLinkItem($child)?>
+                <?= /* @noEscape */$block->renderLinkItem($child)?>
             <?php endforeach; ?>
         </ol>
     <?php endif; ?>

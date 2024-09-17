@@ -141,11 +141,11 @@ class Cache
 
         return sprintf(
             '%s_%s_%s_%s_%s',
+            self::REDIS_CACHE_KEY,
             $storeId,
             $customerGroupId,
             $productId,
-            $cardType,
-            self::REDIS_CACHE_KEY
+            $cardType
         );
     }
 }

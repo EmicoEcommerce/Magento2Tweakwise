@@ -75,7 +75,9 @@ class ProductListItem implements ArgumentInterface
 
         return sprintf(
             '<esi:include src="/%s?product_id=%s&store_id=%s" />',
-            Cache::PRODUCT_CARD_PATH, $productId, $storeId
+            Cache::PRODUCT_CARD_PATH,
+            $productId,
+            $storeId
         );
     }
 

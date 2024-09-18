@@ -11,6 +11,7 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
+use Magento\Store\Model\StoreManagerInterface;
 
 class ProductListItem implements ArgumentInterface
 {
@@ -20,7 +21,8 @@ class ProductListItem implements ArgumentInterface
      */
     public function __construct(
         private readonly LayoutInterface $layout,
-        private readonly Cache $cacheHelper
+        private readonly Cache $cacheHelper,
+        private readonly StoreManagerInterface $storeManager
     ) {
     }
 
@@ -58,6 +60,7 @@ class ProductListItem implements ArgumentInterface
         }
 
         $productId = (int) $product->getId();
+        $storeId = $this->storeManager->getStore()->getId();
         if (!$this->cacheHelper->load($productId)) {
             $itemHtml = $this->getItemHtmlWithRenderer(
                 $product,
@@ -70,7 +73,8 @@ class ProductListItem implements ArgumentInterface
             $this->cacheHelper->save($itemHtml, $productId);
         }
 
-        return sprintf('<esi:include src="/%s?product_id=%s" />', Cache::PRODUCT_CARD_PATH, $productId);
+        //return sprintf('<esi:include src="/%s?product_id=%s" />', Cache::PRODUCT_CARD_PATH, $productId);
+        return sprintf('<esi:include src="/%s?product_id=%s&store_id=%s" />', Cache::PRODUCT_CARD_PATH, $productId, $storeId);
     }
 
     /**

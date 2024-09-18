@@ -73,8 +73,10 @@ class ProductListItem implements ArgumentInterface
             $this->cacheHelper->save($itemHtml, $productId);
         }
 
-        return sprintf('<esi:include src="/%s?product_id=%s&store_id=%s" />',
-            Cache::PRODUCT_CARD_PATH, $productId, $storeId);
+        return sprintf(
+            '<esi:include src="/%s?product_id=%s&store_id=%s" />',
+            Cache::PRODUCT_CARD_PATH, $productId, $storeId
+        );
     }
 
     /**

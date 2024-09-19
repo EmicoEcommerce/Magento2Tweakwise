@@ -79,7 +79,7 @@ class ProductListItem implements ArgumentInterface
         $customerGroupId = $this->customerSession->getCustomerGroupId();
 
         return sprintf(
-            '<esi:include src="/%s?product_id=%s&store_id=%s&customer_group_id=%s&cardtype=default" />',
+            '<esi:include src="/%s?product_id=%s&store_id=%s&customer_group_id=%s" />',
             Cache::PRODUCT_CARD_PATH,
             $productId,
             $storeId,

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
 use Magento\Catalog\Model\Product;
+use Magento\Customer\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
+use Magento\Store\Model\StoreManagerInterface;
 
 class ProductListItem implements ArgumentInterface
 {
@@ -20,7 +22,9 @@ class ProductListItem implements ArgumentInterface
      */
     public function __construct(
         private readonly LayoutInterface $layout,
-        private readonly Cache $cacheHelper
+        private readonly Cache $cacheHelper,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly Session $customerSession
     ) {
     }
 
@@ -58,6 +62,7 @@ class ProductListItem implements ArgumentInterface
         }
 
         $productId = (int) $product->getId();
+
         if (!$this->cacheHelper->load($productId)) {
             $itemHtml = $this->getItemHtmlWithRenderer(
                 $product,
@@ -70,7 +75,16 @@ class ProductListItem implements ArgumentInterface
             $this->cacheHelper->save($itemHtml, $productId);
         }
 
-        return sprintf('<esi:include src="/%s?product_id=%s" />', Cache::PRODUCT_CARD_PATH, $productId);
+        $storeId = $this->storeManager->getStore()->getId();
+        $customerGroupId = $this->customerSession->getCustomerGroupId();
+
+        return sprintf(
+            '<esi:include src="/%s?product_id=%s&store_id=%s&customer_group_id=%s" />',
+            Cache::PRODUCT_CARD_PATH,
+            $productId,
+            $storeId,
+            $customerGroupId
+        );
     }
 
     /**

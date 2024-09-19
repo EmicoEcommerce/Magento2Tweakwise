@@ -85,6 +85,9 @@ class ProductListItem implements ArgumentInterface
             $this->cacheHelper->save($itemHtml, $itemId);
         }
 
+        $storeId = $this->storeManager->getStore()->getId();
+        $customerGroupId = $this->customerSession->getCustomerGroupId();
+
         return sprintf(
             '<esi:include src="/%s?item_id=%s&store_id=%s&customer_group_id=%s" />',
             Cache::PRODUCT_CARD_PATH,

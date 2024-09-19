@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
 use Magento\Catalog\Model\Product;
+use Magento\Customer\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\AbstractBlock;
@@ -12,6 +13,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 use Tweakwise\Magento2Tweakwise\Model\Visual;
+use Magento\Store\Model\StoreManagerInterface;
 
 class ProductListItem implements ArgumentInterface
 {
@@ -21,7 +23,9 @@ class ProductListItem implements ArgumentInterface
      */
     public function __construct(
         private readonly LayoutInterface $layout,
-        private readonly Cache $cacheHelper
+        private readonly Cache $cacheHelper,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly Session $customerSession
     ) {
     }
 
@@ -81,7 +85,13 @@ class ProductListItem implements ArgumentInterface
             $this->cacheHelper->save($itemHtml, $itemId);
         }
 
-        return sprintf('<esi:include src="/%s?item_id=%s" />', Cache::PRODUCT_CARD_PATH, $itemId);
+        return sprintf(
+            '<esi:include src="/%s?item_id=%s&store_id=%s&customer_group_id=%s" />',
+            Cache::PRODUCT_CARD_PATH, 
+            $itemId,
+            $storeId,
+            $customerGroupId
+        );
     }
 
     /**

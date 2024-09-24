@@ -36,10 +36,10 @@ class Card implements HttpGetActionInterface
      */
     public function execute(): HttpInterface
     {
-        $productId = $this->request->getParam('product_id');
+        $itemId = (string) $this->request->getParam('item_id');
         $cardType = $this->request->getParam('card_type');
-        $itemHtml = $cardType ? $this->cacheHelper->load((int)$productId, $cardType) :
-            $this->cacheHelper->load((int)$productId);
+        $itemHtml = $cardType ? $this->cacheHelper->load($itemId, $cardType) :
+            $this->cacheHelper->load($itemId);
 
         $response = $this->httpFactory->create();
         $response->appendBody($itemHtml);

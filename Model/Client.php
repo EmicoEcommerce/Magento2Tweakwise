@@ -96,7 +96,8 @@ class Client
                 RequestOptions::TIMEOUT => self::REQUEST_TIMEOUT,
                 RequestOptions::HEADERS => [
                     'user-agent' => $this->config->getUserAgentString(),
-                    'Accept-Encoding' => 'gzip, deflate'
+                    'Accept-Encoding' => 'gzip, deflate',
+                    'TWN-Source' => $this->config->getModuleVersion(),
                 ]
             ];
             $this->client = new HttpClient($options);

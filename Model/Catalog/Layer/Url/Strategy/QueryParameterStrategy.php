@@ -161,10 +161,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     {
         $selectedFilters = $request->getQuery();
         $reservedParams = [
-            self::PARAM_LIMIT,
-            self::PARAM_MODE,
             self::PARAM_PAGE,
-            self::PARAM_ORDER,
             self::PARAM_CATEGORY,
         ];
 

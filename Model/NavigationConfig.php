@@ -158,6 +158,8 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                     'max' => $sliderRenderer->getMaxValue(),
                     'currentMin' => $sliderRenderer->getCurrentMinValue(),
                     'currentMax' => $sliderRenderer->getCurrentMaxValue(),
+                    'containsBuckets' => $sliderRenderer->containsBuckets(),
+                    'containsClickpoints' => $sliderRenderer->containsClickpoints(),
                 ]
             ]
         );

@@ -21,6 +21,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\Config\Storage\WriterInterface;
+use Magento\Framework\Composer\ComposerInformation;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -128,7 +129,8 @@ class Config
         RequestInterface $request,
         State $state,
         WriterInterface $configWriter,
-        TypeListInterface $cacheTypeList
+        TypeListInterface $cacheTypeList,
+        private readonly ComposerInformation $composerInformation
     ) {
         $this->config = $config;
         $this->jsonSerializer = $jsonSerializer;
@@ -637,5 +639,18 @@ class Config
     public function getProductCardLifetime(): int
     {
         return (int) $this->config->getValue(self::PRODUCT_CARD_LIFETIME_XML_PATH, ScopeInterface::SCOPE_STORE);
+    }
+    public function getModuleVersion(): string
+    {
+        $installedPackages = $this->composerInformation
+            ->getInstalledMagentoPackages();
+        if (!isset($installedPackages['tweakwise/magento2-tweakwise']['version'])) {
+            // This should never be the case
+            return '';
+        }
+
+        $version = $installedPackages['tweakwise/magento2-tweakwise']['version'];
+
+        return sprintf('Magento2Tweakwise %s', $version);
     }
 }

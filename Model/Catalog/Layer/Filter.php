@@ -257,8 +257,7 @@ class Filter extends AbstractFilter implements FilterInterface
      */
     public function getName()
     {
-        $title = (string) $this->facet->getFacetSettings()->getTitle();
-        return htmlentities($title);
+        return (string) $this->facet->getFacetSettings()->getTitle();
     }
 
     /**

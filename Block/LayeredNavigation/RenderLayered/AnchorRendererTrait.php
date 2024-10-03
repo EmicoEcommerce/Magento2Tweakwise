@@ -47,6 +47,6 @@ trait AnchorRendererTrait
      */
     protected function getItemUrl(Item $item)
     {
-        return $this->escapeHtml($item->getUrl());
+        return $item->getUrl();
     }
 }

@@ -5,11 +5,13 @@
  * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
+use Magento\Framework\Escaper;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRenderer;
 
 /**
  * @var $block DefaultRenderer
- * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ * @var $escaper Escaper
  */
 
 $hasHiddenItems = $block->hasHiddenItems();
@@ -20,48 +22,48 @@ $postfix = $block->getItemPostfix();
 $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 
 ?>
-<div data-mage-init='<?=$block->getJsSortConfig()?>'>
+<div data-mage-init='<?=$escaper->escapeHtmlAttr($block->getJsSortConfig())?>'>
     <?php if ($block->isSearchable()): ?>
         <input
-            data-max-visible="<?=  $block->getMaxItemsShown()?>"
+            data-max-visible="<?= $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>"
             type="text"
             class="tw_filtersearch js-skip-submit"
             name="tw_filtersearch"
-            placeholder="<?= $block->getSearchPlaceholder(); ?>" >
-        <div style="display: none" class="search_no_results"><?= $block->getSearchNoResultsText(); ?></div>
+            placeholder="<?= $escaper->escapeHtmlAttr($block->getSearchPlaceholder()); ?>" >
+        <div style="display: none" class="search_no_results"><?= $escaper->escapeHtml($block->getSearchNoResultsText()); ?></div>
     <?php endif; ?>
     <ol class="items">
         <?php foreach ($block->getItems() as $index => $item): ?>
             <li class="item<?=$block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
                 <?php if ($hasHiddenItems && $hasAlternateSortOrder):?>
-                    data-alternate-sort="<?=$item->getAlternateSortOrder();?>"
-                    data-original-sort="<?=$index;?>"
+                    data-alternate-sort="<?=$escaper->escapeHtmlAttr($item->getAlternateSortOrder());?>"
+                    data-original-sort="<?=$escaper->escapeHtmlAttr($index);?>"
                 <?php endif;?>
             >
                 <a <?=$block->renderAnchorHtmlTagAttributes($item);?>>
                     <?php $cssId = $item->getCssId();?>
                     <?php if ($showCheckBox): ?>
-                        <input id="<?=$cssId?>"
-                               name="<?=$item->getFilter()->getFacet()->getFacetSettings()->getUrlKey()?>[]"
+                        <input id="<?=$escaper->escapeHtmlAttr($cssId)?>"
+                               name="<?=$escaper->escapeHtmlAttr($item->getFilter()->getFacet()->getFacetSettings()->getUrlKey())?>[]"
                                type="checkbox" <?=($item->isSelected() ? 'checked="checked"' : '')?>
                                value="<?=$escaper->escapeHtmlAttr($item->getLabel())?>"
                         >
 
-                        <label for="<?=$cssId?>">
-                            <?=$prefix . $escaper->escapeHtml($item->getLabel()) . $postfix?>
+                        <label for="<?= $escaper->escapeHtmlAttr($cssId)?>">
+                            <?=$escaper->escapeHtml($prefix . $item->getLabel() . $postfix)?>
                         </label>
                     <?php else: ?>
-                        <?=$prefix . $escaper->escapeHtml($item->getLabel()) . $postfix?>
+                        <?= $escaper->escapeHtml($prefix . $item->getLabel() . $postfix)?>
                     <?php endif; ?>
 
                     <?php if ($shouldDisplayProductCountLayer): ?>
                         <span class="count">
-                            <?=htmlentities($item->getCount())?>
+                            <?= $escaper->escapeHtml($item->getCount())?>
                             <span class="filter-count-label">
                                 <?php if ($item->getCount() === 1):?>
-                                    <?=__('item')?>
+                                    <?=$escaper->escapeHtml(__('item'))?>
                                 <?php else:?>
-                                    <?=__('items')?>
+                                    <?=$escaper->escapeHtml(__('items'))?>
                                 <?php endif;?>
                             </span>
                         </span>
@@ -72,7 +74,7 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
     </ol>
 
     <?php if ($hasHiddenItems): ?>
-        <a class="more-items"><?=__($block->getMoreItemText())?></a>
-        <a class="less-items default-hidden"><?=__($block->getLessItemText())?></a>
+        <a class="more-items"><?=$escaper->escapeHtml(__($block->getMoreItemText()))?></a>
+        <a class="less-items default-hidden"><?=$escaper->escapeHtml(__($block->getLessItemText()))?></a>
     <?php endif; ?>
 </div>

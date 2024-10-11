@@ -24,7 +24,7 @@ define([
             currentMax: 99999999,
             formFilters: false,
             ajaxFilters: false,
-            containsBucket: false,
+            containsBuckets: false,
             containsClickpoints: false
         },
 
@@ -90,7 +90,7 @@ define([
             var sliderContainer = $(this.options.container);
             sliderContainer.on('change', '.slider-min', this._updateSliderUrlInput.bind(this));
             sliderContainer.on('change', '.slider-max', this._updateSliderUrlInput.bind(this));
-            if (this.options.containsBucket) {
+            if (this.options.containsBuckets) {
                 sliderContainer.on('click', '.bucket-link', this._clickBucketSlider.bind(this));
             }
 

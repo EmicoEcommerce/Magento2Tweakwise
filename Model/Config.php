@@ -121,6 +121,7 @@ class Config
      * @param State $state
      * @param WriterInterface $configWriter
      * @param TypeListInterface $cacheTypeList
+     * @param ComposerInformation $composerInformation
      * @throws LocalizedException
      */
     public function __construct(
@@ -640,6 +641,10 @@ class Config
     {
         return (int) $this->config->getValue(self::PRODUCT_CARD_LIFETIME_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
+
+    /**
+     * @return string
+     */
     public function getModuleVersion(): string
     {
         $installedPackages = $this->composerInformation

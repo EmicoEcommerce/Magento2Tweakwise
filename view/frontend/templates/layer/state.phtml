@@ -13,7 +13,6 @@ use Magento\Framework\Escaper;
  *
  * @var $block \Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\Navigation\State
  * @var $escaper Escaper
- * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
  */
 ?>
 <?php /** @var Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item[] $_filters */ ?>
@@ -27,7 +26,7 @@ use Magento\Framework\Escaper;
         role="heading"
         aria-level="2"
         data-role="title"
-        data-count="<?= /* @noEscape */ count($_filters) ?>"><?= $escaper->escapeHtml(__('Now Shopping by')) ?>
+        data-count="<?=  count($_filters) ?>"><?= $escaper->escapeHtml(__('Now Shopping by')) ?>
     </strong>
     <ol class="items">
         <?php foreach ($_filters as $_filter): ?>
@@ -43,8 +42,8 @@ use Magento\Framework\Escaper;
                         );
                     ?>
                     <a class="action remove" href="<?= $escaper->escapeUrl($_filter->getRemoveUrl()) ?>"
-                       data-js-filter-id="<?=$block->getActiveFilterCssId($_filter)?>"
-                       title="<?= /* @noEscape */ $escaper->escapeHtmlAttr(__('Remove')) . " " . $currentFilterName ?>">
+                       data-js-filter-id="<?=$escaper->escapeHtmlAttr($block->getActiveFilterCssId($_filter))?>"
+                       title="<?=  $escaper->escapeHtmlAttr(__('Remove') . " " . $currentFilterName)?>">
                         <span><?= $escaper->escapeHtml(__('Remove This Item')) ?></span>
                     </a>
                 </li>

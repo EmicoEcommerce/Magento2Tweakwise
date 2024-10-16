@@ -5,11 +5,13 @@
  * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
+use Magento\Framework\Escaper;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer;
 
 /**
  * @var $block SliderRenderer
- * phpcs:disable Magento2.Security.XssTemplate.FoundUnescaped
+ * @var $escaper Escaper
  */
 $itemPrefix = $block->getItemPrefix();
 $itemPostfix = $block->getItemPostfix();
@@ -25,8 +27,8 @@ $cointainsBuckets = $block->containsBuckets();
 $cointainsClickpoints = $block->containsClickpoints();
 $clickpointCounter = 0;
 ?>
-<div class="slider-attribute" id="attribute-slider-<?=$block->getCssId()?>">
-        <?php
+<div class="slider-attribute" id="attribute-slider-<?=$escaper->escapeHtmlAttr($block->getCssId())?>">
+    <?php
     if ($cointainsBuckets): ?>
         <div class="buckets">
             <?php
@@ -39,8 +41,8 @@ $clickpointCounter = 0;
                 $bucketHeight = floor($bucket['relativeamount'] * $bucketHightFactor);
                 $bucketWidth = (($rangeMax - $rangeMin) / $totalRange) * 100;
                 ?>
-                <a href="javascript:void(0);" class="bucket-link" style="width: <?= $bucketWidth ?>%" data-rangemin="<?= $rangeMin ?>" data-rangemax="<?= $rangeMax ?>">
-                    <div class="bucket-range" style="height: <?= $bucketHeight ?>px;">
+                <a href="javascript:void(0);" class="bucket-link" style="width: <?= $escaper->escapeHtmlAttr($bucketWidth) ?>%" data-rangemin="<?= $escaper->escapeHtmlAttr($rangeMin) ?>" data-rangemax="<?= $escaper->escapeHtmlAttr($rangeMax) ?>">
+                    <div class="bucket-range" style="height: <?= $escaper->escapeHtmlAttr($bucketHeight) ?>px;">
                     </div>
                 </a>
             <?php endforeach; ?>
@@ -59,56 +61,55 @@ $clickpointCounter = 0;
                 $clickpointCounter++;
                 ?>
             <a>
-                <div class="indicator" style="left: <?= $clickpointPosition ?>%">
-                    <div class="indicator-number"><?= ceil($clickpoint['value']) ?></div>
+                <div class="indicator" style="left: <?= $escaper->escapeHtmlAttr($clickpointPosition) ?>%">
+                    <div class="indicator-number"><?= $escaper->escapeHtml(ceil($clickpoint['value'])) ?></div>
                     <div class="indicator-arrow"></div>
                 </div>
             </a>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
-
     <div class="slider" data-mage-init="<?=$escaper->escapeHtmlAttr($block->getJsSliderConfig())?>"></div>
     <div class="labels">
         <span class="current-min-value">
-            <span class="prefix"><?= $itemPrefix ?></span>
-            <?= $block->renderValue($currentMinValue)?>
-            <span class="postfix"><?= $itemPostfix ?></span>
+            <span class="prefix"><?= $escaper->escapeHtml($itemPrefix) ?></span>
+            <?= $escaper->escapeHtml($block->renderValue($currentMinValue))?>
+            <span class="postfix"><?= $escaper->escapeHtml($itemPostfix) ?></span>
         </span>
         <span class="current-max-value">
-            <span class="prefix"><?= $itemPrefix ?></span>
-            <?=$block->renderValue($currentMaxValue)?>
-            <span class="postfix"><?= $itemPostfix ?></span>
+            <span class="prefix"><?= $escaper->escapeHtml($itemPrefix) ?></span>
+            <?= $escaper->escapeHtml($block->renderValue($currentMaxValue))?>
+            <span class="postfix"><?= $escaper->escapeHtml($itemPostfix) ?></span>
         </span>
     </div>
     <div class="slider-inputs">
         <div class="slider-min-wrapper">
-            <label for="<?= $urlKey ?>-min"><?=__('From')?></label>
+            <label for="<?= $escaper->escapeUrl($urlKey) ?>-min"><?= $escaper->escapeHtml(__('From'))?></label>
             <input type="text"
                    class="slider-min js-skip-submit"
-                   id="<?= $urlKey ?>-min"
-                   name="<?= $urlKey ?>-min"
-                   value="<?= $currentMinValue ?>"
+                   id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-min"
+                   name="<?= $escaper->escapeHtmlAttr($urlKey) ?>-min"
+                   value="<?= $escaper->escapeHtmlAttr($currentMinValue) ?>"
             >
         </div>
         <div class="slider-max-wrapper">
-            <label for="<?= $urlKey ?>-max"><?=__('To')?></label>
+            <label for="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"><?=$escaper->escapeHtml(__('To'))?></label>
             <input type="text"
                    class="slider-max js-skip-submit"
-                   id="<?= $urlKey ?>-max"
-                   name="<?= $urlKey ?>-max"
-                   value="<?= $currentMaxValue ?>"
+                   id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
+                   name="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
+                   value="<?= $escaper->escapeHtmlAttr($currentMaxValue) ?>"
             >
         </div>
         <input type="hidden"
-               data-disabled-input="<?=$disabledSliderUrlInputValue?>"
+               data-disabled-input="<?= $escaper->escapeHtmlAttr($disabledSliderUrlInputValue)?>"
                <?php if ($sliderUrlInputValue === $disabledSliderUrlInputValue):?>
                disabled="disabled"
                <?php endif;?>
-               id="<?=$block->getCssId()?>"
+               id="<?=$escaper->escapeHtmlAttr($block->getCssId())?>"
                class="slider-url-value"
-               name="<?= $urlKey ?>"
-               value="<?=$sliderUrlInputValue?>"
+               name="<?= $escaper->escapeHtmlAttr($urlKey) ?>"
+               value="<?=$escaper->escapeHtmlAttr($sliderUrlInputValue)?>"
         >
     </div>
 </div>

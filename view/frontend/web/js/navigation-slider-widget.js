@@ -24,6 +24,8 @@ define([
             currentMax: 99999999,
             formFilters: false,
             ajaxFilters: false,
+            containsBuckets: false,
+            containsClickpoints: false
         },
 
         /**
@@ -88,6 +90,10 @@ define([
             var sliderContainer = $(this.options.container);
             sliderContainer.on('change', '.slider-min', this._updateSliderUrlInput.bind(this));
             sliderContainer.on('change', '.slider-max', this._updateSliderUrlInput.bind(this));
+            if (this.options.containsBuckets) {
+                sliderContainer.on('click', '.bucket-link', this._clickBucketSlider.bind(this));
+            }
+
         },
 
         /**
@@ -103,6 +109,20 @@ define([
             var inputValue = minValue + '-' + maxValue;
             sliderUrlInput.val(inputValue);
             this._updateSliderDisabledAttribute(sliderUrlInput, inputValue)
+        },
+
+        _clickBucketSlider: function (event) {
+
+            var sliderContainer = $(this.options.container);
+            var sliderUrlInput = sliderContainer.find('.slider-url-value');
+            var bucket = $(event.currentTarget);
+            var minValue = bucket.data('rangemin');
+            var maxValue = bucket.data('rangemax');
+            var inputValue = minValue + '-' + maxValue;
+            sliderUrlInput.val(inputValue);
+            // Trigger change event on sliderUrlInput
+            this._updateSliderDisabledAttribute(sliderUrlInput, inputValue);
+            sliderUrlInput.trigger('change');
         },
 
         /**

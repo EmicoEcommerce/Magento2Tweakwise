@@ -71,13 +71,16 @@ class Client
      * @param Logger $log
      * @param ResponseFactory $responseFactory
      * @param EndpointManager $endpointManager
+     * @param Timer $timer
+     * @param ModuleInformation $moduleInformation
      */
     public function __construct(
         Config $config,
         Logger $log,
         ResponseFactory $responseFactory,
         EndpointManager $endpointManager,
-        Timer $timer
+        Timer $timer,
+        private readonly ModuleInformation $moduleInformation
     ) {
         $this->config = $config;
         $this->log = $log;
@@ -97,7 +100,7 @@ class Client
                 RequestOptions::HEADERS => [
                     'user-agent' => $this->config->getUserAgentString(),
                     'Accept-Encoding' => 'gzip, deflate',
-                    'TWN-Source' => $this->config->getModuleVersion(),
+                    'TWN-Source' => $this->moduleInformation->getModuleVersion(),
                 ]
             ];
             $this->client = new HttpClient($options);

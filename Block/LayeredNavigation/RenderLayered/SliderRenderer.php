@@ -173,4 +173,67 @@ class SliderRenderer extends DefaultRenderer
 
         return 'slider-' . $urlKey;
     }
+
+    /**
+     * @return bool
+     */
+    public function containsBuckets(): bool
+    {
+        return $this->filter->getFacet()->getFacetSettings()->containsBuckets();
+    }
+
+    /**
+     * @return bool
+     */
+    public function containsClickpoints(): bool
+    {
+        return $this->filter->getFacet()->getFacetSettings()->containsClickpoints();
+    }
+
+    /**
+     * @return array
+     */
+    public function getBuckets(): array
+    {
+        if ($this->containsBuckets()) {
+            return $this->filter->getFacet()->getBuckets();
+        }
+
+        return [];
+    }
+
+    public function getClickPoints(): array
+    {
+        if ($this->containsClickpoints()) {
+            return $this->filter->getFacet()->getClickpoints();
+        }
+
+        return [];
+    }
+
+    public function getBucketHightFactor(): float
+    {
+        $maxRelativeRange = 1;
+        if ($this->containsBuckets()) {
+            $buckets = $this->getBuckets();
+            foreach ($buckets as $bucket) {
+                //get max range from bucket array
+                if ($bucket['relativeamount'] > $maxRelativeRange) {
+                    $relativeAmount = ceil($bucket['relativeamount']);
+                    if ($relativeAmount > $maxRelativeRange) {
+                        $maxRelativeRange = $relativeAmount;
+                    }
+                }
+            }
+        }
+
+        $bucketHightFactor = 60 / $maxRelativeRange;
+
+        return $bucketHightFactor;
+    }
+
+    public function getTotalrange(): float
+    {
+        return ($this->getMaxValue() - $this->getMinValue());
+    }
 }

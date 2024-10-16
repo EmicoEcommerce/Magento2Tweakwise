@@ -43,6 +43,11 @@ class Filter extends AbstractFilter implements FilterInterface
     protected $items;
 
     /**
+     * @var array
+     */
+    protected $buckets;
+
+    /**
      * @var Layer
      */
     protected $layer;
@@ -175,6 +180,18 @@ class Filter extends AbstractFilter implements FilterInterface
     }
 
     /**
+     * @return array
+     */
+    public function getBuckets(): array
+    {
+        if (!$this->buckets) {
+            $this->initBuckets();
+        }
+
+        return $this->buckets;
+    }
+
+    /**
      * @param AttributeType $item
      * @return $this
      */
@@ -257,8 +274,7 @@ class Filter extends AbstractFilter implements FilterInterface
      */
     public function getName()
     {
-        $title = (string) $this->facet->getFacetSettings()->getTitle();
-        return htmlentities($title);
+        return (string) $this->facet->getFacetSettings()->getTitle();
     }
 
     /**
@@ -373,6 +389,14 @@ class Filter extends AbstractFilter implements FilterInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return void
+     */
+    protected function initBuckets(): void
+    {
+        $this->buckets = $this->facet->getBuckets();
     }
 
     /**

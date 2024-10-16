@@ -12,6 +12,7 @@
     <preference for="Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface" type="Tweakwise\Magento2Tweakwise\Model\AttributeSlugRepository"/>
     <preference for="Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
     <preference for="Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface" type="Tweakwise\Magento2Tweakwise\Model\AttributeSlug"/>
+    <preference for="Tweakwise\Magento2Tweakwise\Api\Data\VisualInterface" type="Tweakwise\Magento2Tweakwise\Model\Visual"/>
 
     <preference for="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlInterface" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />
     <preference for="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy" />

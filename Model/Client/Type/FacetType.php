@@ -51,7 +51,7 @@ class FacetType extends Type
         $this->data['attributes'] = $values;
         return $this;
     }
-        
+
     public function getFacetSettings(): ?SettingsType
     {
         return $this->getValue('facet_settings');
@@ -63,5 +63,35 @@ class FacetType extends Type
     public function getAttributes(): ?array
     {
         return $this->getValue('attributes');
+    }
+
+    /**
+     * @return array
+     */
+    public function getBuckets(): array
+    {
+        //only return buckets if there is more than one bucket
+        if (isset($this->data['buckets']['bucket'][0]) && is_array($this->data['buckets']['bucket'][0])) {
+            return $this->data['buckets']['bucket'];
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getClickpoints(): array
+    {
+        if (
+            isset($this->data['clickpoints']['clickpoint'][0])
+            && is_array($this->data['clickpoints']['clickpoint'][0])
+        ) {
+            return $this->data['clickpoints']['clickpoint'];
+        } elseif (isset($this->data['clickpoints']['clickpoint'])) {
+            return $this->data['clickpoints'];
+        }
+
+        return [];
     }
 }

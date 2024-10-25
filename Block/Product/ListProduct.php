@@ -101,7 +101,7 @@ class ListProduct extends MagentoListProduct
         }
 
         $queryParams = array_merge($this->request->getParams(), $queryParams);
-        $params['_query'] = $queryParams;
+        $params['_query'] = isset($params['_query']) ? array_merge($params['_query'], $queryParams) : $queryParams;
 
         return parent::getUrl($route, $params);
     }

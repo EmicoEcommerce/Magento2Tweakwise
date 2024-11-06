@@ -9,18 +9,24 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <script src="Tweakwise_Magento2Tweakwise::js/product-page.js"/>
+    </head>
 <body>
-        <referenceBlock name="product.info.upsell">
-            <arguments>
-                <argument name="view_model_linked_product_list_item" xsi:type="object">
-                    Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem
-                </argument>
-            </arguments>
-            <block class="Magento\Catalog\Block\Product\AbstractProduct"
-                   name="tweakwise.catalog.linked.product.list.item"
-                   template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-                   ifconfig="tweakwise/personal_merchandising/enabled"/>
-        </referenceBlock>
+    <referenceContainer name="content">
+        <block class="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductPage" name="magento2tweakwise.productpage" template="Tweakwise_Magento2Tweakwise::product/page.phtml"/>
+    </referenceContainer>
+    <referenceBlock name="product.info.upsell">
+        <arguments>
+            <argument name="view_model_linked_product_list_item" xsi:type="object">
+                Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem
+            </argument>
+        </arguments>
+        <block class="Magento\Catalog\Block\Product\AbstractProduct"
+               name="tweakwise.catalog.linked.product.list.item"
+               template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
+               ifconfig="tweakwise/personal_merchandising/enabled"/>
+    </referenceBlock>
     <referenceBlock name="catalog.product.related">
         <arguments>
             <argument name="view_model_linked_product_list_item" xsi:type="object">

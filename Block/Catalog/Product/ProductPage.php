@@ -4,8 +4,9 @@ namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product;
 
 use Magento\Framework\View\Element\Template;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandising;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use
+use Magento\Store\Model\StoreManagerInterface;
 
 class ProductPage extends Template
 {
@@ -13,19 +14,19 @@ class ProductPage extends Template
         Template\Context $context,
         private readonly Config $tweakwiseConfig,
         private readonly Helper $helper,
+        private PersonalMerchandising $personalMerchandising,
+        private readonly StoreManagerInterface $storeManager,
         array $data = []
     ) {
         parent::__construct($context, $data);
     }
 
-    public function getProfileKey()
-    {
-        //return $this->tweakwiseConfig->getOrSetProfileKey();
-    }
-
     public function getProductKey()
     {
-        return 'test';
+        $productId = $this->getRequest()->getParam('id');
+        $storeId = $this->storeManager->getStore()->getId();
+
+        return $this->helper->getTweakwiseId($storeId, $productId);
     }
 
     public function getApiUrl()
@@ -36,5 +37,10 @@ class ProductPage extends Template
     public function getInstanceKey()
     {
         return $this->tweakwiseConfig->getGeneralAuthenticationKey();
+    }
+
+    public function getCookieName()
+    {
+        return $this->tweakwiseConfig->getPersonalMerchandisingCookieName();
     }
 }

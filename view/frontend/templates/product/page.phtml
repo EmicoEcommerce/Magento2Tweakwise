@@ -1,4 +1,21 @@
 <?php
-$profileKey = $block->getProfileKey();
+
+/** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductPage $block */
+$tweakwiseCookieName = $block->getCookieName();
 $apiUrl = $block->getApiUrl();
 $productKey = $block->getProductKey();
+$instanceKey = $block->getInstanceKey();
+?>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Tweakwise_Magento2Tweakwise/js/product-page": {
+                "apiUrl": "<?php echo $apiUrl; ?>",
+            "tweakwiseCookieName": "<?php echo $tweakwiseCookieName; ?>",
+            "productKey": "<?php echo $productKey; ?>",
+            "instanceKey": "<?php echo $instanceKey; ?>"
+        }
+    }
+}
+</script>

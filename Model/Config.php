@@ -408,7 +408,12 @@ class Config
      */
     public function getPersonalMerchandisingCookieName(Store $store = null)
     {
-        return (string) $this->getStoreConfig('tweakwise/personal_merchandising/cookie_name', $store);
+        $cookie = $this->getStoreConfig('tweakwise/personal_merchandising/cookie_name', $store);
+
+        if (empty($cookie)) {
+            $cookie = 'tw_analytics';
+        }
+        return $cookie;
     }
 
     /**
@@ -535,7 +540,7 @@ class Config
      * @return mixed|string|null
      * @throws LocalizedException
      */
-    protected function getStoreConfig(string $path, Store $store = null)
+    public function getStoreConfig(string $path, Store $store = null)
     {
         if ($store) {
             return $store->getConfig($path);

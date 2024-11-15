@@ -6,7 +6,7 @@ namespace Tweakwise\Magento2Tweakwise\Block\Product;
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Block\Product\Context;
-use Magento\Catalog\Block\Product\ListProduct as MagentoListProduct;
+use Tweakwise\Magento2Tweakwise\Block\Product\ListProduct;
 use Magento\Catalog\Helper\Output as OutputHelper;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Catalog\Model\Layer\Search as SearchLayer;
@@ -18,7 +18,7 @@ use Magento\Framework\Url\Helper\Data;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 
-class ListSearchProduct extends MagentoListProduct
+class ListSearchProduct extends ListProduct
 {
     /**
      * @param Context $context
@@ -45,7 +45,7 @@ class ListSearchProduct extends MagentoListProduct
         private readonly Cache $cacheHelper,
         private readonly Registry $registry,
         private readonly RequestInterface $request,
-        readonly SearchLayer $searchLayer,
+        private readonly SearchLayer $searchLayer,
         array $data = [],
         ?OutputHelper $outputHelper = null
     ) {
@@ -55,6 +55,11 @@ class ListSearchProduct extends MagentoListProduct
             $layerResolver,
             $categoryRepository,
             $urlHelper,
+            $tweakwiseConfig,
+            $cookieManager,
+            $cacheHelper,
+            $registry,
+            $request,
             $data,
             $outputHelper
         );
@@ -63,84 +68,5 @@ class ListSearchProduct extends MagentoListProduct
     public function getLayer()
     {
         return $this->searchLayer;
-    }
-
-    /**
-     * @return int|bool|null
-     */
-    protected function getCacheLifetime()
-    {
-        if (
-            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
-            $this->cacheHelper->isTweakwiseAjaxRequest()
-        ) {
-            return parent::getCacheLifetime();
-        }
-
-        $this->setData('ttl', Cache::PRODUCT_LIST_TTL);
-        $this->setData('cache_lifetime', Cache::PRODUCT_LIST_TTL);
-        return $this->getData('cache_lifetime');
-    }
-
-    /**
-     * @param string $route
-     * @param array $params
-     * @return string
-     */
-    public function getUrl($route = '', $params = [])
-    {
-        if (
-            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
-            $route !== 'page_cache/block/esi'
-        ) {
-            return parent::getUrl($route, $params);
-        }
-
-        $queryParams = [];
-        $profileKey = $this->getProfileKey();
-        if ($profileKey) {
-            $queryParams['tn_pk'] = $profileKey;
-        }
-
-        $category = $this->registry->registry('current_category');
-        if ($category) {
-            $queryParams['cc_id'] = $category->getId();
-        }
-
-        $queryParams = array_merge($this->request->getParams(), $queryParams);
-        $params['_query'] = $queryParams;
-
-        return parent::getUrl($route, $params);
-    }
-
-    /**
-     * @return string
-     */
-    public function getTemplate()
-    {
-        if (
-            !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
-            $this->cacheHelper->isHyvaTheme()
-        ) {
-            return parent::getTemplate();
-        }
-
-        return 'Tweakwise_Magento2Tweakwise::product/list.phtml';
-    }
-
-    /**
-     * @return string|null
-     */
-    private function getProfileKey(): ?string
-    {
-        return $this->cookieManager->getCookie(
-            $this->tweakwiseConfig->getPersonalMerchandisingCookieName(),
-            null
-        );
-    }
-
-    public function _getProductCollection()
-    {
-        return parent::_getProductCollection();
     }
 }

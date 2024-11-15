@@ -23,6 +23,11 @@
     </type>
     <preference for="Magento\Catalog\Block\Product\ListProduct"
                 type="Tweakwise\Magento2Tweakwise\Block\Product\ListProduct"/>
+    <type name="Tweakwise\Magento2Tweakwise\Block\Product\ListSearchProduct">
+        <arguments>
+            <argument name="view_model_linked_product_list_item" xsi:type="object">Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem</argument>
+        </arguments>
+    </type>
     <preference for="Magento\Catalog\Block\Product\ProductList\Upsell"
                 type="Tweakwise\Magento2Tweakwise\Block\Product\ProductList\Upsell"/>
     <preference for="Magento\Catalog\Block\Product\ProductList\Related"

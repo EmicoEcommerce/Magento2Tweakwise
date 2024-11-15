@@ -20,6 +20,14 @@
                     <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>
                 </arguments>
             </block>
+            <block class="Magento\Catalog\Block\Product\AbstractProduct"
+                   name="tweakwise.catalog.product.list.item"
+                   template="Tweakwise_Magento2Tweakwise::product/list/item.phtml"
+                   ifconfig="tweakwise/personal_merchandising/enabled"/>
+            <block class="Magento\Catalog\Block\Product\AbstractProduct"
+                   name="tweakwise.catalog.product.list.visual"
+                   template="Tweakwise_Magento2Tweakwise::product/list/visual.phtml"
+                   ifconfig="tweakwise/personal_merchandising/enabled"/>
         </referenceBlock>
         <referenceBlock name="search.result">
             <block ifconfig="tweakwise/search/searchbanner" before="-" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.products.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.products.top.phtml">
@@ -27,6 +35,24 @@
                     <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>
                 </arguments>
             </block>
+        </referenceBlock>
+        <referenceBlock name="search_result_list">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Tweakwise_Magento2Tweakwise::product/list.phtml</argument>
+            </action>
+            <arguments>
+                <argument name="view_model_product_list_item" xsi:type="object">
+                    Tweakwise\Magento2Tweakwise\ViewModel\ProductListItem
+                </argument>
+            </arguments>
+            <block class="Magento\Catalog\Block\Product\AbstractProduct"
+                   name="tweakwise.catalog.product.list.item"
+                   template="Tweakwise_Magento2Tweakwise::product/list/item.phtml"
+                   ifconfig="tweakwise/personal_merchandising/enabled"/>
+            <block class="Magento\Catalog\Block\Product\AbstractProduct"
+                   name="tweakwise.catalog.product.list.visual"
+                   template="Tweakwise_Magento2Tweakwise::product/list/visual.phtml"
+                   ifconfig="tweakwise/personal_merchandising/enabled"/>
         </referenceBlock>
         <referenceBlock name="catalogsearch.leftnav">
             <arguments>

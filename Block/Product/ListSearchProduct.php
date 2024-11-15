@@ -9,6 +9,7 @@ use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\ListProduct as MagentoListProduct;
 use Magento\Catalog\Helper\Output as OutputHelper;
 use Magento\Catalog\Model\Layer\Resolver;
+use Magento\Catalog\Model\Layer\Search as SearchLayer;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Registry;
@@ -44,6 +45,7 @@ class ListSearchProduct extends MagentoListProduct
         private readonly Cache $cacheHelper,
         private readonly Registry $registry,
         private readonly RequestInterface $request,
+        readonly SearchLayer $searchLayer,
         array $data = [],
         ?OutputHelper $outputHelper = null
     ) {
@@ -56,6 +58,11 @@ class ListSearchProduct extends MagentoListProduct
             $data,
             $outputHelper
         );
+    }
+
+    public function getLayer()
+    {
+        return $this->searchLayer;
     }
 
     /**

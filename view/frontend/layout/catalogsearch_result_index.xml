@@ -37,9 +37,6 @@
             </block>
         </referenceBlock>
         <referenceBlock name="search_result_list">
-            <action method="setTemplate">
-                <argument name="template" xsi:type="string">Tweakwise_Magento2Tweakwise::product/list.phtml</argument>
-            </action>
             <arguments>
                 <argument name="view_model_product_list_item" xsi:type="object">
                     Tweakwise\Magento2Tweakwise\ViewModel\ProductListItem

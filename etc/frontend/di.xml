@@ -21,6 +21,8 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Magento\CatalogSearch\Block\SearchResult\ListProduct"
+                type="Tweakwise\Magento2Tweakwise\Block\Product\ListProduct"/>
     <preference for="Magento\Catalog\Block\Product\ListProduct"
                 type="Tweakwise\Magento2Tweakwise\Block\Product\ListProduct"/>
     <preference for="Magento\Catalog\Block\Product\ProductList\Upsell"

@@ -21,8 +21,14 @@
             </argument>
         </arguments>
     </type>
+    <virtualType name="Tweakwise\Magento2Tweakwise\Block\SearchResult\ListProduct"
+                 type="Tweakwise\Magento2Tweakwise\Block\Product\ListProduct">
+        <arguments>
+            <argument name="catalogLayer" xsi:type="object">Magento\Catalog\Model\Layer\Search</argument>
+        </arguments>
+    </virtualType>
     <preference for="Magento\CatalogSearch\Block\SearchResult\ListProduct"
-                type="Tweakwise\Magento2Tweakwise\Block\Product\ListProduct"/>
+                type="Tweakwise\Magento2Tweakwise\Block\SearchResult\ListProduct"/>
     <preference for="Magento\Catalog\Block\Product\ListProduct"
                 type="Tweakwise\Magento2Tweakwise\Block\Product\ListProduct"/>
     <preference for="Magento\Catalog\Block\Product\ProductList\Upsell"

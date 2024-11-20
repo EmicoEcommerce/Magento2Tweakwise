@@ -71,16 +71,13 @@ class Client
      * @param Logger $log
      * @param ResponseFactory $responseFactory
      * @param EndpointManager $endpointManager
-     * @param Timer $timer
-     * @param ModuleInformation $moduleInformation
      */
     public function __construct(
         Config $config,
         Logger $log,
         ResponseFactory $responseFactory,
         EndpointManager $endpointManager,
-        Timer $timer,
-        private readonly ModuleInformation $moduleInformation
+        Timer $timer
     ) {
         $this->config = $config;
         $this->log = $log;
@@ -99,8 +96,7 @@ class Client
                 RequestOptions::TIMEOUT => self::REQUEST_TIMEOUT,
                 RequestOptions::HEADERS => [
                     'user-agent' => $this->config->getUserAgentString(),
-                    'Accept-Encoding' => 'gzip, deflate',
-                    'TWN-Source' => $this->moduleInformation->getModuleVersion(),
+                    'Accept-Encoding' => 'gzip, deflate'
                 ]
             ];
             $this->client = new HttpClient($options);
@@ -115,8 +111,32 @@ class Client
      */
     protected function createHttpRequest(Request $tweakwiseRequest): HttpRequest
     {
+        if ($tweakwiseRequest->isPostRequest()) {
+            return $this->createPostRequest($tweakwiseRequest);
+        } else {
+            return $this->createGetRequest($tweakwiseRequest);
+        }
+    }
+
+    protected function createPostRequest(Request $tweakwiseRequest): HttpRequest
+    {
+        $path = $tweakwiseRequest->getPath();
+        $headers = [];
+
+        $headers['Content-Type'] = 'application/json';
+        $headers['Instance-Key'] = $this->config->getGeneralAuthenticationKey();
+        $body = json_encode($tweakwiseRequest->getParameters());
+        //post request are used for the analytics api
+        $uri = new Uri($tweakwiseRequest->getApiUrl().'/'.$path);
+        return new HttpRequest('POST', $uri, $headers, $body);
+    }
+
+    protected function createGetRequest(Request $tweakwiseRequest): HttpRequest
+    {
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
+
+        $headers = [];
 
         if ($path === "recommendations/featured") {
             if ($this->config->getRecommendationsFeaturedCategory()) {
@@ -134,12 +154,11 @@ class Client
 
         if ($tweakwiseRequest->getParameters()) {
             $query = http_build_query($tweakwiseRequest->getParameters());
-            $url = sprintf('%s?%s', $url, $query);
+            $url   = sprintf('%s?%s', $url, $query);
         }
 
         $uri = new Uri($url);
-
-        return new HttpRequest('GET', $uri);
+        return new HttpRequest('GET', $uri, $headers);
     }
 
     /**
@@ -207,6 +226,10 @@ class Client
                 $requestUrl
             )
         );
+
+        if ($statusCode === 204) {
+            return $this->responseFactory->create($tweakwiseRequest, []);
+        }
 
         if ($statusCode !== 200) {
             throw new ApiException(

@@ -235,9 +235,14 @@
                         setting below)
                     </comment>
                 </field>
+                <field id="analytics_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send analytics events to tweakwise</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Note only enable this if you don't use javascript to send productviews/search/purchases requests to tweakwise</comment>
+                </field>
                 <field id="cookie_name" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cookie name</label>
-                    <comment>Name of cookie which holds tweakwise profile information, this is usually set in the tweakwise measure script.</comment>
+                    <comment>Name of cookie which holds tweakwise profile information, this is usually set in the tweakwise measure script. Or when analytics is enabled, it is done automaticly</comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

@@ -235,6 +235,11 @@
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\FacetAttributeRequest</argument>
         </arguments>
     </type>
+    <type name="Tweakwise\Magento2Tweakwise\Observer\TweakwiseCheckout">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest</argument>
+        </arguments>
+    </type>
 
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FacetTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet">
         <arguments>
@@ -418,5 +423,9 @@
             <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest</argument>
         </arguments>
     </virtualType>
-
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
+        <arguments>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\PurchaseRequest</argument>
+        </arguments>
+    </virtualType>
 </config>

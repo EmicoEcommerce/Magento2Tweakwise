@@ -326,4 +326,15 @@ class Request
         $this->setParameter('tn_profilekey', $profileKey);
         return $this;
     }
+
+    public function setParameterArray(string $parameter, array $value)
+    {
+        $this->parameters[$parameter] = $value;
+        return $this;
+    }
+
+    public function isPostRequest()
+    {
+        return false;
+    }
 }

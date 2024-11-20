@@ -1,6 +1,6 @@
 <?php
 
-/** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductPage $block */
+/** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\PersonalMerchandisingAnalytics $block */
 $tweakwiseCookieName = $block->getCookieName();
 $apiUrl = $block->getApiUrl();
 $productKey = $block->getProductKey();
@@ -11,10 +11,10 @@ $instanceKey = $block->getInstanceKey();
     {
         "*": {
             "Tweakwise_Magento2Tweakwise/js/product-page": {
-                "apiUrl": "<?php echo $apiUrl; ?>",
-            "tweakwiseCookieName": "<?php echo $tweakwiseCookieName; ?>",
-            "productKey": "<?php echo $productKey; ?>",
-            "instanceKey": "<?php echo $instanceKey; ?>"
+                "apiUrl": "<?= $apiUrl; ?>pageview",
+            "tweakwiseCookieName": "<?= $tweakwiseCookieName; ?>",
+            "productKey": "<?= $productKey; ?>",
+            "instanceKey": "<?= $instanceKey; ?>"
         }
     }
 }

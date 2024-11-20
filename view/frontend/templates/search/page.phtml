@@ -1,0 +1,21 @@
+<?php
+
+/** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\PersonalMerchandisingAnalytics $block */
+$tweakwiseCookieName = $block->getCookieName();
+$apiUrl = $block->getApiUrl();
+$searchQuery = $block->getSearchQuery();
+$instanceKey = $block->getInstanceKey();
+?>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Tweakwise_Magento2Tweakwise/js/search-page": {
+                "apiUrl": "<?php echo $apiUrl; ?>search",
+            "tweakwiseCookieName": "<?php echo $tweakwiseCookieName; ?>",
+            "searchQuery": "<?php echo $searchQuery; ?>",
+            "instanceKey": "<?php echo $instanceKey; ?>"
+        }
+    }
+}
+</script>

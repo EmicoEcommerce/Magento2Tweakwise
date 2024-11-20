@@ -541,7 +541,7 @@ class Config
      * @return mixed|string|null
      * @throws LocalizedException
      */
-    public function getStoreConfig(string $path, Store $store = null)
+    protected function getStoreConfig(string $path, Store $store = null)
     {
         if ($store) {
             return $store->getConfig($path);

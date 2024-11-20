@@ -12,25 +12,35 @@ use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Magento\Framework\App\Request\Http as Request;
+use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
-use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class TweakwiseCheckout implements ObserverInterface
 {
+    /**
+     * Constructor.
+     *
+     * @param RequestFactory              $requestFactory
+     * @param Client                      $client
+     * @param Helper                      $helper
+     * @param StoreManagerInterface       $storeManager
+     * @param PersonalMerchandisingConfig $config
+     * @param CookieManagerInterface      $cookieManager
+     */
     public function __construct(
         private readonly RequestFactory $requestFactory,
         private readonly Client $client,
         private readonly Helper $helper,
         private readonly StoreManagerInterface $storeManager,
-        private readonly Config $config,
+        private readonly PersonalMerchandisingConfig $config,
         private readonly CookieManagerInterface $cookieManager
     ) {
     }
 
     public function execute(Observer $observer)
     {
-        if ($this->config->getStoreConfig('tweakwise/personal_merchandising/analytics_enabled')) {
+        if ($this->config->isAnalyticsEnabled('tweakwise/personal_merchandising/analytics_enabled')) {
             if ($this->config->isPersonalMerchandisingActive()) {
                 $order = $observer->getEvent()->getOrder();
                 // Get the order items

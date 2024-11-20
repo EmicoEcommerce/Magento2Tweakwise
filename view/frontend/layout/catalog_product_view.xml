@@ -14,7 +14,7 @@
     </head>
 <body>
     <referenceContainer name="content">
-        <block class="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductPage" name="magento2tweakwise.productpage" template="Tweakwise_Magento2Tweakwise::product/page.phtml"/>
+        <block class="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductPage" name="magento2tweakwise.productpage" template="Tweakwise_Magento2Tweakwise::product/page.phtml" ifconfig="tweakwise/personal_merchandising/analytics_enabled"/>
     </referenceContainer>
     <referenceBlock name="product.info.upsell">
         <arguments>

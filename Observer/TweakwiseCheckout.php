@@ -29,12 +29,14 @@ class TweakwiseCheckout implements ObserverInterface
 
     public function execute(Observer $observer)
     {
-        if ($this->config->isPersonalMerchandisingActive()) {
-            $order = $observer->getEvent()->getOrder();
-            // Get the order items
-            $items = $order->getAllItems();
+        if ($this->config->getStoreConfig('tweakwise/personal_merchandising/analytics_enabled')) {
+            if ($this->config->isPersonalMerchandisingActive()) {
+                $order = $observer->getEvent()->getOrder();
+                // Get the order items
+                $items = $order->getAllItems();
 
-            $this->sendCheckout($items);
+                $this->sendCheckout($items);
+            }
         }
     }
 
@@ -58,7 +60,7 @@ class TweakwiseCheckout implements ObserverInterface
 
         try {
             $this->client->request($tweakwiseRequest);
-        } catch (ApiException $e) {
+        } catch (\Exception $e) {
             // Log error
             $this->log->error('Purchase request for tw failed: ' . $e->getMessage());
         }

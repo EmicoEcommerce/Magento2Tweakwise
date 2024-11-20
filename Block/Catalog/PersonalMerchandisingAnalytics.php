@@ -21,7 +21,7 @@ class PersonalMerchandisingAnalytics extends Template
         parent::__construct($context, $data);
     }
 
-    public function getProductKey(): int
+    public function getProductKey(): string
     {
         $productId = $this->getRequest()->getParam('id');
         $storeId = $this->storeManager->getStore()->getId();
@@ -30,7 +30,7 @@ class PersonalMerchandisingAnalytics extends Template
             return 0;
         }
 
-        return $this->helper->getTweakwiseId($storeId, $productId);
+        return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
     }
 
     public function getApiUrl(): string

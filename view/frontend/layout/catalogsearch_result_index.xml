@@ -6,9 +6,6 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <head>
-        <script src="Tweakwise_Magento2Tweakwise::js/search-page.js"/>
-    </head>
     <body>
         <referenceBlock name="columns.top">
             <block ifconfig="tweakwise/search/searchbanner" before="-" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.container.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.container.top.phtml">

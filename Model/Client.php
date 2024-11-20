@@ -127,7 +127,7 @@ class Client
         $headers['Instance-Key'] = $this->config->getGeneralAuthenticationKey();
         $body = json_encode($tweakwiseRequest->getParameters());
         //post request are used for the analytics api
-        $uri = new Uri($tweakwiseRequest->getApiUrl() . '/'.$path);
+        $uri = new Uri($tweakwiseRequest->getApiUrl() . '/' . $path);
         return new HttpRequest('POST', $uri, $headers, $body);
     }
 

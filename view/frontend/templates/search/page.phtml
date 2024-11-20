@@ -1,6 +1,9 @@
 <?php
 
+use Magento\Framework\Escaper;
+
 /** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\PersonalMerchandisingAnalytics $block */
+/** @var  Escaper $escaper */
 $tweakwiseCookieName = $block->getCookieName();
 $apiUrl = $block->getApiUrl();
 $searchQuery = $block->getSearchQuery();
@@ -11,12 +14,12 @@ $instanceKey = $block->getInstanceKey();
     {
         "*": {
             "Tweakwise_Magento2Tweakwise/js/search-page": {
-                "apiUrl": "<?php echo $apiUrl; ?>search",
-            "tweakwiseCookieName": "<?php echo $tweakwiseCookieName; ?>",
-            "searchQuery": "<?php echo $searchQuery; ?>",
-            "instanceKey": "<?php echo $instanceKey; ?>"
+                "apiUrl": "<?= $escaper->escapeUrl($apiUrl); ?>search",
+            "tweakwiseCookieName": "<?= $escaper->escapeHtmlAttr($tweakwiseCookieName); ?>",
+            "searchQuery": "<?= $escaper->escapeHtmlAttr($searchQuery); ?>",
+            "instanceKey": "<?= $escaper->escapeHtmlAttr($instanceKey); ?>"
         }
     }
 }
 </script>
-<script src="<?php echo $this->getViewFileUrl('Tweakwise_Magento2Tweakwise::js/search-page.js'); ?>"></script>
+<script src="<?= $this->getViewFileUrl('Tweakwise_Magento2Tweakwise::js/search-page.js'); ?>"></script>

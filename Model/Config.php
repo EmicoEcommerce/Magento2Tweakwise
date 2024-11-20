@@ -413,6 +413,7 @@ class Config
         if (empty($cookie)) {
             $cookie = 'tw_analytics';
         }
+
         return $cookie;
     }
 

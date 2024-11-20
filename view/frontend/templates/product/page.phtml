@@ -1,20 +1,24 @@
 <?php
 
 /** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\PersonalMerchandisingAnalytics $block */
+/** @var  Escaper $escaper */
+
+use Magento\Framework\Escaper;
+
 $tweakwiseCookieName = $block->getCookieName();
-$apiUrl = $block->getApiUrl();
-$productKey = $block->getProductKey();
-$instanceKey = $block->getInstanceKey();
+$apiUrl              = $block->getApiUrl();
+$productKey          = $block->getProductKey();
+$instanceKey         = $block->getInstanceKey();
 ?>
 
 <script type="text/x-magento-init">
     {
         "*": {
             "Tweakwise_Magento2Tweakwise/js/product-page": {
-                "apiUrl": "<?= $apiUrl; ?>pageview",
-            "tweakwiseCookieName": "<?= $tweakwiseCookieName; ?>",
-            "productKey": "<?= $productKey; ?>",
-            "instanceKey": "<?= $instanceKey; ?>"
+                "apiUrl": "<?= $escaper->escapeUrl($apiUrl); ?>pageview",
+            "tweakwiseCookieName": "<?= $escaper->escapeHtmlAttr($tweakwiseCookieName); ?>",
+            "productKey": "<?= $escaper->escapeHtmlAttr($productKey); ?>",
+            "instanceKey": "<?= $escaper->escapeHtmlAttr($instanceKey); ?>"
         }
     }
 }

@@ -180,10 +180,13 @@ define([
             var href = aElement.attr('href');
             if (this.options.seoEnabled) {
                 var seoHref = aElement.data('seo-href');
-                return seoHref ? seoHref : href;
+                href = seoHref ? seoHref : href;
             }
 
-            return href;
+            let url = new URL(href, window.location.origin);
+            url.search = this._getFilterParameters();
+
+            return url.toString();
         },
 
         /**

@@ -126,6 +126,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 'productListSelector' => '.products.wrapper',
                 'toolbarSelector' => '.toolbar.toolbar-products',
                 'ajaxCache' => true,
+                'urlStrategy' => $this->config->getUrlStrategy()
             ],
         ];
         if ($this->config->isPersonalMerchandisingActive()) {

@@ -33,31 +33,38 @@ class TweakwiseCheckout implements ObserverInterface
         private readonly Client $client,
         private readonly Helper $helper,
         private readonly StoreManagerInterface $storeManager,
-        private readonly PersonalMerchandisingConfig $config,
-        private readonly CookieManagerInterface $cookieManager
+        private readonly PersonalMerchandisingConfig $config
     ) {
     }
 
+    /**
+     * @param Observer $observer
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function execute(Observer $observer)
     {
         if ($this->config->isAnalyticsEnabled('tweakwise/personal_merchandising/analytics_enabled')) {
-            if ($this->config->isPersonalMerchandisingActive()) {
-                $order = $observer->getEvent()->getOrder();
-                // Get the order items
-                $items = $order->getAllItems();
+            $order = $observer->getEvent()->getOrder();
+            // Get the order items
+            $items = $order->getAllItems();
 
-                $this->sendCheckout($items);
-            }
+            $this->sendCheckout($items);
+
         }
     }
 
+    /**
+     * @param $items
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     private function sendCheckout($items)
     {
         $storeId = (int)$this->storeManager->getStore()->getId();
-        $profileKey = $this->cookieManager->getCookie(
-            $this->config->getPersonalMerchandisingCookieName(),
-            null
-        );
+        $profileKey = $this->config->getProfileKey();
         $tweakwiseRequest = $this->requestFactory->create();
 
         $tweakwiseRequest->setParameter('profileKey', $profileKey);
@@ -72,8 +79,7 @@ class TweakwiseCheckout implements ObserverInterface
         try {
             $this->client->request($tweakwiseRequest);
         } catch (\Exception $e) {
-            // Log error
-            $this->log->error('Purchase request for tw failed: ' . $e->getMessage());
+            // Do nothing
         }
     }
 }

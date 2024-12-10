@@ -12,43 +12,42 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetResponse;
 
-class PurchaseRequest extends Request
+class AnalyticsRequest extends Request
 {
     /**
      * @var string
      */
-    protected $path = 'purchase';
-
-    /**
-     * @var array
-     */
-    protected $productKeys;
+    protected $path = '';
 
     protected $apiUrl = 'https://navigator-analytics.tweakwise.com/api';
 
-    /**
-     * @return true
-     */
     public function isPostRequest()
     {
         return true;
     }
 
-    /**
-     * @return mixed|string
-     */
     public function getApiurl()
     {
         return $this->apiUrl;
     }
 
-    /**
-     * @param string $profileKey
-     *
-     * @return void
-     */
     public function setProfileKey(string $profileKey)
     {
         $this->setParameter('ProfileKey', $profileKey);
+    }
+
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    public function getProfileKey()
+    {
+        $profileKey = $this->getCookie($this->config->getPersonalMerchandisingCookieName());
+        if (!$profileKey) {
+            $profileKey = $this->generateProfileKey();
+            $this->setCookie('profileKey', $profileKey);
+        }
+        return $profileKey;
     }
 }

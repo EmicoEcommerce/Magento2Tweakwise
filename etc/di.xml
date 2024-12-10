@@ -240,6 +240,11 @@
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest</argument>
         </arguments>
     </type>
+    <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\Analytics">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
+        </arguments>
+    </type>
 
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FacetTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Facet">
         <arguments>
@@ -426,6 +431,11 @@
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
             <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\PurchaseRequest</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
+        <arguments>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\AnalyticsRequest</argument>
         </arguments>
     </virtualType>
 </config>

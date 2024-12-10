@@ -21,26 +21,41 @@ class AnalyticsRequest extends Request
 
     protected $apiUrl = 'https://navigator-analytics.tweakwise.com/api';
 
+    /**
+     * @return string
+     */
     public function isPostRequest()
     {
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getApiurl()
     {
         return $this->apiUrl;
     }
 
+    /**
+     * @return string
+     */
     public function setProfileKey(string $profileKey)
     {
         $this->setParameter('ProfileKey', $profileKey);
     }
 
+    /**
+     * @return string
+     */
     public function setPath($path)
     {
         $this->path = $path;
     }
 
+    /**
+     * @return string
+     */
     public function getProfileKey()
     {
         $profileKey = $this->getCookie($this->config->getPersonalMerchandisingCookieName());
@@ -48,6 +63,7 @@ class AnalyticsRequest extends Request
             $profileKey = $this->generateProfileKey();
             $this->setCookie('profileKey', $profileKey);
         }
+
         return $profileKey;
     }
 }

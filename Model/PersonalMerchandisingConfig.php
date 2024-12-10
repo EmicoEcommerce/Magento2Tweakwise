@@ -23,8 +23,7 @@ class PersonalMerchandisingConfig extends Config
         private CookieManagerInterface $cookieManager,
         private CookieMetadataFactory $cookieMetadataFactory
     ) {
-        parent::__construct($config, $jsonSerializer, $request, $state,
-            $configWriter, $cacheTypeList);
+        parent::__construct($config, $jsonSerializer, $request, $state, $configWriter, $cacheTypeList);
     }
 
     /**
@@ -36,6 +35,9 @@ class PersonalMerchandisingConfig extends Config
         return (bool)$this->getStoreConfig('tweakwise/personal_merchandising/analytics_enabled', $store);
     }
 
+    /**
+     * @return string|null
+     */
     public function getProfileKey()
     {
         $profileKey = $this->cookieManager->getCookie(
@@ -43,7 +45,7 @@ class PersonalMerchandisingConfig extends Config
             null
         );
 
-        if($this->isAnalyticsEnabled()) {
+        if ($this->isAnalyticsEnabled()) {
             if ($profileKey === null) {
                 $profileKey = $this->generateProfileKey();
                 $this->cookieManager->setPublicCookie(
@@ -53,9 +55,13 @@ class PersonalMerchandisingConfig extends Config
                 );
             }
         }
+
         return $profileKey;
     }
 
+    /**
+     * @return string
+     */
     private function getCookieMetadata()
     {
         return $this->cookieMetadataFactory
@@ -65,6 +71,9 @@ class PersonalMerchandisingConfig extends Config
             ->setSecure(true);
     }
 
+    /**
+     * @return string
+     */
     private function generateProfileKey()
     {
         return uniqid('', true);

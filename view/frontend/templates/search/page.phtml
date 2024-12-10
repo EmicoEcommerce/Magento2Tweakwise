@@ -3,21 +3,15 @@
 use Magento\Framework\Escaper;
 
 /** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\PersonalMerchandisingAnalytics $block */
-/** @var  Escaper $escaper */
-$tweakwiseCookieName = $block->getCookieName();
-$apiUrl = $block->getApiUrl();
+
 $searchQuery = $block->getSearchQuery();
-$instanceKey = $block->getInstanceKey();
 ?>
 
 <script type="text/x-magento-init">
     {
         "*": {
             "Tweakwise_Magento2Tweakwise/js/search-page": {
-                "apiUrl": "<?= $escaper->escapeUrl($apiUrl); ?>search",
-            "tweakwiseCookieName": "<?= $escaper->escapeHtmlAttr($tweakwiseCookieName); ?>",
-            "searchQuery": "<?= $escaper->escapeHtmlAttr($searchQuery); ?>",
-            "instanceKey": "<?= $escaper->escapeHtmlAttr($instanceKey); ?>"
+              "instanceKey": "<?= $escaper->escapeHtmlAttr($instanceKey); ?>"
         }
     }
 }

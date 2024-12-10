@@ -26,7 +26,6 @@ class TweakwiseCheckout implements ObserverInterface
      * @param Helper                      $helper
      * @param StoreManagerInterface       $storeManager
      * @param PersonalMerchandisingConfig $config
-     * @param CookieManagerInterface      $cookieManager
      */
     public function __construct(
         private readonly RequestFactory $requestFactory,
@@ -51,7 +50,6 @@ class TweakwiseCheckout implements ObserverInterface
             $items = $order->getAllItems();
 
             $this->sendCheckout($items);
-
         }
     }
 
@@ -79,6 +77,7 @@ class TweakwiseCheckout implements ObserverInterface
         try {
             $this->client->request($tweakwiseRequest);
         } catch (\Exception $e) {
+            // @phpcs:ignore
             // Do nothing
         }
     }

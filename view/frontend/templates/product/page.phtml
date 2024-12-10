@@ -5,20 +5,14 @@
 
 use Magento\Framework\Escaper;
 
-$tweakwiseCookieName = $block->getCookieName();
-$apiUrl              = $block->getApiUrl();
 $productKey          = $block->getProductKey();
-$instanceKey         = $block->getInstanceKey();
 ?>
 
 <script type="text/x-magento-init">
     {
         "*": {
             "Tweakwise_Magento2Tweakwise/js/product-page": {
-                "apiUrl": "<?= $escaper->escapeUrl($apiUrl); ?>pageview",
-            "tweakwiseCookieName": "<?= $escaper->escapeHtmlAttr($tweakwiseCookieName); ?>",
-            "productKey": "<?= $escaper->escapeHtmlAttr($productKey); ?>",
-            "instanceKey": "<?= $escaper->escapeHtmlAttr($instanceKey); ?>"
+              "productKey": "<?= $escaper->escapeHtmlAttr($productKey); ?>"
         }
     }
 }

@@ -39,7 +39,6 @@ class Analytics extends Action
     {
         $result = $this->resultJsonFactory->create();
         if ($this->config->isAnalyticsEnabled()) {
-
             $type = $this->getRequest()->getParam('type');
             $profileKey = $this->config->getProfileKey();
 
@@ -63,6 +62,7 @@ class Analytics extends Action
                 $result->setData(['success' => false, 'message' => $e->getMessage()]);
             }
         }
+
         return $result;
     }
 }

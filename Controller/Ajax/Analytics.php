@@ -55,16 +55,17 @@ class Analytics extends Action
                 $tweakwiseRequest->setPath('search');
             }
 
-
             if (!empty($tweakwiseRequest->getPath())) {
                 try {
                     $this->client->request($tweakwiseRequest);
                     $result->setData(['success' => true]);
                 } catch (\Exception $e) {
-                    $result->setData([
-                        'success' => false,
-                        'message' => $e->getMessage()
-                    ]);
+                    $result->setData(
+                        [
+                            'success' => false,
+                            'message' => $e->getMessage()
+                        ]
+                    );
                 }
             }
         }

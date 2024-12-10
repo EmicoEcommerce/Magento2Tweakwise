@@ -8,6 +8,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Sales\Block\Order\Items;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
@@ -39,7 +40,6 @@ class TweakwiseCheckout implements ObserverInterface
     /**
      * @param Observer $observer
      *
-     * @return void
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(Observer $observer)
@@ -54,7 +54,7 @@ class TweakwiseCheckout implements ObserverInterface
     }
 
     /**
-     * @param $items
+     * @param Items $items
      *
      * @return void
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -77,8 +77,7 @@ class TweakwiseCheckout implements ObserverInterface
         try {
             $this->client->request($tweakwiseRequest);
         } catch (\Exception $e) {
-            // @phpcs:ignore
-            // Do nothing
+            // Do nothing @phpcs:ignore
         }
     }
 }

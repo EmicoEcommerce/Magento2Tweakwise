@@ -38,7 +38,7 @@ class AnalyticsRequest extends Request
     }
 
     /**
-     * @return string
+     * @return void
      */
     public function setProfileKey(string $profileKey)
     {
@@ -46,7 +46,7 @@ class AnalyticsRequest extends Request
     }
 
     /**
-     * @return string
+     * @return void
      */
     public function setPath($path)
     {

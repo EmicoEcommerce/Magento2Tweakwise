@@ -62,21 +62,11 @@ class PersonalMerchandisingConfig extends Config
             ->createPublicCookieMetadata()
             ->setDuration(86400)
             ->setPath('/')
-            ->setDomain($this->getCookieDomain())
-            ->setSecure($this->getRequest()->isSecure())
-            ->setHttpOnly(true);
-    }
-
-    private function getCookieDomain()
-    {
-        return $this->scopeConfig->getValue(
-            'web/cookie/cookie_domain',
-            ScopeInterface::SCOPE_STORE
-        );
+            ->setSecure(true);
     }
 
     private function generateProfileKey()
     {
-        return md5(uniqid('', true));
+        return uniqid('', true);
     }
 }

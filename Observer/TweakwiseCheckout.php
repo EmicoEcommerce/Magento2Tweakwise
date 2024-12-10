@@ -40,6 +40,7 @@ class TweakwiseCheckout implements ObserverInterface
     /**
      * @param Observer $observer
      *
+     * @return void
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(Observer $observer)
@@ -51,6 +52,8 @@ class TweakwiseCheckout implements ObserverInterface
 
             $this->sendCheckout($items);
         }
+
+        return;
     }
 
     /**
@@ -77,7 +80,9 @@ class TweakwiseCheckout implements ObserverInterface
         try {
             $this->client->request($tweakwiseRequest);
         } catch (\Exception $e) {
-            // Do nothing @phpcs:ignore
+            // Do nothing so that the checkout process can continue
+            return;
         }
+        return;
     }
 }

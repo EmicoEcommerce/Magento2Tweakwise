@@ -15,7 +15,11 @@
             </block>
         </referenceBlock>
         <referenceBlock name="content">
-            <block class="Tweakwise\Magento2Tweakwise\Block\Catalog\PersonalMerchandisingAnalytics" name="magento2tweakwise.productpage" template="Tweakwise_Magento2Tweakwise::search/page.phtml" ifconfig="tweakwise/personal_merchandising/analytics_enabled"/>
+            <block class="Magento\Framework\View\Element\Template" name="magento2tweakwise.productpage" template="Tweakwise_Magento2Tweakwise::search/page.phtml" ifconfig="tweakwise/personal_merchandising/analytics_enabled">
+                <arguments>
+                    <argument name="viewModel" xsi:type="object">Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics</argument>
+                </arguments>
+            </block>
             <block ifconfig="tweakwise/search/searchbanner" before="-" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.list.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.list.top.phtml">
                 <arguments>
                     <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>

@@ -3,18 +3,18 @@
 /** @var \Tweakwise\Magento2Tweakwise\Block\Catalog\PersonalMerchandisingAnalytics $block */
 /** @var  Escaper $escaper */
 
-use Magento\Framework\Escaper;
-
-$productKey          = $block->getProductKey();
+/** @var \Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics $viewModel */
+$viewModel = $block->getData('viewModel');
 ?>
 
 <script type="text/x-magento-init">
     {
         "*": {
-            "Tweakwise_Magento2Tweakwise/js/product-page": {
-              "productKey": "<?= $escaper->escapeHtmlAttr($productKey); ?>"
+            "Tweakwise_Magento2Tweakwise/js/analytics": {
+              "productKey": "<?= $escaper->escapeHtmlAttr($viewModel->getProductKey()); ?>",
+              "type": "product"
         }
     }
 }
 </script>
-<script src="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl('Tweakwise_Magento2Tweakwise::js/product-page.js')); ?>"></script>
+<script src="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl('Tweakwise_Magento2Tweakwise::js/analytics.js')); ?>"></script>

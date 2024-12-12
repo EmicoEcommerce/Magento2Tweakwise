@@ -10,6 +10,7 @@ use Magento\Framework\App\State;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class PersonalMerchandisingConfig extends Config
 {

@@ -23,6 +23,8 @@ use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
  */
 class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInterface
 {
+    const QUERY_PARAMETER_STRATEGY = 'Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy';
+
     /**
      * @var Config
      */
@@ -126,7 +128,10 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 'productListSelector' => '.products.wrapper',
                 'toolbarSelector' => '.toolbar.toolbar-products',
                 'ajaxCache' => true,
-                'urlStrategy' => $this->config->getUrlStrategy() === 'Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy' ? 'queryparameter' : 'path',
+                'urlStrategy' => $this->config->getUrlStrategy() ===
+                self::QUERY_PARAMETER_STRATEGY
+                    ? 'queryparameter'
+                    : 'path',
             ],
         ];
         if ($this->config->isPersonalMerchandisingActive()) {

@@ -135,6 +135,10 @@ class Client
         return new HttpRequest('POST', $uri, $headers, $body);
     }
 
+    /**
+     * @param Request $tweakwiseRequest
+     * @return HttpRequest
+     */
     protected function createGetRequest(Request $tweakwiseRequest): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();

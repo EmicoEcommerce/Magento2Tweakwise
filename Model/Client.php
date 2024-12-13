@@ -118,6 +118,10 @@ class Client
         }
     }
 
+    /**
+     * @param Request $tweakwiseRequest
+     * @return HttpRequest
+     */
     protected function createPostRequest(Request $tweakwiseRequest): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();

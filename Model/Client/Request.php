@@ -327,12 +327,18 @@ class Request
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function setParameterArray(string $parameter, array $value)
     {
         $this->parameters[$parameter] = $value;
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function isPostRequest()
     {
         return false;

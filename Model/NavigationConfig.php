@@ -126,7 +126,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 'productListSelector' => '.products.wrapper',
                 'toolbarSelector' => '.toolbar.toolbar-products',
                 'ajaxCache' => true,
-                'urlStrategy' => $this->config->getUrlStrategy()
+                'urlStrategy' => $this->config->getUrlStrategy() === 'Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy' ? 'queryparameter' : 'path',
             ],
         ];
         if ($this->config->isPersonalMerchandisingActive()) {

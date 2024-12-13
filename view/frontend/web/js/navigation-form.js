@@ -184,7 +184,7 @@ define([
                 href = seoHref ? seoHref : href;
             }
 
-            if (this.options.urlStrategy === 'Tweakwise\\Magento2Tweakwise\\Model\\Catalog\\Layer\\Url\\Strategy\\QueryParameterStrategy') {
+            if (this.options.urlStrategy === 'queryparameter') {
                 let url = new URL(href, window.location.origin);
                 url.search = this._getFilterParameters();
                 return url.toString();

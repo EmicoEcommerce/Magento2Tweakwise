@@ -42,6 +42,7 @@ cid
             </search>
             <personal_merchandising>
                 <product_card_lifetime>3600</product_card_lifetime>
+                <analytics_enabled>0</analytics_enabled>
             </personal_merchandising>
             <recommendations>
                 <crosssell_enabled>0</crosssell_enabled>

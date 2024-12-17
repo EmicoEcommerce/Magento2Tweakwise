@@ -408,7 +408,13 @@ class Config
      */
     public function getPersonalMerchandisingCookieName(Store $store = null)
     {
-        return (string) $this->getStoreConfig('tweakwise/personal_merchandising/cookie_name', $store);
+        $cookie = $this->getStoreConfig('tweakwise/personal_merchandising/cookie_name', $store);
+
+        if (empty($cookie)) {
+            $cookie = 'tw_analytics';
+        }
+
+        return $cookie;
     }
 
     /**

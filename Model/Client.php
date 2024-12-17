@@ -163,7 +163,7 @@ class Client
 
         if ($tweakwiseRequest->getParameters()) {
             $query = http_build_query($tweakwiseRequest->getParameters());
-            $url   = sprintf('%s?%s', $url, $query);
+            $url = sprintf('%s?%s', $url, $query);
         }
 
         $uri = new Uri($url);

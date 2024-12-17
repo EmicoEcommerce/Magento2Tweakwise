@@ -8,6 +8,7 @@ use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\ListProduct as MagentoListProduct;
 use Magento\Catalog\Helper\Output as OutputHelper;
+use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Helper\PostHelper;
@@ -32,6 +33,7 @@ class ListProduct extends MagentoListProduct
      * @param RequestInterface $request
      * @param array $data
      * @param OutputHelper|null $outputHelper
+     * @param Layer|null $catalogLayer
      */
     public function __construct(
         Context $context,
@@ -45,7 +47,8 @@ class ListProduct extends MagentoListProduct
         private readonly Registry $registry,
         private readonly RequestInterface $request,
         array $data = [],
-        ?OutputHelper $outputHelper = null
+        ?OutputHelper $outputHelper = null,
+        ?Layer $catalogLayer = null
     ) {
         parent::__construct(
             $context,
@@ -56,6 +59,9 @@ class ListProduct extends MagentoListProduct
             $data,
             $outputHelper
         );
+        if ($catalogLayer) {
+            $this->_catalogLayer = $catalogLayer;
+        }
     }
 
     /**
@@ -101,7 +107,7 @@ class ListProduct extends MagentoListProduct
         }
 
         $queryParams = array_merge($this->request->getParams(), $queryParams);
-        $params['_query'] = $queryParams;
+        $params['_query'] = isset($params['_query']) ? array_merge($params['_query'], $queryParams) : $queryParams;
 
         return parent::getUrl($route, $params);
     }

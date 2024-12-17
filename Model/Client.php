@@ -20,12 +20,12 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request as HttpRequest;
-use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 use Magento\Framework\Profiler;
 use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
 use GuzzleHttp\Client as HttpClient;
+use Magento\Framework\UrlInterface;
 
 class Client
 {
@@ -71,8 +71,6 @@ class Client
      * @param Logger $log
      * @param ResponseFactory $responseFactory
      * @param EndpointManager $endpointManager
-     * @param Timer $timer
-     * @param ModuleInformation $moduleInformation
      */
     public function __construct(
         Config $config,
@@ -80,7 +78,7 @@ class Client
         ResponseFactory $responseFactory,
         EndpointManager $endpointManager,
         Timer $timer,
-        private readonly ModuleInformation $moduleInformation
+        private UrlInterface $urlBuilder
     ) {
         $this->config = $config;
         $this->log = $log;
@@ -99,8 +97,7 @@ class Client
                 RequestOptions::TIMEOUT => self::REQUEST_TIMEOUT,
                 RequestOptions::HEADERS => [
                     'user-agent' => $this->config->getUserAgentString(),
-                    'Accept-Encoding' => 'gzip, deflate',
-                    'TWN-Source' => $this->moduleInformation->getModuleVersion(),
+                    'Accept-Encoding' => 'gzip, deflate'
                 ]
             ];
             $this->client = new HttpClient($options);
@@ -115,8 +112,40 @@ class Client
      */
     protected function createHttpRequest(Request $tweakwiseRequest): HttpRequest
     {
+        if ($tweakwiseRequest->isPostRequest()) {
+            return $this->createPostRequest($tweakwiseRequest);
+        } else {
+            return $this->createGetRequest($tweakwiseRequest);
+        }
+    }
+
+    /**
+     * @param Request $tweakwiseRequest
+     * @return HttpRequest
+     */
+    protected function createPostRequest(Request $tweakwiseRequest): HttpRequest
+    {
+        $path = $tweakwiseRequest->getPath();
+        $headers = [];
+
+        $headers['Content-Type'] = 'application/json';
+        $headers['Instance-Key'] = $this->config->getGeneralAuthenticationKey();
+        $body = json_encode($tweakwiseRequest->getParameters());
+        //post request are used for the analytics api
+        $uri = $this->urlBuilder->getUrl($tweakwiseRequest->getApiUrl() . '/' . $path);
+        return new HttpRequest('POST', $uri, $headers, $body);
+    }
+
+    /**
+     * @param Request $tweakwiseRequest
+     * @return HttpRequest
+     */
+    protected function createGetRequest(Request $tweakwiseRequest): HttpRequest
+    {
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
+
+        $headers = [];
 
         if ($path === "recommendations/featured") {
             if ($this->config->getRecommendationsFeaturedCategory()) {
@@ -138,8 +167,7 @@ class Client
         }
 
         $uri = new Uri($url);
-
-        return new HttpRequest('GET', $uri);
+        return new HttpRequest('GET', $uri, $headers);
     }
 
     /**
@@ -207,6 +235,10 @@ class Client
                 $requestUrl
             )
         );
+
+        if ($statusCode === 204) {
+            return $this->responseFactory->create($tweakwiseRequest, []);
+        }
 
         if ($statusCode !== 200) {
             throw new ApiException(

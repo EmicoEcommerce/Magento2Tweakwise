@@ -5,4 +5,7 @@
             instance="Tweakwise\Magento2Tweakwise\Observer\CreateTweakwiseSlugsAfterSaveAttribute"
         />
     </event>
+    <event name="sales_order_place_after">
+        <observer name="product_purchase_observer" instance="Tweakwise\Magento2Tweakwise\Observer\TweakwiseCheckout" />
+    </event>
 </config>

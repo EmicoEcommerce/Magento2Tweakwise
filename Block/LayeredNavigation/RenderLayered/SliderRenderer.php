@@ -128,7 +128,7 @@ class SliderRenderer extends DefaultRenderer
             return $value;
         }
 
-        return $this->priceHelper->currency($value);
+        return $this->priceHelper->currency($value, true, false);
     }
 
     /**

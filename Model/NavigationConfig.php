@@ -129,7 +129,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 'toolbarSelector' => '.toolbar.toolbar-products',
                 'ajaxCache' => true,
                 'urlStrategy' => $this->config->getUrlStrategy() ===
-                self::URL_STRATEGY
+                QueryParameterStrategy::class
                     ? 'queryparameter'
                     : 'path',
             ],

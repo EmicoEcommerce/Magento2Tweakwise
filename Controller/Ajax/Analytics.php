@@ -10,6 +10,9 @@ use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\ResultInterface;
 
 class Analytics extends Action
 {
@@ -33,7 +36,7 @@ class Analytics extends Action
     }
 
     /**
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Json|\Magento\Framework\Controller\ResultInterface
+     * @return ResponseInterface|Json|ResultInterface
      */
     public function execute()
     {
@@ -44,14 +47,13 @@ class Analytics extends Action
 
             $tweakwiseRequest = $this->requestFactory->create();
             $tweakwiseRequest->setProfileKey($profileKey);
+            $value = $this->getRequest()->getParam('value');
 
             if ($type === 'product') {
-                $productKey = $this->getRequest()->getParam('productKey');
-                $tweakwiseRequest->setParameter('productKey', $productKey);
+                $tweakwiseRequest->setParameter('productKey', $value);
                 $tweakwiseRequest->setPath('pageview');
             } elseif ($type === 'search') {
-                $searchTerm = $this->getRequest()->getParam('searchTerm');
-                $tweakwiseRequest->setParameter('searchTerm', $searchTerm);
+                $tweakwiseRequest->setParameter('searchTerm', $value);
                 $tweakwiseRequest->setPath('search');
             }
 

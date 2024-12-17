@@ -4,14 +4,9 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
     return function(config) {
         $(document).ready(function() {
             var requestData = {
-                type: config.type
+                type: config.type,
+                value: config.value
             };
-
-            if (config.type === 'search') {
-                requestData.searchTerm = config.searchQuery;
-            } else if (config.type === 'product') {
-                requestData.productKey = config.productKey;
-            }
 
             $.ajax({
                 url: '/tweakwise/ajax/analytics',

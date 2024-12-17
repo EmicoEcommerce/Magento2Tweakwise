@@ -20,12 +20,12 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request as HttpRequest;
-use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 use Magento\Framework\Profiler;
 use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
 use GuzzleHttp\Client as HttpClient;
+use Magento\Framework\UrlInterface;
 
 class Client
 {
@@ -77,7 +77,8 @@ class Client
         Logger $log,
         ResponseFactory $responseFactory,
         EndpointManager $endpointManager,
-        Timer $timer
+        Timer $timer,
+        private UrlInterface $urlBuilder
     ) {
         $this->config = $config;
         $this->log = $log;
@@ -131,7 +132,7 @@ class Client
         $headers['Instance-Key'] = $this->config->getGeneralAuthenticationKey();
         $body = json_encode($tweakwiseRequest->getParameters());
         //post request are used for the analytics api
-        $uri = new Uri($tweakwiseRequest->getApiUrl() . '/' . $path);
+        $uri = $this->urlBuilder->getUrl($tweakwiseRequest->getApiUrl() . '/' . $path);
         return new HttpRequest('POST', $uri, $headers, $body);
     }
 

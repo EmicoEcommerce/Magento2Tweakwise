@@ -26,6 +26,7 @@ use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
 use GuzzleHttp\Client as HttpClient;
 use Magento\Framework\UrlInterface;
+use GuzzleHttp\Psr7\Uri;
 
 class Client
 {

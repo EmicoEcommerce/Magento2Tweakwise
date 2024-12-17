@@ -23,8 +23,6 @@ use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
  */
 class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInterface
 {
-    private const URL_STRATEGY = 'Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy';
-
     /**
      * @var Config
      */

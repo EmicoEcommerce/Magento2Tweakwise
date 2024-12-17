@@ -26,6 +26,7 @@ define([
             noticeMessageSelector: '.message.notice',
             isLoading: false,
             ajaxCache: true,
+            urlStrategy: '',
         },
 
         currentXhr: null,
@@ -183,10 +184,13 @@ define([
                 href = seoHref ? seoHref : href;
             }
 
-            let url = new URL(href, window.location.origin);
-            url.search = this._getFilterParameters();
+            if (this.options.urlStrategy === 'queryparameter') {
+                let url = new URL(href, window.location.origin);
+                url.search = this._getFilterParameters();
+                return url.toString();
+            }
 
-            return url.toString();
+            return href;
         },
 
         /**

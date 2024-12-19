@@ -129,7 +129,13 @@ class FilterSlugManager
 
             $attributeSlugEntity = $this->attributeSlugFactory->create();
             $attributeSlugEntity->setAttribute($option->getLabel());
-            $attributeSlugEntity->setSlug($this->translitUrl->filter($option->getLabel()));
+
+            $slug = $this->translitUrl->filter($option->getLabel());
+            if (empty($slug)) {
+                $slug = urlencode($option->getLabel());
+            }
+
+            $attributeSlugEntity->setSlug($slug);
 
             $this->attributeSlugRepository->save($attributeSlugEntity);
             $this->cache->remove(self::CACHE_KEY);

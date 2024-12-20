@@ -43,9 +43,9 @@ class TweakwiseCheckout implements ObserverInterface
      * @return void
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function execute(Observer $observer)
+    public function execute(Observer $observer): void
     {
-        if ($this->config->isAnalyticsEnabled('tweakwise/personal_merchandising/analytics_enabled')) {
+        if ($this->config->isAnalyticsEnabled()) {
             $order = $observer->getEvent()->getOrder();
             // Get the order items
             $items = $order->getAllItems();
@@ -60,7 +60,7 @@ class TweakwiseCheckout implements ObserverInterface
      * @return void
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function sendCheckout($items)
+    private function sendCheckout($items): void
     {
         $storeId = (int)$this->storeManager->getStore()->getId();
         $profileKey = $this->config->getProfileKey();

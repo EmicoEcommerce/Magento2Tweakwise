@@ -29,7 +29,7 @@ class PurchaseRequest extends Request
     /**
      * @return true
      */
-    public function isPostRequest()
+    public function isPostRequest(): bool
     {
         return true;
     }
@@ -37,7 +37,7 @@ class PurchaseRequest extends Request
     /**
      * @return mixed|string
      */
-    public function getApiurl()
+    public function getApiurl(): string
     {
         return $this->apiUrl;
     }
@@ -47,7 +47,7 @@ class PurchaseRequest extends Request
      *
      * @return void
      */
-    public function setProfileKey(string $profileKey)
+    public function setProfileKey(string $profileKey): void
     {
         $this->setParameter('ProfileKey', $profileKey);
     }

@@ -31,7 +31,7 @@ class PersonalMerchandisingConfig extends Config
      * @param Store|null $store
      * @return bool
      */
-    public function isAnalyticsEnabled(Store $store = null)
+    public function isAnalyticsEnabled(Store $store = null): bool
     {
         return (bool)$this->getStoreConfig('tweakwise/personal_merchandising/analytics_enabled', $store);
     }
@@ -39,7 +39,7 @@ class PersonalMerchandisingConfig extends Config
     /**
      * @return string|null
      */
-    public function getProfileKey()
+    public function getProfileKey(): ?string
     {
         $profileKey = $this->cookieManager->getCookie(
             $this->getPersonalMerchandisingCookieName(),
@@ -61,9 +61,9 @@ class PersonalMerchandisingConfig extends Config
     }
 
     /**
-     * @return string
+     * @return CookieMetadataInterface
      */
-    private function getCookieMetadata()
+    private function getCookieMetadata(): CookieMetadataInterface
     {
         return $this->cookieMetadataFactory
             ->createPublicCookieMetadata()
@@ -75,7 +75,7 @@ class PersonalMerchandisingConfig extends Config
     /**
      * @return string
      */
-    private function generateProfileKey()
+    private function generateProfileKey(): string
     {
         return uniqid('', true);
     }

@@ -24,7 +24,7 @@ class AnalyticsRequest extends Request
     /**
      * @return string
      */
-    public function isPostRequest()
+    public function isPostRequest(): bool
     {
         return true;
     }
@@ -32,7 +32,7 @@ class AnalyticsRequest extends Request
     /**
      * @return string
      */
-    public function getApiurl()
+    public function getApiurl(): string
     {
         return $this->apiUrl;
     }
@@ -40,7 +40,7 @@ class AnalyticsRequest extends Request
     /**
      * @return void
      */
-    public function setProfileKey(string $profileKey)
+    public function setProfileKey(string $profileKey): void
     {
         $this->setParameter('ProfileKey', $profileKey);
     }
@@ -48,7 +48,7 @@ class AnalyticsRequest extends Request
     /**
      * @return void
      */
-    public function setPath($path)
+    public function setPath($path): void
     {
         $this->path = $path;
     }
@@ -56,7 +56,7 @@ class AnalyticsRequest extends Request
     /**
      * @return string
      */
-    public function getProfileKey()
+    public function getProfileKey(): string
     {
         $profileKey = $this->getCookie($this->config->getPersonalMerchandisingCookieName());
         if (!$profileKey) {

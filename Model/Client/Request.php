@@ -330,7 +330,7 @@ class Request
     /**
      * @return string|null
      */
-    public function setParameterArray(string $parameter, array $value)
+    public function setParameterArray(string $parameter, array $value): Request
     {
         $this->parameters[$parameter] = $value;
         return $this;
@@ -339,7 +339,7 @@ class Request
     /**
      * @return string|null
      */
-    public function isPostRequest()
+    public function isPostRequest(): bool
     {
         return false;
     }

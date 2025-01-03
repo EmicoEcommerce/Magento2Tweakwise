@@ -121,4 +121,10 @@ class ProductNavigationRequest extends Request
         $this->setParameter('tn_st', $templateId);
         return $this;
     }
+
+    public function setBuilderTemplateId($templateId)
+    {
+        $this->setParameter('tn_b', $templateId);
+        return $this;
+    }
 }

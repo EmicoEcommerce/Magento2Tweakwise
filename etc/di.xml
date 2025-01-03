@@ -270,6 +270,12 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\BuilderTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Template">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\BuilderTemplateRequest</argument>
+        </arguments>
+    </virtualType>
+
     <type name="Tweakwise\Magento2Tweakwise\Model\Config\Source\Language">
         <arguments>
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\LanguageRequest</argument>
@@ -401,6 +407,11 @@
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\SortTemplateRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
         <arguments>
             <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\SortTemplateRequest</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\BuilderTemplateRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
+        <arguments>
+            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\BuilderTemplateRequest</argument>
         </arguments>
     </virtualType>
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Catalog\LanguageRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">

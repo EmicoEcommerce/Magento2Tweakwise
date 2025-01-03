@@ -15,7 +15,7 @@ class BuilderTemplateRequest extends Request
     /**
      * @return string
      */
-    public function getResponseType()
+    public function getResponseType(): string
     {
         return BuilderTemplateResponse::class;
     }

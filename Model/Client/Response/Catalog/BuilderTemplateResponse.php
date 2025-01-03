@@ -11,7 +11,7 @@ class BuilderTemplateResponse extends Response
      * @param TemplateType[]|array[] $templates
      * @return $this
      */
-    public function setBuilder(array $templates)
+    public function setBuilder(array $templates): BuilderTemplateResponse
     {
         $templates = $this->normalizeArray($templates, 'builder');
 

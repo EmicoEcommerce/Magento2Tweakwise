@@ -2,10 +2,10 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog;
 
-use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\Catalog\TemplateRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\Catalog\BuilderTemplateResponse;
 
-class BuilderTemplateRequest extends Request
+class BuilderTemplateRequest extends TemplateRequest
 {
     /**
      * @var string

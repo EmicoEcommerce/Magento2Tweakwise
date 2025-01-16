@@ -84,7 +84,7 @@ class FilterSlugManager
         $lookupTable = $this->getLookupTable();
         $attribute = strtolower($filterItem->getAttribute()->getTitle());
 
-        if (isset($lookupTable[$attribute])) {
+        if (!empty($lookupTable[$attribute])) {
             return $lookupTable[$attribute];
         }
 
@@ -121,6 +121,10 @@ class FilterSlugManager
             $optionLabel = $option->getLabel();
             if ($optionLabel instanceof Phrase) {
                 $optionLabel = $optionLabel->render();
+            }
+
+            if (empty($this->translitUrl->filter($option->getLabel()))) {
+                continue;
             }
 
             if (isset($this->lookupTable[strtolower($option->getLabel())])) {

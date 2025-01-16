@@ -55,8 +55,11 @@ class Template implements OptionSourceInterface
         $result = [
             ['value' => null, 'label' => __('* Default template')],
         ];
-        foreach ($response->getTemplates() as $template) {
-            $result[] = ['value' => $template->getTemplateId(), 'label' => $template->getName()];
+
+        if (!empty($response->getTemplates())) {
+            foreach ($response->getTemplates() as $template) {
+                $result[] = ['value' => $template->getTemplateId(), 'label' => $template->getName()];
+            }
         }
 
         return $result;

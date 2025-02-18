@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
+use Magento\Framework\App\ResponseFactory;
 use Tweakwise\Magento2Tweakwise\Exception\RuntimeException;
 use Tweakwise\Magento2Tweakwise\Exception\UnexpectedValueException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
@@ -136,6 +137,7 @@ class PathSlugStrategy implements
         CurrentContext $currentContext,
         ScopeConfigInterface $scopeConfig,
         StrategyHelper $strategyHelper,
+        private ResponseFactory $responseFactory,
         array $rewriteResolvers,
         array $skipMatchExtensions
     ) {
@@ -516,6 +518,12 @@ class PathSlugStrategy implements
             for each filter. Meaning that a correct filter path should have an even number of path parts
             */
             return false;
+        }
+
+        if ($rewrite->getRedirectType() === 301) {
+            $url = $this->magentoUrl->getDirectUrl($rewrite->getTargetPath() . $filterPath);
+            $this->responseFactory->create()->setRedirect($url)->sendResponse();
+            exit;
         }
 
         // Set the filter params part of the URL as a separate request param.

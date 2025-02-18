@@ -124,6 +124,7 @@ class PathSlugStrategy implements
      * @param CurrentContext $currentContext
      * @param ScopeConfigInterface $scopeConfig
      * @param StrategyHelper $strategyHelper
+     * @param ResponseFactory $responseFactory
      * @param RewriteResolverInterface[] $rewriteResolvers
      * @param array $skipMatchExtensions
      */
@@ -523,7 +524,7 @@ class PathSlugStrategy implements
         if ($rewrite->getRedirectType() === 301) {
             $url = $this->magentoUrl->getDirectUrl($rewrite->getTargetPath() . $filterPath);
             $this->responseFactory->create()->setRedirect($url)->sendResponse();
-            exit;
+            return false;
         }
 
         // Set the filter params part of the URL as a separate request param.

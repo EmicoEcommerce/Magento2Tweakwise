@@ -167,10 +167,7 @@ class Collection extends AbstractCollection
         parent::_afterLoad();
 
         $this->applyCollectionSizeValues();
-
-        if ($this->config->isPersonalMerchandisingActive()) {
-            $this->addVisuals();
-        }
+        $this->addVisuals();
 
         return $this;
     }

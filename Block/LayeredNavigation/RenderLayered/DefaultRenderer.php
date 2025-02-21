@@ -140,9 +140,19 @@ class DefaultRenderer extends Template
      */
     private function findCurrentCategory($items)
     {
-        $storeId = $this->filter->getStoreId();
-        $currentCategory = $this->filter->getLayer()->getCurrentCategory();
-        $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
+        $tweakwiseCategoryId = $this
+                ->navigationConfig
+                ->getNavigationContext()
+                ->getContext()
+                ->getResponse()
+                ->getProperties()
+                ->getSelectedCategoryId();
+
+        if (empty($tweakwiseCategoryId)) {
+            $storeId = $this->filter->getStoreId();
+            $currentCategory = $this->filter->getLayer()->getCurrentCategory();
+            $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
+        }
 
         foreach ($items as $index => $item) {
             if ($item->getAttribute()->getValue('attributeid') == $tweakwiseCategoryId) {

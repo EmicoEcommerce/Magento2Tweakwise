@@ -205,6 +205,6 @@ class Collection extends AbstractCollection
     protected function getProductIds()
     {
         $response = $this->navigationContext->getResponse();
-        return $response->getProductIds();
+        return $response->getProductIds() ?? [];
     }
 }

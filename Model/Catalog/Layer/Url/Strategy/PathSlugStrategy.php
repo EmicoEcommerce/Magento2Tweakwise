@@ -479,28 +479,7 @@ class PathSlugStrategy implements
             return false;
         }
 
-        $rewrites = [];
-        foreach ($this->rewriteResolvers as $rewriteResolver) {
-            $rewrites[] = $rewriteResolver->getRewrites($request);
-        }
-
-        $rewrites = array_merge([], ...$rewrites);
-
-        if (empty($rewrites)) {
-            return false;
-        }
-
-        $sortByLongestMatch = static function (
-            UrlRewrite $rewrite1,
-            UrlRewrite $rewrite2
-        ) {
-            return
-                strlen($rewrite2->getRequestPath()) -
-                strlen($rewrite1->getRequestPath());
-        };
-        usort($rewrites, $sortByLongestMatch);
-
-        $rewrite = current($rewrites);
+        $rewrite = $this->getRewrite($request);
         $path = trim($request->getPathInfo(), '/');
 
         $filterPath = str_replace($rewrite->getRequestPath(), '', $path);
@@ -519,12 +498,6 @@ class PathSlugStrategy implements
             for each filter. Meaning that a correct filter path should have an even number of path parts
             */
             return false;
-        }
-
-        if ($rewrite->getRedirectType() === 301) {
-            $url = $this->magentoUrl->getDirectUrl($rewrite->getTargetPath() . $filterPath);
-            $this->responseFactory->create()->setRedirect($url)->sendResponse();
-            exit;
         }
 
         // Set the filter params part of the URL as a separate request param.
@@ -648,5 +621,26 @@ class PathSlugStrategy implements
         }
 
         return !$context->getRequest() instanceof ProductSearchRequest;
+    }
+
+    public function getRewrite(MagentoHttpRequest $request): ?UrlRewrite
+    {
+        $rewrites = [];
+        foreach ($this->rewriteResolvers as $rewriteResolver) {
+            $rewrites[] = $rewriteResolver->getRewrites($request);
+        }
+
+        $rewrites = array_merge([], ...$rewrites);
+
+        if (empty($rewrites)) {
+            return null;
+        }
+
+        $sortByLongestMatch = static function (UrlRewrite $rewrite1, UrlRewrite $rewrite2) {
+            return strlen($rewrite2->getRequestPath()) - strlen($rewrite1->getRequestPath());
+        };
+        usort($rewrites, $sortByLongestMatch);
+
+        return current($rewrites);
     }
 }

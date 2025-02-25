@@ -74,12 +74,11 @@ class Router implements RouterInterface
             return $result;
         }
 
-        $url = $request->getParam('redirect');
+        $url = $request->getParam('tw_filter_redirect');
 
-        if($url) {
-            $url = $request->getParam('redirect');
+        if ($url) {
             $redirect = $this->actionFactory->create(Redirect::class);
-            $redirect->getResponse()->setRedirect($request->getParam('redirect'));
+            $redirect->getResponse()->setRedirect($url);
             return $redirect;
         }
 

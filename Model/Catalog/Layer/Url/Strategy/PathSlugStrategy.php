@@ -9,7 +9,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
-use Magento\Framework\App\ResponseFactory;
 use Tweakwise\Magento2Tweakwise\Exception\RuntimeException;
 use Tweakwise\Magento2Tweakwise\Exception\UnexpectedValueException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
@@ -124,7 +123,6 @@ class PathSlugStrategy implements
      * @param CurrentContext $currentContext
      * @param ScopeConfigInterface $scopeConfig
      * @param StrategyHelper $strategyHelper
-     * @param ResponseFactory $responseFactory
      * @param RewriteResolverInterface[] $rewriteResolvers
      * @param array $skipMatchExtensions
      */
@@ -138,7 +136,6 @@ class PathSlugStrategy implements
         CurrentContext $currentContext,
         ScopeConfigInterface $scopeConfig,
         StrategyHelper $strategyHelper,
-        private ResponseFactory $responseFactory,
         array $rewriteResolvers,
         array $skipMatchExtensions
     ) {

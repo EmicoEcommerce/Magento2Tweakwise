@@ -38,7 +38,7 @@ class Analytics extends Action
     /**
      * @return ResponseInterface|Json|ResultInterface
      */
-    public function execute(): ResponseInterface|Json|ResultInterface
+    public function execute()
     {
         $result = $this->resultJsonFactory->create();
         if ($this->config->isAnalyticsEnabled()) {

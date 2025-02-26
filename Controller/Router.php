@@ -10,6 +10,7 @@ use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\RouterInterface;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
+use Magento\Framework\App\Action\Redirect;
 
 class Router implements RouterInterface
 {
@@ -71,6 +72,14 @@ class Router implements RouterInterface
 
         if ($result instanceof ActionInterface) {
             return $result;
+        }
+
+        $url = $request->getParam('tw_filter_redirect');
+
+        if ($url) {
+            $redirect = $this->actionFactory->create(Redirect::class);
+            $redirect->getResponse()->setRedirect($url);
+            return $redirect;
         }
 
         return $this->actionFactory->create(Forward::class);

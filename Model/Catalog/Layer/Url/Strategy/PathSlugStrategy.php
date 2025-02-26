@@ -518,6 +518,11 @@ class PathSlugStrategy implements
             return false;
         }
 
+        if ($rewrite->getRedirectType() === 301) {
+            $url = $this->magentoUrl->getDirectUrl($rewrite->getTargetPath() . $filterPath);
+            $request->setParam('tw_filter_redirect', $url);
+        }
+
         // Set the filter params part of the URL as a separate request param.
         // The request param filter_path is used to query tweakwise.
         $request->setParam(self::REQUEST_FILTER_PATH, $filterPath);

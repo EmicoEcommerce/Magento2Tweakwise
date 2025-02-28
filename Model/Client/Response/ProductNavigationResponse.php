@@ -60,6 +60,62 @@ class ProductNavigationResponse extends Response
     }
 
     /**
+     * Function to get items from groups and set the items
+     * @param array $groups
+     * @return $this
+     */
+    public function setGroups(array $groups): ProductNavigationResponse
+    {
+        if (!$groups) {
+            return $this;
+        }
+
+        $items = [];
+        foreach ($groups['group'] as $group) {
+            $simple = $this->getMostSuitableVariant($group);
+            $configurable = $this->getConfigurable($group);
+
+            if (!$configurable) {
+                continue;
+            }
+
+            $configurable['image'] = $simple['image'];
+
+            $items[] = $configurable;
+        }
+
+        $this->setItems($items);
+        return $this;
+    }
+
+    /**
+     * Function to get most suitable variant. This is always the first item in the array.
+     * @param array $group
+     * @return array
+     */
+    private function getMostSuitableVariant(array $group): array
+    {
+        return reset($group['items']['item']);
+    }
+
+    /**
+     * @param array $group
+     * @return array
+     */
+    private function getConfigurable(array $group): array
+    {
+        foreach ($group['items']['item'] as $item) {
+            if ($item['itemno'] !== $group['code']) {
+                continue;
+            }
+
+            return $item;
+        }
+
+        return [];
+    }
+
+    /**
      * @param PropertiesType|array $properties
      * @return $this
      */

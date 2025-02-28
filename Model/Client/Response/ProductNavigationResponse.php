@@ -67,6 +67,7 @@ class ProductNavigationResponse extends Response
     public function setGroups(array $groups): ProductNavigationResponse
     {
         if (!$groups) {
+            $this->setItems([]);
             return $this;
         }
 

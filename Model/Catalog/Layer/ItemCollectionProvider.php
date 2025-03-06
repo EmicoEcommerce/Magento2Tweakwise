@@ -103,7 +103,9 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
                 ;
             }
 
-            $collection->overwriteImage();
+            if ($this->config->isGroupedProductsEnabled()) {
+                $collection->overwriteImage();
+            }
 
             return $collection;
         } catch (TweakwiseExceptionInterface $e) {

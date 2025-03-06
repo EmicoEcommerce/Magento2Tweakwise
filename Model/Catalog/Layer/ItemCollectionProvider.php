@@ -95,6 +95,7 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
 
         try {
             $collection = $this->collectionFactory->create(['navigationContext' => $this->navigationContext]);
+            $collection->addAttributeToSelect('*');
 
             if (count($collection->getItems()) < 1) {
                 $collection = $this->collectionFactory
@@ -102,7 +103,7 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
                 ;
             }
 
-            $collection->clear();
+            $collection->overwriteImage();
 
             return $collection;
         } catch (TweakwiseExceptionInterface $e) {

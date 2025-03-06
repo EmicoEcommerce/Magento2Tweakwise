@@ -199,6 +199,32 @@ class Collection extends AbstractCollection
         }
     }
 
+    public function overwriteImage(): void
+    {
+        try {
+            $response = $this->navigationContext->getResponse();
+        } catch (Exception $e) {
+            return;
+        }
+
+        $counter = 0;
+        foreach ($response->getItems() as $item) {
+            if ($item->getValue('type') !== ItemType::PRODUCT->value) {
+                $counter++;
+                continue;
+            }
+
+            if (!empty($item->getImage())) {
+                $this->_items[$counter]->setData('image', $item->getImage());
+                $this->_items[$counter]->setData('small_image',
+                    $item->getImage());
+                $this->_items[$counter]->setData('thumbnail',
+                    $item->getImage());
+                $counter++;
+            }
+        }
+    }
+
     /**
      * {@inheritdoc}
      */

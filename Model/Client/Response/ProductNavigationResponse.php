@@ -80,7 +80,9 @@ class ProductNavigationResponse extends Response
                 continue;
             }
 
-            $configurable['image'] = $simple['image'];
+            if (!empty($simple['image'])){
+                $configurable['image'] = $simple['image'];
+            }
 
             $items[] = $configurable;
         }
@@ -96,7 +98,11 @@ class ProductNavigationResponse extends Response
      */
     private function getMostSuitableVariant(array $group): array
     {
-        return reset($group['items']['item']);
+        if (isset($group['items']['item'][0])) {
+            return reset($group['items']['item']);
+        }
+
+        return $group['items']['item'];
     }
 
     /**
@@ -105,15 +111,7 @@ class ProductNavigationResponse extends Response
      */
     private function getConfigurable(array $group): array
     {
-        foreach ($group['items']['item'] as $item) {
-            if ($item['itemno'] !== $group['code']) {
-                continue;
-            }
-
-            return $item;
-        }
-
-        return [];
+        return ['itemno' => $group['code']];
     }
 
     /**

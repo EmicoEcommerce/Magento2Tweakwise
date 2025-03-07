@@ -169,6 +169,10 @@ class ProductNavigationResponse extends Response
     {
         $productImages = [];
         foreach ($this->getItems() as $item) {
+            if (!$item->getImage()) {
+                continue;
+            }
+
             $productImages[$this->helper->getStoreId($item->getId())] = $item->getImage();
         }
 

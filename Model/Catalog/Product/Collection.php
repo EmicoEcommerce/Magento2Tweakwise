@@ -167,7 +167,26 @@ class Collection extends AbstractCollection
         parent::_afterLoad();
 
         $this->applyCollectionSizeValues();
+        $this->applyProductImages();
         $this->addVisuals();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function applyProductImages(): AbstractCollection
+    {
+        foreach ($this->getProductImages() as $productId => $productImageUrl) {
+            if (!$this->_items[$productId]) {
+                continue;
+            }
+
+            $this->_items[$productId]->setData('image', $productImageUrl);
+            $this->_items[$productId]->setData('small_image', $productImageUrl);
+            $this->_items[$productId]->setData('thumbnail', $productImageUrl);
+        }
 
         return $this;
     }
@@ -210,11 +229,15 @@ class Collection extends AbstractCollection
 
     /**
      * @return array
-     * @throws Exception
      */
     protected function getProductImages(): array
     {
-        $response = $this->navigationContext->getResponse();
+        try {
+            $response = $this->navigationContext->getResponse();
+        } catch (Exception $e) {
+            return [];
+        }
+
         return $response->getProductImages() ?? [];
     }
 }

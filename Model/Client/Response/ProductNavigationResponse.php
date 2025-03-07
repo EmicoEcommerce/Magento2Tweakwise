@@ -173,7 +173,9 @@ class ProductNavigationResponse extends Response
                 continue;
             }
 
-            $productImages[$this->helper->getStoreId($item->getId())] = $item->getImage();
+            // Remove domain and media path when full url is used
+            $imageUrl = preg_replace("#^.*?/catalog/product/#", "", $item->getImage());
+            $productImages[$this->helper->getStoreId($item->getId())] = $imageUrl;
         }
 
         return $productImages;

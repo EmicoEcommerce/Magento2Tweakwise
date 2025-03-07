@@ -84,6 +84,10 @@ class ProductNavigationResponse extends Response
                 $configurable['image'] = $simple['image'];
             }
 
+            if (!empty($simple['type'])) {
+                $configurable['type'] = $simple['type'];
+            }
+
             $items[] = $configurable;
         }
 

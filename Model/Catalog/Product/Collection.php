@@ -179,7 +179,7 @@ class Collection extends AbstractCollection
     protected function applyProductImages(): AbstractCollection
     {
         foreach ($this->getProductImages() as $productId => $productImageUrl) {
-            if (!$this->_items[$productId]) {
+            if (!isset($this->_items[$productId])) {
                 continue;
             }
 

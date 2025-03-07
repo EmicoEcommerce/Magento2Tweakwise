@@ -97,4 +97,12 @@ class Collection extends AbstractCollection
     {
         return $this->response->getProductIds();
     }
+
+    /**
+     * @return array
+     */
+    protected function getProductImages(): array
+    {
+        return [];
+    }
 }

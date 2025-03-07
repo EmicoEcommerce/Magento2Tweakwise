@@ -7,5 +7,4 @@ namespace Tweakwise\Magento2Tweakwise\Model\Enum;
 enum ItemType: string
 {
     case VISUAL = 'visual';
-    case PRODUCT = 'product';
 }

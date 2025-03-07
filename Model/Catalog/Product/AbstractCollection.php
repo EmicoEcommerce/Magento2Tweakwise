@@ -20,6 +20,11 @@ abstract class AbstractCollection extends ProductCollection
     abstract protected function getProductIds();
 
     /**
+     * @return array
+     */
+    abstract protected function getProductImages(): array;
+
+    /**
      * @return $this
      */
     protected function applyEntityIdFilter()
@@ -66,6 +71,24 @@ abstract class AbstractCollection extends ProductCollection
     }
 
     /**
+     * @return $this
+     */
+    protected function applyProductImages(): AbstractCollection
+    {
+        foreach ($this->getProductImages() as $productId => $productImageUrl) {
+            if (!$this->_items[$productId]) {
+                continue;
+            }
+
+            $this->_items[$productId]->setData('image', $productImageUrl);
+            $this->_items[$productId]->setData('small_image', $productImageUrl);
+            $this->_items[$productId]->setData('thumbnail', $productImageUrl);
+        }
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function _beforeLoad()
@@ -86,6 +109,7 @@ abstract class AbstractCollection extends ProductCollection
         parent::_afterLoad();
 
         $this->fixProductOrder();
+        $this->applyProductImages();
 
         return $this;
     }

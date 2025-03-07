@@ -80,12 +80,8 @@ class ProductNavigationResponse extends Response
                 continue;
             }
 
-            if (!empty($simple['image'])){
+            if (!empty($simple['image'])) {
                 $configurable['image'] = $simple['image'];
-            }
-
-            if (!empty($simple['type'])){
-                $configurable['type'] = $simple['type'];
             }
 
             $items[] = $configurable;
@@ -164,5 +160,18 @@ class ProductNavigationResponse extends Response
         }
 
         return $ids;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductImages(): array
+    {
+        $productImages = [];
+        foreach ($this->getItems() as $item) {
+            $productImages[$this->helper->getStoreId($item->getId())] = $item->getImage();
+        }
+
+        return $productImages;
     }
 }

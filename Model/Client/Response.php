@@ -38,6 +38,7 @@ class Response extends Type
         $this->helper = $helper;
         parent::__construct($data);
     }
+
     /**
      * Function to get items from groups and set the items
      * @param array $groups
@@ -64,7 +65,7 @@ class Response extends Type
                 $configurable['image'] = $simple['image'];
             }
 
-            if (!empty($simple['type'])){
+            if (!empty($simple['type'])) {
                 $configurable['type'] = $simple['type'];
             }
 

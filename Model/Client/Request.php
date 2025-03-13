@@ -30,6 +30,11 @@ class Request
     protected $path;
 
     /**
+     * @var string
+     */
+    protected $groupedPath;
+
+    /**
      * @var array
      */
     protected $parameters = [];
@@ -76,6 +81,10 @@ class Request
      */
     public function getPath()
     {
+        if ($this->config->isGroupedProductsEnabled($this->storeManager->getStore()) && !empty($this->groupedPath)) {
+            return $this->groupedPath;
+        }
+
         return $this->path;
     }
 

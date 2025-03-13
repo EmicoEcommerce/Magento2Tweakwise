@@ -18,6 +18,10 @@ class SuggestionsRequest extends Request implements SearchRequestInterface
      * @var string
      */
     protected $path = 'suggestions';
+    /**
+     * @var string
+     */
+    protected $groupedPath = 'suggestions/grouped';
 
     /**
      * @return string

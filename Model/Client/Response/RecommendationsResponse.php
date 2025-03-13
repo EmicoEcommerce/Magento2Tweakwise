@@ -40,25 +40,6 @@ class RecommendationsResponse extends Response
         return $this->getDataValue('items') ?: [];
     }
 
-    /**
-     * @param ItemType[]|array[] $items
-     * @return $this
-     */
-    public function setItems(array $items)
-    {
-        $items = $this->normalizeArray($items, 'item');
-
-        foreach ($items as $value) {
-            if (!$value instanceof ItemType) {
-                $value = new ItemType($value);
-            }
-
-            $this->data['items'][] = $value;
-        }
-
-        return $this;
-    }
-
     public function replaceItems(array $items)
     {
         $this->data['items'] = $items;

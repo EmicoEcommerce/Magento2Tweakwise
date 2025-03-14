@@ -67,7 +67,7 @@ class ProductListItem implements ArgumentInterface
             );
         }
 
-        $itemId = (int)$item->getId();
+        $itemId = (string)$item->getId();
         $storeId = (int)$this->storeManager->getStore()->getId();
         $customerGroupId = (int)$this->customerSession->getCustomerGroupId();
         $hashedCacheKeyInfo = $this->cacheHelper->hashCacheKeyInfo(
@@ -80,6 +80,7 @@ class ProductListItem implements ArgumentInterface
         if (!$this->cacheHelper->load($hashedCacheKeyInfo)) {
             if ($isVisual) {
                 $itemHtml = $this->getVisualHtml($item);
+                $this->cacheHelper->save($itemHtml, $hashedCacheKeyInfo);
             } else {
                 $itemHtml = $this->getItemHtmlWithRenderer(
                     $item,
@@ -89,14 +90,18 @@ class ProductListItem implements ArgumentInterface
                     $imageDisplayArea,
                     $showDescription
                 );
+                $this->cacheHelper->save(
+                    $itemHtml,
+                    $hashedCacheKeyInfo,
+                    [Product::CACHE_TAG, sprintf('%s_%s', Product::CACHE_TAG, $itemId)]
+                );
             }
-
-            $this->cacheHelper->save($itemHtml, $hashedCacheKeyInfo);
         }
 
         return sprintf(
-            '<esi:include src="/%s?cache_key_info=%s" />',
+            '<esi:include src="/%s?item_id=%s&cache_key_info=%s" />',
             Cache::PRODUCT_CARD_PATH,
+            $itemId,
             $hashedCacheKeyInfo
         );
     }

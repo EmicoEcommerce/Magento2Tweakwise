@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
 use Exception;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType;
 use Tweakwise\Magento2Tweakwise\Api\Data\VisualInterface;
@@ -179,7 +180,10 @@ class Collection extends AbstractCollection
     protected function applyProductImages(): AbstractCollection
     {
         foreach ($this->getProductImages() as $productId => $productImageUrl) {
-            if (!isset($this->_items[$productId]) || $this->_items[$productId]->getData('type_id') !== 'configurable') {
+            if (
+                !isset($this->_items[$productId]) ||
+                $this->_items[$productId]->getTypeId() !== Configurable::TYPE_CODE
+            ) {
                 continue;
             }
 

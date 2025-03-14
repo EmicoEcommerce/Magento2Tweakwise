@@ -117,4 +117,25 @@ class ItemType extends Type
     {
         return (string) $this->getDataValue('url');
     }
+
+    public function getGroupCodeFromAttributes()
+    {
+        $attributes = $this->getDataValue('attributes');
+
+        foreach ($attributes as $attribute) {
+            if (!is_array($attribute)) {
+                $attribute = $attributes['attribute'];
+            }
+
+            if (
+                isset($attribute['name']) &&
+                $attribute['name'] === 'groupcode' &&
+                isset($attribute['values']['value'])
+            ) {
+                return (string)($attribute['values']['value']);
+            }
+        }
+
+        return '';
+    }
 }

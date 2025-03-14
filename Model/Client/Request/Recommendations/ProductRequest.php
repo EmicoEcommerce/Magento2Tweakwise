@@ -33,6 +33,10 @@ class ProductRequest extends FeaturedRequest
      */
     public function setProduct(Product $product)
     {
+        if ($this->config->isGroupedProductsEnabled() && $product->getTypeId() === 'configurable') {
+
+        }
+
         $this->product = $product;
         return $this;
     }

@@ -9,11 +9,28 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 
+use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class RecommendationsResponse extends Response
 {
+    private bool $proccessedGroupedProducts = false;
+
+    public function __construct(
+        Helper $helper,
+        Request $request,
+        private readonly Config $config,
+        array $data = null
+    ) {
+        parent::__construct(
+            $helper,
+            $request,
+            $data
+        );
+    }
     /**
      * @param array $recommendation
      */
@@ -37,7 +54,26 @@ class RecommendationsResponse extends Response
      */
     public function getItems(): array
     {
-        return $this->getDataValue('items') ?: [];
+        if ($this->config->isGroupedProductsEnabled() && !$this->proccessedGroupedProducts) {
+            //manually group items since recommendations doesn't have an grouped call yet.
+            $items = parent::getItems();
+            $groups = [];
+            if (empty($items)) {
+                return $this->data['items'];
+            }
+
+            foreach ($items as $item) {
+                $groups['group'][] = [
+                    'code' => $item->getGroupCodeFromAttributes(),
+                    'items' => ['item' => [$item->data]],
+                ];
+            }
+
+            $this->setGroups($groups);
+            $this->proccessedGroupedProducts = true;
+        }
+
+        return $this->data['items'];
     }
 
     public function replaceItems(array $items)

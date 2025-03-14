@@ -60,13 +60,19 @@ class Cache
     /**
      * @param string $data
      * @param string $hashedCacheKeyInfo
+     * @param array $tags
      * @return void
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    public function save(string $data, string $hashedCacheKeyInfo): void
+    public function save(string $data, string $hashedCacheKeyInfo, array $tags = []): void
     {
-        $this->cache->save($data, $this->getCacheKey($hashedCacheKeyInfo));
+        $this->cache->save(
+            $data,
+            $this->getCacheKey($hashedCacheKeyInfo),
+            $tags,
+            $this->config->getProductCardLifetime()
+        );
     }
 
     /**
@@ -139,7 +145,7 @@ class Cache
     }
 
     /**
-     * @param int $itemId
+     * @param string $itemId
      * @param int $storeId
      * @param int $customerGroupId
      * @param string $image
@@ -147,7 +153,7 @@ class Cache
      * @return string
      */
     public function hashCacheKeyInfo(
-        int $itemId,
+        string $itemId,
         int $storeId,
         int $customerGroupId,
         string $image = '',

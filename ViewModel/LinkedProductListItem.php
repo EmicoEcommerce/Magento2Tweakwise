@@ -52,7 +52,7 @@ class LinkedProductListItem implements ArgumentInterface
             );
         }
 
-        $productId = (int)$product->getId();
+        $productId = (string)$product->getId();
         $storeId = (int)$this->storeManager->getStore()->getId();
         $customerGroupId = (int)$this->customerSession->getCustomerGroupId();
         $cardType = str_replace(' ', '_', $params['card_type']);
@@ -70,12 +70,17 @@ class LinkedProductListItem implements ArgumentInterface
                 $parentBlock,
                 $params
             );
-            $this->cacheHelper->save($itemHtml, $hashedCacheKeyInfo);
+            $this->cacheHelper->save(
+                $itemHtml,
+                $hashedCacheKeyInfo,
+                [Product::CACHE_TAG, sprintf('%s_%s', Product::CACHE_TAG, $productId)]
+            );
         }
 
         return sprintf(
-            '<esi:include src="/%s?cache_key_info=%s" />',
+            '<esi:include src="/%s?item_id=%s&cache_key_info=%s" />',
             Cache::PRODUCT_CARD_PATH,
+            $productId,
             $hashedCacheKeyInfo
         );
     }

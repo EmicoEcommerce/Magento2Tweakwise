@@ -31,6 +31,7 @@ class RecommendationsResponse extends Response
             $data
         );
     }
+
     /**
      * @param array $recommendation
      */

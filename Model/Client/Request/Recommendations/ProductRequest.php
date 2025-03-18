@@ -33,11 +33,12 @@ class ProductRequest extends FeaturedRequest
      */
     public function setProduct(Product $product)
     {
-        if ($this->config->isGroupedProductsEnabled() && $product->getTypeId() === 'configurable') {
+        $this->product = $product;
 
+        if ($this->config->isGroupedProductsEnabled() && $product->getTypeId() === 'configurable') {
+            $this->product = $this->getSimpleProduct($product);
         }
 
-        $this->product = $product;
         return $this;
     }
 
@@ -66,5 +67,15 @@ class ProductRequest extends FeaturedRequest
         }
 
         return '/' . $productTweakwiseId . parent::getPathSuffix();
+    }
+
+    private function getSimpleProduct(Product $product)
+    {
+        $children = $product->getTypeInstance()->getUsedProducts($product);
+        foreach ($children as $child) {
+            if ($child->isSaleable() && $child->getTypeId() === 'simple') {
+                return $child;
+            }
+        }
     }
 }

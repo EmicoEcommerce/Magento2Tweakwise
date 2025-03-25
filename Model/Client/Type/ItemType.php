@@ -118,7 +118,10 @@ class ItemType extends Type
         return (string) $this->getDataValue('url');
     }
 
-    public function getGroupCodeFromAttributes()
+    /**
+     * @return string
+     */
+    public function getGroupCodeFromAttributes(): string
     {
         $attributes = $this->getDataValue('attributes');
 
@@ -132,7 +135,7 @@ class ItemType extends Type
                 $attribute['name'] === 'groupcode' &&
                 isset($attribute['values']['value'])
             ) {
-                return (string)($attribute['values']['value']);
+                return (string)$attribute['values']['value'];
             }
         }
 

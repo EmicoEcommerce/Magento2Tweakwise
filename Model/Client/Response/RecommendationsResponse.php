@@ -17,8 +17,19 @@ use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class RecommendationsResponse extends Response
 {
+    /**
+     * @var bool
+     */
     private bool $proccessedGroupedProducts = false;
 
+    /**
+     * RecommendationsResponse constructor.
+     *
+     * @param Helper $helper
+     * @param Request $request
+     * @param Config $config
+     * @param array|null $data
+     */
     public function __construct(
         Helper $helper,
         Request $request,
@@ -56,7 +67,7 @@ class RecommendationsResponse extends Response
     public function getItems(): array
     {
         if ($this->config->isGroupedProductsEnabled() && !$this->proccessedGroupedProducts) {
-            //manually group items since recommendations doesn't have an grouped call yet.
+            // Manually group items since recommendations doesn't have a grouped call yet.
             $items = parent::getItems();
             $groups = [];
             if (empty($items)) {

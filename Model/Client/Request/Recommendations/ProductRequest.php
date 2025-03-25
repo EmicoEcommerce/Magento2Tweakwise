@@ -69,11 +69,15 @@ class ProductRequest extends FeaturedRequest
         return '/' . $productTweakwiseId . parent::getPathSuffix();
     }
 
-    private function getSimpleProduct(Product $product)
+    /**
+     * @param Product $product
+     * @return Product
+     */
+    private function getSimpleProduct(Product $product): Product
     {
         $children = $product->getTypeInstance()->getUsedProducts($product);
         foreach ($children as $child) {
-            if ($child->isSaleable() && $child->getTypeId() === 'simple') {
+            if ($child->isSaleable() && $child->getTypeId() === Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
                 return $child;
             }
         }

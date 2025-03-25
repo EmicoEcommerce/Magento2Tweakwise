@@ -60,10 +60,10 @@ class PersonalMerchandisingConfig extends Config
         return $profileKey;
     }
 
-    /**
-     * @return CookieMetadataInterface
+P    /**
+     * @return PublicCookieMetadata
      */
-    private function getCookieMetadata(): CookieMetadataInterface
+    private function getCookieMetadata(): PublicCookieMetadata
     {
         return $this->cookieMetadataFactory
             ->createPublicCookieMetadata()

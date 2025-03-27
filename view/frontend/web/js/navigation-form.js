@@ -394,6 +394,11 @@ define([
             const baseUrl = window.location.origin;
             const resultUrl = new URL(response.url, baseUrl);
             const queryParams = new URLSearchParams(window.location.search ?? '');
+
+            if (!resultUrl.searchParams.has('p')) {
+                queryParams.delete('p');
+            }
+
             let queryParamsString = queryParams.toString();
 
             if (resultUrl.search) {

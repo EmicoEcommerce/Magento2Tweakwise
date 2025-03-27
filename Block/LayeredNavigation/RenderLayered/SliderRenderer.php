@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
+use Magento\Framework\Escaper;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
@@ -45,6 +46,7 @@ class SliderRenderer extends DefaultRenderer
      * @param Template\Context $context
      * @param Json $jsonSerializer
      * @param Helper $helper
+     * @param Escaper $escaper
      * @param array $data
      */
     public function __construct(
@@ -56,6 +58,7 @@ class SliderRenderer extends DefaultRenderer
         Template\Context $context,
         Json $jsonSerializer,
         Helper $helper,
+        protected Escaper $escaper,
         array $data = []
     ) {
         parent::__construct(
@@ -65,6 +68,7 @@ class SliderRenderer extends DefaultRenderer
             $filterHelper,
             $jsonSerializer,
             $helper,
+            $escaper,
             $data
         );
         $this->priceHelper = $priceHelper;

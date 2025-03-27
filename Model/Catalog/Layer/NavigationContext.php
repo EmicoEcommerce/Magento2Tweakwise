@@ -148,11 +148,11 @@ class NavigationContext
     }
 
     /**
-     * @return ProductNavigationResponse|null
+     * @return ProductNavigationResponse
      * @throws Exception
      * @throws ApiException
      */
-    public function getResponse(): ProductNavigationResponse|null
+    public function getResponse(): ProductNavigationResponse
     {
         if (!$this->response) {
             $request = $this->getRequest();
@@ -166,6 +166,8 @@ class NavigationContext
                     //no api response
                     throw $e;
                 }
+            } else {
+                throw new ApiException('Tweakwise API is not reachable');
             }
         }
 

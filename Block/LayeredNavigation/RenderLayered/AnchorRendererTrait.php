@@ -27,7 +27,11 @@ trait AnchorRendererTrait
         $anchorAttributes = $this->getAnchorTagAttributes($item);
         $attributeHtml = [];
         foreach ($anchorAttributes as $anchorAttribute => $anchorAttributeValue) {
-            $attributeHtml[] = sprintf('%s="%s"', $anchorAttribute, $this->escaper->escapeHtmlAttr($anchorAttributeValue));
+            $attributeHtml[] = sprintf(
+                '%s="%s"',
+                $anchorAttribute,
+                $this->escaper->escapeHtmlAttr($anchorAttributeValue)
+            );
         }
 
         return implode(' ', $attributeHtml);

@@ -94,7 +94,7 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
         }
 
         try {
-            if (empty($this->navigationContext->getResponse()->getProductIds()))  {
+            if (empty($this->navigationContext->getResponse()->getProductIds())) {
                 $collection = $this->collectionFactory
                     ->create(['navigationContext' => $this->navigationContext->resetPagination()])
                 ;

@@ -11,6 +11,8 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
+use Magento\Store\Model\Store;
 
 class PersonalMerchandisingConfig extends Config
 {
@@ -21,8 +23,8 @@ class PersonalMerchandisingConfig extends Config
         State $state,
         WriterInterface $configWriter,
         TypeListInterface $cacheTypeList,
-        private CookieManagerInterface $cookieManager,
-        private CookieMetadataFactory $cookieMetadataFactory
+        private readonly CookieManagerInterface $cookieManager,
+        private readonly CookieMetadataFactory $cookieMetadataFactory
     ) {
         parent::__construct($config, $jsonSerializer, $request, $state, $configWriter, $cacheTypeList);
     }

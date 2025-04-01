@@ -13,6 +13,7 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Store\Model\Store;
+use Magento\Framework\Exception\LocalizedException;
 
 class PersonalMerchandisingConfig extends Config
 {
@@ -32,7 +33,7 @@ class PersonalMerchandisingConfig extends Config
     /**
      * @param Store|null $store
      * @return bool
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     public function isAnalyticsEnabled(Store $store = null): bool
     {

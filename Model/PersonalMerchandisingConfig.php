@@ -32,6 +32,7 @@ class PersonalMerchandisingConfig extends Config
     /**
      * @param Store|null $store
      * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function isAnalyticsEnabled(Store $store = null): bool
     {

@@ -24,6 +24,7 @@ use Magento\Framework\App\Config\Storage\WriterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Config
 {
@@ -173,6 +174,16 @@ class Config
     public function getGeneralAuthenticationKey(Store $store = null)
     {
         return (string)$this->getStoreConfig('tweakwise/general/authentication_key', $store);
+    }
+
+    /**
+     * @param Store|null $store
+     * @return bool
+     * @throws LocalizedException
+     */
+    public function isGroupedProductsEnabled(Store $store = null): bool
+    {
+        return (bool)$this->getStoreConfig('tweakwise/general/grouped_products', $store);
     }
 
     /**

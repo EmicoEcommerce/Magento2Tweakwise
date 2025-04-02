@@ -21,4 +21,9 @@ class ProductSearchRequest extends ProductNavigationRequest implements SearchReq
      * @var string
      */
     protected $path = 'navigation-search';
+
+    /**
+     * @var string
+     */
+    protected $groupedPath = 'navigation-search/grouped';
 }

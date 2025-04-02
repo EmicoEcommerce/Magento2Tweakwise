@@ -11,6 +11,9 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
+use Magento\Store\Model\Store;
+use Magento\Framework\Exception\LocalizedException;
 
 class PersonalMerchandisingConfig extends Config
 {
@@ -21,8 +24,8 @@ class PersonalMerchandisingConfig extends Config
         State $state,
         WriterInterface $configWriter,
         TypeListInterface $cacheTypeList,
-        private CookieManagerInterface $cookieManager,
-        private CookieMetadataFactory $cookieMetadataFactory
+        private readonly CookieManagerInterface $cookieManager,
+        private readonly CookieMetadataFactory $cookieMetadataFactory
     ) {
         parent::__construct($config, $jsonSerializer, $request, $state, $configWriter, $cacheTypeList);
     }
@@ -30,6 +33,7 @@ class PersonalMerchandisingConfig extends Config
     /**
      * @param Store|null $store
      * @return bool
+     * @throws LocalizedException
      */
     public function isAnalyticsEnabled(Store $store = null): bool
     {
@@ -60,10 +64,10 @@ class PersonalMerchandisingConfig extends Config
         return $profileKey;
     }
 
-    /**
-     * @return CookieMetadataInterface
-     */
-    private function getCookieMetadata(): CookieMetadataInterface
+   /**
+    * @return PublicCookieMetadata
+    */
+    private function getCookieMetadata(): PublicCookieMetadata
     {
         return $this->cookieMetadataFactory
             ->createPublicCookieMetadata()

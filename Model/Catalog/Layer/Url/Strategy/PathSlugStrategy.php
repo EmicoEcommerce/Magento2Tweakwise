@@ -301,10 +301,11 @@ class PathSlugStrategy implements
 
             if (
                 $page &&
-                (int) $page > 1 &&
-                count($this->getActiveFilters()) < 1
+                (int) $page > 1
             ) {
                 $query['p'] = $page;
+            } else {
+                unset($query['p']);
             }
 
             if ($sort) {

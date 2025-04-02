@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
+use Magento\Framework\Escaper;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
@@ -59,6 +60,7 @@ class DefaultRenderer extends Template
      * @param FilterHelper $filterHelper
      * @param Json $jsonSerializer
      * @param Helper $helper
+     * @param Escaper $escaper
      * @param array $data
      */
     public function __construct(
@@ -68,6 +70,7 @@ class DefaultRenderer extends Template
         FilterHelper $filterHelper,
         Json $jsonSerializer,
         Helper $helper,
+        protected Escaper $escaper,
         array $data = []
     ) {
         parent::__construct($context, $data);

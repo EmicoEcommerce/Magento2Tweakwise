@@ -94,15 +94,13 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
         }
 
         try {
-            $collection = $this->collectionFactory->create(['navigationContext' => $this->navigationContext]);
-
-            if (count($collection->getItems()) < 1) {
+            if (empty($this->navigationContext->getResponse()->getProductIds())) {
                 $collection = $this->collectionFactory
                     ->create(['navigationContext' => $this->navigationContext->resetPagination()])
                 ;
+            } else {
+                $collection = $this->collectionFactory->create(['navigationContext' => $this->navigationContext]);
             }
-
-            $collection->clear();
 
             return $collection;
         } catch (TweakwiseExceptionInterface $e) {

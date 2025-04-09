@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
+use Magento\Framework\Escaper;
 use RuntimeException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
@@ -61,6 +62,7 @@ class SwatchRenderer extends RenderLayered
      * @param EavAttributeFactory $eavAttributeFactory
      * @param FilterHelper $filterHelper
      * @param SwatchAttributeResolver $swatchAttributeResolver
+     * @param Escaper $escaper
      * @param array $data
      */
     public function __construct(
@@ -72,6 +74,7 @@ class SwatchRenderer extends RenderLayered
         EavAttributeFactory $eavAttributeFactory,
         FilterHelper $filterHelper,
         SwatchAttributeResolver $swatchAttributeResolver,
+        protected Escaper $escaper,
         array $data = []
     ) {
         parent::__construct(

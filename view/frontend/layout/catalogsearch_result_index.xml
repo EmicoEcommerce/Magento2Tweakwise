@@ -34,13 +34,6 @@
                 </arguments>
             </block>
         </referenceBlock>
-        <referenceBlock name="search_result_list">
-            <arguments>
-                <argument name="view_model_product_list_item" xsi:type="object">
-                    Tweakwise\Magento2Tweakwise\ViewModel\ProductListItem
-                </argument>
-            </arguments>
-        </referenceBlock>
         <referenceBlock name="catalogsearch.leftnav">
             <arguments>
                 <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>
@@ -54,8 +47,7 @@
             </arguments>
             <block class="Magento\Catalog\Block\Product\AbstractProduct"
                    name="tweakwise.catalog.product.list.item"
-                   template="Tweakwise_Magento2Tweakwise::product/list/item.phtml"
-                   ifconfig="tweakwise/personal_merchandising/enabled"/>
+                   template="Tweakwise_Magento2Tweakwise::product/list/item.phtml"/>
         </referenceBlock>
     </body>
 </page>

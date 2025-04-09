@@ -331,9 +331,9 @@ class Client
         try {
             return $this->doRequest($request, $async);
         } catch (ApiException $e) {
-            $this->config->setTweakwiseExceptionThrown(true);
             //don't log 404 messages.
             if ($e->getCode() !== 404) {
+                $this->config->setTweakwiseExceptionThrown(true);
                 $this->log->throwException($e);
             } else {
                 throw ($e);

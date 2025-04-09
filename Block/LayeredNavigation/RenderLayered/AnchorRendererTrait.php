@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
+use Magento\Framework\Escaper;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
 
@@ -13,6 +14,11 @@ trait AnchorRendererTrait
     protected $filterHelper;
 
     /**
+     * @var Escaper
+     */
+    protected Escaper $escaper;
+
+    /**
      * @param Item $item
      * @return string
      */
@@ -21,7 +27,11 @@ trait AnchorRendererTrait
         $anchorAttributes = $this->getAnchorTagAttributes($item);
         $attributeHtml = [];
         foreach ($anchorAttributes as $anchorAttribute => $anchorAttributeValue) {
-            $attributeHtml[] = sprintf('%s="%s"', $anchorAttribute, $anchorAttributeValue);
+            $attributeHtml[] = sprintf(
+                '%s="%s"',
+                $anchorAttribute,
+                $this->escaper->escapeHtmlAttr($anchorAttributeValue)
+            );
         }
 
         return implode(' ', $attributeHtml);

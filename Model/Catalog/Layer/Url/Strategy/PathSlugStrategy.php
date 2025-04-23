@@ -396,7 +396,7 @@ class PathSlugStrategy implements
             // Replace filter path in current URL with the new filter combination path
             if (strpos($currentUrl, $currentFilterPath) !== false) {
                 rtrim($currentFilterPath, '/');
-                $url = str_replace($currentFilterPath.'/', $newFilterPath.'/', $currentUrl);
+                $url = str_replace($currentFilterPath . '/', $newFilterPath . '/', $currentUrl);
             } else {
                 $url = $currentUrl . '/' . $newFilterPath;
             }

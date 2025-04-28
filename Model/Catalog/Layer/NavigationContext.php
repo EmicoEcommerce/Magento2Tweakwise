@@ -161,11 +161,23 @@ class NavigationContext
 
             if (!$this->config->getTweakwiseExceptionTrown()) {
                 try {
-                    $this->response = $this->client->request($request);
-                } catch (ApiException $e) {
-                    //no api response
-                    throw $e;
-                }
+                     $this->response = $this->client->request($request);
++                    
+                     //Request number two to searchbanners if needed
++                    if ($this->showSearchBanners() && $request instanceof ProductSearchRequest) {
+                         $this->response->setValue('searchbanners', []);
++                        $searchQuery = $request->getParameter('tn_q');
++                        $request->setPath('searchbanners');
++                        $request->setParameters(['tn_cid' => '10001185', 'tn_q' => $searchQuery]);
++                        $searchBannerResponse = $this->client->request($request);
++                        if ($searchBannerResponse->hasValue('searchbanner')) {
++                            $this->response->setValue(
++                                'searchbanners',
++                                ['searchbanner' => $searchBannerResponse->getValue('searchbanner')]
++                            );
++                        }
++                    }
+
             } else {
                 throw new ApiException('Tweakwise API is not reachable');
             }

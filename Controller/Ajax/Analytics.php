@@ -42,12 +42,20 @@ class Analytics extends Action
     {
         $result = $this->resultJsonFactory->create();
         if ($this->config->isAnalyticsEnabled()) {
-            $type = $this->getRequest()->getParam('type');
+            $request = $this->getRequest();
+            $type = $request->getParam('type');
+            $value = $request->getParam('value');
             $profileKey = $this->config->getProfileKey();
+
+            //hyva theme
+            if (empty($type)) {
+                $contentDecoded = json_decode($request->getContent(), true);
+                $type = isset($contentDecoded['type']) ? $contentDecoded['type'] : $type;
+                $value = isset($contentDecoded['value']) ? $contentDecoded['value'] : $value;
+            }
 
             $tweakwiseRequest = $this->requestFactory->create();
             $tweakwiseRequest->setProfileKey($profileKey);
-            $value = $this->getRequest()->getParam('value');
 
             if ($type === 'product') {
                 $tweakwiseRequest->setParameter('productKey', $value);

@@ -81,6 +81,6 @@ class PersonalMerchandisingConfig extends Config
      */
     private function generateProfileKey(): string
     {
-        return uniqid('', true);
+        return str_replace('.', '', uniqid('', true));
     }
 }

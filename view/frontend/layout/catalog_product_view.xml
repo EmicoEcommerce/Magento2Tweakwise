@@ -11,7 +11,7 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 <body>
     <referenceContainer name="content">
-        <block class="Magento\Framework\View\Element\Template" name="magento2tweakwise.productpage" template="Tweakwise_Magento2Tweakwise::analytics.phtml" ifconfig="tweakwise/personal_merchandising/analytics_enabled">
+        <block class="Magento\Framework\View\Element\Template" name="magento2tweakwise.productpage" template="Tweakwise_Magento2Tweakwise::analytics.phtml" ifconfig="tweakwise/merchandising_builder/personal_merchandising/analytics_enabled">
             <arguments>
                 <argument name="viewModel" xsi:type="object">Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics</argument>
                 <argument name="analyticsType" xsi:type="string">product</argument>
@@ -27,7 +27,7 @@
         <block class="Magento\Catalog\Block\Product\AbstractProduct"
                name="tweakwise.catalog.linked.product.list.item"
                template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-               ifconfig="tweakwise/personal_merchandising/enabled"/>
+               ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
     </referenceBlock>
     <referenceBlock name="catalog.product.related">
         <arguments>
@@ -38,7 +38,7 @@
         <block class="Magento\Catalog\Block\Product\AbstractProduct"
                name="tweakwise.catalog.linked.product.list.item"
                template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-               ifconfig="tweakwise/personal_merchandising/enabled"/>
+               ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
     </referenceBlock>
     </body>
 </page>

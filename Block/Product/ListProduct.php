@@ -117,7 +117,10 @@ class ListProduct extends MagentoListProduct
      */
     public function getTemplate()
     {
-        if ($this->cacheHelper->isHyvaTheme()) {
+        if (
+            !$this->cacheHelper->shouldUseMerchandisingListing() ||
+            $this->cacheHelper->isHyvaTheme()
+        ) {
             return parent::getTemplate();
         }
 

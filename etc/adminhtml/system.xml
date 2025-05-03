@@ -221,37 +221,51 @@
                     </depends>
                 </field>
             </group>
-            <group id="personal_merchandising" translate="label" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Personal Merchandising</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enabled</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Note that Varnish must be enabled and properly configured for personal merchandising to
-                        work properly in cached blocks. Enabling this can have impact on performance, caching of ajax
-                        filter requests will be disabled for requests which have a profile cookie value (see Cookie name
-                        setting below)
-                    </comment>
-                </field>
-                <field id="cookie_name" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Cookie name</label>
-                    <comment>Name of cookie which holds tweakwise profile information, this is usually set in the tweakwise measure script. Or when analytics is enabled, it is done automaticly</comment>
+            <group id="merchandising_builder" translate="label" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Merchandising Builder</label>
+                <group id="personal_merchandising" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Personal Merchandising</label>
+                    <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Enabled</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <comment>Note that Varnish must be enabled and properly configured for personal merchandising to
+                            work properly in cached blocks. Enabling this can have impact on performance, caching of ajax
+                            filter requests will be disabled for requests which have a profile cookie value (see Cookie name
+                            setting below)
+                        </comment>
+                    </field>
+                    <field id="cookie_name" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Cookie name</label>
+                        <comment>Name of cookie which holds tweakwise profile information, this is usually set in the tweakwise measure script. Or when analytics is enabled, it is done automaticly</comment>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                    </field>
+                    <field id="product_card_lifetime" translate="label,comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Product Card TTL</label>
+                        <comment>The cache lifetime for a product tile on the category view.</comment>
+                        <validate>validate-number</validate>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                    </field>
+                    <field id="analytics_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Send analytics events to Tweakwise</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <comment>Note only enable this if you don't use javascript to send productviews/search/purchases requests to tweakwise</comment>
+                    </field>
+                </group>
+                <group id="visuals" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Visuals</label>
+                    <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Enabled</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <comment>Enable this if you want to show visuals on the PLP. This is automatically enabled when the personal merchandising configuration is enabled.</comment>
+                    </field>
                     <depends>
-                        <field id="enabled">1</field>
+                        <field id="tweakwise/merchandising_builder/personal_merchandising/enabled">0</field>
                     </depends>
-                </field>
-                <field id="product_card_lifetime" translate="label,comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Product Card TTL</label>
-                    <comment>The cache lifetime for a product tile on the category view.</comment>
-                    <validate>validate-number</validate>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                </field>
-                <field id="analytics_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Send analytics events to Tweakwise</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Note only enable this if you don't use javascript to send productviews/search/purchases requests to tweakwise</comment>
-                </field>
+                </group>
             </group>
             <group id="recommendations" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Recommendations</label>

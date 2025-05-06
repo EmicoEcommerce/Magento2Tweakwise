@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Controller\Product;
 
+use Magento\Catalog\Model\Product;
+use Magento\PageCache\Model\Cache\Type as PageType;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\RequestInterface;
@@ -36,13 +38,24 @@ class Card implements HttpGetActionInterface
      */
     public function execute(): HttpInterface
     {
-        $itemId = (string) $this->request->getParam('item_id');
-        $cardType = $this->request->getParam('card_type');
-        $itemHtml = $cardType ? $this->cacheHelper->load($itemId, $cardType) :
-            $this->cacheHelper->load($itemId);
+        $itemId = (string)$this->request->getParam('item_id');
+        $cacheKeyInfo = (string)$this->request->getParam('cache_key_info');
+        $itemHtml = $this->cacheHelper->load($cacheKeyInfo);
 
         $response = $this->httpFactory->create();
         $response->appendBody($itemHtml);
+
+        $response->setHeader(
+            'X-Magento-Tags',
+            implode(
+                ',',
+                [
+                    Product::CACHE_TAG,
+                    sprintf('%s_%s', Product::CACHE_TAG, $itemId),
+                    PageType::CACHE_TAG
+                ]
+            )
+        );
         $response->setPublicHeaders($this->config->getProductCardLifetime());
         return $response;
     }

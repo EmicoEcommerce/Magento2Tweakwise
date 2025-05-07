@@ -7,12 +7,11 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
-use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
-use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Serialize\Serializer\Json as jsonSerializer;
 
 class Analytics extends Action
 {
@@ -24,13 +23,15 @@ class Analytics extends Action
      * @param Client                      $client
      * @param PersonalMerchandisingConfig $config
      * @param RequestFactory              $requestFactory
+     * @param jsonSerializer              $jsonSerializer
      */
     public function __construct(
         private Context $context,
         private JsonFactory $resultJsonFactory,
         private Client $client,
         private PersonalMerchandisingConfig $config,
-        private RequestFactory $requestFactory
+        private RequestFactory $requestFactory,
+        private readonly jsonSerializer $jsonSerializer
     ) {
         parent::__construct($context);
     }
@@ -49,9 +50,9 @@ class Analytics extends Action
 
             //hyva theme
             if (empty($type)) {
-                $contentDecoded = json_decode($request->getContent(), true);
-                $type = isset($contentDecoded['type']) ? $contentDecoded['type'] : $type;
-                $value = isset($contentDecoded['value']) ? $contentDecoded['value'] : $value;
+                $contentDecoded = $this->jsonSerializer->unserialize($request->getContent());
+                $type = $contentDecoded['type'] ?? $type;
+                $value = $contentDecoded['value'] ?? $value;
             }
 
             $tweakwiseRequest = $this->requestFactory->create();

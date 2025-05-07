@@ -18,6 +18,21 @@ use Magento\Framework\Math\Random;
 
 class PersonalMerchandisingConfig extends Config
 {
+    /**
+     * Constructor.
+     *
+     * @param ScopeConfigInterface   $config
+     * @param Json                   $jsonSerializer
+     * @param RequestInterface       $request
+     * @param State                  $state
+     * @param WriterInterface        $configWriter
+     * @param TypeListInterface      $cacheTypeList
+     * @param CookieManagerInterface $cookieManager
+     * @param CookieMetadataFactory  $cookieMetadataFactory
+     * @param Random                 $mathRandom
+     *
+     * @throws LocalizedException
+     */
     public function __construct(
         ScopeConfigInterface $config,
         Json $jsonSerializer,

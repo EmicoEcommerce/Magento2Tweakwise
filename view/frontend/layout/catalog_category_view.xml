@@ -20,7 +20,7 @@
                 <block class="Magento\Catalog\Block\Product\AbstractProduct"
                        name="tweakwise.catalog.linked.product.list.item"
                        template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-                       ifconfig="tweakwise/personal_merchandising/enabled"/>
+                       ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
             </block>
         </referenceContainer>
         <referenceBlock name="category.products.list">

@@ -577,12 +577,7 @@ class PathSlugStrategy implements
         $category = $this->strategyHelper->getCategoryFromItem($item);
         $categoryUrlPath = \parse_url($category->getUrl(), PHP_URL_PATH);
 
-        $url = $this->magentoUrl->getDirectUrl(
-            sprintf(
-                '%s/',
-                trim($categoryUrlPath, '/'),
-            )
-        );
+        $url = $this->magentoUrl->getDirectUrl($categoryUrlPath);
 
         /*
         Make sure we dont have any double slashes, add the current filter path to the category url to maintain
@@ -590,7 +585,9 @@ class PathSlugStrategy implements
         */
         $filterSlugPath = $this->buildFilterSlugPath($this->getActiveFilters());
 
-        $url .= '/' . trim($filterSlugPath, '/');
+        if (!empty($filterSlugPath)) {
+            $url .= '/' . trim($filterSlugPath, '/');
+        }
 
         /*
          We explode the url so that we can capture its parts and find the double values in order to remove them.

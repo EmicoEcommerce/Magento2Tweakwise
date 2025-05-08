@@ -135,7 +135,7 @@ define([
          * @private
          */
         _getFilterParameters: function () {
-            var serializedData = this.element.find(':not(.js-skip-submit)').serialize();
+            var serializedData = this.element.find("input:not('.js-skip-submit')").serialize();
             let params = new URLSearchParams(serializedData);
 
             let keysForDel = [];

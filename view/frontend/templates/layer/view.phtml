@@ -102,7 +102,7 @@ if (!$block->canShowBlock()) {
                     <?php if ($renderFilterButton): ?>
                         <div class="show-items-link">
                             <button type="button" class="btn btn-primary btn-block js-btn-filter">
-                                <?= $escaper->escapeHtml(__(sprintf('Show <span>%s</span> items', $block->getLayer()->getProductCount()))); ?>
+                                <?= $escaper->escapeHtml(__(sprintf('Show %s items', $block->getLayer()->getProductCount()))); ?>
                             </button>
                         </div>
                     <?php endif;?>

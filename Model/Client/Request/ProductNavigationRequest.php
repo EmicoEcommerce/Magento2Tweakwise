@@ -9,11 +9,22 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
+use Magento\Framework\Exception\LocalizedException;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 
 class ProductNavigationRequest extends Request
 {
+    /**
+     * @var string
+     */
+    protected $path = 'navigation';
+
+    /**
+     * @var string
+     */
+    protected $groupedPath = 'navigation/grouped';
+
     /**
      * Maximum number of products returned for one request
      */
@@ -24,11 +35,6 @@ class ProductNavigationRequest extends Request
      */
     private const SORT_ASC = 'ASC';
     private const SORT_DESC = 'DESC';
-
-    /**
-     * @var string
-     */
-    protected $path = 'navigation';
 
     /**
      * @var array

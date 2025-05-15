@@ -9,27 +9,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 class ProductSuggestionsResponse extends Response implements AutocompleteProductResponseInterface
 {
     /**
-     * @param ItemType[]|array[] $items
-     * @return $this
-     */
-    public function setItems(array $items)
-    {
-        $items = $this->normalizeArray($items, 'item');
-
-        $values = [];
-        foreach ($items as $value) {
-            if (!$value instanceof ItemType) {
-                $value = new ItemType($value);
-            }
-
-            $values[] = $value;
-        }
-
-        $this->data['items'] = $values;
-        return $this;
-    }
-
-    /**
      * @return int[]
      */
     public function getProductIds()

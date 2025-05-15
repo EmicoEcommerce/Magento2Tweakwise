@@ -20,6 +20,11 @@ class AutocompleteRequest extends Request
     protected $path = 'autocomplete';
 
     /**
+     * @var string
+     */
+    protected $groupedPath = 'autocomplete/grouped';
+
+    /**
      * {@inheritDoc}
      */
     public function getResponseType()

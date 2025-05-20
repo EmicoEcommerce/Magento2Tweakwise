@@ -7,12 +7,11 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
-use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
-use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 
 class Analytics extends Action
 {
@@ -24,13 +23,15 @@ class Analytics extends Action
      * @param Client                      $client
      * @param PersonalMerchandisingConfig $config
      * @param RequestFactory              $requestFactory
+     * @param JsonSerializer              $jsonSerializer
      */
     public function __construct(
         private Context $context,
         private JsonFactory $resultJsonFactory,
         private Client $client,
         private PersonalMerchandisingConfig $config,
-        private RequestFactory $requestFactory
+        private RequestFactory $requestFactory,
+        private readonly JsonSerializer $jsonSerializer
     ) {
         parent::__construct($context);
     }
@@ -42,12 +43,20 @@ class Analytics extends Action
     {
         $result = $this->resultJsonFactory->create();
         if ($this->config->isAnalyticsEnabled()) {
-            $type = $this->getRequest()->getParam('type');
+            $request = $this->getRequest();
+            $type = $request->getParam('type');
+            $value = $request->getParam('value');
             $profileKey = $this->config->getProfileKey();
+
+            //hyva theme
+            if (empty($type)) {
+                $content = $this->jsonSerializer->unserialize($request->getContent());
+                $type = $content['type'] ?? null;
+                $value = $content['value'] ?? null;
+            }
 
             $tweakwiseRequest = $this->requestFactory->create();
             $tweakwiseRequest->setProfileKey($profileKey);
-            $value = $this->getRequest()->getParam('value');
 
             if ($type === 'product') {
                 $tweakwiseRequest->setParameter('productKey', $value);

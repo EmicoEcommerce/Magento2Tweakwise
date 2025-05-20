@@ -23,7 +23,7 @@ class Analytics extends Action
      * @param Client                      $client
      * @param PersonalMerchandisingConfig $config
      * @param RequestFactory              $requestFactory
-     * @param jsonSerializer              $jsonSerializer
+     * @param JsonSerializer              $jsonSerializer
      */
     public function __construct(
         private Context $context,

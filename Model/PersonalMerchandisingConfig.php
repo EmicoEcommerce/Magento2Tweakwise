@@ -14,9 +14,25 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Store\Model\Store;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Math\Random;
 
 class PersonalMerchandisingConfig extends Config
 {
+    /**
+     * Constructor.
+     *
+     * @param ScopeConfigInterface   $config
+     * @param Json                   $jsonSerializer
+     * @param RequestInterface       $request
+     * @param State                  $state
+     * @param WriterInterface        $configWriter
+     * @param TypeListInterface      $cacheTypeList
+     * @param CookieManagerInterface $cookieManager
+     * @param CookieMetadataFactory  $cookieMetadataFactory
+     * @param Random                 $mathRandom
+     *
+     * @throws LocalizedException
+     */
     public function __construct(
         ScopeConfigInterface $config,
         Json $jsonSerializer,
@@ -25,7 +41,8 @@ class PersonalMerchandisingConfig extends Config
         WriterInterface $configWriter,
         TypeListInterface $cacheTypeList,
         private readonly CookieManagerInterface $cookieManager,
-        private readonly CookieMetadataFactory $cookieMetadataFactory
+        private readonly CookieMetadataFactory $cookieMetadataFactory,
+        private readonly Random $mathRandom
     ) {
         parent::__construct($config, $jsonSerializer, $request, $state, $configWriter, $cacheTypeList);
     }
@@ -84,6 +101,6 @@ class PersonalMerchandisingConfig extends Config
      */
     private function generateProfileKey(): string
     {
-        return uniqid('', true);
+        return $this->mathRandom->getUniqueHash();
     }
 }

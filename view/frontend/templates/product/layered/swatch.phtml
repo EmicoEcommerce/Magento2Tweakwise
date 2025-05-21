@@ -24,6 +24,9 @@ use Magento\Framework\Escaper;
     <div class="swatch-attribute-options clearfix">
         <?php foreach ($swatchData['options'] as $option => $label): ?>
             <?php $item = $block->getItemForSwatch($option);?>
+            <?php if (!$item) {
+                continue;
+            } ?>
             <a <?=$block->renderAnchorHtmlTagAttributes($item);?>
                 aria-label="<?=  $label['label'] ?>"
                 class="swatch-option-link-layered"

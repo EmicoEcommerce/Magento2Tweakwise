@@ -39,27 +39,6 @@ class ProductNavigationResponse extends Response
     }
 
     /**
-     * @param ItemType[]|array[] $items
-     * @return $this
-     */
-    public function setItems(array $items)
-    {
-        $items = $this->normalizeArray($items, 'item');
-
-        $values = [];
-        foreach ($items as $value) {
-            if (!$value instanceof ItemType) {
-                $value = new ItemType($value);
-            }
-
-            $values[] = $value;
-        }
-
-        $this->data['items'] = $values;
-        return $this;
-    }
-
-    /**
      * @param PropertiesType|array $properties
      * @return $this
      */
@@ -105,5 +84,24 @@ class ProductNavigationResponse extends Response
         }
 
         return $ids;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductImages(): array
+    {
+        $productImages = [];
+        foreach ($this->getItems() as $item) {
+            if (!$item->getImage()) {
+                continue;
+            }
+
+            // Remove domain and media path when full url is used
+            $imageUrl = preg_replace("#^.*?/catalog/product/#", "", $item->getImage());
+            $productImages[$this->helper->getStoreId($item->getId())] = $imageUrl;
+        }
+
+        return $productImages;
     }
 }

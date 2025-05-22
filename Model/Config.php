@@ -178,6 +178,16 @@ class Config
     }
 
     /**
+     * @param Store|null $store
+     * @return bool
+     * @throws LocalizedException
+     */
+    public function isGroupedProductsEnabled(Store $store = null): bool
+    {
+        return (bool)$this->getStoreConfig('tweakwise/general/grouped_products', $store);
+    }
+
+    /**
      * @deprecated
      * @see \Tweakwise\Magento2Tweakwise\Model\Client::REQUEST_TIMEOUT
      * @return int

@@ -45,27 +45,6 @@ class AutocompleteResponse extends Response implements AutocompleteProductRespon
     }
 
     /**
-     * @param ItemType[]|array[] $items
-     * @return $this
-     */
-    public function setItems(array $items)
-    {
-        $items = $this->normalizeArray($items, 'item');
-
-        $values = [];
-        foreach ($items as $value) {
-            if (!$value instanceof ItemType) {
-                $value = new ItemType($value);
-            }
-
-            $values[] = $value;
-        }
-
-        $this->data['items'] = $values;
-        return $this;
-    }
-
-    /**
      * @param InstantSearchType|array $instantSearch
      * @return $this
      */

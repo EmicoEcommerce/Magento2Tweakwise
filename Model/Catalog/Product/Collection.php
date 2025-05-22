@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
 use Exception;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType;
 use Tweakwise\Magento2Tweakwise\Api\Data\VisualInterface;
@@ -167,7 +168,29 @@ class Collection extends AbstractCollection
         parent::_afterLoad();
 
         $this->applyCollectionSizeValues();
+        $this->applyProductImages();
         $this->addVisuals();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function applyProductImages(): AbstractCollection
+    {
+        foreach ($this->getProductImages() as $productId => $productImageUrl) {
+            if (
+                !isset($this->_items[$productId]) ||
+                $this->_items[$productId]->getTypeId() !== Configurable::TYPE_CODE
+            ) {
+                continue;
+            }
+
+            $this->_items[$productId]->setData('image', $productImageUrl);
+            $this->_items[$productId]->setData('small_image', $productImageUrl);
+            $this->_items[$productId]->setData('thumbnail', $productImageUrl);
+        }
 
         return $this;
     }
@@ -206,5 +229,19 @@ class Collection extends AbstractCollection
     {
         $response = $this->navigationContext->getResponse();
         return $response->getProductIds() ?? [];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getProductImages(): array
+    {
+        try {
+            $response = $this->navigationContext->getResponse();
+        } catch (Exception $e) {
+            return [];
+        }
+
+        return $response->getProductImages() ?? [];
     }
 }

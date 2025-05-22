@@ -52,27 +52,36 @@ class LinkedProductListItem implements ArgumentInterface
             );
         }
 
-        $productId = (string) $product->getId();
+        $productId = (string)$product->getId();
+        $storeId = (int)$this->storeManager->getStore()->getId();
+        $customerGroupId = (int)$this->customerSession->getCustomerGroupId();
         $cardType = str_replace(' ', '_', $params['card_type']);
-        if (!$this->cacheHelper->load($productId, $cardType)) {
+        $hashedCacheKeyInfo = $this->cacheHelper->hashCacheKeyInfo(
+            $productId,
+            $storeId,
+            $customerGroupId,
+            $this->cacheHelper->getImage($product),
+            $cardType
+        );
+
+        if (!$this->cacheHelper->load($hashedCacheKeyInfo)) {
             $itemHtml = $this->getItemHtmlWithRenderer(
                 $product,
                 $parentBlock,
                 $params
             );
-            $this->cacheHelper->save($itemHtml, $productId, $cardType);
+            $this->cacheHelper->save(
+                $itemHtml,
+                $hashedCacheKeyInfo,
+                [Product::CACHE_TAG, sprintf('%s_%s', Product::CACHE_TAG, $productId)]
+            );
         }
 
-        $storeId = $this->storeManager->getStore()->getId();
-        $customerGroupId = $this->customerSession->getCustomerGroupId();
-
         return sprintf(
-            '<esi:include src="/%s?item_id=%s&store_id=%s&customer_group_id=%s&card_type=%s" />',
+            '<esi:include src="/%s?item_id=%s&cache_key_info=%s" />',
             Cache::PRODUCT_CARD_PATH,
             $productId,
-            $storeId,
-            $customerGroupId,
-            $cardType
+            $hashedCacheKeyInfo
         );
     }
 

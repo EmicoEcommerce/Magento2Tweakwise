@@ -9,11 +9,40 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 
+use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class RecommendationsResponse extends Response
 {
+    /**
+     * @var bool
+     */
+    private bool $proccessedGroupedProducts = false;
+
+    /**
+     * RecommendationsResponse constructor.
+     *
+     * @param Helper $helper
+     * @param Request $request
+     * @param Config $config
+     * @param array|null $data
+     */
+    public function __construct(
+        Helper $helper,
+        Request $request,
+        private readonly Config $config,
+        array $data = null
+    ) {
+        parent::__construct(
+            $helper,
+            $request,
+            $data
+        );
+    }
+
     /**
      * @param array $recommendation
      */
@@ -37,26 +66,26 @@ class RecommendationsResponse extends Response
      */
     public function getItems(): array
     {
-        return $this->getDataValue('items') ?: [];
-    }
-
-    /**
-     * @param ItemType[]|array[] $items
-     * @return $this
-     */
-    public function setItems(array $items)
-    {
-        $items = $this->normalizeArray($items, 'item');
-
-        foreach ($items as $value) {
-            if (!$value instanceof ItemType) {
-                $value = new ItemType($value);
+        if ($this->config->isGroupedProductsEnabled() && !$this->proccessedGroupedProducts) {
+            // Manually group items since recommendations doesn't have a grouped call yet.
+            $items = parent::getItems();
+            $groups = [];
+            if (empty($items)) {
+                return $this->data['items'];
             }
 
-            $this->data['items'][] = $value;
+            foreach ($items as $item) {
+                $groups['group'][] = [
+                    'code' => $item->getGroupCodeFromAttributes(),
+                    'items' => ['item' => [$item->data]],
+                ];
+            }
+
+            $this->setGroups($groups);
+            $this->proccessedGroupedProducts = true;
         }
 
-        return $this;
+        return $this->data['items'];
     }
 
     public function replaceItems(array $items)

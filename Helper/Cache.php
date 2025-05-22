@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Helper;
 
-use Magento\Customer\Model\Session;
+use Magento\Catalog\Model\Product;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\DesignInterface;
 use Magento\PageCache\Model\Config;
-use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config as TweakwiseConfig;
 
 class Cache
@@ -27,49 +28,51 @@ class Cache
     private ?bool $isHyvaTheme = null;
 
     /**
-     * @param StoreManagerInterface $storeManager
      * @param CacheInterface $cache
-     * @param Session $customerSession
      * @param RequestInterface $request
      * @param ScopeConfigInterface $scopeConfig
      * @param TweakwiseConfig $config
      * @param DesignInterface $viewDesign
+     * @param Json $jsonSerializer
      */
     public function __construct(
-        private readonly StoreManagerInterface $storeManager,
-        private readonly CacheInterface        $cache,
-        private readonly Session               $customerSession,
-        private readonly RequestInterface      $request,
-        private readonly ScopeConfigInterface  $scopeConfig,
-        private readonly TweakwiseConfig       $config,
-        private readonly DesignInterface       $viewDesign
+        private readonly CacheInterface $cache,
+        private readonly RequestInterface $request,
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly TweakwiseConfig $config,
+        private readonly DesignInterface $viewDesign,
+        private readonly Json $jsonSerializer
     ) {
     }
 
     /**
-     * @param string $itemId
-     * @param string $cardType
+     * @param string $hashedCacheKeyInfo
      * @return string
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    public function load(string $itemId, string $cardType = 'default'): string
+    public function load(string $hashedCacheKeyInfo): string
     {
-        $result = $this->cache->load($this->getCacheKey($itemId, $cardType));
+        $result = $this->cache->load($this->getCacheKey($hashedCacheKeyInfo));
         return $result ? $result : '';
     }
 
     /**
      * @param string $data
-     * @param string $itemId
-     * @param string $cardType
+     * @param string $hashedCacheKeyInfo
+     * @param array $tags
      * @return void
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    public function save(string $data, string $itemId, string $cardType = 'default'): void
+    public function save(string $data, string $hashedCacheKeyInfo, array $tags = []): void
     {
-        $this->cache->save($data, $this->getCacheKey($itemId, $cardType));
+        $this->cache->save(
+            $data,
+            $this->getCacheKey($hashedCacheKeyInfo),
+            $tags,
+            $this->config->getProductCardLifetime()
+        );
     }
 
     /**
@@ -86,6 +89,20 @@ class Cache
     public function isVarnishEnabled(): bool
     {
         return $this->scopeConfig->getValue(Config::XML_PAGECACHE_TYPE) === (string) Config::VARNISH;
+    }
+
+    /**
+     * @param Product $item
+     * @return string
+     * @throws LocalizedException
+     */
+    public function getImage(Product $item): string
+    {
+        if (!$this->config->isGroupedProductsEnabled() || $item->getTypeId() !== Configurable::TYPE_CODE) {
+            return '';
+        }
+
+        return $item->getImage();
     }
 
     /**
@@ -137,23 +154,32 @@ class Cache
 
     /**
      * @param string $itemId
+     * @param int $storeId
+     * @param int $customerGroupId
+     * @param string $image
      * @param string $cardType
      * @return string
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
-    private function getCacheKey(string $itemId, string $cardType): string
-    {
-        $storeId = $this->storeManager->getStore()->getId();
-        $customerGroupId = $this->customerSession->getCustomerGroupId();
+    public function hashCacheKeyInfo(
+        string $itemId,
+        int $storeId,
+        int $customerGroupId,
+        string $image = '',
+        string $cardType = 'default',
+    ): string {
+        return sha1($this->jsonSerializer->serialize([$itemId, $storeId, $customerGroupId, $image, $cardType]));
+    }
 
+    /**
+     * @param string $hashedCacheKeyInfo
+     * @return string
+     */
+    private function getCacheKey(string $hashedCacheKeyInfo): string
+    {
         return sprintf(
-            '%s_%s_%s_%s_%s',
-            $storeId,
-            $customerGroupId,
-            $itemId,
-            $cardType,
-            self::REDIS_CACHE_KEY
+            '%s_%s',
+            self::REDIS_CACHE_KEY,
+            $hashedCacheKeyInfo
         );
     }
 }

@@ -83,9 +83,9 @@ class Cache
     /**
      * @return bool
      */
-    public function isVarnishEnabled(): bool
+    public function isCachingEngineEnabled(): bool
     {
-        return $this->scopeConfig->getValue(Config::XML_PAGECACHE_TYPE) === (string) Config::VARNISH;
+        return $this->scopeConfig->getValue(Config::XML_PAGECACHE_TYPE) !== (string) Config::BUILT_IN;
     }
 
     /**
@@ -93,7 +93,7 @@ class Cache
      */
     public function personalMerchandisingCanBeApplied(): bool
     {
-        return $this->isVarnishEnabled() && $this->config->isPersonalMerchandisingActive();
+        return $this->isCachingEngineEnabled() && $this->config->isPersonalMerchandisingActive();
     }
 
     /**

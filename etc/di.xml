@@ -335,6 +335,27 @@
             <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
         </arguments>
     </virtualType>
+    <virtualType name="Magento\Catalog\Model\Layer\Search\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Catalog\Model\Layer\Category\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Search</argument>
+        </arguments>
+    </virtualType>
 
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption\Product" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption">
         <arguments>

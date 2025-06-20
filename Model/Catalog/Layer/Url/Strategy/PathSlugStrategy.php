@@ -375,29 +375,30 @@ class PathSlugStrategy implements
     public function buildFilterUrl(MagentoHttpRequest $request, array $filters = []): string
     {
         $currentUrl = $this->getOriginalUrl($request);
-
         $currentFilterPath = $request->getParam(self::REQUEST_FILTER_PATH);
-        $newFilterPath = $this->buildFilterSlugPath($filters);
 
         if (empty($currentFilterPath)) {
             $urlParts = parse_url($currentUrl);
 
-            if (strpos($urlParts['path'], $newFilterPath) === false) {
-                $url = $urlParts['path'] . $newFilterPath;
-            } else {
-                //filter path already exists in url
-                $url = $urlParts['path'];
+            usort($filters, [$this, 'sortFilterItems']);
+            $url = $urlParts['path'];
+            foreach ($filters as $filter) {
+                $newFilterPath = $this->buildFilterSlugPath([$filter]);
+                if (strpos($url, rtrim($newFilterPath, '/')) === false) {
+                    $url .= $newFilterPath;
+                }
             }
 
             if (isset($urlParts['query'])) {
                 $url .= '?' . $urlParts['query'];
             }
         } else {
+            $newFilterPath = $this->buildFilterSlugPath($filters);
             // Replace filter path in current URL with the new filter combination path
             if (strpos($currentUrl, $currentFilterPath) !== false) {
                 $url = str_replace(
-                    sprintf('%s/', rtrim($currentFilterPath, '/')),
-                    sprintf('%s/', $newFilterPath),
+                    rtrim($currentFilterPath, '/'),
+                    $newFilterPath,
                     $currentUrl
                 );
             } else {

@@ -38,8 +38,12 @@ define([
          */
         _handleMoreItemsLink: function () {
             this._sortItems('alternate-sort');
+            let firstHidden = this.element.find('.default-hidden').first();
             this.element.find('.default-hidden').show();
             this.element.find('.more-items').hide();
+            if (firstHidden) {
+                firstHidden.focus();
+            }
 
             return false;
         },
@@ -53,8 +57,7 @@ define([
         _handleLessItemsLink: function () {
             this._sortItems('original-sort');
             this.element.find('.default-hidden').hide();
-            this.element.find('.more-items').show();
-
+            this.element.find('.more-items').show().focus();
             return false;
         },
 

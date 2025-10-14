@@ -23,8 +23,8 @@ $hasHiddenItems = $block->hasHiddenItems();
     </ol>
 
     <?php if ($hasHiddenItems): ?>
-        <a class="more-items"><?=$escaper->escapeHtml(__($block->getMoreItemText()))?></a>
-        <a class="less-items default-hidden"><?=$escaper->escapeHtml(__($block->getLessItemText()))?></a>
+        <a role="button" tabindex="0" class="more-items"><?=$escaper->escapeHtml(__($block->getMoreItemText()))?></a>
+        <a role="button" tabindex="0" class="less-items default-hidden"><?=$escaper->escapeHtml(__($block->getLessItemText()))?></a>
     <?php endif; ?>
 </div>
 

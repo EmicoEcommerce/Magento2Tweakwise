@@ -19,15 +19,19 @@ class ConfigAttributeProcessService
 
         $filterList = trim($filterList);
 
-        $filterListExploded = explode(',', $filterList) ?: [];
+        // @phpstan-ignore-next-line
+        $filterListExploded = explode(',', $filterList) ? explode(',', $filterList) : [];
+        // @phpstan-ignore-next-line
         if (empty($filterListExploded)) {
             return [];
         }
 
         $return = [];
         foreach ($filterListExploded as $listItem) {
-            $item = explode('=', trim($listItem)) ?: null;
+            // @phpstan-ignore-next-line
+            $item = explode('=', trim($listItem)) ? explode('=', trim($listItem)) : null;
 
+            // @phpstan-ignore-next-line
             if ($item === null || !isset($item[0]) || !isset($item[1])) {
                 continue;
             }
@@ -51,8 +55,10 @@ class ConfigAttributeProcessService
 
         $filterList = trim($filterList);
 
-        $filterListExploded = explode(',', $filterList) ?: [];
+        // @phpstan-ignore-next-line
+        $filterListExploded = explode(',', $filterList) ? explode(',', $filterList) : [];
 
+        // @phpstan-ignore-next-line
         if (empty($filterListExploded)) {
             return [];
         }

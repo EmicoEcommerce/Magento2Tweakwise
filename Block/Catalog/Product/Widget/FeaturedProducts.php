@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -22,6 +22,7 @@ class FeaturedProducts extends Featured implements BlockInterface
     protected function _construct()
     {
         parent::_construct();
+        // @phpstan-ignore-next-line
         $this->setTemplate('Magento_Catalog::product/list/items.phtml');
     }
 
@@ -54,6 +55,7 @@ class FeaturedProducts extends Featured implements BlockInterface
      */
     public function getItems(): Collection
     {
+        // @phpstan-ignore-next-line
         return $this->_getProductCollection();
     }
 }

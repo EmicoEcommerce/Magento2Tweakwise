@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -33,11 +33,13 @@ class FacetResponse extends Response
 
             //remove tree, link and slider facets
             if (
-                $value->getFacetSettings()->getSelectionType() === 'checkbox' ||
-                ($value->getFacetSettings()->getSelectionType() === 'color')
+                $value->getFacetSettings()->getSelectionType() !== 'checkbox' &&
+                ($value->getFacetSettings()->getSelectionType() !== 'color')
             ) {
-                $values[] = $value;
+                continue;
             }
+
+            $values[] = $value;
         }
 
         $this->data['facets'] = $values;

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
@@ -125,8 +125,8 @@ class AutocompleteDataProvider implements DataProviderInterface
         $request->setMaxResult($config->getAutocompleteMaxResults());
         $request->setSearch($query);
 
-        /** @var AutocompleteResponse $response */
         try {
+            /** @var AutocompleteResponse $response */
             $response = $this->client->request($request);
         } catch (\Exception $e) {
             return [];

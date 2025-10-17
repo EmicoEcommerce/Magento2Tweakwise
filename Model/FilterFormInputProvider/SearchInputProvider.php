@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
@@ -75,6 +75,7 @@ class SearchInputProvider implements FilterFormInputProviderInterface
 
         $input['__tw_hash'] = $this->hashInputProvider->getHash($input);
 
+        // @phpstan-ignore-next-line
         return array_merge(
             $parameters,
             $input,

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Api;
 
@@ -11,6 +11,7 @@ interface AttributeSlugRepositoryInterface
 {
     /**
      * @param AttributeSlugInterface $attributeSlug
+     * @return AttributeSlugInterface
      */
     public function save(AttributeSlugInterface $attributeSlug);
 

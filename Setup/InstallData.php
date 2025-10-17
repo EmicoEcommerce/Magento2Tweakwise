@@ -51,6 +51,7 @@ class InstallData implements InstallDataInterface
      * @param ModuleContextInterface $context
      * @return void
      * phpcs:disable Generic.Files.LineLength.TooLong
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -72,6 +73,10 @@ class InstallData implements InstallDataInterface
         $setup->endSetup();
     }
 
+    /**
+     * @param EavSetup $eavSetup
+     * @return void
+     */
     protected function ensureCrosssellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
@@ -106,6 +111,10 @@ class InstallData implements InstallDataInterface
         }
     }
 
+    /**
+     * @param EavSetup $eavSetup
+     * @return void
+     */
     protected function ensureUpsellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
@@ -140,6 +149,10 @@ class InstallData implements InstallDataInterface
         }
     }
 
+    /**
+     * @param EavSetup $eavSetup
+     * @return void
+     */
     protected function ensureFeaturedTemplateAttribute(EavSetup $eavSetup)
     {
         $eavSetup->addAttribute(
@@ -160,6 +173,7 @@ class InstallData implements InstallDataInterface
 
     /**
      * Update tw server url as the old url will be retired
+     * @return void
      */
     protected function updateNavigatorBaseUrl()
     {
@@ -168,9 +182,11 @@ class InstallData implements InstallDataInterface
 
     /**
      * Set default category view for new installs only
+     * @return void
      */
     protected function setDefaultCategoryView()
     {
+        // @phpstan-ignore-next-line
         $this->writer->save('tweakwise/layered/default_category_view', 1);
     }
 }

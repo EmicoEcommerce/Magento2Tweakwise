@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Setup\Patch\Data;
 
@@ -12,17 +12,11 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 class UpdateLabelNamesPatch implements DataPatchInterface
 {
     /**
-     * @var ModuleDataSetupInterface
-     */
-    private ModuleDataSetupInterface $moduleDataSetup;
-
-    /**
      * @param ModuleDataSetupInterface $moduleDataSetup
      */
     public function __construct(
-        ModuleDataSetupInterface $moduleDataSetup
+        private ModuleDataSetupInterface $moduleDataSetup
     ) {
-        $this->moduleDataSetup = $moduleDataSetup;
     }
 
     /**
@@ -31,7 +25,7 @@ class UpdateLabelNamesPatch implements DataPatchInterface
      * @return void
      * phpcs:disable Generic.Files.LineLength.TooLong
      */
-    public function apply()
+    public function apply() // @phpstan-ignore-line
     {
         $this->moduleDataSetup->getConnection()->startSetup();
 

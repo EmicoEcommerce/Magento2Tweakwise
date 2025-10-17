@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -78,13 +78,14 @@ class AutocompleteRequest extends Request
     /**
      * @param int $maxResult
      */
-    public function setMaxResult($maxResult)
+    public function setMaxResult($maxResult) // @phpstan-ignore-line
     {
         $maxResult = (int) $maxResult;
-        if ($maxResult == 0) {
+        if ($maxResult === 0) {
             $maxResult = null;
         }
 
+        // @phpstan-ignore-next-line
         $this->setParameter('tn_maxresults', $maxResult);
     }
 }

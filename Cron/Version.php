@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Cron;
 
@@ -32,6 +32,7 @@ class Version
 
     /**
      * Update Tweakwise version number to config table
+     * @return void
      * phpcs:disable Generic.Files.LineLength.TooLong
      */
     public function execute()

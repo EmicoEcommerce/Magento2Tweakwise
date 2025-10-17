@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType;
 
@@ -45,11 +45,11 @@ abstract class SuggestionTypeAbstract extends Type implements SuggestionTypeInte
     public function getName()
     {
         $match = $this->getMatch();
-        /** @var string $category */
         $categoryName = $this->getCategoryName();
         $insertion = (string) __('in');
 
-        return ($categoryName) ? "$match $insertion $categoryName" : $match;
+        // phpcs:disable Squiz.Strings.DoubleQuoteUsage.ContainsVar
+        return $categoryName ? "$match $insertion $categoryName" : $match;
     }
 
     /**

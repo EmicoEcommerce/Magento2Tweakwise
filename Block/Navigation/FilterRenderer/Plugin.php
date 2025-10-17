@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -65,6 +65,7 @@ class Plugin
     /**
      * @var SwatchHelper
      */
+    // @phpstan-ignore-next-line
     protected $swatchHelper;
 
     /**
@@ -85,8 +86,8 @@ class Plugin
      * @param FilterInterface $filter
      * @return mixed
      * @throws \Magento\Framework\Exception\LocalizedException
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     public function aroundRender(FilterRenderer $subject, Closure $proceed, FilterInterface $filter)
     {
@@ -109,6 +110,7 @@ class Plugin
         $settings = $facet->getFacetSettings();
         $renderType = $settings->getSelectionType();
 
+        // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
         if ($this->config->getUseDefaultLinkRenderer() && in_array($renderType, $this->defaultAllowedRenderTypes)) {
             return $proceed($filter);
         }

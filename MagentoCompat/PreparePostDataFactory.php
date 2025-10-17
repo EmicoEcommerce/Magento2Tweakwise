@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\MagentoCompat;
 
@@ -36,12 +36,13 @@ class PreparePostDataFactory
         ObjectManagerInterface $objectManager,
         ProductMetadataInterface $productMetadata
     ) {
+        // @phpstan-ignore-next-line
         $this->objectManager = $objectManager;
         $this->productMetadata = $productMetadata;
     }
 
     /**
-     * @return mixed|null
+     * @return ArgumentInterface|null
      * phpcs:disable Magento2.PHP.LiteralNamespaces.LiteralClassUsage
      */
     public function getPreparePostData(): ?ArgumentInterface

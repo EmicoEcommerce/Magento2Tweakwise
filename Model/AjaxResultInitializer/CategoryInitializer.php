@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 
@@ -57,6 +57,7 @@ class CategoryInitializer implements InitializerInterface
 
     /**
      * @param AjaxNavigationResult $ajaxNavigationResult
+     * @return void
      */
     protected function initializeLayout(AjaxNavigationResult $ajaxNavigationResult)
     {
@@ -65,6 +66,7 @@ class CategoryInitializer implements InitializerInterface
 
     /**
      * Create category layer
+     * @return void
      */
     protected function initializeLayer()
     {
@@ -73,15 +75,18 @@ class CategoryInitializer implements InitializerInterface
 
     /**
      * @param RequestInterface $request
+     * @return void
      * @throws NoSuchEntityException
      */
     protected function initializeRegistry(RequestInterface $request)
     {
         // Register the category, its needed while rendering filters and products
-        if (!$this->registry->registry('current_category')) {
-            $categoryId = (int)$request->getParam('__tw_object_id') ?: 2;
-            $category = $this->categoryRepository->get($categoryId);
-            $this->registry->register('current_category', $category);
+        if ($this->registry->registry('current_category')) {
+            return;
         }
+
+        $categoryId = (int)$request->getParam('__tw_object_id') ? (int)$request->getParam('__tw_object_id') : 2;
+        $category = $this->categoryRepository->get($categoryId);
+        $this->registry->register('current_category', $category);
     }
 }

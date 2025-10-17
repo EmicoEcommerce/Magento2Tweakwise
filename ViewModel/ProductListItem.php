@@ -126,12 +126,14 @@ class ProductListItem implements ArgumentInterface
         /** @var AbstractBlock $itemRendererBlock */
         $itemRendererBlock = $this->layout->getBlock('tweakwise.catalog.product.list.item');
 
+        // @phpstan-ignore-next-line
         if (! $itemRendererBlock) {
             return '';
         }
 
         $detailsRenderers = $parentBlock->getChildBlock('details.renderers');
         if ($detailsRenderers) {
+            // @phpstan-ignore-next-line
             $itemRendererBlock->setChild('details.renderers', $detailsRenderers);
         }
 
@@ -157,6 +159,7 @@ class ProductListItem implements ArgumentInterface
         /** @var AbstractBlock $visualRendererBlock */
         $visualRendererBlock = $this->layout->getBlock('tweakwise.catalog.product.list.visual');
 
+        // @phpstan-ignore-next-line
         if (! $visualRendererBlock) {
             return '';
         }

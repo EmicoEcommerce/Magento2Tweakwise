@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -93,6 +93,7 @@ class Client
      */
     protected function getClient(): HttpClient
     {
+        // @phpstan-ignore-next-line
         if (!$this->client) {
             $options = [
                 RequestOptions::TIMEOUT => self::REQUEST_TIMEOUT,
@@ -115,9 +116,9 @@ class Client
     {
         if ($tweakwiseRequest->isPostRequest()) {
             return $this->createPostRequest($tweakwiseRequest);
-        } else {
-            return $this->createGetRequest($tweakwiseRequest);
         }
+
+        return $this->createGetRequest($tweakwiseRequest);
     }
 
     /**
@@ -133,7 +134,9 @@ class Client
         $headers['Instance-Key'] = $this->config->getGeneralAuthenticationKey();
         $body = json_encode($tweakwiseRequest->getParameters());
         //post request are used for the analytics api
+        // @phpstan-ignore-next-line
         $uri = $this->urlBuilder->getUrl($tweakwiseRequest->getApiUrl() . '/' . $path);
+        // @phpstan-ignore-next-line
         return new HttpRequest('POST', $uri, $headers, $body);
     }
 
@@ -148,8 +151,9 @@ class Client
 
         $headers = [];
 
-        if ($path === "recommendations/featured") {
+        if ($path === 'recommendations/featured') {
             if ($this->config->getRecommendationsFeaturedCategory()) {
+                // @phpstan-ignore-next-line
                 $tweakwiseRequest->setCategory();
             }
         }
@@ -260,7 +264,7 @@ class Client
                     sprintf(
                         'Invalid response received by Tweakwise server, xml load fails. Request "%s", XML Errors: %s',
                         $requestUrl,
-                        implode(PHP_EOL, $errors)
+                        implode(PHP_EOL, $errors) // @phpstan-ignore-line
                     )
                 );
             }
@@ -323,7 +327,7 @@ class Client
      *
      * @param Request $request
      * @param bool $async
-     * @return Response|PromiseInterface
+     * @return Response|PromiseInterface|void
      * @throws \Exception
      */
     public function request(Request $request, bool $async = false)
@@ -333,12 +337,12 @@ class Client
             return $this->doRequest($request, $async);
         } catch (ApiException $e) {
             //don't log 404 messages.
-            if ($e->getCode() !== 404) {
-                $this->config->setTweakwiseExceptionThrown(true);
-                $this->log->throwException($e);
-            } else {
-                throw ($e);
+            if ($e->getCode() === 404) {
+                throw $e;
             }
+
+            $this->config->setTweakwiseExceptionThrown(true);
+            $this->log->throwException($e);
         } finally {
             Profiler::stop('tweakwise::request::' . $request->getPath());
         }

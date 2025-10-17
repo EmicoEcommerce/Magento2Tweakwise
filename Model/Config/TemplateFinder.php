@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Config;
 
@@ -41,8 +41,8 @@ class TemplateFinder
      * @param Product $product
      * @param string $type
      * @return int|string
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function forProduct(Product $product, $type)
     {
@@ -72,6 +72,7 @@ class TemplateFinder
 
         //try default product category
         $category = $product->getCategory();
+        // @phpstan-ignore-next-line
         if ($category) {
             $templateId = $this->forCategory($category, $type);
         }
@@ -85,6 +86,7 @@ class TemplateFinder
 
         foreach ($categoryIds as $categoryId) {
             $category = $this->categoryRepository->get($categoryId);
+            // @phpstan-ignore-next-line
             $templateId = $this->forCategory($category, $type);
 
             if ($templateId) {
@@ -125,6 +127,7 @@ class TemplateFinder
             return $this->forCategory($parent, $type);
         }
 
+        // @phpstan-ignore-next-line
         return null;
     }
 

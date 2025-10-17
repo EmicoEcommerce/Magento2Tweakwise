@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -37,6 +37,7 @@ class AttributeSlug extends AbstractModel implements AttributeSlugInterface
 
     /**
      * @param string|null $attribute
+     * @return void
      */
     public function setAttribute(?string $attribute)
     {

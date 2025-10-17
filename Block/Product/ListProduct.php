@@ -35,6 +35,7 @@ class ListProduct extends MagentoListProduct
      * @param OutputHelper|null $outputHelper
      * @param SpecialPriceBulkResolver $specialPriceBulkResolver
      * @param Layer|null $catalogLayer
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         Context $context,
@@ -49,7 +50,7 @@ class ListProduct extends MagentoListProduct
         private readonly RequestInterface $request,
         array $data = [],
         ?OutputHelper $outputHelper = null,
-        $specialPriceBulkResolver = null,
+        $specialPriceBulkResolver = null, // @phpstan-ignore-line
         ?Layer $catalogLayer = null
     ) {
         if (!$specialPriceBulkResolver) {
@@ -63,6 +64,7 @@ class ListProduct extends MagentoListProduct
                 $outputHelper
             );
         } else {
+            // @phpstan-ignore-next-line
             parent::__construct(
                 $context,
                 $postDataHelper,
@@ -70,14 +72,16 @@ class ListProduct extends MagentoListProduct
                 $categoryRepository,
                 $urlHelper,
                 $data,
-                $specialPriceBulkResolver,
+                $specialPriceBulkResolver, // @phpstan-ignore-line
                 $outputHelper
             );
         }
 
-        if ($catalogLayer) {
-            $this->_catalogLayer = $catalogLayer;
+        if (!$catalogLayer) {
+            return;
         }
+
+        $this->_catalogLayer = $catalogLayer;
     }
 
     /**

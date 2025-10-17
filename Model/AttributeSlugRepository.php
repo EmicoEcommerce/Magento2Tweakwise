@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -80,20 +80,20 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             //check for existing slugs with the same slug
             try {
                 /** @var AttributeSlug $existingSlug */
-                $existingSlug = $this->findBySlug($attributeSlug->getSlug(), $attributeSlug->getStoreId());
-
-                if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
-                    //same attribute, no need to change anything
-                    return $attributeSlug;
-                }
+                $existingSlug = $this->findBySlug($attributeSlug->getSlug());
 
                 //slug exists, check if it is not the current attribute saved
-                $newSlug = $attributeSlug->getSlug();
-                $counter = 0;
-                while ($newSlug === $this->findBySlug($newSlug, $attributeSlug->getStoreId())->getSlug()) {
-                    $counter++;
-                    $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
+                if ($attributeSlug->getAttribute() !== $existingSlug->getAttribute()) {
+                    $newSlug = $attributeSlug->getSlug();
+                    $counter = 0;
+                    while ($newSlug === $this->findBySlug($newSlug)->getSlug()) {
+                        $counter++;
+                        $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
+                    }
                 }
+
+                /** @var AttributeSlug $attributeSlug */
+                $this->resource->save($attributeSlug);
             } catch (NoSuchEntityException $exception) {
                 //slug doesnt exist. Save value
                 if (isset($newSlug)) {
@@ -127,8 +127,7 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
 
-        $items = $collection->getItems();
-
+        // @phpstan-ignore-next-line
         $searchResults->setItems($collection->getItems());
         $searchResults->setTotalCount($collection->getSize());
         return $searchResults;
@@ -178,11 +177,10 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
      * @return AttributeSlugInterface
      * @throws NoSuchEntityException
      */
-    public function findBySlug(string $slug, $storeId = 0): AttributeSlugInterface
+    public function findBySlug(string $slug): AttributeSlugInterface
     {
         $collection = $this->collectionFactory->create()
-            ->addFieldToFilter('slug', $slug)
-            ->addFieldToFilter('store_id', $storeId);
+            ->addFieldToFilter('slug', $slug);
         if (!$collection->getSize()) {
             throw new NoSuchEntityException(__('No slug found for attribute "%1".', $slug));
         }

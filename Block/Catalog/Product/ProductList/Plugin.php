@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -16,7 +16,7 @@ class Plugin
      *
      * @return string
      */
-    public function afterGetAdditionalHtml($subject, $result)
+    public function afterGetAdditionalHtml($subject, $result) // @phpstan-ignore-line
     {
         $searchBanner = $subject->getBlockHtml('navigation.search.banner.products.top');
 

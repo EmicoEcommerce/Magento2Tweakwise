@@ -1,8 +1,7 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Seo;
 
-use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
@@ -47,7 +46,7 @@ class FilterHelper
     }
 
     /**
-     * @param Filter $item
+     * @param Item $item
      * @return bool
      */
     public function shouldFilterBeIndexable(Item $item): bool
@@ -77,10 +76,13 @@ class FilterHelper
     public function shouldPageBeIndexable(): bool
     {
         foreach ($this->getActiveFilterItems() as $item) {
-            if ($item instanceof Item) {
-                if (!$this->shouldFilterBeIndexable($item)) {
-                    return false;
-                }
+            // @phpstan-ignore-next-line
+            if (!($item instanceof Item)) {
+                continue;
+            }
+
+            if (!$this->shouldFilterBeIndexable($item)) {
+                return false;
             }
         }
 
@@ -123,6 +125,7 @@ class FilterHelper
     protected function exceedsMaxAllowedFacets(): bool
     {
         $maxAllowedFacetsCount = $this->config->getMaxAllowedFacets();
+        // @phpstan-ignore-next-line
         if (!is_numeric($maxAllowedFacetsCount)) {
             return false;
         }
@@ -209,11 +212,14 @@ class FilterHelper
         $layer = $this->layerResolver->get();
         $filters = $layer->getState()->getFilters();
         if ($includeCategoryFilter) {
+            // @phpstan-ignore-next-line
             return $filters;
         }
 
+        // @phpstan-ignore-next-line
         return array_filter(
             $filters,
+            // @phpstan-ignore-next-line
             function (Item $filterItem) {
                 return !$this->isCategoryFilterItem($filterItem);
             }

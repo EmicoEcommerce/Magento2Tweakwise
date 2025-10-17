@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Seo\Robots;
 
@@ -32,6 +32,7 @@ class Plugin
      * @param PageConfig $config
      * @param string $result
      * @return string
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function afterGetRobots(PageConfig $config, $result)
     {

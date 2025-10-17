@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Setup\Patch\Data;
 
@@ -17,25 +17,13 @@ use Magento\Eav\Setup\EavSetupFactory;
 class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
 {
     /**
-     * @var ModuleDataSetupInterface
-     */
-    private ModuleDataSetupInterface $moduleDataSetup;
-
-    /**
-     * @var EavSetupFactory
-     */
-    private EavSetupFactory $eavSetupFactory;
-
-    /**
      * @param ModuleDataSetupInterface $moduleDataSetup
      * @param EavSetupFactory $eavSetupFactory
      */
     public function __construct(
-        ModuleDataSetupInterface $moduleDataSetup,
-        EavSetupFactory $eavSetupFactory
+        private ModuleDataSetupInterface $moduleDataSetup,
+        private EavSetupFactory $eavSetupFactory
     ) {
-        $this->eavSetupFactory = $eavSetupFactory;
-        $this->moduleDataSetup = $moduleDataSetup;
     }
 
     /**
@@ -43,7 +31,7 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
      *
      * @return void
      */
-    public function apply()
+    public function apply() // @phpstan-ignore-line
     {
         $this->moduleDataSetup->getConnection()->startSetup();
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
@@ -80,6 +68,10 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
         return [];
     }
 
+    /**
+     * @param EavSetup $eavSetup
+     * @return void
+     */
     protected function ensureShoppingcartCrosssellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
@@ -114,6 +106,10 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
         }
     }
 
+    /**
+     * @param EavSetup $eavSetup
+     * @return void
+     */
     protected function ensureCrosssellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
@@ -148,6 +144,10 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
         }
     }
 
+    /**
+     * @param EavSetup $eavSetup
+     * @return void
+     */
     protected function ensureUpsellTemplateAttribute(EavSetup $eavSetup)
     {
         foreach ([Category::ENTITY, Product::ENTITY] as $entityType) {
@@ -182,6 +182,10 @@ class AddRecommendationCategoryFieldsPatch implements DataPatchInterface
         }
     }
 
+    /**
+     * @param EavSetup $eavSetup
+     * @return void
+     */
     protected function ensureFeaturedTemplateAttribute(EavSetup $eavSetup)
     {
         $eavSetup->addAttribute(

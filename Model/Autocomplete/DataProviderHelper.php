@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete;
 
@@ -115,20 +115,24 @@ class DataProviderHelper
      * @noinspection PhpIncompatibleReturnTypeInspection
      * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
      * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
-     * @SuppressWarnings(PHPMD.EmptyCatchBlock)
+     * @SuppressWarnings("PHPMD.EmptyCatchBlock")
      */
     public function getCategory()
     {
         $categoryId = (int)$this->request->getParam('cid');
         if ($categoryId && $this->config->isAutocompleteStayInCategory()) {
             try {
+                // @phpstan-ignore-next-line
                 return $this->categoryRepository->get($categoryId);
             } catch (NoSuchEntityException $e) {
+                // noop
             }
         }
 
         $store = $this->storeManager->getStore();
+        // @phpstan-ignore-next-line
         $categoryId = $store->getRootCategoryId();
+        // @phpstan-ignore-next-line
         return $this->categoryRepository->get($categoryId);
     }
 
@@ -163,6 +167,7 @@ class DataProviderHelper
         $productCollection->addCategoryFilter($category);
 
         $result = [];
+        // @phpstan-ignore-next-line
         foreach ($response->getProductData() as $item) {
             $product = $productCollection->getItemById($item['id']);
 

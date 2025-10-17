@@ -38,9 +38,11 @@ class UpdatePersonalMerchandisingConfigs implements DataPatchInterface
 
         foreach ($configurationPaths as $oldPath => $newPath) {
             $value = $this->scopeConfig->getValue($oldPath);
-            if ($value !== null) {
-                $this->configWriter->save($newPath, $value);
+            if ($value === null) {
+                continue;
             }
+
+            $this->configWriter->save($newPath, $value);
         }
 
         return $this;

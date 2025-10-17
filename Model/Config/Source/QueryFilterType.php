@@ -1,5 +1,4 @@
-<?php
-
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *

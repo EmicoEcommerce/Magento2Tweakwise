@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -52,8 +52,9 @@ class Plugin extends AbstractRecommendationPlugin
      * @param Upsell $subject
      * @param Closure $proceed
      * @return int
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
      */
-    public function aroundGetItemLimit(Upsell $subject, Closure $proceed, $type = '')
+    public function aroundGetItemLimit(Upsell $subject, Closure $proceed, $type = '') // @phpstan-ignore-line
     {
         if (!$this->config->isRecommendationsEnabled(Config::RECOMMENDATION_TYPE_UPSELL)) {
             return $proceed($type);

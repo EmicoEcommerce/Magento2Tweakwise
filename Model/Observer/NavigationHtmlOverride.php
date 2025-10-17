@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -74,11 +74,15 @@ class NavigationHtmlOverride implements ObserverInterface
         $isNavigation = !$isSearch;
 
         if ($isSearch && $searchEnabled) {
+            // @phpstan-ignore-next-line
             $block->setTemplate('Tweakwise_Magento2Tweakwise::layer/view.phtml');
         }
 
-        if ($isNavigation && $navigationEnabled) {
-            $block->setTemplate('Tweakwise_Magento2Tweakwise::layer/view.phtml');
+        if (!$isNavigation || !$navigationEnabled) {
+            return;
         }
+
+        // @phpstan-ignore-next-line
+        $block->setTemplate('Tweakwise_Magento2Tweakwise::layer/view.phtml');
     }
 }

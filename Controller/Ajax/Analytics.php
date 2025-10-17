@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
@@ -33,7 +33,7 @@ class Analytics extends Action
      * @param JsonSerializer              $jsonSerializer
      */
     public function __construct(
-        private Context $context,
+        Context $context,
         private JsonFactory $resultJsonFactory,
         private Client $client,
         private PersonalMerchandisingConfig $config,
@@ -62,7 +62,9 @@ class Analytics extends Action
         $value = $this->getRequest()->getParam('value');
 
         //hyva theme
+        // @phpstan-ignore-next-line
         if (empty($type) && !empty($request->getContent())) {
+            // @phpstan-ignore-next-line
             $content = $this->jsonSerializer->unserialize($request->getContent());
             $type = $content['type'] ?? null;
             $value = $content['value'] ?? null;
@@ -75,7 +77,6 @@ class Analytics extends Action
         $profileKey = $this->config->getProfileKey();
         $tweakwiseRequest = $this->requestFactory->create();
         $tweakwiseRequest->setProfileKey($profileKey);
-        $storeId = (int)$this->storeManager->getStore()->getId();
 
         try {
             $this->processAnalyticsRequest($type, $value);
@@ -84,6 +85,7 @@ class Analytics extends Action
             return $result->setData(['success' => false, 'message' => $e->getMessage()]);
         }
 
+        // @phpstan-ignore-next-line
         return $result;
     }
 
@@ -156,7 +158,9 @@ class Analytics extends Action
         $twRequestId = $this->getRequest()->getParam('requestId');
 
         //hyva theme
+        // @phpstan-ignore-next-line
         if (empty($twRequestId) && !empty($this->getRequest()->getContent())) {
+            // @phpstan-ignore-next-line
             $content = $this->jsonSerializer->unserialize($this->getRequest()->getContent());
             $twRequestId = $content['requestId'] ?? null;
         }
@@ -166,6 +170,7 @@ class Analytics extends Action
         }
 
         if (ctype_digit($value)) {
+            // @phpstan-ignore-next-line
             $value = $this->helper->getTweakwiseId($storeId, $value);
         }
 

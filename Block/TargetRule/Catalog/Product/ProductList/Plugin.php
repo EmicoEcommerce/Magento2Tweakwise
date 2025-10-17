@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -73,8 +73,9 @@ abstract class Plugin
      * @param AbstractProductList $subject
      * @param Closure $proceed
      * @return array
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
-    public function aroundGetItemCollection(AbstractProductList $subject, Closure $proceed)
+    public function aroundGetItemCollection(AbstractProductList $subject, Closure $proceed) // @phpstan-ignore-line
     {
         if (!$this->config->isRecommendationsEnabled($this->type)) {
             return $proceed();
@@ -91,8 +92,9 @@ abstract class Plugin
      * @param AbstractProductList $subject
      * @param Closure $proceed
      * @return int
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
-    public function aroundGetPositionLimit(AbstractProductList $subject, Closure $proceed)
+    public function aroundGetPositionLimit(AbstractProductList $subject, Closure $proceed) // @phpstan-ignore-line
     {
         if (!$this->config->isRecommendationsEnabled($this->type)) {
             return $proceed();
@@ -107,6 +109,7 @@ abstract class Plugin
 
     /**
      * @param ProductRequest $request
+     * @return void
      */
     protected function configureRequest(ProductRequest $request)
     {
@@ -121,10 +124,10 @@ abstract class Plugin
 
     /**
      * @return Collection
-     * @throws InvalidArgumentException
      */
     protected function getCollection()
     {
+        // @phpstan-ignore-next-line
         if (!$this->collection) {
             $request = $this->context->getRequest();
             if (!$request instanceof ProductRequest) {

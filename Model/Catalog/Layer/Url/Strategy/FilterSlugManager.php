@@ -108,8 +108,6 @@ class FilterSlugManager
         return $slug;
     }
 
-
-
     /**
      * @param \Magento\Eav\Api\Data\AttributeOptionInterface[] $options
      * @return void
@@ -117,7 +115,7 @@ class FilterSlugManager
     public function createFilterSlugByAttributeOptions(Interceptor $options)
     {
         $allTranslations = $options->toArray();
-        foreach($allTranslations['option']['value'] as $optionId => $optionTranslations) {
+        foreach ($allTranslations['option']['value'] as $optionId => $optionTranslations) {
             foreach ($optionTranslations as $storeId => $optionLabel) {
                 if (empty($optionLabel) || ctype_space((string)$optionLabel)) {
                     continue;

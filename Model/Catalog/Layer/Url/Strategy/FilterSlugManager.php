@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute\Interceptor;
 use Magento\Framework\Phrase;
 use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
@@ -100,43 +101,48 @@ class FilterSlugManager
         $attributeSlugEntity->setAttribute($attribute);
         $attributeSlugEntity->setSlug($slug);
 
-        $this->attributeSlugRepository->save($attributeSlugEntity);
+        $savedSlug = $this->attributeSlugRepository->save($attributeSlugEntity);
+        $slug = $savedSlug->getSlug();
         $this->cache->remove(self::CACHE_KEY);
 
         return $slug;
     }
 
+
+
     /**
      * @param \Magento\Eav\Api\Data\AttributeOptionInterface[] $options
      * @return void
      */
-    public function createFilterSlugByAttributeOptions(array $options)
+    public function createFilterSlugByAttributeOptions(Interceptor $options)
     {
-        foreach ($options as $option) {
-            if (empty($option->getLabel()) || ctype_space((string) $option->getLabel())) {
-                continue;
+        $allTranslations = $options->toArray();
+        foreach($allTranslations['option']['value'] as $optionId => $optionTranslations) {
+            foreach ($optionTranslations as $storeId => $optionLabel) {
+                if (empty($optionLabel) || ctype_space((string)$optionLabel)) {
+                    continue;
+                }
+
+                $this->getLookupTable();
+                if ($optionLabel instanceof Phrase) {
+                    $optionLabel = $optionLabel->render();
+                }
+
+                if (empty($this->translitUrl->filter($optionLabel))) {
+                    continue;
+                }
+
+                if (isset($this->lookupTable[strtolower($optionLabel)])) {
+                    continue;
+                }
+
+                $attributeSlugEntity = $this->attributeSlugFactory->create();
+                $attributeSlugEntity->setAttribute($optionLabel);
+                $attributeSlugEntity->setSlug($this->translitUrl->filter($optionLabel));
+
+                $this->attributeSlugRepository->save($attributeSlugEntity);
+                $this->cache->remove(self::CACHE_KEY);
             }
-
-            $this->getLookupTable();
-            $optionLabel = $option->getLabel();
-            if ($optionLabel instanceof Phrase) {
-                $optionLabel = $optionLabel->render();
-            }
-
-            if (empty($this->translitUrl->filter($option->getLabel()))) {
-                continue;
-            }
-
-            if (isset($this->lookupTable[strtolower($option->getLabel())])) {
-                continue;
-            }
-
-            $attributeSlugEntity = $this->attributeSlugFactory->create();
-            $attributeSlugEntity->setAttribute($option->getLabel());
-            $attributeSlugEntity->setSlug($this->translitUrl->filter($option->getLabel()));
-
-            $this->attributeSlugRepository->save($attributeSlugEntity);
-            $this->cache->remove(self::CACHE_KEY);
         }
     }
 

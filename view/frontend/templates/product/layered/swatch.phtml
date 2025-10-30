@@ -40,7 +40,7 @@ $hasHiddenItems = $block->hasHiddenItems();
                        type="checkbox" <?=/* @noEscape */ ($item->isSelected() ? 'checked="checked"' : '')?>
                        value="<?=$escaper->escapeHtmlAttr($item->getLabel())?>"
                 >
-                <label for="<?=$escaper->escapeHtmlAttr($cssId)?>" aria-label="<?=  $label['label'] ?>>
+                <label for="<?=$escaper->escapeHtmlAttr($cssId)?>" aria-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>">
                 <?php if (isset($swatchData['swatches'][$option]['type'])) { ?>
                     <?php switch ($swatchData['swatches'][$option]['type']) {
                         case '3':

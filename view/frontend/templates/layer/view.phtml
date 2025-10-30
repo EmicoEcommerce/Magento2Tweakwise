@@ -46,7 +46,7 @@ if (!$block->canShowBlock()) {
 
         <?php if ($block->getLayer()->getState()->getFilters()): ?>
             <div class="block-actions filter-actions">
-                <a
+                <a tabindex="0" role="button"
                     href="<?=$escaper->escapeUrl($block->getClearUrl()) ?>"
                     class="action clear filter-clear"><span><?=$escaper->escapeHtml(__('Clear All'))?></span>
                 </a>
@@ -74,29 +74,33 @@ if (!$block->canShowBlock()) {
                                 }
                             }'>
                             <div data-role="collapsible" class="filter-options-item">
-                                <div data-role="title" class="filter-options-title">
-                                    <?=$escaper->escapeHtml(__($filter->getName()))?>
-                                    <?php $tooltip = $filter->getTooltip(); ?>
-                                    <?php if ($tooltip): ?>
-                                        <span class="tooltip" data-tooltip="<?=$escaper->escapeHtmlAttr($tooltip)?>"><span>i</span></span>
-                                    <?php endif; ?>
-                                </div>
-                                <?php
-                                    $filterContentStyle = $filter->isDefaultCollapsed() ? 'display: none;' : ''
-                                ?>
-                                <div data-role="content" class="filter-options-content" style="<?= $escaper->escapeHtmlAttr($filterContentStyle)?>">
-                                    <?= /* @noEscape */ $block->getChildBlock('renderer')->render($filter) ?>
-                                </div>
+                                <fieldset>
+                                    <legend data-role="title" class="filter-options-title" tabindex="0" role="button" >
+                                        <?=$escaper->escapeHtml(__($filter->getName()))?>
+                                        <?php $tooltip = $filter->getTooltip(); ?>
+                                        <?php if ($tooltip): ?>
+                                            <span class="tooltip" data-tooltip="<?=$escaper->escapeHtmlAttr($tooltip)?>"><span>i</span></span>
+                                        <?php endif; ?>
+                                    </legend>
+                                    <?php
+                                        $filterContentStyle = $filter->isDefaultCollapsed() ? 'display: none;' : ''
+                                    ?>
+                                    <div data-role="content" class="filter-options-content" style="<?= $escaper->escapeHtmlAttr($filterContentStyle)?>">
+                                        <?= /* @noEscape */ $block->getChildBlock('renderer')->render($filter) ?>
+                                    </div>
+                                </fieldset>
                             </div>
                         </div>
                     <?php else: ?>
                         <div class="filter-options-item">
-                            <div class="filter-options-title filter-options-title-non-collapsible">
-                                <?=$escaper->escapeHtml(__($filter->getName()))?>
-                            </div>
-                            <div class="filter-options-content">
-                                <?= /* @noEscape */$block->getChildBlock('renderer')->render($filter) ?>
-                            </div>
+                            <fieldset>
+                                <legend class="filter-options-title filter-options-title-non-collapsible">
+                                    <?=$escaper->escapeHtml(__($filter->getName()))?>
+                                </legend>
+                                <div class="filter-options-content">
+                                    <?= /* @noEscape */$block->getChildBlock('renderer')->render($filter) ?>
+                                </div>
+                            </fieldset>
                         </div>
                     <?php endif; ?>
                     <?php if ($renderFilterButton): ?>

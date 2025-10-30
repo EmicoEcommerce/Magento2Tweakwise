@@ -45,6 +45,22 @@ define([
          */
         _createSlider: function () {
             $(this.options.container).find('.slider').slider(this._getSliderConfig());
+            $(this.options.container).find('.ui-slider-handle:eq(0)')
+                .attr({
+                    'aria-label': 'Minimum value',
+                    'aria-valuenow': this.options.currentMin,
+                    'aria-valuemin': this.options.min,
+                    'aria-valuemax': this.options.max,
+                    'tabindex': 0
+                });
+            $(this.options.container).find('.ui-slider-handle:eq(1)')
+                .attr({
+                    'aria-label': 'Maximum value',
+                    'aria-valuenow': this.options.currentMax,
+                    'aria-valuemin': this.options.min,
+                    'aria-valuemax': this.options.max,
+                    'tabindex': 0
+                });
         },
 
         /**
@@ -88,8 +104,14 @@ define([
          */
         _bindInputChangeEvents: function () {
             var sliderContainer = $(this.options.container);
-            sliderContainer.on('change', '.slider-min', this._updateSliderUrlInput.bind(this));
-            sliderContainer.on('change', '.slider-max', this._updateSliderUrlInput.bind(this));
+            sliderContainer.on('change', '.slider-min', function (e) {
+                e.stopPropagation();
+                this._updateSliderUrlInput();
+            }.bind(this));
+            sliderContainer.on('change', '.slider-max', function (e) {
+                e.stopPropagation();
+                this._updateSliderUrlInput();
+            }.bind(this));
             if (this.options.containsBuckets) {
                 sliderContainer.on('click', '.bucket-link', this._clickBucketSlider.bind(this));
             }
@@ -109,6 +131,7 @@ define([
             var inputValue = minValue + '-' + maxValue;
             sliderUrlInput.val(inputValue);
             this._updateSliderDisabledAttribute(sliderUrlInput, inputValue)
+            sliderContainer.find('.slider').slider('values', [minValue, maxValue]);
         },
 
         _clickBucketSlider: function (event) {

@@ -16,7 +16,7 @@ use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\TreeRender
 $item = $block->getItem();
 ?>
 <li class="item">
-    <a href="<?=$escaper->escapeUrl($block->getCategoryUrl($item))?>">
+    <a tabindex="0" href="<?=$escaper->escapeUrl($block->getCategoryUrl($item))?>">
         <?=$escaper->escapeHtml($block->getItemPrefix())?>
         <?=$escaper->escapeHtml($item->getLabel())?>
         <?=$escaper->escapeHtml($block->getItemPostfix())?>

@@ -25,6 +25,8 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 <div data-mage-init='<?=$escaper->escapeHtmlAttr($block->getJsSortConfig())?>'>
     <?php if ($block->isSearchable()): ?>
         <input
+            aria-hidden="true"
+            tabindex="-1"
             data-max-visible="<?= $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>"
             type="text"
             class="tw_filtersearch js-skip-submit"

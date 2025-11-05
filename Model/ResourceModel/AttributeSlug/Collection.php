@@ -18,7 +18,7 @@ class Collection extends AbstractCollection
     /**
      * @var string
      */
-    protected $_idFieldName = 'attribute';
+    protected $_idFieldName = 'id';
 
     /**
      * @return void

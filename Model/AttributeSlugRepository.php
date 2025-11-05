@@ -82,18 +82,18 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                 /** @var AttributeSlug $existingSlug */
                 $existingSlug = $this->findBySlug($attributeSlug->getSlug());
 
-                //slug exists, check if it is not the current attribute saved
-                if ($attributeSlug->getAttribute() !== $existingSlug->getAttribute()) {
-                    $newSlug = $attributeSlug->getSlug();
-                    $counter = 0;
-                    while ($newSlug === $this->findBySlug($newSlug)->getSlug()) {
-                        $counter++;
-                        $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
-                    }
+                if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
+                    //same attribute, no need to change anything
+                    return $attributeSlug;
                 }
 
-                /** @var AttributeSlug $attributeSlug */
-                $this->resource->save($attributeSlug);
+                //slug exists, check if it is not the current attribute saved
+                $newSlug = $attributeSlug->getSlug();
+                $counter = 0;
+                while ($newSlug === $this->findBySlug($newSlug)->getSlug()) {
+                    $counter++;
+                    $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
+                }
             } catch (NoSuchEntityException $exception) {
                 //slug doesnt exist. Save value
                 if (isset($newSlug)) {
@@ -126,6 +126,8 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
 
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
+
+        $items = $collection->getItems();
 
         $searchResults->setItems($collection->getItems());
         $searchResults->setTotalCount($collection->getSize());

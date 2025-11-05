@@ -89,6 +89,10 @@ class FilterSlugManager
             return $lookupTable[$attribute];
         }
 
+        //$test1 = $lookupTable["cortenová oceľ"];
+        //$test2 = $lookupTable["cortenová ocel'"];
+        $test3 = $filterItem->getAttribute()->getTitle();
+
         $slug = $this->translitUrl->filter($attribute);
 
         if (empty($slug)) {

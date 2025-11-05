@@ -21,7 +21,7 @@ class AttributeSlug extends AbstractDb
      */
     protected function _construct()
     {
-        $this->_init('tweakwise_attribute_slug', AttributeSlugInterface::ATTRIBUTE);
-        $this->_isPkAutoIncrement = false;
+        $this->_init('tweakwise_attribute_slug', 'id');
+        $this->_isPkAutoIncrement = true;
     }
 }

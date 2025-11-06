@@ -80,7 +80,7 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             //check for existing slugs with the same slug
             try {
                 /** @var AttributeSlug $existingSlug */
-                $existingSlug = $this->findBySlug($attributeSlug->getSlug());
+                $existingSlug = $this->findBySlug($attributeSlug->getSlug(), $attributeSlug->getStoreId());
 
                 if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
                     //same attribute, no need to change anything
@@ -90,7 +90,7 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                 //slug exists, check if it is not the current attribute saved
                 $newSlug = $attributeSlug->getSlug();
                 $counter = 0;
-                while ($newSlug === $this->findBySlug($newSlug)->getSlug()) {
+                while ($newSlug === $this->findBySlug($newSlug, $attributeSlug->getStoreId())->getSlug()) {
                     $counter++;
                     $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
                 }
@@ -178,10 +178,11 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
      * @return AttributeSlugInterface
      * @throws NoSuchEntityException
      */
-    public function findBySlug(string $slug): AttributeSlugInterface
+    public function findBySlug(string $slug, $storeId = 0): AttributeSlugInterface
     {
         $collection = $this->collectionFactory->create()
-            ->addFieldToFilter('slug', $slug);
+            ->addFieldToFilter('slug', $slug)
+            ->addFieldToFilter('store_id', $storeId);
         if (!$collection->getSize()) {
             throw new NoSuchEntityException(__('No slug found for attribute "%1".', $slug));
         }

@@ -24,7 +24,15 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'primary' => true,
         ]);
 
-        $connection->addIndex($tableName, 'ATTRIBUTE', 'attribute', 'unique');
+        $connection->addColumn('tweakwise_attribute_slug', 'store_id', [
+            'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            'nullable' => false,
+            'unsigned' => true,
+            'comment' => 'store id',
+            'default' => 0,
+        ]);
+
+        $connection->addIndex($tableName, 'ATTRIBUTE', ['attribute', 'store_id'], 'unique');
 
         $setup->endSetup();
     }

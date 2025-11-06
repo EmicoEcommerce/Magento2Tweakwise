@@ -20,6 +20,8 @@ use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Filter\TranslitUrl;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use function array_search;
 
 class FilterSlugManager
 {
@@ -67,7 +69,8 @@ class FilterSlugManager
         AttributeSlugRepositoryInterface $attributeSlugRepository,
         AttributeSlugInterfaceFactory $attributeSlugFactory,
         CacheInterface $cache,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        protected readonly StoreManagerInterface $storeManager
     ) {
         $this->translitUrl = $translitUrl;
         $this->attributeSlugRepository = $attributeSlugRepository;
@@ -85,13 +88,9 @@ class FilterSlugManager
         $lookupTable = $this->getLookupTable();
         $attribute = strtolower($filterItem->getAttribute()->getTitle());
 
-        if (!empty($lookupTable[$attribute])) {
-            return $lookupTable[$attribute];
+        if (!empty($lookupTable[$this->storeManager->getStore()->getId()][$attribute])) {
+            return $lookupTable[$this->storeManager->getStore()->getId()][$attribute];
         }
-
-        //$test1 = $lookupTable["cortenová oceľ"];
-        //$test2 = $lookupTable["cortenová ocel'"];
-        $test3 = $filterItem->getAttribute()->getTitle();
 
         $slug = $this->translitUrl->filter($attribute);
 
@@ -104,6 +103,7 @@ class FilterSlugManager
         $attributeSlugEntity = $this->attributeSlugFactory->create();
         $attributeSlugEntity->setAttribute($attribute);
         $attributeSlugEntity->setSlug($slug);
+        $attributeSlugEntity->setStoreId($this->storeManager->getStore()->getId());
 
         $savedSlug = $this->attributeSlugRepository->save($attributeSlugEntity);
         $slug = $savedSlug->getSlug();
@@ -143,6 +143,7 @@ class FilterSlugManager
 
                 $attributeSlugEntity = $this->attributeSlugFactory->create();
                 $attributeSlugEntity->setAttribute($optionLabel);
+                $attributeSlugEntity->setStoreId((int)$storeId);
                 $attributeSlugEntity->setSlug($this->translitUrl->filter($optionLabel));
 
                 $this->attributeSlugRepository->save($attributeSlugEntity);
@@ -158,7 +159,14 @@ class FilterSlugManager
      */
     public function getAttributeBySlug(string $slug): string
     {
-        $attribute = array_search($slug, $this->getLookupTable(), false);
+        $lookupTable = $this->getLookupTable();
+        $attribute = array_search($slug, $lookupTable[$this->storeManager->getStore()->getId()], false);
+
+        //fallback
+        if ($attribute === false) {
+            $attribute = array_search($slug, $lookupTable[0], false);
+        }
+
         if ($attribute === false) {
             // Check if slug matched the pattern for a slider filter (i.e. 80-120).
             if (preg_match('/^\d+-\d+$/', $slug)) {
@@ -193,7 +201,7 @@ class FilterSlugManager
             $attributeSlugs = $this->attributeSlugRepository->getList(new SearchCriteria());
             $lookupTable = [];
             foreach ($attributeSlugs->getItems() as $attributeSlug) {
-                $lookupTable[$attributeSlug->getAttribute()] = $attributeSlug->getSlug();
+                $lookupTable[$attributeSlug->getStoreId()][$attributeSlug->getAttribute()] = $attributeSlug->getSlug();
             }
 
             $this->cache->save($this->serializer->serialize($lookupTable), self::CACHE_KEY);

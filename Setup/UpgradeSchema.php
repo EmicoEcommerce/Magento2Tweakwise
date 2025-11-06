@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Tweakwise\Magento2Tweakwise\Setup;
 
 use Magento\Framework\Setup\UpgradeSchemaInterface;
@@ -7,6 +10,7 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
+    //@phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.UselessOverridingMethod
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();

@@ -9,7 +9,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\ResourceModel;
 
-use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 class AttributeSlug extends AbstractDb

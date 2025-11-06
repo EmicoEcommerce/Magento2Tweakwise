@@ -533,7 +533,6 @@ class PathSlugStrategy implements
         }
 
         if ($rewrite->getRedirectType() === 301) {
-
             $url = $this->magentoUrl->getDirectUrl($rewrite->getTargetPath() . $filterPath);
             $request->setParam('tw_filter_redirect', $url);
         }

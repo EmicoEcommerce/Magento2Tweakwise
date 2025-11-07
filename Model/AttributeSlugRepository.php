@@ -174,6 +174,7 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
 
     /**
      * @param string $slug
+     * @param int $storeId
      * @return AttributeSlugInterface
      * @throws NoSuchEntityException
      */

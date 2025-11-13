@@ -137,7 +137,7 @@ class FilterSlugManager
                     continue;
                 }
 
-                if (isset($this->lookupTable[strtolower($optionLabel)])) {
+                if (isset($this->lookupTable[$storeId][strtolower($optionLabel)])) {
                     continue;
                 }
 
@@ -160,12 +160,17 @@ class FilterSlugManager
      */
     public function getAttributeBySlug(string $slug): string
     {
+        $attribute = false;
         $lookupTable = $this->getLookupTable();
-        // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
-        $attribute = array_search($slug, $lookupTable[$this->storeManager->getStore()->getId()], false);
+
+        if (isset($lookupTable[$this->storeManager->getStore()->getId()])) {
+            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
+            $attribute = array_search($slug, $lookupTable[$this->storeManager->getStore()->getId()], false);
+
+        }
 
         //fallback
-        if ($attribute === false) {
+        if ($attribute === false && isset($lookupTable[0])) {
             $attribute = array_search($slug, $lookupTable[0], false);
         }
 

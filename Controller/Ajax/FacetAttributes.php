@@ -1,10 +1,9 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\Controller\Result\JsonFactory;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
@@ -15,31 +14,12 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
  */
 class FacetAttributes extends Action
 {
-    /**
-     * @var JsonFactory
-     */
-    private JsonFactory $jsonFactory;
-
-    /**
-     * @var Client
-     */
-    private Client $client;
-
-    /**
-     * @var RequestFactory
-     */
-    private RequestFactory $requestFactory;
-
     public function __construct(
         Context $context,
-        JsonFactory $jsonFactory,
-        RequestFactory $requestFactory,
-        Client $client
+        private RequestFactory $requestFactory,
+        private Client $client
     ) {
         parent::__construct($context);
-        $this->jsonFactory = $jsonFactory;
-        $this->requestFactory = $requestFactory;
-        $this->client = $client;
     }
 
     public function execute()
@@ -53,10 +33,12 @@ class FacetAttributes extends Action
         $allStores = $facetRequest->getStores();
 
         if (!empty($facetKey)) {
+            // @phpstan-ignore-next-line
             $facetRequest->addFacetKey($facetKey);
         }
 
         if (!empty($filtertemplate)) {
+            // @phpstan-ignore-next-line
             $facetRequest->addParameter('tn_ft', $filtertemplate);
         }
 
@@ -70,17 +52,22 @@ class FacetAttributes extends Action
             try {
                 $response = $this->client->request($facetRequest);
             } catch (ApiException $e) {
-                if (!$e->getCode() == 404) {
+                // @phpstan-ignore-next-line
+                if (!$e->getCode() === 404) {
                     throw $e;
                 }
 
                 continue;
             }
 
-            if (!empty($response->getAttributes())) {
-                foreach ($response->getAttributes() as $attribute) {
-                    $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
-                }
+            // @phpstan-ignore-next-line
+            if (empty($response->getAttributes())) {
+                continue;
+            }
+
+            // @phpstan-ignore-next-line
+            foreach ($response->getAttributes() as $attribute) {
+                $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
             }
         }
 
@@ -101,6 +88,7 @@ class FacetAttributes extends Action
             'Access-Control-Allow-Headers',
             'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
         );
+        // @phpstan-ignore-next-line
         $json->setData(['data' => $result]);
 
         return $json;

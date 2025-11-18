@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -10,7 +10,6 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
-use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetResponse;
 
 class PurchaseRequest extends Request
 {
@@ -24,7 +23,7 @@ class PurchaseRequest extends Request
      */
     protected $productKeys;
 
-    protected $apiUrl = 'https://navigator-analytics.tweakwise.com/api';
+    protected string $apiUrl = 'https://navigator-analytics.tweakwise.com/api';
 
     /**
      * @return true
@@ -35,7 +34,7 @@ class PurchaseRequest extends Request
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
     public function getApiurl(): string
     {
@@ -47,7 +46,7 @@ class PurchaseRequest extends Request
      *
      * @return void
      */
-    public function setProfileKey(string $profileKey): void
+    public function setProfileKey(string $profileKey): void // @phpstan-ignore-line
     {
         $this->setParameter('ProfileKey', $profileKey);
     }

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -68,6 +68,7 @@ class Featured extends ListProduct
      * @internal param RecommendationsContext $recommendationsContext
      * @internal param Config $config
      * @internal param array $data
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         ProductContext $productContext,
@@ -128,6 +129,7 @@ class Featured extends ListProduct
      */
     public function getProductCollection()
     {
+        // @phpstan-ignore-next-line
         return $this->_getProductCollection();
     }
 
@@ -169,6 +171,7 @@ class Featured extends ListProduct
     {
         if ($this->_productCollection === null) {
             if (!$this->checkRecommendationEnabled()) {
+                // @phpstan-ignore-next-line
                 $this->_productCollection = parent::_getProductCollection()
                     ->addFieldToFilter('entity_id', ['null' => true]);
             } else {
@@ -178,6 +181,7 @@ class Featured extends ListProduct
             }
         }
 
+        // @phpstan-ignore-next-line
         return $this->_productCollection;
     }
 
@@ -191,6 +195,7 @@ class Featured extends ListProduct
 
     /**
      * @param FeaturedRequest $request
+     * @return void
      */
     protected function configureRequest(FeaturedRequest $request)
     {

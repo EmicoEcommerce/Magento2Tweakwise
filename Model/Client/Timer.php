@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client;
 
@@ -57,6 +57,7 @@ class Timer
             return sprintf('%s;dur=%f', 'TW-' . $name, $timeTaken);
         }
 
+        // @phpstan-ignore-next-line
         return 0;
     }
 
@@ -67,8 +68,7 @@ class Timer
     public function getTime($name)
     {
         if (isset($this->timers[$name])) {
-            $timeTaken = ($this->timers[$name]['end'] - $this->timers[$name]['start']);
-            return $timeTaken;
+            return $this->timers[$name]['end'] - $this->timers[$name]['start'];
         }
 
         return 0;
@@ -80,15 +80,20 @@ class Timer
      */
     private function setHeader($name)
     {
+        // @phpstan-ignore-next-line
         $currentHeader = $this->response->getHeader('Server-Timing');
         $timing = $this->getServerTiming($name);
 
-        if ($timing > 0) {
-            if (empty($currentHeader)) {
-                $this->response->setHeader('Server-Timing', $timing, false);
-            } else {
-                $this->response->setHeader('Server-Timing', $currentHeader->getFieldValue() . ', ' . $timing, true);
-            }
+        if ($timing <= 0) {
+            return;
+        }
+
+        if (empty($currentHeader)) {
+            // @phpstan-ignore-next-line
+            $this->response->setHeader('Server-Timing', $timing, false);
+        } else {
+            // @phpstan-ignore-next-line
+            $this->response->setHeader('Server-Timing', $currentHeader->getFieldValue() . ', ' . $timing, true);
         }
     }
 }

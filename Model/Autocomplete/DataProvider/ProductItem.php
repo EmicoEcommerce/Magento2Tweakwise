@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -81,7 +81,7 @@ class ProductItem implements ItemInterface
         $price = (float) $priceInfo->getPrice('regular_price')->getValue();
         $finalPrice = (float) $priceInfo->getPrice('final_price')->getValue();
 
-        if ($productType == Grouped::TYPE_CODE || $productType == Type::TYPE_BUNDLE) {
+        if ($productType === Grouped::TYPE_CODE || $productType === Type::TYPE_BUNDLE) {
             $tweakwisePrice = (float)$product->getData('tweakwise_price');
             $tweakwiseFinalPrice = (float)$product->getData('tweakwise_final_price');
             if ($price < $tweakwisePrice) {

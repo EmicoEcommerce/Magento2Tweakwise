@@ -18,6 +18,7 @@ class InstallSchema implements InstallSchemaInterface
      * @param ModuleContextInterface $context
      * @return void
      * @throws \Zend_Db_Exception
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -53,7 +54,7 @@ class InstallSchema implements InstallSchemaInterface
             $table->addIndex(
                 $installer->getIdxName($tableName, [AttributeSlugInterface::SLUG]),
                 [AttributeSlugInterface::SLUG],
-                AdapterInterface::INDEX_TYPE_UNIQUE
+                AdapterInterface::INDEX_TYPE_UNIQUE // @phpstan-ignore-line
             );
 
             $installer->getConnection()->createTable($table);

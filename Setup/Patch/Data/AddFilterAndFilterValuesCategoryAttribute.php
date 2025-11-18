@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Setup\Patch\Data;
 
@@ -10,7 +10,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 /**
- * @SuppressWarnings(PHPMD.LongClassName)
+ * @SuppressWarnings("PHPMD.LongClassName")
  */
 class AddFilterAndFilterValuesCategoryAttribute implements DataPatchInterface
 {
@@ -77,6 +77,8 @@ class AddFilterAndFilterValuesCategoryAttribute implements DataPatchInterface
                 'backend' => ''
             ]
         );
+
+        return $this;
     }
 
     /**

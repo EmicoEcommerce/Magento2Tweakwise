@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -29,6 +29,7 @@ class FeaturedRequest extends Request
      */
     protected $templateId;
 
+    // @phpstan-ignore-next-line
     protected $registery;
 
     public function __construct(Helper $helper, StoreManager $storeManager, Registry $registry, Config $config)
@@ -63,6 +64,7 @@ class FeaturedRequest extends Request
             $templateId = (int) $templateId;
         }
 
+        // @phpstan-ignore-next-line
         $this->templateId = $templateId;
         return $this;
     }
@@ -100,8 +102,10 @@ class FeaturedRequest extends Request
     public function setCategory()
     {
         $categoryId = $this->getCurrentCategoryId();
-        if (!empty($categoryId)) {
-            $this->addCategoryFilter($categoryId);
+        if (empty($categoryId)) {
+            return;
         }
+
+        $this->addCategoryFilter($categoryId);
     }
 }

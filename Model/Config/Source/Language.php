@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Config\Source;
 
@@ -39,7 +39,7 @@ class Language implements OptionSourceInterface
      * @return array
      * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
      * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
-     * @SuppressWarnings(PHPMD.EmptyCatchBlock)
+     * @SuppressWarnings("PHPMD.EmptyCatchBlock")
      */
     public function toOptionArray()
     {
@@ -64,6 +64,7 @@ class Language implements OptionSourceInterface
                 ];
             }
         } catch (ApiException $e) {
+            // noop
         }
 
         return $options;

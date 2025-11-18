@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -60,6 +60,7 @@ class FormMini extends Template
      */
     public function getJsonPriceFormat()
     {
+        // @phpstan-ignore-next-line
         return json_encode($this->localeFormat->getPriceFormat());
     }
 

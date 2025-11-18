@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -37,9 +37,11 @@ class DataProvider implements DataProviderInterface
     {
         $items = [];
         foreach ($this->dataProviders as $dataProvider) {
-            if ($dataProvider->isSupported()) {
-                $items[] = $dataProvider->getItems();
+            if (!$dataProvider->isSupported()) {
+                continue;
             }
+
+            $items[] = $dataProvider->getItems();
         }
 
         return !empty($items) ? array_merge([], ...$items) : [];

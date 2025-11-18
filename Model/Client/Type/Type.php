@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -12,7 +12,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
 use BadMethodCallException;
 
 /**
- * @SuppressWarnings(PHPMD.NumberOfChildren)
+ * @SuppressWarnings("PHPMD.NumberOfChildren")
  */
 class Type
 {
@@ -60,7 +60,7 @@ class Type
             return self::$_underscoreCache[$name];
         }
 
-        $result = strtolower(trim(preg_replace('/([A-Z]|[0-9]+)/', "_$1", $name), '_'));
+        $result = strtolower(trim(preg_replace('/([A-Z]|[0-9]+)/', '_$1', $name), '_'));
         self::$_underscoreCache[$name] = $result;
         return $result;
     }
@@ -123,11 +123,11 @@ class Type
     /**
      * @param string $key
      * @return bool
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
      */
     public function getBoolValue($key)
     {
-        return $this->getDataValue($key) == 'true';
+        return $this->getDataValue($key) === 'true';
     }
 
     /**

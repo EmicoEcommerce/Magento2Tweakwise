@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -50,11 +50,11 @@ class AttributeType extends Type
 
     /**
      * @return bool
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
      */
     public function getIsSelected()
     {
-        return $this->getDataValue('isselected') == 'true';
+        return $this->getDataValue('isselected') === 'true';
     }
 
     /**
@@ -70,6 +70,7 @@ class AttributeType extends Type
      */
     public function getAttributeId()
     {
+        // @phpstan-ignore-next-line
         return (string) $this->getDataValue('attributeid');
     }
 

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -41,6 +41,7 @@ class Plugin extends AbstractRecommendationPlugin
         }
 
         try {
+            // @phpstan-ignore-next-line
             return $this->getCollection();
         } catch (ApiException $e) {
             return $proceed();

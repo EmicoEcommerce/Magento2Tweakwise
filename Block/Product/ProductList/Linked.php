@@ -22,8 +22,8 @@ class Linked
     public function __construct(
         private readonly Cache $cacheHelper,
         private readonly RequestInterface $request,
-        private readonly ProductRepositoryInterface $productRepository,
-        private readonly Registry $registry,
+        private readonly ProductRepositoryInterface $productRepository, // @phpstan-ignore-line
+        private readonly Registry $registry, // @phpstan-ignore-line
     ) {
     }
 
@@ -60,12 +60,16 @@ class Linked
      */
     public function prepareData(AbstractProduct $productBlock): void
     {
-        if ($this->cacheHelper->isEsiRequest($this->request) && !$productBlock->getProduct()) {
-            $productId = $this->request->getParam('product_id');
-            $product = $this->productRepository->getById($productId);
-            $this->registry->register('product', $product);
-            $productBlock->setData('product', $product);
+        // @phpstan-ignore-next-line
+        if (!$this->cacheHelper->isEsiRequest($this->request) || $productBlock->getProduct()) {
+            return;
         }
+
+        // @phpstan-ignore-next-line
+        $productId = $this->request->getParam('product_id');
+        $product = $this->productRepository->getById($productId);
+        $this->registry->register('product', $product);
+        $productBlock->setData('product', $product);
     }
 
     /**

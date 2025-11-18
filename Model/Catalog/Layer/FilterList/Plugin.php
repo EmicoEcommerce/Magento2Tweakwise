@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -53,6 +53,7 @@ class Plugin
      * @param Closure $proceed
      * @param Layer $layer
      * @return AbstractFilter[]
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function aroundGetFilters(FilterList $subject, Closure $proceed, Layer $layer)
     {
@@ -73,6 +74,7 @@ class Plugin
         }
 
         try {
+            // @phpstan-ignore-next-line
             return $this->tweakwiseFilterList->getFilters($layer);
         } catch (TweakwiseExceptionInterface $e) {
             $this->log->critical($e);

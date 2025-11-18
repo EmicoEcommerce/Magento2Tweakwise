@@ -6,13 +6,9 @@ namespace Tweakwise\Magento2Tweakwise\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
-use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Sales\Block\Order\Items;
-use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
-use Magento\Framework\App\Request\Http as Request;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
@@ -45,14 +41,16 @@ class TweakwiseCheckout implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
-        if ($this->config->isAnalyticsEnabled()) {
-            $order = $observer->getEvent()->getOrder();
-            $totalExclTax = (float)$order->getBaseSubtotal();
-            // Get the order items
-            $items = $order->getAllItems();
-
-            $this->sendCheckout($items, $totalExclTax);
+        if (!$this->config->isAnalyticsEnabled()) {
+            return;
         }
+
+        $order = $observer->getEvent()->getOrder();
+        $totalExclTax = (float)$order->getBaseSubtotal();
+        // Get the order items
+        $items = $order->getAllItems();
+
+        $this->sendCheckout($items, $totalExclTax);
     }
 
     /**
@@ -72,10 +70,12 @@ class TweakwiseCheckout implements ObserverInterface
         $tweakwiseRequest->setParameter('revenue', (string)$totalExclTax);
         $tweakwiseRequest->setPath('purchase');
 
+        // @phpstan-ignore-next-line
         foreach ($items as $item) {
             $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
         }
 
+        // @phpstan-ignore-next-line
         $tweakwiseRequest->setParameterArray('ProductKeys', $productTwId);
 
         // @phpcs:disable

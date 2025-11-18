@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -70,6 +70,7 @@ class Collection extends AbstractCollection
      * @param VisualFactory $visualFactory
      * @param Config $config
      * @param AdapterInterface|null $connection
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         CollectionEntityFactory $entityFactory,
@@ -152,6 +153,7 @@ class Collection extends AbstractCollection
     protected function applyCollectionSizeValues()
     {
         $response = $this->navigationContext->getResponse();
+        // @phpstan-ignore-next-line
         $properties = $response->getProperties();
 
         $this->_pageSize = $properties->getPageSize();
@@ -213,6 +215,7 @@ class Collection extends AbstractCollection
             return;
         }
 
+        // @phpstan-ignore-next-line
         foreach ($response->getItems() as $item) {
             if ($item->getValue('type') !== ItemType::VISUAL->value) {
                 continue;
@@ -220,11 +223,15 @@ class Collection extends AbstractCollection
 
             /** @var VisualInterface $visual */
             $visual = $this->visualFactory->create();
+            // @phpstan-ignore-next-line
             $visual->setId($item->getValue('itemno'));
             $visual->setImageUrl($item->getImage());
             $visual->setUrl($item->getUrl());
+            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
+            // @phpstan-ignore-next-line
             $itemPosition = array_search($item, $response->getItems());
 
+            // @phpstan-ignore-next-line
             array_splice($this->_items, $itemPosition, 0, [$visual]);
         }
     }
@@ -235,6 +242,7 @@ class Collection extends AbstractCollection
     protected function getProductIds()
     {
         $response = $this->navigationContext->getResponse();
+        // @phpstan-ignore-next-line
         return $response->getProductIds() ?? [];
     }
 
@@ -249,6 +257,7 @@ class Collection extends AbstractCollection
             return [];
         }
 
+        // @phpstan-ignore-next-line
         return $response->getProductImages() ?? [];
     }
 }

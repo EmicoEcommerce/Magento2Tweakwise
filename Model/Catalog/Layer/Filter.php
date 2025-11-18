@@ -1,5 +1,4 @@
-<?php
-
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -28,7 +27,7 @@ use Magento\Store\Model\StoreManager;
  * @see \Magento\Catalog\Model\Layer\Filter\AbstractFilter
  * only for the type hint in
  * @see \Magento\Swatches\Block\LayeredNavigation\RenderLayered
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
  */
 class Filter extends AbstractFilter implements FilterInterface
 {
@@ -237,7 +236,9 @@ class Filter extends AbstractFilter implements FilterInterface
             if (!$hasChildren) {
                 $result[] = $item;
             } else {
-                $deepestActiveChild = $this->findDeepestActiveChildItem($item) ?: $item;
+                $deepestActiveChild = $this->findDeepestActiveChildItem($item) ?
+                    $this->findDeepestActiveChildItem($item) :
+                    $item;
                 $result[] = $deepestActiveChild;
             }
         }
@@ -256,7 +257,9 @@ class Filter extends AbstractFilter implements FilterInterface
     public function setAttributeModel($attribute)
     {
         $this->attributeModel = $attribute;
+        // @phpstan-ignore-next-line
         $this->optionLabelValueMap = null;
+        // @phpstan-ignore-next-line
         $this->optionLabelItemMap = null;
         return $this;
     }
@@ -266,6 +269,7 @@ class Filter extends AbstractFilter implements FilterInterface
      */
     public function getAttributeModel()
     {
+        // @phpstan-ignore-next-line
         return $this->attributeModel;
     }
 
@@ -352,6 +356,7 @@ class Filter extends AbstractFilter implements FilterInterface
         $item = $this->itemFactory->create(['filter' => $this, 'attributeType' => $attributeType]);
 
         $children = [];
+        // @phpstan-ignore-next-line
         foreach ($attributeType->getChildren() as $childAttributeType) {
             $children[] = $this->createItem($childAttributeType);
         }
@@ -363,6 +368,7 @@ class Filter extends AbstractFilter implements FilterInterface
 
     /**
      * @param Item $item
+     * @return Item|null
      */
     protected function findDeepestActiveChildItem(Item $item)
     {
@@ -415,9 +421,11 @@ class Filter extends AbstractFilter implements FilterInterface
                 $map[(string)$option->getLabel()] = $option->getValue();
             }
 
+            // @phpstan-ignore-next-line
             $this->optionLabelValueMap = $map;
         }
 
+        // @phpstan-ignore-next-line
         return $this->optionLabelValueMap;
     }
 
@@ -461,6 +469,7 @@ class Filter extends AbstractFilter implements FilterInterface
     {
         $map = $this->getOptionLabelValueMap();
         $map = array_flip($map);
+        // @phpstan-ignore-next-line
         return $map[$id] ?? null;
     }
 
@@ -532,8 +541,8 @@ class Filter extends AbstractFilter implements FilterInterface
 
         $selectedMin = $activeItems[0]->getAttribute()->getTitle();
         $selectedMax = $activeItems[1]->getAttribute()->getTitle();
-        $mockedActiveItem = clone($activeItems[0]);
-        $mockedActiveItem->getAttribute()->setValue('title', "$selectedMin-$selectedMax");
+        $mockedActiveItem = clone$activeItems[0];
+        $mockedActiveItem->getAttribute()->setValue('title', sprintf('%s-%s', $selectedMin, $selectedMax));
 
         return [$mockedActiveItem];
     }

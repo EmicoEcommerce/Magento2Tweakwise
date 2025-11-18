@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
@@ -160,9 +160,9 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                     'ajaxFilters' => $this->isAjaxFilters(),
                     'formFilters' => $this->isFormFilters(),
                     'filterUrl' => $sliderRenderer->getFilterUrl(),
-                    'prefix' => "<span class=\"prefix\">{$sliderRenderer->getItemPrefix()}</span>",
-                    'postfix' => "<span class=\"postfix\">{$sliderRenderer->getItemPostfix()}</span>",
-                    'container' => "#attribute-slider-{$sliderRenderer->getCssId()}",
+                    'prefix' => sprintf('<span class=\"prefix\">%s</span>', $sliderRenderer->getItemPrefix()),
+                    'postfix' => sprintf('<span class=\"postfix\">%s</span>', $sliderRenderer->getItemPostfix()),
+                    'container' => sprintf('#attribute-slider-%s', $sliderRenderer->getCssId()),
                     'min' => $sliderRenderer->getMinValue(),
                     'max' => $sliderRenderer->getMaxValue(),
                     'currentMin' => $sliderRenderer->getCurrentMinValue(),
@@ -186,7 +186,9 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
         $mVersion = $this->productMetadata->getVersion();
         if (version_compare($mVersion, '2.3.3', '<')) {
             return 'tweakwiseNavigationSliderCompat';
-        } elseif (version_compare($mVersion, '2.4.4', '<')) {
+        }
+
+        if (version_compare($mVersion, '2.4.4', '<')) {
             return 'tweakwiseNavigationSlider';
         }
 
@@ -194,9 +196,10 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
     }
 
     /**
-     * @param bool $hasAlternateSort
+     * @param $hasAlternateSort
+     * @return bool|string
      */
-    public function getJsSortConfig($hasAlternateSort = null)
+    public function getJsSortConfig($hasAlternateSort = null) // @phpstan-ignore-line
     {
         return $this->jsonSerializer->serialize(
             [
@@ -239,6 +242,9 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
         return $this->url->getUrl('tweakwise/ajax/analytics');
     }
 
+    /**
+     * @return CurrentContext
+     */
     public function getNavigationContext()
     {
         return $this->currentNavigationContext;

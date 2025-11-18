@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -53,8 +53,8 @@ class CatalogSearchRedirect implements ObserverInterface
      * @param Observer $observer
      * @return void
      * @throws \Exception
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function execute(Observer $observer)
     {
@@ -72,6 +72,7 @@ class CatalogSearchRedirect implements ObserverInterface
         }
 
         try {
+            // @phpstan-ignore-next-line
             $redirects = $this->context->getResponse()->getRedirects();
         } catch (ApiException $e) {
             //no api response
@@ -102,6 +103,7 @@ class CatalogSearchRedirect implements ObserverInterface
         $response->setRedirect($url);
         /** @var Action $controller */
         $controller = $observer->getData('controller_action');
+        // @phpstan-ignore-next-line
         $controller->getActionFlag()->set('', Action::FLAG_NO_DISPATCH, 1);
     }
 

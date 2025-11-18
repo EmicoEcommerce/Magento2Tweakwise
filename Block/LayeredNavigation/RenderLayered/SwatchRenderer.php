@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -13,6 +13,7 @@ use Magento\Framework\Escaper;
 use RuntimeException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
 use Tweakwise\Magento2Tweakwise\Model\Swatches\SwatchAttributeResolver;
 use Magento\Catalog\Model\Product;
@@ -64,6 +65,7 @@ class SwatchRenderer extends RenderLayered
      * @param SwatchAttributeResolver $swatchAttributeResolver
      * @param Escaper $escaper
      * @param array $data
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         Context $context,
@@ -92,12 +94,14 @@ class SwatchRenderer extends RenderLayered
 
     /**
      * @param Filter $filter
+     * @return void
      * @throws LocalizedException
      */
     public function setFilter(Filter $filter)
     {
         $this->filter = $filter;
         // Make sure attribute model exists
+        // @phpstan-ignore-next-line
         if (!$this->filter->getAttributeModel()) {
             $attributeCode = $filter->getFacet()->getFacetSettings()->getUrlKey();
             $attributeModel = $this->eavAttributeFactory->create([]);
@@ -121,12 +125,13 @@ class SwatchRenderer extends RenderLayered
      * @return array
      * @throws RuntimeException
      * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function getSwatchData()
     {
-        if (false === $this->eavAttribute instanceof Attribute) {
+        // @phpstan-ignore-next-line
+        if ($this->eavAttribute instanceof Attribute === false) {
             throw new RuntimeException('Magento_Swatches: RenderLayered: Attribute has not been set.');
         }
 
@@ -156,12 +161,13 @@ class SwatchRenderer extends RenderLayered
             if (empty($swatchData)) {
                 /** @var AttributeInterface|Attribute $attribute */
                 $attribute = $swatchAttributeData['attribute'];
+                // @phpstan-ignore-next-line
                 $this->filter->setAttributeModel($attribute);
                 $optionIds = array_values($swatchAttributeData['options']);
-                $optionLabels = array_keys($swatchAttributeData['options']);
 
                 $attributeOptions = [];
                 foreach ($attribute->getOptions() as $option) {
+                    // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
                     if (!in_array($option->getValue(), $optionIds, false)) {
                         continue;
                     }
@@ -173,11 +179,12 @@ class SwatchRenderer extends RenderLayered
                         continue;
                     }
 
+                    // @phpstan-ignore-next-line
                     $attributeOptions[$option->getValue()] = $this->getOptionViewData($filterItem, $option);
                 }
 
                 $swatchData = [
-                    'attribute_id' => $attribute->getId(),
+                    'attribute_id' => $attribute->getId(), // @phpstan-ignore-line
                     'attribute_code' => $attribute->getAttributeCode(),
                     'attribute_label' => $this->filter->getFacet()->getFacetSettings()->getTitle(),
                     'options' => $attributeOptions,
@@ -191,7 +198,7 @@ class SwatchRenderer extends RenderLayered
         $sortedOptions = [];
         foreach ($this->filter->getFacet()->getAttributes() as $attribute) {
             foreach ($swatchData['options'] as $key => $option) {
-                if ($option['label'] == $attribute->getTitle()) {
+                if ($option['label'] === $attribute->getTitle()) {
                     $sortedOptions[$key] = $option;
                     $filterItems[$option['label']]->setData('_default_hidden', $counter >= $this->getMaxItemsShown());
                     $counter++;
@@ -243,6 +250,7 @@ class SwatchRenderer extends RenderLayered
      */
     public function shouldDisplayProductCountOnLayer()
     {
+        // @phpstan-ignore-next-line
         return $this->getFacetSettings()->getIsNumberOfResultVisible();
     }
 

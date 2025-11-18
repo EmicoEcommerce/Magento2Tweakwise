@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
@@ -77,6 +77,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      * @param CategoryRepositoryInterface $categoryRepository
      * @param CategoryInterfaceFactory $categoryFactory
      * @param ToolbarInputProvider $toolbarInputProvider
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         UrlInterface $url,
@@ -123,6 +124,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
 
         $input['__tw_hash'] = $this->hashInputProvider->getHash($input);
 
+        // @phpstan-ignore-next-line
         return array_merge($input, $this->toolbarInputProvider->getFilterFormInput());
     }
 
@@ -139,7 +141,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      */
     public function getCategoryId()
     {
-        return (int)$this->getCategory()->getId() ?: null;
+        return (int)$this->getCategory()->getId() ? (int)$this->getCategory()->getId() : null;
     }
 
     /**
@@ -153,6 +155,7 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
         }
 
         try {
+            // @phpstan-ignore-next-line
             $rootCategory = $this->storeManager->getStore()->getRootCategoryId();
         } catch (NoSuchEntityException $exception) {
             $rootCategory = 2;

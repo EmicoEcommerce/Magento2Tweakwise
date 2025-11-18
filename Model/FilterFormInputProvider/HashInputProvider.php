@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
@@ -25,11 +25,6 @@ class HashInputProvider
     protected $config;
 
     /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    /**
      * ToolbarInputProvider constructor.
      * @param MagentoHttpRequest $request
      * @param Config $config
@@ -40,27 +35,33 @@ class HashInputProvider
         MagentoHttpRequest $request,
         Config $config,
         Encryptor $encryptor,
-        SerializerInterface $serializer
+        private SerializerInterface $serializer
     ) {
         $this->request = $request;
         $this->config = $config;
         $this->encryptor = $encryptor;
-        $this->serializer = $serializer;
     }
 
-    public function getHash($input)
+    /**
+     * @param $input
+     * @return string
+     */
+    public function getHash($input) // @phpstan-ignore-line
     {
         $input['salt'] = $this->getSalt();
 
         return $this->encryptor->hash($this->serializer->serialize($input));
     }
 
+    /**
+     * @return string
+     */
     protected function getSalt()
     {
         return $this->config->getSalt();
     }
 
-    public function validateHash($request)
+    public function validateHash($request) // @phpstan-ignore-line
     {
         $isValid = false;
         $hash = $request->getParam('__tw_hash', null);

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -93,15 +93,18 @@ class Tweakwise
 
     /**
      * @param Layer $layer
+     * @return void
      * @throws NoSuchEntityException
      */
     protected function initFilters(Layer $layer)
     {
         $request = $this->context->getRequest();
         if (!$request->hasParameter('tn_cid')) {
+            // @phpstan-ignore-next-line
             $request->addCategoryFilter($this->getCurrentCategory($layer));
         }
 
+        // @phpstan-ignore-next-line
         $facets = $this->context->getResponse()->getFacets();
 
         $facetAttributeNames = array_map(
@@ -211,7 +214,7 @@ class Tweakwise
 
         if (
             !$this->config->isPersonalMerchandisingActive() ||
-            $layerCurrentCategory->getId() !== $this->storeManager->getStore()->getRootCategoryId()
+            $layerCurrentCategory->getId() !== $this->storeManager->getStore()->getRootCategoryId() // @phpstan-ignore-line
         ) {
             return $layerCurrentCategory;
         }

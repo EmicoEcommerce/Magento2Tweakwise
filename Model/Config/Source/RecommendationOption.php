@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -39,16 +39,6 @@ class RecommendationOption extends AbstractSource
     protected $options;
 
     /**
-     * @var bool
-     */
-    protected $addCodeOption;
-
-    /**
-     * @var bool
-     */
-    protected $addEmpty;
-
-    /**
      * Template constructor.
      *
      * @param Client $client
@@ -59,13 +49,11 @@ class RecommendationOption extends AbstractSource
     public function __construct(
         Client $client,
         RequestFactory $requestFactory,
-        $addCodeOption = false,
-        $addEmpty = false
+        protected $addCodeOption = false,
+        protected $addEmpty = false
     ) {
         $this->client = $client;
         $this->requestFactory = $requestFactory;
-        $this->addCodeOption = $addCodeOption;
-        $this->addEmpty = $addEmpty;
     }
 
     /**
@@ -93,6 +81,7 @@ class RecommendationOption extends AbstractSource
             ];
         }
 
+        // @phpstan-ignore-next-line
         foreach ($response->getRecommendations() as $recommendation) {
             $result[] = [
                 'value' => $recommendation->getId(),

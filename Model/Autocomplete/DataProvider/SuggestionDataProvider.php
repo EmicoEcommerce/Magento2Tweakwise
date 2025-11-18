@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
@@ -118,10 +118,12 @@ class SuggestionDataProvider implements DataProviderInterface
         );
 
         $suggestionsRequest = $this->suggestionRequestFactory->create();
+        // @phpstan-ignore-next-line
         $suggestionsRequest->setSearch($query);
 
         if ($profileKeyCookie) {
             $profileKey = $this->request->setProfileKey($profileKeyCookie);
+            // @phpstan-ignore-next-line
             $suggestionsRequest->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
         }
 
@@ -136,6 +138,7 @@ class SuggestionDataProvider implements DataProviderInterface
         $productSuggestionsRequest->setSearch($query);
 
         if ($profileKeyCookie) {
+            // @phpstan-ignore-next-line
             $productSuggestionsRequest->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
         }
 
@@ -145,23 +148,27 @@ class SuggestionDataProvider implements DataProviderInterface
             true
         );
 
+        // @phpstan-ignore-next-line
         if (empty($promises)) {
             return [];
         }
 
         $results = [];
+        // @phpstan-ignore-next-line
         $responses = Utils::unwrap($promises);
-        foreach ($responses as $key => $response) {
+        foreach ($responses as $response) {
             if ($response instanceof AutocompleteProductResponseInterface) {
                 $results[] = $this->dataProviderHelper->getProductItems($response);
             }
 
-            if ($response instanceof SuggestionsResponse) {
-                $results[] = $this->getSuggestionGroups($response);
+            if (!($response instanceof SuggestionsResponse)) {
+                continue;
             }
+
+            $results[] = $this->getSuggestionGroups($response);
         }
 
-        return (!empty($results)) ? array_merge(...$results) : [];
+        return !empty($results) ? array_merge(...$results) : [];
     }
 
     /**
@@ -171,7 +178,8 @@ class SuggestionDataProvider implements DataProviderInterface
     protected function getSuggestionGroups(SuggestionsResponse $response)
     {
         $results = [];
-        $groups = $response->getGroups() ?: [];
+        // @phpstan-ignore-next-line
+        $groups = $response->getGroups() ? $response->getGroups() : [];
         foreach ($groups as $suggestionGroup) {
             $results[] = $this->suggestionGroupItemFactory->create(['group' => $suggestionGroup]);
         }

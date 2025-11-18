@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider;
 
@@ -37,11 +37,14 @@ class ToolbarInputProvider implements FilterFormInputProviderInterface
         $input = [];
         foreach (self::TOOLBAR_INPUTS as $toolbarInput) {
             $toolbarInputValue = $this->request->getParam($toolbarInput);
-            if ($toolbarInputValue) {
-                $input[$toolbarInput] = filter_var($toolbarInputValue, FILTER_SANITIZE_ENCODED);
+            if (!$toolbarInputValue) {
+                continue;
             }
+
+            $input[$toolbarInput] = filter_var($toolbarInputValue, FILTER_SANITIZE_ENCODED);
         }
 
+        // @phpstan-ignore-next-line
         return $input;
     }
 }

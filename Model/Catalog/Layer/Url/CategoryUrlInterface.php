@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -20,14 +20,14 @@ interface CategoryUrlInterface
     /**
      * @param MagentoHttpRequest $request
      * @param Item $item
-     * @return mixed
+     * @return string
      */
     public function getCategoryFilterSelectUrl(MagentoHttpRequest $request, Item $item): string;
 
     /**
      * @param MagentoHttpRequest $request
      * @param Item $item
-     * @return mixed
+     * @return string
      */
     public function getCategoryFilterRemoveUrl(MagentoHttpRequest $request, Item $item): string;
 }

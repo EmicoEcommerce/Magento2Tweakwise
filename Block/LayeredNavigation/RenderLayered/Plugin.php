@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -51,6 +51,7 @@ class Plugin
      * @param Closure $proceed
      * @param AbstractFilter $filter
      * @return $this
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function aroundSetSwatchFilter(RenderLayered $subject, Closure $proceed, AbstractFilter $filter)
     {
@@ -64,6 +65,7 @@ class Plugin
      * @param string $attributeCode
      * @param int $optionId
      * @return string
+     * Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function aroundBuildUrl(RenderLayered $subject, Closure $proceed, $attributeCode, $optionId)
     {

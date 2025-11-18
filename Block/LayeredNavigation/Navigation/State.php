@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\Navigation;
 
@@ -57,6 +57,7 @@ class State extends MagentoStateBlock
      * If you want to change this behaviour use a plugin on afterGetTemplate
      *
      * @param CurrentContext $currentContext
+     * @return void
      */
     protected function updateTemplate(CurrentContext $currentContext)
     {
@@ -79,9 +80,11 @@ class State extends MagentoStateBlock
             $this->_template = 'Tweakwise_Magento2Tweakwise::layer/state.phtml';
         }
 
-        if ($isNavigation && $navigationEnabled) {
-            $this->_template = 'Tweakwise_Magento2Tweakwise::layer/state.phtml';
+        if (!$isNavigation || !$navigationEnabled) {
+            return;
         }
+
+        $this->_template = 'Tweakwise_Magento2Tweakwise::layer/state.phtml';
     }
 
     /**

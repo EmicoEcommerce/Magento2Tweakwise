@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2Tweakwise\Controller;
 
@@ -45,7 +45,9 @@ class Router implements RouterInterface
      */
     protected function getRouteMatchingStrategy(): RouteMatchingInterface
     {
+        // @phpstan-ignore-next-line
         if (!$this->routeMatchingStrategy) {
+            // @phpstan-ignore-next-line
             $this->routeMatchingStrategy = $this->urlStrategyFactory->create(RouteMatchingInterface::class);
         }
 
@@ -78,7 +80,9 @@ class Router implements RouterInterface
 
         if ($url) {
             $redirect = $this->actionFactory->create(Redirect::class);
+            // @phpstan-ignore-next-line
             $redirect->getResponse()->setHttpResponseCode(301);
+            // @phpstan-ignore-next-line
             $redirect->getResponse()->setRedirect($url);
             return $redirect;
         }

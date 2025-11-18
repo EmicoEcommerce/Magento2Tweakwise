@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -11,7 +11,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
-use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\RedirectType;
 
@@ -79,6 +78,7 @@ class ProductNavigationResponse extends Response
     public function getProductIds()
     {
         $ids = [];
+        // @phpstan-ignore-next-line
         foreach ($this->getItems() as $item) {
             $ids[] = $this->helper->getStoreId($item->getId());
         }
@@ -92,13 +92,14 @@ class ProductNavigationResponse extends Response
     public function getProductImages(): array
     {
         $productImages = [];
+        // @phpstan-ignore-next-line
         foreach ($this->getItems() as $item) {
             if (!$item->getImage()) {
                 continue;
             }
 
             // Remove domain and media path when full url is used
-            $imageUrl = preg_replace("#^.*?/catalog/product/#", "", $item->getImage());
+            $imageUrl = preg_replace('#^.*?/catalog/product/#', '', $item->getImage());
             $productImages[$this->helper->getStoreId($item->getId())] = $imageUrl;
         }
 

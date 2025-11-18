@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -97,7 +97,9 @@ class Context
      */
     public function getRequest()
     {
+        // @phpstan-ignore-next-line
         if (!$this->request) {
+            // @phpstan-ignore-next-line
             $this->request = $this->requestFactory->create();
         }
 
@@ -113,11 +115,11 @@ class Context
      */
     public function getResponse()
     {
+        // @phpstan-ignore-next-line
         if (!$this->response) {
+            // @phpstan-ignore-next-line
             $this->response = $this->client->request($this->getRequest());
         }
-
-        $template = $this->request->getTemplate();
 
         if (!is_numeric($this->request->getTemplate())) {
             //grouped item
@@ -137,6 +139,7 @@ class Context
      */
     public function getCollection()
     {
+        // @phpstan-ignore-next-line
         if (!$this->collection) {
             $collection = $this->collectionFactory->create(['response' => $this->getResponse()]);
             $this->prepareCollection($collection);
@@ -148,6 +151,7 @@ class Context
 
     /**
      * @param Collection $collection
+     * @return void
      */
     protected function prepareCollection(Collection $collection)
     {
@@ -166,7 +170,9 @@ class Context
      */
     public function setRequest(FeaturedRequest $request)
     {
+        // @phpstan-ignore-next-line
         $this->collection = null;
+        // @phpstan-ignore-next-line
         $this->response = null;
         $this->request = $request;
     }

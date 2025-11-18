@@ -20,8 +20,8 @@ $hasHiddenItems = $block->hasHiddenItems();
      attribute-id="<?= $escaper->escapeHtmlAttr($swatchData['attribute_id']) ?>"
      data-mage-init='{"tweakwiseNavigationSort":[]}'>
     <?php if ($block->isSearchable()): ?>
-        <input tabindex="-1" data-max-visible="<?=  $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>" type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $block->getSearchPlaceholder(); ?>" >
-        <div style="display: none" class="search_no_results"><?= $block->getSearchNoResultsText(); ?></div>
+        <input tabindex="-1" data-max-visible="<?=  $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>" type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $escaper->escapeHtmlAttr($block->getSearchPlaceholder()); ?>" >
+        <div style="display: none" class="search_no_results"><?= $escaper->escapeHtmlAttr($block->getSearchNoResultsText()); ?></div>
     <?php endif; ?>
     <div class="swatch-attribute-options clearfix">
         <?php foreach ($swatchData['options'] as $option => $label): ?>
@@ -31,7 +31,6 @@ $hasHiddenItems = $block->hasHiddenItems();
                 aria-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
                 tabindex="0"
                 role="button"
-                class="swatch-option-link-layered"
                 class="swatch-option-link-layered <?php /* @noEscape */ if ($block->shouldDisplayProductCountOnLayer()): ?>swatch-with-count<?php endif; ?><?= /* @noEscape */ $block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
             >
                 <?php $cssId = $item->getCssId();?>

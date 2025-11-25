@@ -23,4 +23,14 @@ class AttributeSlug extends AbstractDb
         $this->_init('tweakwise_attribute_slug', 'id');
         $this->_isPkAutoIncrement = true;
     }
+
+    /**
+     * Truncate the attribute slug table
+     *
+     * @return void
+     */
+    public function truncateTable(): void
+    {
+        $connection = $this->getConnection()->truncateTable($this->getMainTable());
+    }
 }

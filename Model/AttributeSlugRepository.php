@@ -190,4 +190,12 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
         $attributeSlug = $collection->getFirstItem();
         return $attributeSlug;
     }
+
+    /**
+     * @return void
+     */
+    public function truncateSlugTable(): void
+    {
+        $this->resource->truncateTable();
+    }
 }

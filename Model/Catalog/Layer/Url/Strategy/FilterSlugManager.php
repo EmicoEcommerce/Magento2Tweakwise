@@ -221,4 +221,32 @@ class FilterSlugManager
         // @phpstan-ignore-next-line
         return $lookupTable;
     }
+
+    /**
+     * @return void
+     */
+    public function truncateSlugTable(): void
+    {
+        $this->attributeSlugRepository->truncateSlugTable();
+        $this->cache->remove(self::CACHE_KEY);
+    }
+
+    /**
+     * @param string $attribute
+     * @param array $option
+     * @param int|string $storeId
+     * @return void
+     */
+    public function createFilterSlugByOption($attribute, $option, $storeId): void
+    {
+        if (empty($this->translitUrl->filter($option['label'])) || ctype_space((string)$option['label'])) {
+            return;
+        }
+
+        $attributeSlugEntity = $this->attributeSlugFactory->create();
+        $attributeSlugEntity->setAttribute($option['label']);
+        $attributeSlugEntity->setStoreId((int)$storeId);
+        $attributeSlugEntity->setSlug($this->translitUrl->filter($option['label']));
+        $this->attributeSlugRepository->save($attributeSlugEntity);
+    }
 }

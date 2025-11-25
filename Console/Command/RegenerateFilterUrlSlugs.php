@@ -126,13 +126,12 @@ class RegenerateFilterUrlSlugs extends Command
     }
 
     /**
-     * @param \Magento\Eav\Api\Data\AttributeInterface $attribute
      * @param array $option
      * @param int $storeId
      * @return void
      */
-    protected function regenerateSlugsForAttributeOption($attribute, $option, $storeId): void
+    protected function regenerateSlugsForAttributeOption($option, $storeId): void
     {
-        $this->filterSlugManager->createFilterSlugByOption($attribute, $option, $storeId);
+        $this->filterSlugManager->createFilterSlugByOption($option, $storeId);
     }
 }

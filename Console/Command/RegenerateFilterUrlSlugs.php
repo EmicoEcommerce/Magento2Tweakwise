@@ -53,6 +53,7 @@ class RegenerateFilterUrlSlugs extends Command
      * @return int
      * @throws LocalizedException
      */
+    //phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<info>Start regenerating filter url slugs</info>');
@@ -83,7 +84,7 @@ class RegenerateFilterUrlSlugs extends Command
                             )
                         );
 
-                        $this->regenerateSlugsForAttributeOption($attribute, $option, (int)$store->getId());
+                        $this->regenerateSlugsForAttributeOption($option, (int)$store->getId());
 
                         $counter++;
                     }
@@ -113,7 +114,6 @@ class RegenerateFilterUrlSlugs extends Command
      */
     protected function getAttributes(): iterable
     {
-        $allowedTypes = ['select', 'multiselect', 'text'];
         $searchCriteria = $this->searchCriteriaBuilder->create();
 
         $items = $this->attributeRepository

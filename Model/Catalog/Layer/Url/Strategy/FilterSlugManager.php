@@ -166,7 +166,6 @@ class FilterSlugManager
         if (isset($lookupTable[$this->storeManager->getStore()->getId()])) {
             // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
             $attribute = array_search($slug, $lookupTable[$this->storeManager->getStore()->getId()], false);
-
         }
 
         //fallback
@@ -232,12 +231,11 @@ class FilterSlugManager
     }
 
     /**
-     * @param string $attribute
      * @param array $option
      * @param int|string $storeId
      * @return void
      */
-    public function createFilterSlugByOption($attribute, $option, $storeId): void
+    public function createFilterSlugByOption($option, $storeId): void
     {
         if (empty($this->translitUrl->filter($option['label'])) || ctype_space((string)$option['label'])) {
             return;

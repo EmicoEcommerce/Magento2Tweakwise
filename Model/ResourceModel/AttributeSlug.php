@@ -31,6 +31,6 @@ class AttributeSlug extends AbstractDb
      */
     public function truncateTable(): void
     {
-        $connection = $this->getConnection()->truncateTable($this->getMainTable());
+        $this->getConnection()->truncateTable($this->getMainTable());
     }
 }

@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -22,14 +22,20 @@ class RequestFactory
     protected $objectManager;
 
     /**
+     * @var string
+     */
+    protected $type;
+
+    /**
      * Factory constructor
      *
      * @param ObjectManagerInterface $objectManager
      * @param string $type
      */
-    public function __construct(ObjectManagerInterface $objectManager, protected $type = Request::class)
+    public function __construct(ObjectManagerInterface $objectManager, $type = Request::class)
     {
         $this->objectManager = $objectManager;
+        $this->type = $type;
     }
 
     /**

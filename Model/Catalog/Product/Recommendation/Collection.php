@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -40,28 +40,7 @@ class Collection extends AbstractCollection
     protected $response;
 
     /**
-     * @param CollectionEntityFactory $entityFactory
-     * @param LoggerInterface $logger
-     * @param FetchStrategyInterface $fetchStrategy
-     * @param ManagerInterface $eventManager
-     * @param EavConfig $eavConfig
-     * @param ResourceConnection $resource
-     * @param EavEntityFactory $eavEntityFactory
-     * @param CatalogResourceHelper $resourceHelper
-     * @param UniversalFactory $universalFactory
-     * @param StoreManagerInterface $storeManager
-     * @param Manager $moduleManager
-     * @param State $catalogProductFlatState
-     * @param ScopeConfigInterface $scopeConfig
-     * @param OptionFactory $productOptionFactory
-     * @param Url $catalogUrl
-     * @param TimezoneInterface $localeDate
-     * @param Session $customerSession
-     * @param DateTime $dateTime
-     * @param GroupManagementInterface $groupManagement
-     * @param RecommendationsResponse $response
-     * @param AdapterInterface|null $connection
-     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
+     * {@inheritdoc}
      */
     public function __construct(
         CollectionEntityFactory $entityFactory,

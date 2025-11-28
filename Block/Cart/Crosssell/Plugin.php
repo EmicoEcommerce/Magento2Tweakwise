@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -98,7 +98,6 @@ class Plugin extends AbstractRecommendationPlugin
      * @param Crosssell $crosssell
      * @param Closure $proceed
      * @return array
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
      */
     public function aroundGetItems(Crosssell $crosssell, Closure $proceed)
     {
@@ -106,7 +105,6 @@ class Plugin extends AbstractRecommendationPlugin
             return $proceed();
         }
 
-        // @phpstan-ignore-next-line
         $this->lastAddedProduct = $this->getLastAddedProduct();
 
         return $proceed();
@@ -170,7 +168,6 @@ class Plugin extends AbstractRecommendationPlugin
         $items = [];
 
         if ($cartProductIds) {
-            // @phpstan-ignore-next-line
             if ($this->lastAddedProduct) {
                 $items = $this->getShoppingcartCrosssellTweakwiseItems(
                     $this->lastAddedProduct,
@@ -219,17 +216,13 @@ class Plugin extends AbstractRecommendationPlugin
         //show crosssell products
         $requestFactory = new RequestFactory(ObjectManager::getInstance(), ProductRequest::class);
         $request = $requestFactory->create();
-        // @phpstan-ignore-next-line
         $request->setProduct($product);
 
-        // @phpstan-ignore-next-line
         if (!$this->templateFinder->forProduct($product, $this->getType())) {
             return $result;
         }
 
-        // @phpstan-ignore-next-line
         $request->setTemplate($this->templateFinder->forProduct($product, $this->getType()));
-        // @phpstan-ignore-next-line
         $this->context->setRequest($request);
 
         try {
@@ -267,19 +260,14 @@ class Plugin extends AbstractRecommendationPlugin
         return $items;
     }
 
-    /**
-     * @return array
-     */
     private function getFeaturedItems()
     {
         $requestFactory = new RequestFactory(ObjectManager::getInstance(), FeaturedRequest::class);
         $request = $requestFactory->create();
 
         $templateId = $this->config->getRecommendationsTemplate(Config::RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED);
-        // @phpstan-ignore-next-line
         $request->setTemplate($templateId);
 
-        // @phpstan-ignore-next-line
         $this->recommendationsContext->setRequest($request);
 
         try {
@@ -288,9 +276,7 @@ class Plugin extends AbstractRecommendationPlugin
             return [];
         }
 
-        // @phpstan-ignore-next-line
         if (!empty($cartItems)) {
-            // @phpstan-ignore-next-line
             $collection = $this->removeCartItems($collection, $cartItems);
         }
 
@@ -298,7 +284,6 @@ class Plugin extends AbstractRecommendationPlugin
             $items[] = $item;
         }
 
-        // @phpstan-ignore-next-line
         return $items;
     }
 }

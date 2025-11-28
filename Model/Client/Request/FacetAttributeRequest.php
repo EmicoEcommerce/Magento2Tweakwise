@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,8 +9,10 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
+use Magento\Store\Model\StoreManager;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetAttributesResponse;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class FacetAttributeRequest extends Request
 {
@@ -32,11 +34,7 @@ class FacetAttributeRequest extends Request
         return FacetAttributesResponse::class;
     }
 
-    /**
-     * @param $facetKey
-     * @return void
-     */
-    public function addFacetKey($facetKey) // @phpstan-ignore-line
+    public function addFacetKey($facetKey)
     {
         $this->setPath($this->path . '/' . $facetKey . '/attributes');
     }

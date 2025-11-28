@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -46,12 +46,10 @@ class ProductRequest extends FeaturedRequest
 
     public function getPath()
     {
-        // @phpstan-ignore-next-line
         if (is_int($this->templateId)) {
             return 'recommendations/product';
         }
 
-        // @phpstan-ignore-next-line
         return 'recommendations/grouped';
     }
 
@@ -61,18 +59,15 @@ class ProductRequest extends FeaturedRequest
      */
     public function getPathSuffix()
     {
-        // @phpstan-ignore-next-line
         if (!$this->product) {
             throw new ApiException('Featured products without product was requested.');
         }
 
         $productTweakwiseId = $this->helper->getTweakwiseId($this->product->getStoreId(), $this->product->getId());
-        // @phpstan-ignore-next-line
         if (is_int($this->templateId)) {
             return parent::getPathSuffix() . '/' . $productTweakwiseId;
         }
 
-        // @phpstan-ignore-next-line
         return '/' . $productTweakwiseId . parent::getPathSuffix();
     }
 
@@ -82,13 +77,11 @@ class ProductRequest extends FeaturedRequest
      */
     private function getSimpleProduct(Product $product): Product
     {
-        // @phpstan-ignore-next-line
         $children = $product->getTypeInstance()->getUsedProducts($product);
         foreach ($children as $child) {
             if ($child->isSaleable() && $child->getTypeId() === Type::TYPE_SIMPLE) {
                 return $child;
             }
         }
-        return $product;
     }
 }

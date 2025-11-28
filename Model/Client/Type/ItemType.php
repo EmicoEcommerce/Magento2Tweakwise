@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -40,7 +40,6 @@ class ItemType extends Type
      */
     public function getId()
     {
-        // @phpstan-ignore-next-line
         return (int) $this->getDataValue('itemno');
     }
 
@@ -65,7 +64,6 @@ class ItemType extends Type
      */
     public function getPrice()
     {
-        // @phpstan-ignore-next-line
         return (float) $this->getDataValue('price');
     }
 
@@ -88,13 +86,11 @@ class ItemType extends Type
                     $attribute['name'] === 'final_price' &&
                     isset($attribute['values']['value'])
                 ) {
-                    // @phpstan-ignore-next-line
                     return (float)($attribute['values']['value']);
                 }
             }
         }
 
-        // @phpstan-ignore-next-line
         return (float) 0;
     }
 

@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -80,7 +80,6 @@ class PropertiesType extends Type
      */
     public function getSearchTerm()
     {
-        // @phpstan-ignore-next-line
         return (string) $this->getDataValue('searchterm');
     }
 
@@ -89,7 +88,6 @@ class PropertiesType extends Type
      */
     public function getSuggestedSearchTerm()
     {
-        // @phpstan-ignore-next-line
         return (string) $this->getDataValue('suggestedsearchterm');
     }
 

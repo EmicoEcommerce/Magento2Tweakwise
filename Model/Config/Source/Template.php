@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -56,7 +56,6 @@ class Template implements OptionSourceInterface
             ['value' => null, 'label' => __('* Default template')],
         ];
 
-        // @phpstan-ignore-next-line
         if (!is_array($response->getTemplates())) {
             return $result;
         }

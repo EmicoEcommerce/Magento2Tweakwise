@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,6 +9,8 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Config\Source;
 
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Magento\Framework\Data\OptionSourceInterface;
 
 class CategoryView implements OptionSourceInterface

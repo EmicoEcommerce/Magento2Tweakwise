@@ -1,9 +1,10 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 
 class ProductSuggestionsResponse extends Response implements AutocompleteProductResponseInterface
 {
@@ -13,7 +14,6 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
     public function getProductIds()
     {
         $ids = [];
-        // @phpstan-ignore-next-line
         foreach ($this->getItems() as $item) {
             $ids[] = $this->helper->getStoreId($item->getId());
         }
@@ -27,7 +27,6 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
     public function getProductData()
     {
         $result = [];
-        // @phpstan-ignore-next-line
         foreach ($this->getItems() as $item) {
             $result[] = [
                 'id' => $this->helper->getStoreId($item->getId()),

@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -23,7 +23,6 @@ class CurrentContext
 
     /**
      * @param NavigationContext $context
-     * @return void
      */
     public function setContext(NavigationContext $context)
     {
@@ -32,10 +31,10 @@ class CurrentContext
 
     /**
      * @return NavigationContext
+     * @throws RuntimeException
      */
     public function getContext()
     {
-        // @phpstan-ignore-next-line
         if (!$this->context) {
             throw new RuntimeException(
                 sprintf(

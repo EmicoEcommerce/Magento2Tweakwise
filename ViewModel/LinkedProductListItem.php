@@ -99,7 +99,6 @@ class LinkedProductListItem implements ArgumentInterface
         /** @var AbstractBlock $itemRendererBlock */
         $itemRendererBlock = $this->layout->getBlock('tweakwise.catalog.linked.product.list.item');
 
-        // @phpstan-ignore-next-line
         if (! $itemRendererBlock) {
             return '';
         }

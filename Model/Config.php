@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -23,8 +23,8 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 
 /**
- * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
- * @SuppressWarnings("PHPMD.ExcessivePublicCount")
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Config
 {
@@ -122,6 +122,7 @@ class Config
      * @param State $state
      * @param WriterInterface $configWriter
      * @param TypeListInterface $cacheTypeList
+     * @throws LocalizedException
      */
     public function __construct(
         ScopeConfigInterface $config,
@@ -149,10 +150,6 @@ class Config
         return $this;
     }
 
-    /**
-     * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
-     */
     public function getTweakwiseExceptionTrown()
     {
         return $this->tweakwiseExceptionThrown;
@@ -225,7 +222,7 @@ class Config
     /**
      * @param Store|null $store
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getCategoryAsLink(?Store $store = null)
     {
@@ -235,7 +232,7 @@ class Config
     /**
      * @param Store|null $store
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getHideSingleOptions(?Store $store = null)
     {
@@ -245,7 +242,7 @@ class Config
     /**
      * @param Store|null $store
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getUseDefaultLinkRenderer(?Store $store = null)
     {
@@ -358,7 +355,6 @@ class Config
      */
     public function showAutocompleteParentCategories(?Store $store = null)
     {
-        // @phpstan-ignore-next-line
         return (bool)$this->getStoreConfig('tweakwise/autocomplete/show_parent_category', $store);
     }
 
@@ -593,7 +589,6 @@ class Config
     /**
      * @param string $type
      * @throws InvalidArgumentException
-     * @return void
      */
     protected function validateRecommendationType($type)
     {
@@ -609,11 +604,11 @@ class Config
             return;
         }
 
-        if ($type === self:: RECCOMENDATION_TYPE_SHOPPINGCART) {
+        if ($type == self:: RECCOMENDATION_TYPE_SHOPPINGCART) {
             return;
         }
 
-        if ($type === self:: RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED) {
+        if ($type == self:: RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED) {
             return;
         }
 
@@ -623,6 +618,8 @@ class Config
                 self::RECOMMENDATION_TYPE_UPSELL,
                 self::RECOMMENDATION_TYPE_CROSSSELL,
                 self::RECOMMENDATION_TYPE_FEATURED,
+                self:: RECCOMENDATION_TYPE_SHOPPINGCART,
+                self::RECCOMENDATION_TYPE_SHOPPINGCART_FEATURED,
             )
         );
     }
@@ -632,9 +629,7 @@ class Config
      */
     public function getUserAgentString()
     {
-        return $this->getStoreConfig('tweakwise/general/version') ?
-            $this->getStoreConfig('tweakwise/general/version') :
-            null;
+        return $this->getStoreConfig('tweakwise/general/version') ?: null;
     }
 
     /**
@@ -642,7 +637,7 @@ class Config
      */
     public function getSalt(): string
     {
-        $salt =  $this->getStoreConfig('tweakwise/general/salt');
+        $salt =  $this->getStoreConfig('tweakwise/general/salt' ?: null);
         if (empty($salt)) {
             $salt = sha1(random_bytes(18));
             $this->configWriter->save('tweakwise/general/salt', $salt, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);

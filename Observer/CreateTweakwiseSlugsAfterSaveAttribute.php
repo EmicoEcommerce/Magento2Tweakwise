@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Observer;
 
@@ -9,11 +9,17 @@ use Magento\Framework\Event\ObserverInterface;
 class CreateTweakwiseSlugsAfterSaveAttribute implements ObserverInterface
 {
     /**
+     * @var FilterSlugManager
+     */
+    protected FilterSlugManager $filterSlugManager;
+
+    /**
      * @param FilterSlugManager $filterSlugManager
      */
     public function __construct(
-        protected FilterSlugManager $filterSlugManager
+        FilterSlugManager $filterSlugManager
     ) {
+        $this->filterSlugManager = $filterSlugManager;
     }
 
     public function execute(Observer $observer)

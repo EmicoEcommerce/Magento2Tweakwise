@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 
@@ -24,7 +24,6 @@ class SearchInitializer implements InitializerInterface
 
     /**
      * @inheritDoc
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
     public function initializeAjaxResult(AjaxNavigationResult $ajaxNavigationResult, RequestInterface $request)
     {
@@ -34,7 +33,6 @@ class SearchInitializer implements InitializerInterface
 
     /**
      * @param AjaxNavigationResult $ajaxNavigationResult
-     * @return void
      */
     protected function initializeLayout(AjaxNavigationResult $ajaxNavigationResult)
     {
@@ -43,7 +41,6 @@ class SearchInitializer implements InitializerInterface
 
     /**
      * Create search Layer
-     * @return void
      */
     protected function initializeLayer()
     {

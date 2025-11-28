@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -88,9 +88,7 @@ class FacetType extends Type
             && is_array($this->data['clickpoints']['clickpoint'][0])
         ) {
             return $this->data['clickpoints']['clickpoint'];
-        }
-
-        if (isset($this->data['clickpoints']['clickpoint'])) {
+        } elseif (isset($this->data['clickpoints']['clickpoint'])) {
             return $this->data['clickpoints'];
         }
 

@@ -80,7 +80,6 @@ class Cache
      */
     public function isTweakwiseAjaxRequest(): bool
     {
-        // @phpstan-ignore-next-line
         return $this->request->getPathInfo() === '/tweakwise/ajax/navigation/';
     }
 
@@ -128,7 +127,6 @@ class Cache
      */
     public function isEsiRequest(RequestInterface $request): bool
     {
-        // @phpstan-ignore-next-line
         return str_contains($request->getRequestUri(), 'page_cache/block/esi');
     }
 

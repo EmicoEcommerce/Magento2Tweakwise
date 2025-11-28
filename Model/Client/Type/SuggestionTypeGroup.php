@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
 
@@ -39,7 +39,6 @@ class SuggestionTypeGroup extends Type
 
     /**
      * @param string $type
-     * @return void
      */
     public function setType(string $type)
     {

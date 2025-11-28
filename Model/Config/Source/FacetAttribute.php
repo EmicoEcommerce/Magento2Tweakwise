@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,7 +9,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Config\Source;
 
-use Tweakwise\Magento2Tweakwise\Controller\Ajax\FacetAttributes;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
@@ -52,12 +51,10 @@ class FacetAttribute implements OptionSourceInterface
         $request = $this->requestFactory->create();
         /** @var FacetAttributes $response */
         $response = $this->client->request($request);
-        // @phpstan-ignore-next-line
         foreach ($response->getAttributes() as $attribute) {
             $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
         }
 
-        // @phpstan-ignore-next-line
         return $result;
     }
 

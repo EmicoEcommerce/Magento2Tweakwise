@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList;
 
@@ -61,7 +61,6 @@ abstract class AbstractRecommendationPlugin
 
     /**
      * @param ProductRequest $request
-     * @return void
      */
     protected function configureRequest(ProductRequest $request)
     {
@@ -76,10 +75,10 @@ abstract class AbstractRecommendationPlugin
 
     /**
      * @return Collection
+     * @throws InvalidArgumentException
      */
     protected function getCollection()
     {
-        // @phpstan-ignore-next-line
         if (!$this->collection) {
             $request = $this->context->getRequest();
             if (!$request instanceof ProductRequest) {

@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
@@ -26,7 +26,7 @@ class SuggestionGroupItem implements ItemInterface
      */
     public function getTitle()
     {
-        return $this->group->getName() ? $this->group->getName() : '';
+        return $this->group->getName() ?: '';
     }
 
     /**

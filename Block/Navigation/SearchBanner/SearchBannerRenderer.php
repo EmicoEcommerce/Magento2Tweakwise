@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -13,9 +13,6 @@ use Magento\Framework\View\Element\Template;
 
 class SearchBannerRenderer extends Template
 {
-    /**
-     * @return array|mixed
-     */
     public function getContainerTopBanner()
     {
         $banners = $this->getSearchBanners();
@@ -27,9 +24,6 @@ class SearchBannerRenderer extends Template
         return [];
     }
 
-    /**
-     * @return array|mixed
-     */
     public function getListTopBanner()
     {
         $banners = $this->getSearchBanners();
@@ -41,9 +35,6 @@ class SearchBannerRenderer extends Template
         return [];
     }
 
-    /**
-     * @return array|mixed
-     */
     public function getProductsTopBanner()
     {
         $banners = $this->getSearchBanners();
@@ -55,9 +46,6 @@ class SearchBannerRenderer extends Template
         return [];
     }
 
-    /**
-     * @return array
-     */
     private function getSearchBanners()
     {
         $navigationContext = $this->getData('tweakwise_navigation_context')->getNavigationContext()->getContext();

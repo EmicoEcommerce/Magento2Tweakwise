@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,7 +9,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
-use Exception;
 use Magento\Framework\Event\Observer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -48,10 +47,7 @@ class CatalogLastPageRedirect implements ObserverInterface
     }
 
     /**
-     * @param Observer $observer
-     * @return void
-     * @throws Exception
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
+     * {@inheritdoc}
      */
     public function execute(Observer $observer)
     {
@@ -65,7 +61,6 @@ class CatalogLastPageRedirect implements ObserverInterface
             return;
         }
 
-        // @phpstan-ignore-next-line
         $properties = $this->context->getResponse()->getProperties();
         if (!$properties->getNumberOfItems()) {
             return;

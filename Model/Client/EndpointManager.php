@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client;
 
@@ -115,13 +115,11 @@ class EndpointManager
      */
     protected function getVariable(): Variable
     {
-        // @phpstan-ignore-next-line
         if ($this->variable) {
             return $this->variable;
         }
 
         /** @var Variable $twPrimaryLastDown */
-        // @phpstan-ignore-next-line
         $twPrimaryLastDown = $this->variableFactory->create();
         $this->variableResource->loadByCode(
             $twPrimaryLastDown,

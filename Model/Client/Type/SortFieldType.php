@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -37,7 +37,7 @@ class SortFieldType extends Type
 
     /**
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsSelected()
     {

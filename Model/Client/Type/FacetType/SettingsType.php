@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -52,11 +52,11 @@ class SettingsType extends Type
 
     /**
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsMultipleSelect()
     {
-        return $this->getDataValue('ismultiselect') === 'true';
+        return $this->getDataValue('ismultiselect') == 'true';
     }
 
     /**
@@ -72,8 +72,7 @@ class SettingsType extends Type
      */
     public function getIsNumberOfResultVisible()
     {
-        // @phpstan-ignore-next-line
-        return $this->getDataValue('isnrofresultsvisible') === 'true';
+        return $this->getDataValue('isnrofresultsvisible') == 'true';
     }
 
     /**
@@ -86,29 +85,29 @@ class SettingsType extends Type
 
     /**
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsCollapsible()
     {
-        return $this->getDataValue('iscollapsible') === 'true';
+        return $this->getDataValue('iscollapsible') == 'true';
     }
 
     /**
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsCollapsed()
     {
-        return $this->getDataValue('iscollapsed') === 'true';
+        return $this->getDataValue('iscollapsed') == 'true';
     }
 
     /**
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsInfoVisible()
     {
-        return $this->getDataValue('isinfovisible') === 'true';
+        return $this->getDataValue('isinfovisible') == 'true';
     }
 
     /**
@@ -158,11 +157,11 @@ class SettingsType extends Type
 
     /**
      * @return bool
-     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsVisible()
     {
-        return $this->getDataValue('isvisible') === 'true';
+        return $this->getDataValue('isvisible') == 'true';
     }
 
     /**
@@ -217,7 +216,7 @@ class SettingsType extends Type
      */
     public function isSearchable()
     {
-        return $this->getBoolValue('issearchable');
+        return ($this->getBoolValue('issearchable'));
     }
 
     /**

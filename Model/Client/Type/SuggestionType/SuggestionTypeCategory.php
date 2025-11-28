@@ -1,9 +1,10 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType;
 
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
@@ -68,6 +69,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
     public function getName()
     {
         $match = $this->getMatch();
+        /** @var string $category */
         $categoryName = $this->getCategoryName();
 
         $parentCategory = $this->getParentCategory();
@@ -76,7 +78,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
             $categoryName = $parentCategory . ' > ' . $categoryName;
         }
 
-        return $categoryName ? $categoryName : $match;
+        return $categoryName ?: $match;
     }
 
     /**
@@ -85,7 +87,7 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
     public function getUrl()
     {
         try {
-            return $this->getCategoryUrl() ? $this->getCategoryUrl() : '';
+            return $this->getCategoryUrl() ?: '';
         } catch (NoSuchEntityException $e) {
             return $this->getSearchUrl();
         }
@@ -104,12 +106,13 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
 
         $categoryId = end($categoryIds);
 
+        /** @var Category $category */
+
         if ($categoryId === $this->getStoreRootCategory()) {
             return '';
         }
 
         $category = $this->categoryRepository->get($categoryId);
-        // @phpstan-ignore-next-line
         return $category->getUrl();
     }
 
@@ -121,7 +124,6 @@ class SuggestionTypeCategory extends SuggestionTypeAbstract
     {
         /** @var Store|StoreInterface $store */
         $store = $this->storeManager->getStore();
-        // @phpstan-ignore-next-line
         return (int)$store->getRootCategoryId();
     }
 }

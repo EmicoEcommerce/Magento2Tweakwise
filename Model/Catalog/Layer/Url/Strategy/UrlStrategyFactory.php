@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise  (https://www.tweakwise.com/) - All Rights Reserved
@@ -36,7 +36,6 @@ class UrlStrategyFactory
         ObjectManagerInterface $objectManager,
         Config $config
     ) {
-        // @phpstan-ignore-next-line
         $this->objectManager = $objectManager;
         $this->config = $config;
     }
@@ -61,7 +60,6 @@ class UrlStrategyFactory
 
         // Check if concrete implementation implements the given interface.
         // If not return preference in di.xml
-        // @phpstan-ignore-next-line
         if (!in_array($interface, class_implements($implementation), true)) {
             return $this->objectManager->get($interface);
         }

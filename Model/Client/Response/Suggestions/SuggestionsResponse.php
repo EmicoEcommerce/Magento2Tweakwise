@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions;
 
@@ -34,7 +34,6 @@ class SuggestionsResponse extends Response
 
     /**
      * @param array $groups
-     * @return $this
      */
     public function setGroup(array $groups)
     {

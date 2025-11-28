@@ -1,9 +1,10 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 
@@ -13,12 +14,31 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
  */
 class Facets extends Action
 {
+    /**
+     * @var JsonFactory
+     */
+    private JsonFactory $jsonFactory;
+
+    /**
+     * @var Client
+     */
+    private Client $client;
+
+    /**
+     * @var RequestFactory
+     */
+    private RequestFactory $requestFactory;
+
     public function __construct(
         Context $context,
-        private RequestFactory $requestFactory,
-        private Client $client
+        JsonFactory $jsonFactory,
+        RequestFactory $requestFactory,
+        Client $client
     ) {
         parent::__construct($context);
+        $this->jsonFactory = $jsonFactory;
+        $this->requestFactory = $requestFactory;
+        $this->client = $client;
     }
 
     public function execute()
@@ -32,7 +52,6 @@ class Facets extends Action
         $allStores = $facetRequest->getStores();
 
         if (!empty($filtertemplate)) {
-            // @phpstan-ignore-next-line
             $facetRequest->addParameter('tn_ft', $filtertemplate);
         }
 
@@ -44,7 +63,6 @@ class Facets extends Action
 
             $response = $this->client->request($facetRequest);
 
-            // @phpstan-ignore-next-line
             foreach ($response->getFacets() as $facet) {
                 $result[] = [
                     'value' => $facet->getFacetSettings()->getUrlKey(),
@@ -70,7 +88,6 @@ class Facets extends Action
             'Access-Control-Allow-Headers',
             'Content-Type, Access-Control-Allow-Headers,Authorization, X-Requested-With'
         );
-        // @phpstan-ignore-next-line
         $json->setData(['data' => $result]);
 
         return $json;

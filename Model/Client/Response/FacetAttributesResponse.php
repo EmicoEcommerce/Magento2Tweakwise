@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -22,6 +22,7 @@ class FacetAttributesResponse extends Response
     {
         $attributes = $this->normalizeArray($attributes, 'attributes');
 
+        $values = [];
         foreach ($attributes as $value) {
             if (!$value instanceof AttributeType) {
                 $value = new AttributeType($value);
@@ -42,9 +43,6 @@ class FacetAttributesResponse extends Response
         return $this;
     }
 
-    /**
-     * @return array|mixed
-     */
     public function getAttributes()
     {
         if (isset($this->data['attributes'])) {

@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -8,6 +8,10 @@
  */
 
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
+
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
+use Magento\Store\Model\StoreManager;
 
 class ProductSearchRequest extends ProductNavigationRequest implements SearchRequestInterface
 {

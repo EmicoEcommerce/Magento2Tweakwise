@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Swatches;
 
@@ -90,14 +90,11 @@ class SwatchAttributeResolver
                 break;
             }
 
-            // @phpstan-ignore-next-line
-            if ($matchingAttributeOptions <= $hits) {
-                continue;
+            if ($matchingAttributeOptions > $hits) {
+                $hits = $matchingAttributeOptions;
+                $targetSwatchAttribute = $swatchConfiguration['attribute'];
+                $resolvedOptions = $matchingAttributeOptions;
             }
-
-            $hits = $matchingAttributeOptions;
-            $targetSwatchAttribute = $swatchConfiguration['attribute'];
-            $resolvedOptions = $matchingAttributeOptions;
         }
 
         if (!$targetSwatchAttribute || !$resolvedOptions) {
@@ -137,14 +134,13 @@ class SwatchAttributeResolver
                 continue;
             }
 
-            // @phpstan-ignore-next-line
             if (!$swatchAttribute->usesSource() || !$swatchAttribute->getSource()) {
                 // We cannot resolve an attribute without source.
                 continue;
             }
 
             /** @var Table $source */
-            $source = $swatchAttribute->getSource(); // @phpstan-ignore-line
+            $source = $swatchAttribute->getSource();
             $options = $source->getAllOptions(true, false);
 
             $optionLabels = array_column($options, 'label');

@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -81,7 +81,6 @@ class Request
      */
     public function getPath()
     {
-        // @phpstan-ignore-next-line
         if ($this->config->isGroupedProductsEnabled($this->storeManager->getStore()) && !empty($this->groupedPath)) {
             return $this->groupedPath;
         }
@@ -116,12 +115,10 @@ class Request
     public function addParameter($parameter, $value, $separator = '|')
     {
         if (isset($this->parameters[$parameter])) {
-            // @phpstan-ignore-next-line
-            if ($value === null) {
+            if ($value == null) {
                 unset($this->parameters[$parameter]);
             } else {
                 if (
-                    // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
                     (!in_array($parameter, self::IGNORE_SEPARATOR_PARAMETERS)) &&
                     ($this->parameters[$parameter] !== $value)
                 ) {
@@ -230,11 +227,7 @@ class Request
         return $this->addCategoryPathFilter($ids);
     }
 
-    /**
-     * @param $category
-     * @return bool
-     */
-    private function isCategoryRoot($category) // @phpstan-ignore-line
+    private function isCategoryRoot($category)
     {
         return  in_array(
             (int) $category->getParentId(),
@@ -286,7 +279,6 @@ class Request
             return $this->helper->getStoreId($tweakwiseCategoryId);
         };
 
-        // @phpstan-ignore-next-line
         $categoryPath = array_map($magentoIdMapper, explode('-', $categoryPath));
         return implode('-', $categoryPath);
     }
@@ -322,7 +314,7 @@ class Request
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     protected function getStoreId()
     {
@@ -345,7 +337,7 @@ class Request
     }
 
     /**
-     * @return Request
+     * @return string|null
      */
     public function setParameterArray(string $parameter, array $value): Request
     {
@@ -354,7 +346,7 @@ class Request
     }
 
     /**
-     * @return bool
+     * @return string|null
      */
     public function isPostRequest(): bool
     {

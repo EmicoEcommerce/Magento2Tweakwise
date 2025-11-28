@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -45,7 +45,6 @@ class RecommendationsResponse extends Response
 
     /**
      * @param array $recommendation
-     * @return void
      */
     public function setRecommendation(array $recommendation)
     {
@@ -69,7 +68,6 @@ class RecommendationsResponse extends Response
     {
         if ($this->config->isGroupedProductsEnabled() && !$this->proccessedGroupedProducts) {
             // Manually group items since recommendations doesn't have a grouped call yet.
-            // @phpstan-ignore-next-line
             $items = parent::getItems();
             $groups = [];
             if (empty($items)) {
@@ -90,10 +88,6 @@ class RecommendationsResponse extends Response
         return $this->data['items'];
     }
 
-    /**
-     * @param array $items
-     * @return void
-     */
     public function replaceItems(array $items)
     {
         $this->data['items'] = $items;
@@ -106,7 +100,6 @@ class RecommendationsResponse extends Response
     {
         $ids = [];
         foreach ($this->getItems() as $item) {
-            // @phpstan-ignore-next-line
             $ids[] = $this->helper->getStoreId($item->getId());
         }
 

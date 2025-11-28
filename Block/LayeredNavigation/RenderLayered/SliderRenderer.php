@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -48,7 +48,6 @@ class SliderRenderer extends DefaultRenderer
      * @param Helper $helper
      * @param Escaper $escaper
      * @param array $data
-     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         PriceHelper $priceHelper,
@@ -96,7 +95,6 @@ class SliderRenderer extends DefaultRenderer
      */
     public function getMinValue()
     {
-        // @phpstan-ignore-next-line
         return floor($this->getItemValue(2, $this->getCurrentMinValue()));
     }
 
@@ -105,7 +103,6 @@ class SliderRenderer extends DefaultRenderer
      */
     public function getMaxValue()
     {
-        // @phpstan-ignore-next-line
         return ceil($this->getItemValue(3, $this->getCurrentMaxValue()));
     }
 
@@ -114,7 +111,6 @@ class SliderRenderer extends DefaultRenderer
      */
     public function getCurrentMinValue()
     {
-        // @phpstan-ignore-next-line
         return floor($this->getItemValue(0));
     }
 
@@ -123,7 +119,6 @@ class SliderRenderer extends DefaultRenderer
      */
     public function getCurrentMaxValue()
     {
-        // @phpstan-ignore-next-line
         return ceil($this->getItemValue(1, 99999));
     }
 
@@ -137,7 +132,6 @@ class SliderRenderer extends DefaultRenderer
             return $value;
         }
 
-        // @phpstan-ignore-next-line
         return $this->priceHelper->currency($value, true, false);
     }
 
@@ -228,24 +222,22 @@ class SliderRenderer extends DefaultRenderer
             $buckets = $this->getBuckets();
             foreach ($buckets as $bucket) {
                 //get max range from bucket array
-                if ($bucket['relativeamount'] <= $maxRelativeRange) {
-                    continue;
+                if ($bucket['relativeamount'] > $maxRelativeRange) {
+                    $relativeAmount = ceil($bucket['relativeamount']);
+                    if ($relativeAmount > $maxRelativeRange) {
+                        $maxRelativeRange = $relativeAmount;
+                    }
                 }
-
-                $relativeAmount = ceil($bucket['relativeamount']);
-                if ($relativeAmount <= $maxRelativeRange) {
-                    continue;
-                }
-
-                $maxRelativeRange = $relativeAmount;
             }
         }
 
-        return 60 / $maxRelativeRange;
+        $bucketHightFactor = 60 / $maxRelativeRange;
+
+        return $bucketHightFactor;
     }
 
     public function getTotalrange(): float
     {
-        return $this->getMaxValue() - $this->getMinValue();
+        return ($this->getMaxValue() - $this->getMinValue());
     }
 }

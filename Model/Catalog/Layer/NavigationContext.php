@@ -1,4 +1,5 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -9,7 +10,6 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer;
 
 use Exception;
-use Magento\Framework\Exception\LocalizedException;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Client;
@@ -109,7 +109,6 @@ class NavigationContext
      * @param ToolbarModel $toolbarModel
      * @param ProductAttributes $productAttributes
      * @param Visibility $visibility
-     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         Config $config,
@@ -141,9 +140,7 @@ class NavigationContext
      */
     public function getRequest(): ProductNavigationRequest
     {
-        // @phpstan-ignore-next-line
         if (!$this->request) {
-            // @phpstan-ignore-next-line
             $this->request = $this->requestFactory->create();
         }
 
@@ -162,20 +159,18 @@ class NavigationContext
 
             $this->initializeRequest($request);
 
-            if ($this->config->getTweakwiseExceptionTrown()) {
+            if (!$this->config->getTweakwiseExceptionTrown()) {
+                try {
+                    $this->response = $this->client->request($request);
+                } catch (ApiException $e) {
+                    //no api response
+                    throw $e;
+                }
+            } else {
                 throw new ApiException('Tweakwise API is not reachable');
-            }
-
-            try {
-                // @phpstan-ignore-next-line
-                $this->response = $this->client->request($request);
-            } catch (ApiException $e) {
-                //no api response
-                throw $e;
             }
         }
 
-        // @phpstan-ignore-next-line
         return $this->response;
     }
 
@@ -207,7 +202,6 @@ class NavigationContext
         $params['tn_fk_p'] = 1;
         $params['tn_p'] = 1;
 
-        // @phpstan-ignore-next-line
         $this->request = null;
         $request = $this->getRequest()->setParameters($params);
         $this->response = null;
@@ -227,11 +221,9 @@ class NavigationContext
                 $map[$attribute->getData('attribute_code')] = $attribute;
             }
 
-            // @phpstan-ignore-next-line
             $this->filterAttributeMap = $map;
         }
 
-        // @phpstan-ignore-next-line
         return $this->filterAttributeMap;
     }
 
@@ -248,7 +240,6 @@ class NavigationContext
 
         /** @noinspection OffsetOperationsInspection */
         if ($mode && isset($availableModes[$mode])) {
-            // @phpstan-ignore-next-line
             return $mode;
         }
 
@@ -280,9 +271,8 @@ class NavigationContext
 
     /**
      * Add correct visibility filters based on type of Request
+     *
      * @param ProductNavigationRequest $request
-     * @return void
-     * @throws LocalizedException
      */
     public function addVisibilityFilter(ProductNavigationRequest $request)
     {

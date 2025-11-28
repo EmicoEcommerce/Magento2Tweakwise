@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Swatches;
 
@@ -13,7 +13,6 @@ class Plugin
      * @param Product $parentProduct
      * @param array $attributes
      * @return bool|Product
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function aroundLoadVariationByFallback(
         Data $subject,
@@ -23,11 +22,9 @@ class Plugin
     ) {
         $hasArrayValues = false;
         foreach ($attributes as $attribute) {
-            if (!\is_array($attribute)) {
-                continue;
+            if (\is_array($attribute)) {
+                $hasArrayValues = true;
             }
-
-            $hasArrayValues = true;
         }
 
         if (!$hasArrayValues) {

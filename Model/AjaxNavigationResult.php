@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
@@ -55,7 +55,6 @@ class AjaxNavigationResult extends Layout
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
      * @param bool $isIsolated
-     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         View\Element\Template\Context $context,
@@ -107,7 +106,6 @@ class AjaxNavigationResult extends Layout
         }
 
         $response->setHeader('Content-Type', 'application/json', true);
-        // @phpstan-ignore-next-line
         $response->appendBody($responseData);
 
         return $this;

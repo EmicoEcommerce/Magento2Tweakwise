@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,7 +9,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
-use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Tweakwise\Magento2Tweakwise\Exception\RuntimeException;
 use Tweakwise\Magento2Tweakwise\Exception\UnexpectedValueException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
@@ -28,6 +27,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Resolver;
+use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
@@ -36,7 +36,7 @@ use Magento\Framework\UrlInterface as MagentoUrlInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 /**
- * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class PathSlugStrategy implements
     UrlInterface,
@@ -125,7 +125,6 @@ class PathSlugStrategy implements
      * @param StrategyHelper $strategyHelper
      * @param RewriteResolverInterface[] $rewriteResolvers
      * @param array $skipMatchExtensions
-     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         UrlModel $magentoUrl,
@@ -183,11 +182,9 @@ class PathSlugStrategy implements
          * @var Item $activeItem
          */
         foreach ($filters as $key => $activeItem) {
-            if ($activeItem !== $item) {
-                continue;
+            if ($activeItem === $item) {
+                unset($filters[$key]);
             }
-
-            unset($filters[$key]);
         }
 
         return $this->buildFilterUrl($request, $filters);
@@ -206,11 +203,9 @@ class PathSlugStrategy implements
          * @var Item $activeItem
          */
         foreach ($filters as $key => $activeItem) {
-            if ($activeItem->getFilter()->getUrlKey() !== $item->getFilter()->getUrlKey()) {
-                continue;
+            if ($activeItem->getFilter()->getUrlKey() === $item->getFilter()->getUrlKey()) {
+                unset($filters[$key]);
             }
-
-            unset($filters[$key]);
         }
 
         $attribute = clone $item->getAttribute();
@@ -226,7 +221,6 @@ class PathSlugStrategy implements
      * @param MagentoHttpRequest $request
      * @param Item[] $activeFilterItems
      * @return string
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
     public function getClearUrl(MagentoHttpRequest $request, array $activeFilterItems): string
     {
@@ -281,14 +275,11 @@ class PathSlugStrategy implements
         }
 
         $filters = $this->getLayer()->getState()->getFilters();
-        // @phpstan-ignore-next-line
         if (!\is_array($filters)) {
             return [];
         }
 
-        // @phpstan-ignore-next-line
         $this->activeFilters = $filters;
-        // @phpstan-ignore-next-line
         return $this->activeFilters;
     }
 
@@ -314,7 +305,6 @@ class PathSlugStrategy implements
             ) {
                 $query['p'] = $page;
             } else {
-                // @phpstan-ignore-next-line
                 unset($query['p']);
             }
 
@@ -335,7 +325,6 @@ class PathSlugStrategy implements
                 FILTER_SANITIZE_URL
             );
 
-            // @phpstan-ignore-next-line
             return str_replace($this->magentoUrl->getBaseUrl(), '', $url);
         }
 
@@ -393,13 +382,10 @@ class PathSlugStrategy implements
         if (empty($currentFilterPath)) {
             $urlParts = parse_url($currentUrl);
 
-            // @phpstan-ignore-next-line
             if (strpos($urlParts['path'], $newFilterPath) === false) {
-                // @phpstan-ignore-next-line
                 $url = $urlParts['path'] . $newFilterPath;
             } else {
                 //filter path already exists in url
-                // @phpstan-ignore-next-line
                 $url = $urlParts['path'];
             }
 
@@ -418,6 +404,11 @@ class PathSlugStrategy implements
                 $url = $currentUrl . '/' . $newFilterPath;
             }
         }
+
+        $categoryUrlSuffix = $this->scopeConfig->getValue(
+            CategoryUrlPathGenerator::XML_PATH_CATEGORY_URL_SUFFIX,
+            'store'
+        );
 
         // Replace all occurrences of double slashes with a single slash except those in scheme.
         // This can happen when $categoryUrlSuffix === '/' and in some other cases
@@ -523,7 +514,7 @@ class PathSlugStrategy implements
         }
 
         $filterPathParts = explode('/', trim($filterPath, '/'));
-        if (count($filterPathParts) % 2 !== 0) {
+        if ((count($filterPathParts) % 2) !== 0) {
             /* In this case we dont have an even amount of path segments,
             This cannot correspond to a filter in this model since the filters
             are constructed as filterName/filterValue for each filter, note the two components
@@ -588,10 +579,8 @@ class PathSlugStrategy implements
         }
 
         $category = $this->strategyHelper->getCategoryFromItem($item);
-        // @phpstan-ignore-next-line
         $categoryUrlPath = \parse_url($category->getUrl(), PHP_URL_PATH);
 
-        // @phpstan-ignore-next-line
         $url = $this->magentoUrl->getDirectUrl($categoryUrlPath);
 
         /*
@@ -626,13 +615,15 @@ class PathSlugStrategy implements
             $prevPart = $part;
         }
 
-        return implode('/', $filteredParts);
+        $url = implode('/', $filteredParts);
+
+        return $url;
     }
 
     /**
      * @param MagentoHttpRequest $request
      * @param Item $item
-     * @return string
+     * @return mixed
      */
     public function getCategoryFilterRemoveUrl(
         MagentoHttpRequest $request,

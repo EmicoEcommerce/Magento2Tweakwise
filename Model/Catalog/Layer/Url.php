@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -63,7 +63,7 @@ class Url
      */
     protected $urlStrategyFactory;
 
-    protected $magentoUrl; // @phpstan-ignore-line
+    protected $magentoUrl;
 
     /**
      * Builder constructor.
@@ -92,9 +92,7 @@ class Url
      */
     public function getUrlStrategy()
     {
-        // @phpstan-ignore-next-line
         if (!$this->urlStrategy) {
-            // @phpstan-ignore-next-line
             $this->urlStrategy = $this->urlStrategyFactory->create();
         }
 
@@ -106,9 +104,7 @@ class Url
      */
     protected function getFilterApplier()
     {
-        // @phpstan-ignore-next-line
         if (!$this->filterApplier) {
-            // @phpstan-ignore-next-line
             $this->filterApplier = $this->urlStrategyFactory
                 ->create(FilterApplierInterface::class);
         }
@@ -121,9 +117,7 @@ class Url
      */
     protected function getCategoryUrlStrategy()
     {
-        // @phpstan-ignore-next-line
         if (!$this->categoryUrlStrategy) {
-            // @phpstan-ignore-next-line
             $this->categoryUrlStrategy = $this->urlStrategyFactory
                 ->create(CategoryUrlInterface::class);
         }
@@ -193,7 +187,6 @@ class Url
 
     /**
      * @param ProductNavigationRequest $navigationRequest
-     * @return void
      */
     public function apply(ProductNavigationRequest $navigationRequest)
     {
@@ -209,7 +202,7 @@ class Url
         return $this->addBaseUrl($this->getUrlStrategy()->getSliderUrl($this->request, $item));
     }
 
-    public function addBaseUrl($url) // @phpstan-ignore-line
+    public function addBaseUrl($url)
     {
 
         $baseUrl = $this->magentoUrl->getBaseUrl();

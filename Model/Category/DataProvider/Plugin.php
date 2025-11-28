@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Category\DataProvider;
 
@@ -68,18 +68,16 @@ class Plugin
         $result = [];
         foreach ($fieldsMap as $fieldSet => $fields) {
             foreach ($fields as $field) {
-                if (!isset($fieldsMeta[$field])) {
-                    continue;
-                }
+                if (isset($fieldsMeta[$field])) {
+                    $config = $fieldsMeta[$field];
+                    if (($fieldSet === 'design' || $fieldSet === 'schedule_design_update') && !$canEditDesign) {
+                        $config['required']        = 1;
+                        $config['disabled']        = 1;
+                        $config['serviceDisabled'] = true;
+                    }
 
-                $config = $fieldsMeta[$field];
-                if (($fieldSet === 'design' || $fieldSet === 'schedule_design_update') && !$canEditDesign) {
-                    $config['required']        = 1;
-                    $config['disabled']        = 1;
-                    $config['serviceDisabled'] = true;
+                    $result[$fieldSet]['children'][$field]['arguments']['data']['config'] = $config;
                 }
-
-                $result[$fieldSet]['children'][$field]['arguments']['data']['config'] = $config;
             }
         }
 

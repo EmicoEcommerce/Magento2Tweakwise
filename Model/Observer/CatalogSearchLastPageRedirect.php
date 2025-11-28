@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
@@ -11,10 +11,8 @@ class CatalogSearchLastPageRedirect extends CatalogLastPageRedirect
      */
     public function execute(Observer $observer)
     {
-        if (!$this->config->isSearchEnabled()) {
-            return;
+        if ($this->config->isSearchEnabled()) {
+            parent::execute($observer);
         }
-
-        parent::execute($observer);
     }
 }

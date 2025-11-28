@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -42,9 +42,7 @@ abstract class AbstractCollection extends ProductCollection
     {
         $select = $this->getSelect();
         $select->setPart(Select::WHERE, []);
-        // @phpstan-ignore-next-line
         $this->_pageSize = null;
-        // @phpstan-ignore-next-line
         $this->_curPage = null;
         return $this;
     }
@@ -58,11 +56,9 @@ abstract class AbstractCollection extends ProductCollection
 
         $result = [];
         foreach ($productIds as $productId) {
-            if (!isset($this->_items[$productId])) {
-                continue;
+            if (isset($this->_items[$productId])) {
+                $result[$productId] = $this->_items[$productId];
             }
-
-            $result[$productId] = $this->_items[$productId];
         }
 
         $this->_items = $result;

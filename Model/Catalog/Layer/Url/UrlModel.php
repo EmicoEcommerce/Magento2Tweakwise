@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -54,7 +54,7 @@ class UrlModel extends MagentoUrl
      * @param array $data
      * @param HostChecker|null $hostChecker
      * @param Json|null $serializer
-     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         ConfigInterface $routeConfig,

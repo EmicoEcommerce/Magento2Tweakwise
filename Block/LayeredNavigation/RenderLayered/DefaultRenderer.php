@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -49,7 +49,6 @@ class DefaultRenderer extends Template
      */
     protected $navigationConfig;
 
-    // @phpstan-ignore-next-line
     protected $helper;
 
     /**
@@ -84,7 +83,6 @@ class DefaultRenderer extends Template
 
     /**
      * @param Filter $filter
-     * @return void
      */
     public function setFilter(Filter $filter)
     {
@@ -123,7 +121,7 @@ class DefaultRenderer extends Template
         $type = $this->filter->getFacet()->getFacetSettings()->getSelectionType();
         $maxItems = $this->getMaxItemsShown();
 
-        if ($this->config->isCategoryViewDefault() && $type === 'link') {
+        if ($this->config->isCategoryViewDefault() && $type == 'link') {
             $result = $this->findCurrentCategory($items);
             if (!empty($result)) {
                 $items = $result;
@@ -145,7 +143,6 @@ class DefaultRenderer extends Template
      */
     private function findCurrentCategory($items)
     {
-        // @phpstan-ignore-next-line
         $tweakwiseCategoryId = $this
                 ->navigationConfig
                 ->getNavigationContext()
@@ -160,24 +157,20 @@ class DefaultRenderer extends Template
             $tweakwiseCategoryId = $this->helper->getTweakwiseId($storeId, $currentCategory->getId());
         }
 
-        foreach ($items as $item) {
-            if ($item->getAttribute()->getValue('attributeid') === $tweakwiseCategoryId) {
+        foreach ($items as $index => $item) {
+            if ($item->getAttribute()->getValue('attributeid') == $tweakwiseCategoryId) {
                 if (!empty($item->getChildren())) {
                     return $item->getChildren();
+                } else {
+                    //current category is the lowest level. Return all items on the same level
+                    return $items;
                 }
-
-                //current category is the lowest level. Return all items on the same level
-                return $items;
-            }
-
-            if (empty($item->getChildren())) {
-                continue;
-            }
-
-            //check if children are the current category
-            $result = $this->findCurrentCategory($item->getChildren());
-            if (!empty($result)) {
-                return $result;
+            } elseif (!empty($item->getChildren())) {
+                //check if children are the current category
+                $result = $this->findCurrentCategory($item->getChildren());
+                if (!empty($result)) {
+                    return $result;
+                }
             }
         }
 
@@ -189,7 +182,6 @@ class DefaultRenderer extends Template
      */
     public function getJsSortConfig()
     {
-        // @phpstan-ignore-next-line
         return $this->navigationConfig->getJsSortConfig($this->hasAlternateSortOrder());
     }
 
@@ -199,7 +191,6 @@ class DefaultRenderer extends Template
     public function hasAlternateSortOrder()
     {
         $filter = function (Item $item) {
-            // @phpstan-ignore-next-line
             return $item->getAlternateSortOrder() !== null;
         };
 
@@ -289,7 +280,6 @@ class DefaultRenderer extends Template
      */
     public function shouldDisplayProductCountOnLayer()
     {
-        // @phpstan-ignore-next-line
         return $this->getFacetSettings()->getIsNumberOfResultVisible();
     }
 
@@ -330,7 +320,6 @@ class DefaultRenderer extends Template
      */
     public function hasDefaultCategoryView()
     {
-        // @phpstan-ignore-next-line
         return $this->config->isCategoryViewDefault();
     }
 }

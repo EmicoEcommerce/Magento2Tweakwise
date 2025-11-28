@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -58,7 +58,6 @@ class Facet implements OptionSourceInterface
             ];
         }
 
-        // @phpstan-ignore-next-line
         return $result;
     }
 

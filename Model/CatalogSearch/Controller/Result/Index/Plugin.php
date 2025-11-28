@@ -1,9 +1,10 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 namespace Tweakwise\Magento2Tweakwise\Model\CatalogSearch\Controller\Result\Index;
 
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\CatalogSearch\Controller\Result\Index;
+use Magento\Search\Model\Query;
 use Magento\Search\Model\QueryFactory;
 
 class Plugin
@@ -37,18 +38,14 @@ class Plugin
      * @param Index $subject
      *
      * @return mixed
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
      */
     public function beforeExecute(Index $subject)
     {
-        if (!$this->config->isSearchEnabled()) {
-            return;
+        if ($this->config->isSearchEnabled()) {
+            /* @var Query $query */
+            $query = $this->queryFactory->get();
+            // Set redirect to '', so that it does not get executed
+            $query->setRedirect('');
         }
-
-        /* @var Query $query */
-        $query = $this->queryFactory->get();
-        // Set redirect to '', so that it does not get executed
-        // @phpstan-ignore-next-line
-        $query->setRedirect('');
     }
 }

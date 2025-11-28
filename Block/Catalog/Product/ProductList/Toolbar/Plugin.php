@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -65,7 +65,6 @@ class Plugin
      * @param Toolbar $subject
      * @param Closure $proceed
      * @return array
-//     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function aroundGetAvailableOrders(Toolbar $subject, Closure $proceed)
     {
@@ -76,17 +75,16 @@ class Plugin
         }
 
         //page is search and search is not enabled
-        if (!$this->config->isSearchEnabled() && ($this->context->getRequest() instanceof ProductSearchRequest)) {
+        if ((!$this->config->isSearchEnabled()) && ($this->context->getRequest() instanceof ProductSearchRequest)) {
             return $proceed();
         }
 
-        // @phpstan-ignore-next-line
         if (empty($this->context->getResponse())) {
             return $proceed();
         }
 
         /** @var SortFieldType[] $sortFields */
-        $sortFields = $this->context->getResponse()->getProperties()->getSortFields(); // @phpstan-ignore-line
+        $sortFields = $this->context->getResponse()->getProperties()->getSortFields();
 
         $result = [];
         foreach ($sortFields as $field) {
@@ -100,7 +98,6 @@ class Plugin
      * @param Toolbar $subject
      * @param string $result
      * @return false|string
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function afterGetWidgetOptionsJson(Toolbar $subject, string $result)
     {
@@ -121,9 +118,8 @@ class Plugin
      * @param Toolbar $subject
      * @param callable $proceed
      * @return int
-     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @throws LocalizedException
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
      */
     public function aroundGetTotalNum(Toolbar $subject, callable $proceed): int
     {
@@ -134,7 +130,6 @@ class Plugin
         if ($this->stockConfiguration->isShowOutOfStock()) {
             try {
                 $response = $this->context->getResponse();
-                // @phpstan-ignore-next-line
                 $result = $response->getProperties()->getNumberOfItems();
             } catch (\Exception $e) {
                 $this->logger->critical($e->getMessage());

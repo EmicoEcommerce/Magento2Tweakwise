@@ -1,4 +1,4 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Request;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetResponse;
 
 class AnalyticsRequest extends Request
 {
@@ -18,13 +19,10 @@ class AnalyticsRequest extends Request
      */
     protected $path = '';
 
-    /**
-     * @var string
-     */
-    protected string $apiUrl = 'https://navigator-analytics.tweakwise.com/api';
+    protected $apiUrl = 'https://navigator-analytics.tweakwise.com/api';
 
     /**
-     * @return bool
+     * @return string
      */
     public function isPostRequest(): bool
     {
@@ -42,7 +40,7 @@ class AnalyticsRequest extends Request
     /**
      * @return void
      */
-    public function setProfileKey(string $profileKey): void // @phpstan-ignore-line
+    public function setProfileKey(string $profileKey): void
     {
         $this->setParameter('ProfileKey', $profileKey);
     }
@@ -50,7 +48,7 @@ class AnalyticsRequest extends Request
     /**
      * @return void
      */
-    public function setPath($path): void // @phpstan-ignore-line
+    public function setPath($path): void
     {
         $this->path = $path;
     }
@@ -60,12 +58,9 @@ class AnalyticsRequest extends Request
      */
     public function getProfileKey(): string
     {
-        // @phpstan-ignore-next-line
         $profileKey = $this->getCookie($this->config->getPersonalMerchandisingCookieName());
         if (!$profileKey) {
-            // @phpstan-ignore-next-line
             $profileKey = $this->generateProfileKey();
-            // @phpstan-ignore-next-line
             $this->setCookie('profileKey', $profileKey);
         }
 

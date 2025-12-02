@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
 
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute\Interceptor;
 use Magento\Framework\Phrase;
 use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
@@ -19,6 +20,7 @@ use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Filter\TranslitUrl;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class FilterSlugManager
 {
@@ -66,7 +68,8 @@ class FilterSlugManager
         AttributeSlugRepositoryInterface $attributeSlugRepository,
         AttributeSlugInterfaceFactory $attributeSlugFactory,
         CacheInterface $cache,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        protected readonly StoreManagerInterface $storeManager
     ) {
         $this->translitUrl = $translitUrl;
         $this->attributeSlugRepository = $attributeSlugRepository;
@@ -84,8 +87,8 @@ class FilterSlugManager
         $lookupTable = $this->getLookupTable();
         $attribute = strtolower($filterItem->getAttribute()->getTitle());
 
-        if (!empty($lookupTable[$attribute])) {
-            return $lookupTable[$attribute];
+        if (!empty($lookupTable[$this->storeManager->getStore()->getId()][$attribute])) {
+            return $lookupTable[$this->storeManager->getStore()->getId()][$attribute];
         }
 
         $slug = $this->translitUrl->filter($attribute);
@@ -99,8 +102,10 @@ class FilterSlugManager
         $attributeSlugEntity = $this->attributeSlugFactory->create();
         $attributeSlugEntity->setAttribute($attribute);
         $attributeSlugEntity->setSlug($slug);
+        $attributeSlugEntity->setStoreId($this->storeManager->getStore()->getId());
 
-        $this->attributeSlugRepository->save($attributeSlugEntity);
+        $savedSlug = $this->attributeSlugRepository->save($attributeSlugEntity);
+        $slug = $savedSlug->getSlug();
         $this->cache->remove(self::CACHE_KEY);
 
         return $slug;
@@ -110,33 +115,41 @@ class FilterSlugManager
      * @param \Magento\Eav\Api\Data\AttributeOptionInterface[] $options
      * @return void
      */
-    public function createFilterSlugByAttributeOptions(array $options)
+    public function createFilterSlugByAttributeOptions(Interceptor $options)
     {
-        foreach ($options as $option) {
-            if (empty($option->getLabel()) || ctype_space((string) $option->getLabel())) {
-                continue;
+        $allTranslations = $options->toArray();
+        if (!isset($allTranslations['option']['value'])) {
+            return;
+        }
+        foreach ($allTranslations['option']['value'] as $optionTranslations) {
+            foreach ($optionTranslations as $storeId => $optionLabel) {
+                if (empty($optionLabel) || ctype_space((string)$optionLabel)) {
+                    continue;
+                }
+
+                $this->getLookupTable();
+                // @phpstan-ignore-next-line
+                if ($optionLabel instanceof Phrase) {
+                    $optionLabel = $optionLabel->render();
+                }
+
+                if (empty($this->translitUrl->filter($optionLabel))) {
+                    continue;
+                }
+
+                if (isset($this->lookupTable[$storeId][strtolower($optionLabel)])) {
+                    continue;
+                }
+
+                $attributeSlugEntity = $this->attributeSlugFactory->create();
+                // @phpstan-ignore-next-line
+                $attributeSlugEntity->setAttribute($optionLabel);
+                $attributeSlugEntity->setStoreId((int)$storeId);
+                $attributeSlugEntity->setSlug($this->translitUrl->filter($optionLabel));
+
+                $this->attributeSlugRepository->save($attributeSlugEntity);
+                $this->cache->remove(self::CACHE_KEY);
             }
-
-            $this->getLookupTable();
-            $optionLabel = $option->getLabel();
-            if ($optionLabel instanceof Phrase) {
-                $optionLabel = $optionLabel->render();
-            }
-
-            if (empty($this->translitUrl->filter($option->getLabel()))) {
-                continue;
-            }
-
-            if (isset($this->lookupTable[strtolower($option->getLabel())])) {
-                continue;
-            }
-
-            $attributeSlugEntity = $this->attributeSlugFactory->create();
-            $attributeSlugEntity->setAttribute($option->getLabel());
-            $attributeSlugEntity->setSlug($this->translitUrl->filter($option->getLabel()));
-
-            $this->attributeSlugRepository->save($attributeSlugEntity);
-            $this->cache->remove(self::CACHE_KEY);
         }
     }
 
@@ -147,7 +160,19 @@ class FilterSlugManager
      */
     public function getAttributeBySlug(string $slug): string
     {
-        $attribute = array_search($slug, $this->getLookupTable(), false);
+        $attribute = false;
+        $lookupTable = $this->getLookupTable();
+
+        if (isset($lookupTable[$this->storeManager->getStore()->getId()])) {
+            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
+            $attribute = array_search($slug, $lookupTable[$this->storeManager->getStore()->getId()], false);
+        }
+
+        //fallback
+        if ($attribute === false && isset($lookupTable[0])) {
+            $attribute = array_search($slug, $lookupTable[0], false);
+        }
+
         if ($attribute === false) {
             // Check if slug matched the pattern for a slider filter (i.e. 80-120).
             if (preg_match('/^\d+-\d+$/', $slug)) {
@@ -157,6 +182,7 @@ class FilterSlugManager
             throw new UnexpectedValueException(sprintf('No attribute found for slug "%s"', $slug));
         }
 
+        // @phpstan-ignore-next-line
         return $attribute;
     }
 
@@ -178,11 +204,12 @@ class FilterSlugManager
     protected function loadLookupTable(): array
     {
         $lookupTable = $this->cache->load(self::CACHE_KEY);
+        // @phpstan-ignore-next-line
         if ($lookupTable === false) {
             $attributeSlugs = $this->attributeSlugRepository->getList(new SearchCriteria());
             $lookupTable = [];
             foreach ($attributeSlugs->getItems() as $attributeSlug) {
-                $lookupTable[$attributeSlug->getAttribute()] = $attributeSlug->getSlug();
+                $lookupTable[$attributeSlug->getStoreId()][$attributeSlug->getAttribute()] = $attributeSlug->getSlug();
             }
 
             $this->cache->save($this->serializer->serialize($lookupTable), self::CACHE_KEY);
@@ -190,6 +217,34 @@ class FilterSlugManager
             $lookupTable = $this->serializer->unserialize($lookupTable);
         }
 
+        // @phpstan-ignore-next-line
         return $lookupTable;
+    }
+
+    /**
+     * @return void
+     */
+    public function truncateSlugTable(): void
+    {
+        $this->attributeSlugRepository->truncateSlugTable();
+        $this->cache->remove(self::CACHE_KEY);
+    }
+
+    /**
+     * @param array $option
+     * @param int|string $storeId
+     * @return void
+     */
+    public function createFilterSlugByOption($option, $storeId): void
+    {
+        if (empty($this->translitUrl->filter($option['label'])) || ctype_space((string)$option['label'])) {
+            return;
+        }
+
+        $attributeSlugEntity = $this->attributeSlugFactory->create();
+        $attributeSlugEntity->setAttribute($option['label']);
+        $attributeSlugEntity->setStoreId((int)$storeId);
+        $attributeSlugEntity->setSlug($this->translitUrl->filter($option['label']));
+        $this->attributeSlugRepository->save($attributeSlugEntity);
     }
 }

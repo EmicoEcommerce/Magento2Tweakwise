@@ -80,20 +80,20 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             //check for existing slugs with the same slug
             try {
                 /** @var AttributeSlug $existingSlug */
-                $existingSlug = $this->findBySlug($attributeSlug->getSlug());
+                $existingSlug = $this->findBySlug($attributeSlug->getSlug(), $attributeSlug->getStoreId());
 
-                //slug exists, check if it is not the current attribute saved
-                if ($attributeSlug->getAttribute() !== $existingSlug->getAttribute()) {
-                    $newSlug = $attributeSlug->getSlug();
-                    $counter = 0;
-                    while ($newSlug === $this->findBySlug($newSlug)->getSlug()) {
-                        $counter++;
-                        $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
-                    }
+                if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
+                    //same attribute, no need to change anything
+                    return $attributeSlug;
                 }
 
-                /** @var AttributeSlug $attributeSlug */
-                $this->resource->save($attributeSlug);
+                //slug exists, check if it is not the current attribute saved
+                $newSlug = $attributeSlug->getSlug();
+                $counter = 0;
+                while ($newSlug === $this->findBySlug($newSlug, $attributeSlug->getStoreId())->getSlug()) {
+                    $counter++;
+                    $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
+                }
             } catch (NoSuchEntityException $exception) {
                 //slug doesnt exist. Save value
                 if (isset($newSlug)) {
@@ -126,6 +126,8 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
 
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
+
+        $items = $collection->getItems();
 
         $searchResults->setItems($collection->getItems());
         $searchResults->setTotalCount($collection->getSize());
@@ -173,13 +175,15 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
 
     /**
      * @param string $slug
+     * @param int $storeId
      * @return AttributeSlugInterface
      * @throws NoSuchEntityException
      */
-    public function findBySlug(string $slug): AttributeSlugInterface
+    public function findBySlug(string $slug, $storeId = 0): AttributeSlugInterface
     {
         $collection = $this->collectionFactory->create()
-            ->addFieldToFilter('slug', $slug);
+            ->addFieldToFilter('slug', $slug)
+            ->addFieldToFilter('store_id', $storeId);
         if (!$collection->getSize()) {
             throw new NoSuchEntityException(__('No slug found for attribute "%1".', $slug));
         }
@@ -187,5 +191,13 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
         /** @var AttributeSlug $attributeSlug */
         $attributeSlug = $collection->getFirstItem();
         return $attributeSlug;
+    }
+
+    /**
+     * @return void
+     */
+    public function truncateSlugTable(): void
+    {
+        $this->resource->truncateTable();
     }
 }

@@ -6,6 +6,7 @@ interface AttributeSlugInterface
 {
     public const ATTRIBUTE = 'attribute';
     public const SLUG = 'slug';
+    public const STORE_ID = 'store_id';
 
     /**
      * @return string|null
@@ -22,4 +23,15 @@ interface AttributeSlugInterface
      * @return void
      */
     public function setSlug(string $slug): void;
+
+    /**
+     * @return int
+     */
+    public function getStoreId(): int;
+
+    /**
+     * @param int $storeId
+     * @return void
+     */
+    public function setStoreId(int $storeId): void;
 }

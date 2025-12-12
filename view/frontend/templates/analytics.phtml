@@ -6,11 +6,11 @@ use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 /** @var \Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics $viewModel */
 $viewModel = $block->getData('viewModel');
 $analyticsType = $block->getData('analyticsType');
-$value = $viewModel->getValue($analyticsType);
+$value = $viewModel->getValue((string)$analyticsType);
 
 /** @var NavigationConfig $tweakwiseNavigationConfig */
 $tweakwiseNavigationConfig = $block->getData('tweakwise_navigation_config');
-$jsFormConfig = $tweakwiseNavigationConfig ? $tweakwiseNavigationConfig->getJsFormConfig() : [];
+$jsFormConfig = $tweakwiseNavigationConfig ? json_decode($tweakwiseNavigationConfig->getJsFormConfig()) : [];
 ?>
 
 <script type="text/x-magento-init">
@@ -20,10 +20,10 @@ $jsFormConfig = $tweakwiseNavigationConfig ? $tweakwiseNavigationConfig->getJsFo
                 "value": "<?= $escaper->escapeHtmlAttr($value ?? ''); ?>",
                 "type": "<?= $escaper->escapeHtmlAttr($analyticsType ?? ''); ?>",
                 "bindItemClickEventsConfig": {
-                    "productListSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig['tweakwiseNavigationForm']['productListSelector'] ?? ''); ?>",
-                    "productSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig['tweakwiseNavigationForm']['productSelector'] ?? ''); ?>",
-                    "analyticsEndpoint": "<?= $escaper->escapeHtmlAttr($jsFormConfig['tweakwiseNavigationForm']['analyticsEndpoint'] ?? ''); ?>",
-                    "twRequestId": "<?= $escaper->escapeHtmlAttr($jsFormConfig['tweakwiseNavigationForm']['twRequestId'] ?? ''); ?>"
+                    "productListSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->productListSelector ?? ''); ?>",
+                    "productSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->productSelector ?? ''); ?>",
+                    "analyticsEndpoint": "<?= /* @noEscape */ $jsFormConfig->tweakwiseNavigationForm->analyticsEndpoint ?? ''; ?>",
+                    "twRequestId": "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->twRequestId ?? ''); ?>"
                 }
             }
         }

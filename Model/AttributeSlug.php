@@ -60,4 +60,21 @@ class AttributeSlug extends AbstractModel implements AttributeSlugInterface
     {
         $this->setData(self::SLUG, $slug);
     }
+
+    /**
+     * @return int
+     */
+    public function getStoreId(): int
+    {
+        return (int)$this->getData(self::STORE_ID);
+    }
+
+    /**
+     * @param int $storeId
+     * @return void
+     */
+    public function setStoreId(int $storeId): void
+    {
+        $this->setData(self::STORE_ID, $storeId);
+    }
 }

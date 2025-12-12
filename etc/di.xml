@@ -186,6 +186,16 @@
         </arguments>
     </type>
 
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="tweakwise_regenerate_filter_url_slugs" xsi:type="object">
+                    Tweakwise\Magento2Tweakwise\Console\Command\RegenerateFilterUrlSlugs
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
     <!-- TW models -->
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext">
         <arguments>

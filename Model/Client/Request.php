@@ -360,4 +360,17 @@ class Request
     {
         return false;
     }
+
+    /**
+     * @return void
+     */
+    public function setLanguage(): void
+    {
+        $language = $this->config->getLanguage();
+        if (!$language) {
+            return;
+        }
+
+        $this->setParameter('tn_lang', $language);
+    }
 }

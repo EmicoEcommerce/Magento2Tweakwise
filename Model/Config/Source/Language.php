@@ -45,7 +45,7 @@ class Language implements OptionSourceInterface
     {
         $options = [
             [
-                'label' => 'Don\'t use language in search',
+                'label' => __('Default language'),
                 'value' => ''
             ]
         ];

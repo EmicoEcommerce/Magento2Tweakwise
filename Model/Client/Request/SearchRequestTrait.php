@@ -44,7 +44,6 @@ trait SearchRequestTrait
     {
         $this->setParameter('tn_q', $query);
         $this->setDefaultCategory();
-        $this->setSearchLanguage();
     }
 
     /**
@@ -72,18 +71,5 @@ trait SearchRequestTrait
         }
 
         return null;
-    }
-
-    /**
-     * @return void
-     */
-    protected function setSearchLanguage(): void
-    {
-        $language = $this->config->getSearchLanguage();
-        if (!$language) {
-            return;
-        }
-
-        $this->setParameter('tn_lang', $language);
     }
 }

@@ -554,9 +554,9 @@ class Config
      * @param Store|null $store
      * @return mixed|string|null
      */
-    public function getSearchLanguage(?Store $store = null)
+    public function getLanguage(?Store $store = null)
     {
-        return $this->getStoreConfig('tweakwise/search/language', $store);
+        return $this->getStoreConfig('tweakwise/general/language', $store);
     }
 
     /**

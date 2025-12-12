@@ -7,7 +7,7 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
                 return;
             }
 
-            const product = $(event.target).closest(`.${config.productSelector}`)[0];
+            const product = $(event.target).closest(`${config.productSelector}`)[0];
             let productId;
 
             if (!product || !product.id) {
@@ -82,7 +82,7 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
                     return;
                 }
 
-                productList.on('click', bindConfig.productSelector, function(event) {
+                productList.on('click', function(event) {
                     handleItemClick(event, bindConfig);
                 });
             }

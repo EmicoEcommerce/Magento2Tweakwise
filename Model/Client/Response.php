@@ -119,4 +119,17 @@ class Response extends Type
         $this->data['items'] = $values;
         return $this;
     }
+
+    public function setBlocks(array $blocks): self
+    {
+        $blocks = $this->normalizeArray($blocks, 'block');
+
+        $values = [];
+        foreach ($blocks as $block) {
+            $this->setItems($block['items']);
+        }
+
+        $this->data['blocks'] = $values;
+        return $this;
+    }
 }

@@ -186,9 +186,4 @@ class SuggestionDataProvider implements DataProviderInterface
 
         return $results;
     }
-
-    protected function getSuggestionBlocks()
-    {
-
-    }
 }

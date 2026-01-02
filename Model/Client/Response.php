@@ -136,13 +136,14 @@ class Response extends Type
     public function setBlocks(array $blocks): self
     {
         $blocks = $this->normalizeArray($blocks, 'block');
+        $items = [];
 
-        $values = [];
         foreach ($blocks as $block) {
-            $this->setItems($block['items']);
+            $items = array_merge($items, $block['items'] ?? []);
         }
 
-        $this->data['blocks'] = $values;
+        $this->setItems($items);
+        $this->data['blocks'] = $blocks;
         return $this;
     }
 }

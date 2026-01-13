@@ -103,20 +103,23 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
 
     /**
      * @param array $analyticsTypes
+     * @param string $requestId
      * @return string
      */
-    public function getEventsData(array $analyticsTypes): string
+    public function getEventsData(array $analyticsTypes, string $requestId): string
     {
         $map = [
             'product'       => fn() => $this->getProductKey(),
             'search'        => fn() => $this->getSearchQuery(),
             'session_start' => fn() => 'session_start',
+            'page_impression' => fn() => 'page_impression',
         ];
 
         $eventsData = array_map(
             fn($type) => [
                 'type'  => $type,
                 'value' => ($map[$type] ?? fn() => '')(),
+                'requestId'  => $requestId,
             ],
             $analyticsTypes
         );

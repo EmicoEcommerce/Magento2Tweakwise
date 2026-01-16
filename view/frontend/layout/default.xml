@@ -14,7 +14,7 @@
 
     <body>
         <referenceBlock name="top.search">
-            <block class="Tweakwise\Magento2Tweakwise\Block\Autocomplete\FormMini" ifconfig="tweakwise/autocomplete/enabled" name="tweakwise-autocomplete" template="Tweakwise_Magento2Tweakwise::form.mini.phtml"/>
+            <block class="Tweakwise\Magento2Tweakwise\Block\Autocomplete\Suggestions" ifconfig="tweakwise/autocomplete/enabled" name="tweakwise-autocomplete" template="Tweakwise_Magento2Tweakwise::suggestions.phtml"/>
         </referenceBlock>
     </body>
 </page>

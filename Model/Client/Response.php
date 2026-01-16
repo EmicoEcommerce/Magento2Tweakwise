@@ -123,14 +123,22 @@ class Response extends Type
     public function setBlocks(array $blocks): self
     {
         $blocks = $this->normalizeArray($blocks, 'block');
+        $this->data['blocks'] = $blocks;
+
         $items = [];
+        $groups = [];
 
         foreach ($blocks as $block) {
             $items = array_merge($items, $block['items'] ?? []);
+            $groups = array_merge($groups, $block['groups'] ?? []);
+        }
+
+        if (!empty($groups)) {
+            $this->setGroups($groups);
+            return $this;
         }
 
         $this->setItems($items);
-        $this->data['blocks'] = $blocks;
         return $this;
     }
 }

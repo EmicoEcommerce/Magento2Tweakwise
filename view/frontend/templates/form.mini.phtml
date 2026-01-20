@@ -18,7 +18,7 @@ use Magento\Framework\Escaper;
 <script
     id="autocomplete-item-template"
     type="text/x-magento-template"
-    data-url="<?=$escaper->escapeUrl($block->getAjaxUrl())?>">
+    data-url="<?=$escaper->escapeUrl($block->getAjaxUrl() . 'blocks/1')?>">
     <% if (data.type === 'product') { %>
         <li
             class="<%- data.row_class %> product-item"

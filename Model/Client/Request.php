@@ -123,7 +123,7 @@ class Request
                 if (
                     // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
                     (!in_array($parameter, self::IGNORE_SEPARATOR_PARAMETERS)) &&
-                    (!in_array($value, explode('|', $this->parameters[$parameter]), true))
+                    ($this->parameters[$parameter] !== $value)
                 ) {
                     $this->parameters[$parameter] = $this->parameters[$parameter] . $separator . $value;
                 }

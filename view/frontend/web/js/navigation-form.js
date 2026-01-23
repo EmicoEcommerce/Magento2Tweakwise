@@ -72,71 +72,10 @@ define([
         _hookEvents: function () {
             this._bindFilterClickEvents();
             this._bindFilterRemoveEvents();
-            this._bindItemClickEvents();
 
             if (this.options.ajaxFilters) {
                 this._bindPopChangeHandler();
             }
-        },
-
-        _bindItemClickEvents: function () {
-            if (!this.options.analyticsEvents) {
-                return;
-            }
-
-            const productlist = $(this.options.productListSelector);
-            productlist.on('click', $(this.options.productsGridSelector), function (event) {
-                try {
-                    if (!this.options.twRequestId) {
-                        return;
-                    }
-
-                    const product = $(event.target).closest(`.${this.options.productSelector}`)[0];
-                    let productId;
-
-                    if (!product || !product.id) {
-                        const visual = $(event.target).closest('.visual');
-                        if (!visual.length) {
-                            const link = $(event.target).closest('a');
-                            if (link.length) {
-                                visual = link.find('.visual');
-                            }
-
-                            if (!visual.length) {
-                                return;
-                            }
-                        }
-                        productId = visual.attr('id');
-                    } else {
-                        productId = product.id.replace(`${this.options.productSelector}_`, '');
-                    }
-
-                    if (!productId) {
-                        return;
-                    }
-
-                    //send async ajax request to the analytics endpoint
-                    $.ajax({
-                        url: this.options.analyticsEndpoint,
-                        type: 'POST',
-                        data: {
-                            type: 'itemclick',
-                            value: productId,
-                            requestId: this.options.twRequestId
-                        },
-                        cache: false,
-                        success: function (response) {
-                            //do nothing
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.error('Error sending analytics event',
-                                textStatus, errorThrown);
-                        }
-                    });
-                } catch (error) {
-                    console.error('Error handling product click event', error);
-                }
-            }.bind(this));
         },
 
         /**
@@ -480,6 +419,7 @@ define([
                 }
             }
 
+            resultUrl.search = queryParamsString;
             let result = resultUrl.toString();
             result = this._normalizeQueryString(result);
 

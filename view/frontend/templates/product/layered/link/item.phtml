@@ -22,7 +22,12 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
         data-alternate-sort="<?= $escaper->escapeHtmlAttr($item->getAlternateSortOrder());?>"
     <?php endif;?>
 >
-    <a href="<?=$escaper->escapeUrl($block->getCategoryUrl($item))?>">
+    <a
+        id ="<?= $escaper->escapeHtmlAttr($item->getCssId()) ?>"
+        tabindex="0"
+        href="<?=$escaper->escapeUrl($block->getCategoryUrl($item))?>"
+        aria-labelledby="<?= $escaper->escapeHtmlAttr($item->getFilter()->getUrlKey()) ?> <?= $escaper->escapeHtmlAttr($item->getCssId()) ?>"
+    >
         <?=$escaper->escapeHtmlAttr($block->getItemPrefix())?>
         <?=$escaper->escapeHtml($item->getLabel())?>
         <?=$escaper->escapeHtmlAttr($block->getItemPostfix())?>

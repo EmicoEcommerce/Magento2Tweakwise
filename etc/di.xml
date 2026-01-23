@@ -175,13 +175,18 @@
                 <item name="webp" xsi:type="string">.webp</item>
                 <item name="gif" xsi:type="string">.gif</item>
             </argument>
+            <argument name="rewriteResolvers" xsi:type="array">
+                <item name="category" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\RewriteResolver\CategoryResolver</item>
+            </argument>
         </arguments>
     </type>
 
-    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy">
+    <type name="Magento\Framework\Console\CommandListInterface">
         <arguments>
-            <argument name="rewriteResolvers" xsi:type="array">
-                <item name="category" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\RewriteResolver\CategoryResolver</item>
+            <argument name="commands" xsi:type="array">
+                <item name="tweakwise_regenerate_filter_url_slugs" xsi:type="object">
+                    Tweakwise\Magento2Tweakwise\Console\Command\RegenerateFilterUrlSlugs
+                </item>
             </argument>
         </arguments>
     </type>
@@ -243,6 +248,16 @@
     <type name="Tweakwise\Magento2Tweakwise\Observer\TweakwiseCheckout">
         <arguments>
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest</argument>
+        </arguments>
+    </type>
+    <type name="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToCartEvent">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
+        </arguments>
+    </type>
+    <type name="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToWishlistEvent">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
         </arguments>
     </type>
     <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\Analytics">

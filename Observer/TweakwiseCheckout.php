@@ -10,26 +10,27 @@ use Magento\Sales\Block\Order\Items;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
+use Tweakwise\Magento2Tweakwise\Service\Event\EventService;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
 
 class TweakwiseCheckout implements ObserverInterface
 {
     /**
-     * Constructor.
-     *
-     * @param RequestFactory              $requestFactory
-     * @param Client                      $client
-     * @param Helper                      $helper
-     * @param StoreManagerInterface       $storeManager
+     * @param RequestFactory $requestFactory
+     * @param Client $client
+     * @param Helper $helper
+     * @param StoreManagerInterface $storeManager
      * @param PersonalMerchandisingConfig $config
+     * @param EventService $eventService
      */
     public function __construct(
         private readonly RequestFactory $requestFactory,
         private readonly Client $client,
         private readonly Helper $helper,
         private readonly StoreManagerInterface $storeManager,
-        private readonly PersonalMerchandisingConfig $config
+        private readonly PersonalMerchandisingConfig $config,
+        private readonly EventService $eventService,
     ) {
     }
 
@@ -66,8 +67,9 @@ class TweakwiseCheckout implements ObserverInterface
         $profileKey = $this->config->getProfileKey();
         $tweakwiseRequest = $this->requestFactory->create();
 
-        $tweakwiseRequest->setParameter('profileKey', $profileKey);
-        $tweakwiseRequest->setParameter('revenue', (string)$totalExclTax);
+        $tweakwiseRequest->setParameter('SessionKey', $this->eventService->getSessionKey());
+        $tweakwiseRequest->setParameter('ProfileKey', $profileKey);
+        $tweakwiseRequest->setParameter('Revenue', (string)$totalExclTax);
         $tweakwiseRequest->setPath('purchase');
 
         // @phpstan-ignore-next-line

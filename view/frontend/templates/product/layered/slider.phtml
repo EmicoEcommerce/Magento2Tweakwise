@@ -41,7 +41,7 @@ $clickpointCounter = 0;
                 $bucketHeight = floor($bucket['relativeamount'] * $bucketHightFactor);
                 $bucketWidth = (($rangeMax - $rangeMin) / $totalRange) * 100;
                 ?>
-                <a href="javascript:void(0);" class="bucket-link" style="width: <?= $escaper->escapeHtmlAttr($bucketWidth) ?>%" data-rangemin="<?= $escaper->escapeHtmlAttr($rangeMin) ?>" data-rangemax="<?= $escaper->escapeHtmlAttr($rangeMax) ?>">
+                <a tabindex="-1" href="javascript:void(0);" class="bucket-link" style="width: <?= $escaper->escapeHtmlAttr($bucketWidth) ?>%" data-rangemin="<?= $escaper->escapeHtmlAttr($rangeMin) ?>" data-rangemax="<?= $escaper->escapeHtmlAttr($rangeMax) ?>">
                     <div class="bucket-range" style="height: <?= $escaper->escapeHtmlAttr($bucketHeight) ?>px;">
                     </div>
                 </a>
@@ -90,6 +90,7 @@ $clickpointCounter = 0;
                    id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-min"
                    name="<?= $escaper->escapeHtmlAttr($urlKey) ?>-min"
                    value="<?= $escaper->escapeHtmlAttr($currentMinValue) ?>"
+                   aria-label="<?= $escaper->escapeHtmlAttr(__('Minimum value')) ?>"
             >
         </div>
         <div class="slider-max-wrapper">
@@ -99,6 +100,7 @@ $clickpointCounter = 0;
                    id="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
                    name="<?= $escaper->escapeHtmlAttr($urlKey) ?>-max"
                    value="<?= $escaper->escapeHtmlAttr($currentMaxValue) ?>"
+                   aria-label="<?= $escaper->escapeHtmlAttr(__('Maximum value')) ?>"
             >
         </div>
         <input type="hidden"

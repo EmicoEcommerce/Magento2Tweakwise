@@ -21,13 +21,13 @@
                        name="tweakwise.catalog.linked.product.list.item"
                        template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
                        ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
-                <block class="Magento\Framework\View\Element\Template" name="magento2tweakwise.analytics" template="Tweakwise_Magento2Tweakwise::analytics.phtml" ifconfig="tweakwise/general/analytics_enabled">
-                    <arguments>
-                        <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
-                    </arguments>
-                </block>
             </block>
         </referenceContainer>
+        <referenceBlock name="tweakwise.analytics">
+            <arguments>
+                <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
+            </arguments>
+        </referenceBlock>
         <referenceBlock name="category.products.list">
             <arguments>
                 <argument name="view_model_product_list_item" xsi:type="object">

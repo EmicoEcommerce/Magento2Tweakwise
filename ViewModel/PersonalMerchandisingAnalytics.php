@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
@@ -18,18 +19,18 @@ use Magento\Framework\App\RequestInterface;
 class PersonalMerchandisingAnalytics implements ArgumentInterface
 {
     /**
-     * PersonalMerchandisingAnalytics constructor.
-     *
      * @param Config $tweakwiseConfig
      * @param Helper $helper
      * @param StoreManagerInterface $storeManager
      * @param RequestInterface $request
+     * @param Json $jsonSerializer
      */
     public function __construct(
         private readonly Config $tweakwiseConfig,
         private readonly Helper $helper,
         private readonly StoreManagerInterface $storeManager,
-        private readonly RequestInterface $request
+        private readonly RequestInterface $request,
+        private readonly Json $jsonSerializer,
     ) {
     }
 
@@ -101,18 +102,25 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     }
 
     /**
-     * Get the value based on the analytics type.
-     *
-     * @param string $analyticsType
+     * @param array $analyticsTypes
      * @return string
      */
-    public function getValue(string $analyticsType): string
+    public function getEventsData(array $analyticsTypes): string
     {
-        return match ($analyticsType) {
-            'product'   => $this->getProductKey(),
-            'search'    => $this->getSearchQuery(),
-            'itemclick' => $this->getTwRequestId(),
-            default     => '',
-        };
+        $map = [
+            'product'       => fn() => $this->getProductKey(),
+            'search'        => fn() => $this->getSearchQuery(),
+            'session_start' => fn() => 'session_start',
+        ];
+
+        $eventsData = array_map(
+            fn($type) => [
+                'type'  => $type,
+                'value' => ($map[$type] ?? fn() => '')(),
+            ],
+            $analyticsTypes
+        );
+
+        return $this->jsonSerializer->serialize($eventsData);
     }
 }

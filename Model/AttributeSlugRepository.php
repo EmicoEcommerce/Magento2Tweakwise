@@ -77,32 +77,32 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
     public function save(AttributeSlugInterface $attributeSlug): AttributeSlugInterface
     {
         try {
-            //check for existing slugs with the same slug
-            try {
-                /** @var AttributeSlug $existingSlug */
-                $existingSlug = $this->findBySlug($attributeSlug->getSlug(), $attributeSlug->getStoreId());
+            $baseSlug = $attributeSlug->getSlug();
+            $storeId = $attributeSlug->getStoreId();
 
-                if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
-                    //same attribute, no need to change anything
-                    return $attributeSlug;
-                }
+            $newSlug = $baseSlug;
+            $counter = 0;
 
-                //slug exists, check if it is not the current attribute saved
-                $newSlug = $attributeSlug->getSlug();
-                $counter = 0;
-                while ($newSlug === $this->findBySlug($newSlug, $attributeSlug->getStoreId())->getSlug()) {
+            while (true) {
+                try {
+                    /** @var AttributeSlug $existingSlug */
+                    $existingSlug = $this->findBySlug($newSlug, $storeId);
+
+                    if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
+                        return $attributeSlug;
+                    }
+
                     $counter++;
-                    $newSlug = sprintf('%s-%s', $attributeSlug->getSlug(), $counter);
+                    $newSlug = sprintf('%s-%s', $baseSlug, $counter);
+                } catch (NoSuchEntityException $e) {
+                    break;
                 }
-            } catch (NoSuchEntityException $exception) {
-                //slug doesnt exist. Save value
-                if (isset($newSlug)) {
-                    $attributeSlug->setSlug($newSlug);
-                }
-
-                /** @var AttributeSlug $attributeSlug */
-                $this->resource->save($attributeSlug);
             }
+
+            $attributeSlug->setSlug($newSlug);
+            $this->resource->save($attributeSlug);
+
+            return $attributeSlug;
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(
                 __(
@@ -111,8 +111,6 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                 )
             );
         }
-
-        return $attributeSlug;
     }
 
     /**
@@ -182,7 +180,7 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
     {
         $collection = $this->collectionFactory->create()
             ->addFieldToFilter('slug', $slug)
-            ->addFieldToFilter('store_id', $storeId);
+            ->addFieldToFilter('store_id', (string)$storeId);
         if (!$collection->getSize()) {
             throw new NoSuchEntityException(__('No slug found for attribute "%1".', $slug));
         }

@@ -67,9 +67,9 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
      *
      * @param int $productId
      * @param int $storeId
-     * @return int
+     * @return string
      */
-    private function getGroupedProductId(int $productId, int $storeId): int
+    private function getGroupedProductId(int $productId, int $storeId): string
     {
         try {
             $product = $this->productRepository->getById($productId);

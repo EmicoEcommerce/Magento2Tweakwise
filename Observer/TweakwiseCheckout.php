@@ -86,7 +86,7 @@ class TweakwiseCheckout implements ObserverInterface
 
         // @phpstan-ignore-next-line
         foreach ($items as $item) {
-            $productTwId[(int)$item->getProductId()] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
+            $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
         }
 
         // @phpstan-ignore-next-line

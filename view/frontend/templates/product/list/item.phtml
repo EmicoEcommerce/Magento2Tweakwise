@@ -24,10 +24,11 @@ $pos = $block->getData('pos');
 $_helper = $block->getData('output_helper');
 $templateType = $block->getData('template_type');
 $showDescription = $block->getData('show_description');
+$productId = $_product->getData('tw_id') ?: $_product->getId();
 ?>
 <li class="item product product-item">
     <div class="product-item-info"
-         id="product-item-info_<?=  $escaper->escapeHtmlAttr($_product->getId()) ?>"
+         id="product-item-info_<?=  $escaper->escapeHtmlAttr($productId) ?>"
          data-container="product-<?=  $escaper->escapeHtmlAttr($viewMode) ?>">
         <?php
         $productImage = $block->getImage($_product, $imageDisplayArea);

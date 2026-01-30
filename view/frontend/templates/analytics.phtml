@@ -1,12 +1,17 @@
 <?php
 
 use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
 use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
+use Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics;
 
-/** @var \Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics $viewModel */
+/** @var $block Template */
+/** @var $escaper Escaper */
+
+/** @var PersonalMerchandisingAnalytics $viewModel */
 $viewModel = $block->getData('viewModel');
-$analyticsType = $block->getData('analyticsType');
-$value = $viewModel->getValue((string)$analyticsType);
+$analyticsTypes = $block->getData('analyticsTypes');
+$eventsData = $viewModel->getEventsData($analyticsTypes);
 
 /** @var NavigationConfig $tweakwiseNavigationConfig */
 $tweakwiseNavigationConfig = $block->getData('tweakwise_navigation_config');
@@ -17,8 +22,7 @@ $jsFormConfig = $tweakwiseNavigationConfig ? json_decode($tweakwiseNavigationCon
     {
         "*": {
             "Tweakwise_Magento2Tweakwise/js/analytics": {
-                "value": "<?= $escaper->escapeHtmlAttr($value ?? ''); ?>",
-                "type": "<?= $escaper->escapeHtmlAttr($analyticsType ?? ''); ?>",
+                "eventsData": <?= $eventsData ?>,
                 "bindItemClickEventsConfig": {
                     "productListSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->productListSelector ?? ''); ?>",
                     "productSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->productSelector ?? ''); ?>",

@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
 use Exception;
+use Magento\Catalog\Model\Product\Type;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType;
@@ -184,21 +185,25 @@ class Collection extends AbstractCollection
      */
     protected function applyProductImages(): AbstractCollection
     {
-        foreach ($this->getProductImages() as $productId => $productImageUrl) {
+        foreach ($this->getProductData() as $productId => $data) {
             if (
                 !isset($this->_items[$productId]) ||
-                $this->_items[$productId]->getTypeId() !== Configurable::TYPE_CODE
+                $this->_items[$productId]->getTypeId() === Type::TYPE_SIMPLE
             ) {
                 continue;
             }
 
-            if (empty($productImageUrl)) {
+            if (!empty($data['tw_id'])) {
+                $this->_items[$productId]->setData('tw_id', $data['tw_id']);
+            }
+
+            if (empty($data['image']) || $this->_items[$productId]->getTypeId() !== Configurable::TYPE_CODE) {
                 continue;
             }
 
-            $this->_items[$productId]->setData('image', $productImageUrl);
-            $this->_items[$productId]->setData('small_image', $productImageUrl);
-            $this->_items[$productId]->setData('thumbnail', $productImageUrl);
+            $this->_items[$productId]->setData('image', $data['image']);
+            $this->_items[$productId]->setData('small_image', $data['image']);
+            $this->_items[$productId]->setData('thumbnail', $data['image']);
         }
 
         return $this;
@@ -249,7 +254,7 @@ class Collection extends AbstractCollection
     /**
      * @return array
      */
-    protected function getProductImages(): array
+    protected function getProductData(): array
     {
         try {
             $response = $this->navigationContext->getResponse();
@@ -258,6 +263,6 @@ class Collection extends AbstractCollection
         }
 
         // @phpstan-ignore-next-line
-        return $response->getProductImages() ?? [];
+        return $response->getProductData() ?? [];
     }
 }

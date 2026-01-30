@@ -175,11 +175,6 @@
                 <item name="webp" xsi:type="string">.webp</item>
                 <item name="gif" xsi:type="string">.gif</item>
             </argument>
-        </arguments>
-    </type>
-
-    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\PathSlugStrategy">
-        <arguments>
             <argument name="rewriteResolvers" xsi:type="array">
                 <item name="category" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\RewriteResolver\CategoryResolver</item>
             </argument>
@@ -253,6 +248,16 @@
     <type name="Tweakwise\Magento2Tweakwise\Observer\TweakwiseCheckout">
         <arguments>
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest</argument>
+        </arguments>
+    </type>
+    <type name="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToCartEvent">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
+        </arguments>
+    </type>
+    <type name="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToWishlistEvent">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
         </arguments>
     </type>
     <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\Analytics">

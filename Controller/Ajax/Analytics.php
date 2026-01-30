@@ -5,12 +5,15 @@ namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\AnalyticsRequest;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultInterface;
+use Tweakwise\Magento2Tweakwise\Service\Event\SessionStartEventService;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
 use Exception;
@@ -21,16 +24,15 @@ use InvalidArgumentException;
 class Analytics extends Action
 {
     /**
-     * Constructor.
-     *
-     * @param Context                     $context
-     * @param JsonFactory                 $resultJsonFactory
-     * @param Client                      $client
+     * @param Context $context
+     * @param JsonFactory $resultJsonFactory
+     * @param Client $client
      * @param PersonalMerchandisingConfig $config
-     * @param RequestFactory              $requestFactory
-     * @param Helper                      $helper
-     * @param StoreManagerInterface       $storeManager
-     * @param JsonSerializer              $jsonSerializer
+     * @param RequestFactory $requestFactory
+     * @param Helper $helper
+     * @param StoreManagerInterface $storeManager
+     * @param JsonSerializer $jsonSerializer
+     * @param SessionStartEventService $sessionStartEventService
      */
     public function __construct(
         Context $context,
@@ -40,7 +42,8 @@ class Analytics extends Action
         private readonly RequestFactory $requestFactory,
         private readonly Helper $helper,
         private readonly StoreManagerInterface $storeManager,
-        private readonly JsonSerializer $jsonSerializer
+        private readonly JsonSerializer $jsonSerializer,
+        private readonly SessionStartEventService $sessionStartEventService,
     ) {
         parent::__construct($context);
     }
@@ -58,28 +61,24 @@ class Analytics extends Action
         }
 
         $request = $this->getRequest();
-        $type = $this->getRequest()->getParam('type');
-        $value = $this->getRequest()->getParam('value');
+        $eventsData = $request->getParam('eventsData');
 
         //hyva theme
         // @phpstan-ignore-next-line
-        if (empty($type) && !empty($request->getContent())) {
+        if (empty($eventsData) && !empty($request->getContent())) {
             // @phpstan-ignore-next-line
             $content = $this->jsonSerializer->unserialize($request->getContent());
-            $type = $content['type'] ?? null;
-            $value = $content['value'] ?? null;
+            $eventsData = $content['eventsData'] ?? null;
         }
 
-        if (empty($type) || empty($value)) {
+        if (empty($eventsData)) {
             return $result->setData(['success' => false, 'message' => 'Missing required parameters.']);
         }
 
-        $profileKey = $this->config->getProfileKey();
-        $tweakwiseRequest = $this->requestFactory->create();
-        $tweakwiseRequest->setProfileKey($profileKey);
-
         try {
-            $this->processAnalyticsRequest($type, $value);
+            foreach ($eventsData as $eventData) {
+                $this->processAnalyticsRequest($eventData);
+            }
             return $result->setData(['success' => true]);
         } catch (Exception $e) {
             return $result->setData(['success' => false, 'message' => $e->getMessage()]);
@@ -91,18 +90,17 @@ class Analytics extends Action
 
     /**
      * Process the analytics request based on type and value.
-     *
-     * @param string $type
-     * @param string $value
-     *
-     * @throws InvalidArgumentException
+     * @param array $eventData
+     * @throws NoSuchEntityException
      */
-    private function processAnalyticsRequest(string $type, string $value): void
+    private function processAnalyticsRequest(array $eventData): void
     {
         $profileKey = $this->config->getProfileKey();
+        /** @var AnalyticsRequest $tweakwiseRequest */
         $tweakwiseRequest = $this->requestFactory->create();
         $tweakwiseRequest->setProfileKey($profileKey);
-        $storeId = (int)$this->storeManager->getStore()->getId();
+        $type = $eventData['type'];
+        $value = $eventData['value'];
 
         switch ($type) {
             case 'product':
@@ -112,7 +110,14 @@ class Analytics extends Action
                 $this->handleSearchType($tweakwiseRequest, $value);
                 break;
             case 'itemclick':
-                $this->handleItemClickType($tweakwiseRequest, $value, $storeId);
+                $this->handleItemClickType($tweakwiseRequest, $value, $eventData['requestId']);
+                break;
+            case 'session_start':
+                if ($this->sessionStartEventService->isSessionStartEventSent()) {
+                    return;
+                }
+
+                $this->sessionStartEventService->handleSessionStartType($tweakwiseRequest);
                 break;
             default:
                 throw new InvalidArgumentException('Invalid type parameter.');
@@ -123,59 +128,53 @@ class Analytics extends Action
 
     /**
      * @param Request $tweakwiseRequest
-     * @param string  $value
+     * @param string $productKey
      *
      * @return void
      */
-    private function handleProductType(Request $tweakwiseRequest, string $value): void
+    private function handleProductType(Request $tweakwiseRequest, string $productKey): void
     {
-        $tweakwiseRequest->setParameter('productKey', $value);
+        $tweakwiseRequest->setParameter('SessionKey', $this->sessionStartEventService->getSessionKey());
+        $tweakwiseRequest->setParameter('ProductKey', $productKey);
         $tweakwiseRequest->setPath('pageview');
     }
 
     /**
      * @param Request $tweakwiseRequest
-     * @param string  $value
+     * @param string $searchTerm
      *
      * @return void
      */
-    private function handleSearchType(Request $tweakwiseRequest, string $value): void
+    private function handleSearchType(Request $tweakwiseRequest, string $searchTerm): void
     {
-        $tweakwiseRequest->setParameter('searchTerm', $value);
+        $tweakwiseRequest->setParameter('SessionKey', $this->sessionStartEventService->getSessionKey());
+        $tweakwiseRequest->setParameter('SearchTerm', $searchTerm);
         $tweakwiseRequest->setPath('search');
     }
 
     /**
      * @param Request $tweakwiseRequest
-     * @param string  $value
-     * @param int     $storeId
-     *
-     * @throws InvalidArgumentException
+     * @param string $itemId
+     * @param string|null $requestId
      * @return void
+     * @throws NoSuchEntityException
      */
-    private function handleItemClickType(Request $tweakwiseRequest, string $value, int $storeId): void
+    private function handleItemClickType(Request $tweakwiseRequest, string $itemId, ?string $requestId): void
     {
-        $twRequestId = $this->getRequest()->getParam('requestId');
+        $storeId = (int)$this->storeManager->getStore()->getId();
 
-        //hyva theme
-        // @phpstan-ignore-next-line
-        if (empty($twRequestId) && !empty($this->getRequest()->getContent())) {
-            // @phpstan-ignore-next-line
-            $content = $this->jsonSerializer->unserialize($this->getRequest()->getContent());
-            $twRequestId = $content['requestId'] ?? null;
-        }
-
-        if (empty($twRequestId)) {
+        if (empty($requestId)) {
             throw new InvalidArgumentException('Missing requestId for itemclick.');
         }
 
-        if (ctype_digit($value)) {
+        if (ctype_digit($itemId)) {
             // @phpstan-ignore-next-line
-            $value = $this->helper->getTweakwiseId($storeId, $value);
+            $itemId = $this->helper->getTweakwiseId($storeId, $itemId);
         }
 
-        $tweakwiseRequest->setParameter('requestId', $twRequestId);
-        $tweakwiseRequest->setParameter('itemId', $value);
+        $tweakwiseRequest->setParameter('SessionKey', $this->sessionStartEventService->getSessionKey());
+        $tweakwiseRequest->setParameter('RequestId', $requestId);
+        $tweakwiseRequest->setParameter('ItemId', $itemId);
         $tweakwiseRequest->setPath('itemclick');
     }
 }

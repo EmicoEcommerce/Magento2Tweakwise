@@ -25,6 +25,8 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
 <div data-mage-init='<?=$escaper->escapeHtmlAttr($block->getJsSortConfig())?>'>
     <?php if ($block->isSearchable()): ?>
         <input
+            aria-hidden="true"
+            tabindex="-1"
             data-max-visible="<?= $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>"
             type="text"
             class="tw_filtersearch js-skip-submit"
@@ -40,13 +42,15 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
                     data-original-sort="<?=$escaper->escapeHtmlAttr($index);?>"
                 <?php endif;?>
             >
-                <a <?=$block->renderAnchorHtmlTagAttributes($item);?>>
+                <a aria-hidden="true" tabindex="-1" <?=$block->renderAnchorHtmlTagAttributes($item);?>>
                     <?php $cssId = $item->getCssId();?>
                     <?php if ($showCheckBox): ?>
                         <input id="<?=$escaper->escapeHtmlAttr($cssId)?>"
-                               name="<?=$escaper->escapeHtmlAttr($item->getFilter()->getFacet()->getFacetSettings()->getUrlKey())?>[]"
+                               name="<?=$escaper->escapeHtmlAttr($item->getFilter()->getUrlKey())?>[]"
                                type="checkbox" <?=($item->isSelected() ? 'checked="checked"' : '')?>
                                value="<?=$escaper->escapeHtmlAttr($item->getLabel())?>"
+                               tabindex="0"
+                               aria-labelledby="<?= $escaper->escapeHtmlAttr($item->getFilter()->getUrlKey()) ?> <?= $escaper->escapeHtmlAttr($cssId) ?>"
                         >
 
                         <label for="<?= $escaper->escapeHtmlAttr($cssId)?>">
@@ -74,7 +78,7 @@ $shouldDisplayProductCountLayer = $block->shouldDisplayProductCountOnLayer();
     </ol>
 
     <?php if ($hasHiddenItems): ?>
-        <a class="more-items"><?=$escaper->escapeHtml(__($block->getMoreItemText()))?></a>
-        <a class="less-items default-hidden"><?=$escaper->escapeHtml(__($block->getLessItemText()))?></a>
+        <a role="button" tabindex="0" class="more-items"><?=$escaper->escapeHtml(__($block->getMoreItemText()))?></a>
+        <a role="button" tabindex="0" class="less-items default-hidden"><?=$escaper->escapeHtml(__($block->getLessItemText()))?></a>
     <?php endif; ?>
 </div>

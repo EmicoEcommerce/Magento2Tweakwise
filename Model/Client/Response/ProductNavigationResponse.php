@@ -89,20 +89,27 @@ class ProductNavigationResponse extends Response
     /**
      * @return array
      */
-    public function getProductImages(): array
+    public function getProductData(): array
     {
-        $productImages = [];
+        $productData = [];
         // @phpstan-ignore-next-line
         foreach ($this->getItems() as $item) {
-            if (!$item->getImage()) {
-                continue;
+            $data = [];
+            if ($item->getImage()) {
+                // Remove domain and media path when full url is used
+                $imageUrl = preg_replace('#^.*?/catalog/product/#', '', $item->getImage());
+                $data['image'] = $imageUrl;
             }
 
-            // Remove domain and media path when full url is used
-            $imageUrl = preg_replace('#^.*?/catalog/product/#', '', $item->getImage());
-            $productImages[$this->helper->getStoreId($item->getId())] = $imageUrl;
+            $twId = $item->getDataValue('tw_id');
+
+            if (!empty($twId)) {
+                $data['tw_id'] = $twId;
+            }
+
+            $productData[$this->helper->getStoreId($item->getId())] = $data;
         }
 
-        return $productImages;
+        return $productData;
     }
 }

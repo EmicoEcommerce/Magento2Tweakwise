@@ -7,10 +7,12 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\State;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Stdlib\Cookie\CookieSizeLimitReachedException;
+use Magento\Framework\Stdlib\Cookie\FailureToSendException;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
-use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Store\Model\Store;
 use Magento\Framework\Exception\LocalizedException;
@@ -18,6 +20,11 @@ use Magento\Framework\Math\Random;
 
 class PersonalMerchandisingConfig extends Config
 {
+    /**
+     * @var string|null
+     */
+    private ?string $profileKey = null;
+
     /**
      * Constructor.
      *
@@ -50,14 +57,17 @@ class PersonalMerchandisingConfig extends Config
     /**
      * @param Store|null $store
      * @return bool
-     * @throws LocalizedException
      */
     public function isAnalyticsEnabled(?Store $store = null): bool
     {
-        return (bool)$this->getStoreConfig(
-            'tweakwise/general/analytics_enabled',
-            $store
-        );
+        try {
+            return (bool)$this->getStoreConfig(
+                'tweakwise/general/analytics_enabled',
+                $store
+            );
+        } catch (LocalizedException $e) {
+            return false;
+        }
     }
 
     /**
@@ -65,23 +75,33 @@ class PersonalMerchandisingConfig extends Config
      */
     public function getProfileKey(): ?string
     {
-        $profileKey = $this->cookieManager->getCookie(
-            $this->getPersonalMerchandisingCookieName(),
-            null
-        );
-
-        if ($this->isAnalyticsEnabled()) {
-            if ($profileKey === null) {
-                $profileKey = $this->generateProfileKey();
-                $this->cookieManager->setPublicCookie(
-                    $this->getPersonalMerchandisingCookieName(),
-                    $profileKey,
-                    $this->getCookieMetadata()
-                );
-            }
+        if (!$this->isAnalyticsEnabled()) {
+            return null;
         }
 
-        return $profileKey;
+        if ($this->profileKey) {
+            return $this->profileKey;
+        }
+
+        $profileKey = $this->cookieManager->getCookie($this->getPersonalMerchandisingCookieName());
+
+        if ($profileKey) {
+            $this->profileKey = $profileKey;
+            return $this->profileKey;
+        }
+
+        $this->profileKey = $this->generateProfileKey();
+        try {
+            $this->cookieManager->setPublicCookie(
+                $this->getPersonalMerchandisingCookieName(),
+                $this->profileKey,
+                $this->getCookieMetadata()
+            );
+        } catch (InputException | CookieSizeLimitReachedException | FailureToSendException $e) {
+            return null;
+        }
+
+        return $this->profileKey;
     }
 
    /**

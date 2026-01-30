@@ -7,11 +7,11 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
                 return;
             }
 
-            const product = $(event.target).closest(`${config.productSelector}`)[0];
+            const product = $(event.target).closest(`.${config.productSelector}`)[0];
             let productId;
 
             if (!product || !product.id) {
-                const visual = $(event.target).closest('.visual');
+                let visual = $(event.target).closest('.visual');
                 if (!visual.length) {
                     const link = $(event.target).closest('a');
                     if (link.length) {
@@ -36,9 +36,13 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
                 url: config.analyticsEndpoint,
                 type: 'POST',
                 data: {
-                    type: 'itemclick',
-                    value: productId,
-                    requestId: config.twRequestId
+                    eventsData: [
+                        {
+                            type: 'itemclick',
+                            value: productId,
+                            requestId: config.twRequestId
+                        }
+                    ]
                 },
                 cache: false,
                 success: function(response) {
@@ -56,11 +60,9 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
     return function(config) {
         $(document).ready(function() {
 
-            // send item or search view event
-            if (config.type && config.value) {
+            if (config.eventsData) {
                 var requestData = {
-                    type: config.type,
-                    value: config.value
+                    eventsData: config.eventsData
                 };
 
                 $.ajax({

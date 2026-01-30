@@ -133,7 +133,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                     : 'path',
                 'twRequestId' => $this->currentNavigationContext->getTweakwiseRequestId(),
                 'analyticsEvents' => $this->config->isAnalyticsEnabled(),
-                'productSelector' => '.product-item-info',
+                'productSelector' => 'product-item-info',
                 'analyticsEndpoint' => $this->getAnalyticsEndPoint(),
             ],
         ];

@@ -56,19 +56,10 @@ class AnalyticsRequest extends Request
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getProfileKey(): string
+    public function getProfileKey(): ?string
     {
-        // @phpstan-ignore-next-line
-        $profileKey = $this->getCookie($this->config->getPersonalMerchandisingCookieName());
-        if (!$profileKey) {
-            // @phpstan-ignore-next-line
-            $profileKey = $this->generateProfileKey();
-            // @phpstan-ignore-next-line
-            $this->setCookie('profileKey', $profileKey);
-        }
-
-        return $profileKey;
+        return $this->getParameter('ProfileKey');
     }
 }

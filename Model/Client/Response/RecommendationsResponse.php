@@ -52,8 +52,22 @@ class RecommendationsResponse extends Response
         if (!empty($recommendation) && !isset($recommendation['items'])) {
             // In this case multiple recommendations are given (group code)
             $recommendations = $recommendation;
+            $items = [];
             foreach ($recommendations as $recommendationEntry) {
                 $this->setData($recommendationEntry);
+                $currentItems = $this->data['items'] ?? [];
+
+                foreach ($currentItems as $currentItem) {
+                    if (isset($items[$currentItem->getId()])) {
+                        continue;
+                    }
+
+                    $items[$currentItem->getId()] = $currentItem;
+                }
+            }
+
+            if (!empty($items)) {
+                $this->data['items'] = $items;
             }
 
             return;
@@ -67,11 +81,12 @@ class RecommendationsResponse extends Response
      */
     public function getItems(): array
     {
+        if (!$this->hasValue('items')) {
+            return [];
+        }
+        
         if ($this->config->isGroupedProductsEnabled() && !$this->proccessedGroupedProducts) {
             // Manually group items since recommendations doesn't have a grouped call yet.
-            if (!$this->hasValue('items')) {
-                return [];
-            }
 
             // @phpstan-ignore-next-line
             $items = parent::getItems();

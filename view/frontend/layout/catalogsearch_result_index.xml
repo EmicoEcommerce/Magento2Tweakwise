@@ -15,18 +15,20 @@
             </block>
         </referenceBlock>
         <referenceBlock name="content">
-            <block class="Magento\Framework\View\Element\Template" name="magento2tweakwise.analytics" template="Tweakwise_Magento2Tweakwise::analytics.phtml" ifconfig="tweakwise/general/analytics_enabled">
-                <arguments>
-                    <argument name="viewModel" xsi:type="object">Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics</argument>
-                    <argument name="analyticsType" xsi:type="string">search</argument>
-                    <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
-                </arguments>
-            </block>
             <block ifconfig="tweakwise/search/searchbanner" before="-" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.list.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.list.top.phtml">
                 <arguments>
                     <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>
                 </arguments>
             </block>
+        </referenceBlock>
+        <referenceBlock name="tweakwise.analytics">
+            <arguments>
+                <argument name="analyticsTypes" xsi:type="array">
+                    <item name="session_start" xsi:type="string">session_start</item>
+                    <item name="search" xsi:type="string">search</item>
+                </argument>
+                <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
+            </arguments>
         </referenceBlock>
         <referenceBlock name="search.result">
             <block ifconfig="tweakwise/search/searchbanner" before="-" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.products.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.products.top.phtml">

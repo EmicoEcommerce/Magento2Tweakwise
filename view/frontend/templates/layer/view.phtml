@@ -48,6 +48,8 @@ if (!$block->canShowBlock()) {
             <div class="block-actions filter-actions">
                 <a
                     href="<?=$escaper->escapeUrl($block->getClearUrl()) ?>"
+                    tabindex="0"
+                    role="button"
                     class="action clear filter-clear"><span><?=$escaper->escapeHtml(__('Clear All'))?></span>
                 </a>
             </div>
@@ -73,12 +75,23 @@ if (!$block->canShowBlock()) {
                                     "openedState": "active", "collapsible": true, "active": <?=$escaper->escapeHtmlAttr($filterActive)?>
                                 }
                             }'>
-                            <div data-role="collapsible" class="filter-options-item">
+                            <legend style="display: none" id="<?= $escaper->escapeHtmlAttr($filter->getUrlKey()) ?>" class="sr-only"><?= $escaper->escapeHtml($filter->getName())?></legend>
+                            <div
+                                data-role="collapsible"
+                                class="filter-options-item"
+
+                            >
                                 <div data-role="title" class="filter-options-title">
                                     <?=$escaper->escapeHtml(__($filter->getName()))?>
                                     <?php $tooltip = $filter->getTooltip(); ?>
                                     <?php if ($tooltip): ?>
-                                        <span class="tooltip" data-tooltip="<?=$escaper->escapeHtmlAttr($tooltip)?>"><span>i</span></span>
+                                        <span
+                                            class="tooltip"
+                                            tabindex="-1"
+                                            aria-label="<?=$escaper->escapeHtmlAttr($tooltip)?>"
+                                            data-tooltip="<?=$escaper->escapeHtmlAttr($tooltip)?>"
+                                        >
+                                            <span>i</span></span>
                                     <?php endif; ?>
                                 </div>
                                 <?php
@@ -91,7 +104,11 @@ if (!$block->canShowBlock()) {
                         </div>
                     <?php else: ?>
                         <div class="filter-options-item">
-                            <div class="filter-options-title filter-options-title-non-collapsible">
+                            <div
+                                class="filter-options-title filter-options-title-non-collapsible"
+                                tabindex="0"
+                                aria-label="<?= $escaper->escapeHtmlAttr(__('Expand filter options for %1', $filter->getName())) ?>"
+                            >
                                 <?=$escaper->escapeHtml(__($filter->getName()))?>
                             </div>
                             <div class="filter-options-content">
@@ -101,7 +118,12 @@ if (!$block->canShowBlock()) {
                     <?php endif; ?>
                     <?php if ($renderFilterButton): ?>
                         <div class="show-items-link">
-                            <button type="button" class="btn btn-primary btn-block js-btn-filter">
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-block js-btn-filter"
+                                tabindex="0"
+                                aria-label="<?= $escaper->escapeHtmlAttr(__(sprintf('Show %s items', $block->getLayer()->getProductCount()))); ?>"
+                            >
                                 <?= $escaper->escapeHtml(__(sprintf('Show %s items', $block->getLayer()->getProductCount()))); ?>
                             </button>
                         </div>

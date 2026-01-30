@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\RequestInterface;
+use Magento\Catalog\Model\Product\Type;
+use Magento\GroupedProduct\Model\Product\Type\Grouped;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Class PersonalMerchandisingAnalytics
@@ -18,18 +24,20 @@ use Magento\Framework\App\RequestInterface;
 class PersonalMerchandisingAnalytics implements ArgumentInterface
 {
     /**
-     * PersonalMerchandisingAnalytics constructor.
-     *
      * @param Config $tweakwiseConfig
      * @param Helper $helper
      * @param StoreManagerInterface $storeManager
      * @param RequestInterface $request
+     * @param Json $jsonSerializer
+     * @param ProductRepositoryInterface $product
      */
     public function __construct(
         private readonly Config $tweakwiseConfig,
         private readonly Helper $helper,
         private readonly StoreManagerInterface $storeManager,
-        private readonly RequestInterface $request
+        private readonly RequestInterface $request,
+        private readonly Json $jsonSerializer,
+        private readonly ProductRepositoryInterface $productRepository,
     ) {
     }
 
@@ -45,6 +53,46 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
 
         if (!$productId) {
             return '0';
+        }
+
+        if (!$this->tweakwiseConfig->isGroupedProductsEnabled()) {
+            return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+        }
+
+        return $this->getGroupedProductId((int)$productId, (int)$storeId);
+    }
+
+    /**
+     * Get the grouped product ID.
+     *
+     * @param int $productId
+     * @param int $storeId
+     * @return string
+     */
+    private function getGroupedProductId(int $productId, int $storeId): string
+    {
+        try {
+            $product = $this->productRepository->getById($productId);
+            if ($product->getTypeId() === Type::TYPE_SIMPLE) {
+                return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+            }
+
+            match ($product->getTypeId()) {
+                Configurable::TYPE_CODE => $associatedProducts = $product->getTypeInstance()->getUsedProducts($product),
+                Grouped::TYPE_CODE => $associatedProducts = $product->getTypeInstance()->getAssociatedProducts($product),
+                Type::TYPE_BUNDLE => $associatedProducts = $product->getTypeInstance()->getSelectionsCollection(
+                    $product->getTypeInstance()->getOptionsIds($product),
+                    $product
+                ),
+                default => $associatedProducts = [],
+            };
+
+            if (!empty($associatedProducts)) {
+                $firstAssociatedProduct = reset($associatedProducts);
+                $productId = $firstAssociatedProduct->getId();
+            }
+        } catch (NoSuchEntityException $e) {
+            // Do nothing
         }
 
         return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
@@ -101,18 +149,25 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     }
 
     /**
-     * Get the value based on the analytics type.
-     *
-     * @param string $analyticsType
+     * @param array $analyticsTypes
      * @return string
      */
-    public function getValue(string $analyticsType): string
+    public function getEventsData(array $analyticsTypes): string
     {
-        return match ($analyticsType) {
-            'product'   => $this->getProductKey(),
-            'search'    => $this->getSearchQuery(),
-            'itemclick' => $this->getTwRequestId(),
-            default     => '',
-        };
+        $map = [
+            'product'       => fn() => $this->getProductKey(),
+            'search'        => fn() => $this->getSearchQuery(),
+            'session_start' => fn() => 'session_start',
+        ];
+
+        $eventsData = array_map(
+            fn($type) => [
+                'type'  => $type,
+                'value' => ($map[$type] ?? fn() => '')(),
+            ],
+            $analyticsTypes
+        );
+
+        return $this->jsonSerializer->serialize($eventsData);
     }
 }

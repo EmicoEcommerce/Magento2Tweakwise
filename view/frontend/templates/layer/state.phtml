@@ -43,6 +43,9 @@ use Magento\Framework\Escaper;
                     ?>
                     <a class="action remove" href="<?= $escaper->escapeUrl($_filter->getRemoveUrl()) ?>"
                        data-js-filter-id="<?=$escaper->escapeHtmlAttr($block->getActiveFilterCssId($_filter))?>"
+                       tabindex="0"
+                       aria-label="<?=  $escaper->escapeHtmlAttr(__('Remove') . " " . $currentFilterName) ?>"
+                       role="button"
                        title="<?=  $escaper->escapeHtmlAttr(__('Remove') . " " . $currentFilterName)?>">
                         <span><?= $escaper->escapeHtml(__('Remove This Item')) ?></span>
                     </a>

@@ -125,20 +125,7 @@ class Response extends Type
         }
 
         $this->data['items'] = $values;
-        return $this;
-    }
 
-    public function setBlocks(array $blocks): self
-    {
-        $blocks = $this->normalizeArray($blocks, 'block');
-        $items = [];
-
-        foreach ($blocks as $block) {
-            $items = array_merge($items, $block['items'] ?? []);
-        }
-
-        $this->setItems($items);
-        $this->data['blocks'] = $blocks;
         return $this;
     }
 }

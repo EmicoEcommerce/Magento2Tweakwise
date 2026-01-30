@@ -43,9 +43,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
     public function setBlocks(array $blocks): self
     {
         $blocks = $this->normalizeArray($blocks, 'block');
-
-        $items = $this->getItems() ?? []; // Retrieve existing items
-
+        $items = [];
         foreach ($blocks as $block) {
             $blockItems = $block['items'] ?? [];
             $blockItems = $this->normalizeArray($blockItems, 'item');

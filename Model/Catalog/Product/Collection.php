@@ -232,6 +232,13 @@ class Collection extends AbstractCollection
             $visual->setId($item->getValue('itemno'));
             $visual->setImageUrl($item->getImage());
             $visual->setUrl($item->getUrl());
+
+            $visualProperties = $item->getValue('visualproperties');
+            if ($visualProperties) {
+                $visual->setColspan((int)$visualProperties['colspan']);
+                $visual->setRowspan((int)$visualProperties['rowspan']);
+            }
+
             // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
             // @phpstan-ignore-next-line
             $itemPosition = array_search($item, $response->getItems());

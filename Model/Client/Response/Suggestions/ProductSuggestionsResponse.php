@@ -48,7 +48,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
             $blockItems = $block['items'] ?? [];
             $blockItems = $this->normalizeArray($blockItems, 'item');
             foreach ($blockItems as $item) {
-                $items[] = $item; // Append items to preserve all values
+                $items[] = $item;
             }
         }
 

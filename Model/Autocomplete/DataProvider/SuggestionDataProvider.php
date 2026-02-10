@@ -205,7 +205,8 @@ class SuggestionDataProvider implements DataProviderInterface
 
         $blocks = $response->getBlocks() ? $response->getBlocks() : [];
         foreach ($blocks as $suggestionBlock) {
-            $results[] = $this->suggestionBlockItemFactory->create(['block' => $suggestionBlock]);
+            $results[] = $this->suggestionBlockItemFactory->create(['data' => ['block' => $suggestionBlock]]);
+
         }
 
         return $results;

@@ -204,9 +204,25 @@ class SuggestionDataProvider implements DataProviderInterface
         $results = [];
 
         $blocks = $response->getBlocks() ? $response->getBlocks() : [];
+        $products = $this->dataProviderHelper->getProductItems($response);
         foreach ($blocks as $suggestionBlock) {
-            $results[] = $this->suggestionBlockItemFactory->create(['data' => ['block' => $suggestionBlock]]);
+            if (empty($suggestionBlock['items'])) {
+                continue;
+            }
 
+            $items = isset($suggestionBlock['items']['item'][0]) ? $suggestionBlock['items']['item'] : $suggestionBlock['items'];
+
+            foreach ($items as &$item) {
+                foreach ($products as $product) {
+                    if ((string)$item['itemno'] === (string)$product->getProduct()->getData('tweakwise_id')) {
+                        $item = array_merge($item, $product->toArray());
+                    }
+                }
+            }
+            unset($item);
+
+            $suggestionBlock['items'] = $items;
+            $results[] = $this->suggestionBlockItemFactory->create(['data' => ['block' => $suggestionBlock]]);
         }
 
         return $results;

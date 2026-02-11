@@ -24,9 +24,9 @@ use Magento\Framework\Escaper;
             <span class="qs-option-name"><%= data.block.name %></span>
         </li>
 
-        <% var items = Array.isArray(data.block.items.item) ? data.block.items.item : [data.block.items.item]; %>
+        <% var items = (data.block.items.item && Array.isArray(data.block.items.item) && data.block.items.item[0]) ? data.block.items.item : data.block.items; %>
         <% _.each(items, function (item, index) { %>
-            <% if (item.type === 'product') { %>
+            <% if (item && item.type === 'product') { %>
                 <li
                     class="<%- item.row_class %> product-item"
                     id="qs-option-<%- data.index %>-<%- index %>"
@@ -66,6 +66,19 @@ use Magento\Framework\Escaper;
                                 </span>
                             <% } %>
                         </div>
+                    </div>
+                </li>
+            <% } else { %>
+                <li
+                    class="<%- item.row_class %> visual-item"
+                    id="qs-option-<%- data.index %>-<%- index %>"
+                    role="option">
+                    <% if (item.image) { %>
+                        <img class="qs-option-image" src="<%- item.image %>" alt="<%- item.title %>">
+                    <% } %>
+
+                    <div class="qs-option-info-container">
+                        <span class="qs-option-name"><%= item.title %></span>
                     </div>
                 </li>
             <% } %>

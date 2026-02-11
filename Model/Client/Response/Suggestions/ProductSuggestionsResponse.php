@@ -34,6 +34,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
                 'id' => $this->helper->getStoreId($item->getId()),
                 'tweakwise_price' => (float) $item->getPrice(),
                 'tweakwise_final_price' => (float) $item->getFinalPrice(),
+                'tweakwise_id' => $item->getId()
             ];
         }
 
@@ -45,6 +46,9 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
         $blocks = $this->normalizeArray($blocks, 'block');
         $items = [];
         foreach ($blocks as $block) {
+            if (!isset($block['items'])) {
+                continue;
+            }
             $blockItems = $block['items'] ?? [];
             $blockItems = $this->normalizeArray($blockItems, 'item');
             foreach ($blockItems as $item) {

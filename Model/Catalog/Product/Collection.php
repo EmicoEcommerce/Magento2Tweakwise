@@ -302,6 +302,7 @@ class Collection extends AbstractCollection
                 $visual->setRowspan($rowspan);
             }
 
+            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
             // @phpstan-ignore-next-line
             $itemPosition = array_search($item, $response->getItems());
 

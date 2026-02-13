@@ -11,6 +11,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\RedirectType;
 
@@ -98,14 +99,16 @@ class ProductNavigationResponse extends Response
             if ($item->getImage()) {
                 // Remove domain and media path when full url is used
                 $imageUrl = preg_replace('#^.*?/catalog/product/#', '', $item->getImage());
-                $data['image'] = $imageUrl;
+                $data[ItemType::IMAGE] = $imageUrl;
             }
 
-            $twId = $item->getDataValue('tw_id');
-
-            if (!empty($twId)) {
-                $data['tw_id'] = $twId;
+            $tweakwiseId = $item->getTweakwiseId();
+            if (!empty($tweakwiseId)) {
+                $data[ItemType::TWEAKWISE_ID] = $tweakwiseId;
             }
+
+            $data[ItemType::COLSPAN] = $item->getColspan();
+            $data[ItemType::ROWSPAN] = $item->getRowspan();
 
             $productData[$this->helper->getStoreId($item->getId())] = $data;
         }

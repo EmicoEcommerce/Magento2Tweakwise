@@ -10,8 +10,12 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product;
 
 use Exception;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Framework\Exception\LocalizedException;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType as ClientItemType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType;
 use Tweakwise\Magento2Tweakwise\Api\Data\VisualInterface;
@@ -171,42 +175,98 @@ class Collection extends AbstractCollection
         parent::_afterLoad();
 
         $this->applyCollectionSizeValues();
-        if ($this->config->isGroupedProductsEnabled()) {
-            $this->applyProductImages();
-        }
-
+        $this->enrichProducts();
         $this->addVisuals();
 
         return $this;
     }
 
     /**
-     * @return $this
+     * @return AbstractCollection
+     * @throws LocalizedException
      */
-    protected function applyProductImages(): AbstractCollection
+    protected function enrichProducts(): AbstractCollection
     {
-        foreach ($this->getProductData() as $productId => $data) {
+        $productData = $this->getProductData();
+        if (!$productData) {
+            return $this;
+        }
+
+        $isGroupedProductsEnabled = $this->config->isGroupedProductsEnabled();
+        foreach ($productData as $productId => $data) {
+            if (!isset($this->_items[$productId])) {
+                continue;
+            }
+
+            $product = $this->_items[$productId];
+            if (!$product instanceof ProductInterface) {
+                continue;
+            }
+
+            $this->applyVisualProperties($product, $data);
+
             if (
-                !isset($this->_items[$productId]) ||
-                $this->_items[$productId]->getTypeId() === Type::TYPE_SIMPLE
+                !$isGroupedProductsEnabled ||
+                $product->getTypeId() === Type::TYPE_SIMPLE
             ) {
                 continue;
             }
 
-            if (!empty($data['tw_id'])) {
-                $this->_items[$productId]->setData('tw_id', $data['tw_id']);
-            }
+            $this->applyTweakwiseId($product, $data);
 
-            if (empty($data['image']) || $this->_items[$productId]->getTypeId() !== Configurable::TYPE_CODE) {
+            if (empty($data[ClientItemType::IMAGE]) || $product->getTypeId() !== Configurable::TYPE_CODE) {
                 continue;
             }
 
-            $this->_items[$productId]->setData('image', $data['image']);
-            $this->_items[$productId]->setData('small_image', $data['image']);
-            $this->_items[$productId]->setData('thumbnail', $data['image']);
+            $this->applyProductImages($product, $data);
         }
 
         return $this;
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @param array $extraProductData
+     * @return void
+     */
+    protected function applyVisualProperties(ProductInterface $product, array $extraProductData): void
+    {
+        if (!$product instanceof Product) {
+            return;
+        }
+
+        $product->setData(ClientItemType::COLSPAN, $extraProductData[ClientItemType::COLSPAN]);
+        $product->setData(ClientItemType::ROWSPAN, $extraProductData[ClientItemType::ROWSPAN]);
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @param array $extraProductData
+     * @return void
+     */
+    protected function applyTweakwiseId(ProductInterface $product, array $extraProductData): void
+    {
+        if (!$product instanceof Product || empty($extraProductData[ClientItemType::TWEAKWISE_ID])) {
+            return;
+        }
+
+        $product->setData(ClientItemType::TWEAKWISE_ID, $extraProductData[ClientItemType::TWEAKWISE_ID]);
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @param array $extraProductData
+     * @return void
+     */
+    protected function applyProductImages(ProductInterface $product, array $extraProductData): void
+    {
+        if (!$product instanceof Product) {
+            return;
+        }
+
+        $product->setData('image', $extraProductData[ClientItemType::IMAGE]);
+        $product->setData('small_image', $extraProductData[ClientItemType::IMAGE]);
+        $product->setData('thumbnail', $extraProductData[ClientItemType::IMAGE]);
     }
 
     /**
@@ -222,24 +282,26 @@ class Collection extends AbstractCollection
 
         // @phpstan-ignore-next-line
         foreach ($response->getItems() as $item) {
-            if ($item->getValue('type') !== ItemType::VISUAL->value) {
+            if ($item->getType() !== ItemType::VISUAL->value) {
                 continue;
             }
 
             /** @var VisualInterface $visual */
             $visual = $this->visualFactory->create();
             // @phpstan-ignore-next-line
-            $visual->setId($item->getValue('itemno'));
+            $visual->setId($item->getId());
             $visual->setImageUrl($item->getImage());
             $visual->setUrl($item->getUrl());
 
-            $visualProperties = $item->getValue('visualproperties');
-            if ($visualProperties) {
-                $visual->setColspan((int)$visualProperties['colspan']);
-                $visual->setRowspan((int)$visualProperties['rowspan']);
+            $colspan = $item->getColspan();
+            if ($colspan) {
+                $visual->setColspan($colspan);
+            }
+            $rowspan = $item->getRowspan();
+            if ($rowspan) {
+                $visual->setRowspan($rowspan);
             }
 
-            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
             // @phpstan-ignore-next-line
             $itemPosition = array_search($item, $response->getItems());
 

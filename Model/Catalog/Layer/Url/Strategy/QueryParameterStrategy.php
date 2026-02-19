@@ -262,11 +262,16 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
              These two are the only unique parts in this situation and so need to be removed.
              */
 
+            $hadTrailingSlash = substr($url, -1) === '/';
             $explode = explode('/', $url);
 
             // @phpstan-ignore-next-line
             if (is_array($explode)) {
                 $url = implode('/', array_unique($explode));
+
+                if ($hadTrailingSlash && substr($url, -1) !== '/') {
+                    $url .= '/';
+                }
             }
 
             $url = str_replace($this->url->getBaseUrl(), '', $url);

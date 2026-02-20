@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\Console\Command;
 
 use Exception;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Eav\Model\Entity\Attribute\Option;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Console\Cli;
@@ -52,7 +53,6 @@ class RegenerateFilterUrlSlugs extends Command
      * @param OutputInterface $output
      *
      * @return int
-     * @throws LocalizedException
      * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -117,6 +117,7 @@ class RegenerateFilterUrlSlugs extends Command
     {
         $searchCriteria = $this->searchCriteriaBuilder->create();
 
+        /** @var Attribute[] $items */
         $items = $this->attributeRepository
             ->getList(self::ENTITY_TYPE, $searchCriteria)
             ->getItems();
@@ -127,7 +128,7 @@ class RegenerateFilterUrlSlugs extends Command
     }
 
     /**
-     * @param array $option
+     * @param Option $option
      * @param int $storeId
      * @return void
      */

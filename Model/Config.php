@@ -21,6 +21,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\Config\Storage\WriterInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
 
 /**
  * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
@@ -167,8 +168,8 @@ class Config
     public function getGeneralServerUrl(bool $useFallBack = false)
     {
         return $useFallBack
-            ? Client\EndpointManager::FALLBACK_SERVER_URL
-            : Client\EndpointManager::SERVER_URL;
+            ? EndpointManager::FALLBACK_SERVER_URL
+            : EndpointManager::SERVER_URL;
     }
 
     /**

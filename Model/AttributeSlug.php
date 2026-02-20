@@ -39,7 +39,7 @@ class AttributeSlug extends AbstractModel implements AttributeSlugInterface
      * @param string|null $attribute
      * @return void
      */
-    public function setAttribute(?string $attribute)
+    public function setAttribute(?string $attribute): void
     {
         $this->setData(self::ATTRIBUTE, $attribute);
     }

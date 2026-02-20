@@ -23,7 +23,7 @@ class Plugin
     ) {
         $hasArrayValues = false;
         foreach ($attributes as $attribute) {
-            if (!\is_array($attribute)) {
+            if (!is_array($attribute)) {
                 continue;
             }
 
@@ -36,7 +36,7 @@ class Plugin
 
         $newAttributes = [];
         foreach ($attributes as $key => $attribute) {
-            if (\is_array($attribute)) {
+            if (is_array($attribute)) {
                 $attribute = end($attribute);
             }
 

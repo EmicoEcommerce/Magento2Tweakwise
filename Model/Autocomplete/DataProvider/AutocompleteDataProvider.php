@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
+use Exception;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client;
@@ -128,7 +129,7 @@ class AutocompleteDataProvider implements DataProviderInterface
         try {
             /** @var AutocompleteResponse $response */
             $response = $this->client->request($request);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
 

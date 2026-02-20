@@ -33,4 +33,9 @@ interface AttributeSlugRepositoryInterface
      * @return bool
      */
     public function delete(AttributeSlugInterface $attributeSlug): bool;
+
+    /**
+     * @return void
+     */
+    public function truncateSlugTable(): void;
 }

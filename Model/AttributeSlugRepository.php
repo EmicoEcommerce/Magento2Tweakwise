@@ -20,6 +20,7 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Tweakwise\Magento2Tweakwise\Model\ResourceModel\AttributeSlug\CollectionFactory;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
+use Exception;
 
 class AttributeSlugRepository implements AttributeSlugRepositoryInterface
 {
@@ -103,7 +104,7 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             $this->resource->save($attributeSlug);
 
             return $attributeSlug;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotSaveException(
                 __(
                     'Could not save the page: %1',
@@ -141,7 +142,7 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
         try {
             /** @var AttributeSlug $attributeSlug */
             $this->resource->delete($attributeSlug);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(
                 __(
                     'Could not delete the Page: %1',

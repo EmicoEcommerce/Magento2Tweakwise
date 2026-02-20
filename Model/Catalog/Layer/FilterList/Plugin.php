@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList;
 
 use Closure;
+use Magento\Catalog\Model\Layer\Search;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -58,13 +59,13 @@ class Plugin
     public function aroundGetFilters(FilterList $subject, Closure $proceed, Layer $layer)
     {
         if (!$this->config->isLayeredEnabled()) {
-            if (!$this->config->isSearchEnabled() || !($layer instanceof Layer\Search)) {
+            if (!$this->config->isSearchEnabled() || !($layer instanceof Search)) {
                 return $proceed($layer);
             }
         }
 
         //page is search and search is not enabled
-        if (!$this->config->isSearchEnabled() && ($layer instanceof Layer\Search)) {
+        if (!$this->config->isSearchEnabled() && ($layer instanceof Search)) {
             return $proceed($layer);
         }
 

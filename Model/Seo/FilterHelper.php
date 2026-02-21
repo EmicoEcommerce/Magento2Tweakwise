@@ -131,7 +131,7 @@ class FilterHelper
         }
 
         $maxAllowedFacetsCount = (int) $maxAllowedFacetsCount;
-        $selectedFilterCount = \count($this->getActiveFilterItems(false));
+        $selectedFilterCount = count($this->getActiveFilterItems(false));
 
         return $selectedFilterCount > $maxAllowedFacetsCount;
     }
@@ -158,7 +158,7 @@ class FilterHelper
 
         $attributeCode = $this->getAttributeCodeFromFilterItem($item);
 
-        return \in_array($attributeCode, $filterWhiteList, true);
+        return in_array($attributeCode, $filterWhiteList, true);
     }
 
     /**
@@ -196,7 +196,7 @@ class FilterHelper
             return false;
         }
 
-        return \in_array(
+        return in_array(
             strtolower($attributeValue),
             array_map('strtolower', $filterValuesWhiteList[$attributeCode]),
             true

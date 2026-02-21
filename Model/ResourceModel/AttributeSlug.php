@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\ResourceModel;
 
+use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 class AttributeSlug extends AbstractDb
@@ -31,6 +32,8 @@ class AttributeSlug extends AbstractDb
      */
     public function truncateTable(): void
     {
-        $this->getConnection()->truncateTable($this->getMainTable());
+        /** @var Mysql $connection */
+        $connection = $this->getConnection();
+        $connection->truncateTable($this->getMainTable());
     }
 }

@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
 use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template\Context;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
@@ -55,7 +56,7 @@ class DefaultRenderer extends Template
     /**
      * Constructor
      *
-     * @param Template\Context $context
+     * @param Context $context
      * @param Config $config
      * @param NavigationConfig $navigationConfig
      * @param FilterHelper $filterHelper
@@ -65,7 +66,7 @@ class DefaultRenderer extends Template
      * @param array $data
      */
     public function __construct(
-        Template\Context $context,
+        Context $context,
         Config $config,
         NavigationConfig $navigationConfig,
         FilterHelper $filterHelper,
@@ -206,7 +207,7 @@ class DefaultRenderer extends Template
         $items = $this->getItems();
         $itemsWithAlternateSortOrder = array_filter($items, $filter);
 
-        return \count($items) === \count($itemsWithAlternateSortOrder);
+        return count($items) === count($itemsWithAlternateSortOrder);
     }
 
     /**

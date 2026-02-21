@@ -84,7 +84,7 @@ class RecommendationsResponse extends Response
         if (!$this->hasValue('items')) {
             return [];
         }
-        
+
         if ($this->config->isGroupedProductsEnabled() && !$this->proccessedGroupedProducts) {
             // Manually group items since recommendations doesn't have a grouped call yet.
 
@@ -125,7 +125,6 @@ class RecommendationsResponse extends Response
     {
         $ids = [];
         foreach ($this->getItems() as $item) {
-            // @phpstan-ignore-next-line
             $ids[] = $this->helper->getStoreId($item->getId());
         }
 

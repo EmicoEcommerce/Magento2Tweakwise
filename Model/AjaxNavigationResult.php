@@ -2,13 +2,18 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
+use Magento\Framework\Translate\InlineInterface;
+use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\View\Layout\BuilderFactory;
+use Magento\Framework\View\Layout\GeneratorPool;
+use Magento\Framework\View\Layout\ReaderPool;
+use Magento\Framework\View\LayoutFactory;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework;
 use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\CookieManagerInterface;
-use Magento\Framework\View;
 use Magento\Framework\View\Result\Layout;
 
 /**
@@ -43,12 +48,12 @@ class AjaxNavigationResult extends Layout
 
     /**
      * AjaxNavigationResult constructor.
-     * @param View\Element\Template\Context $context
-     * @param View\LayoutFactory $layoutFactory
-     * @param View\Layout\ReaderPool $layoutReaderPool
-     * @param Framework\Translate\InlineInterface $translateInline
-     * @param View\Layout\BuilderFactory $layoutBuilderFactory
-     * @param View\Layout\GeneratorPool $generatorPool
+     * @param Context $context
+     * @param LayoutFactory $layoutFactory
+     * @param ReaderPool $layoutReaderPool
+     * @param InlineInterface $translateInline
+     * @param BuilderFactory $layoutBuilderFactory
+     * @param GeneratorPool $generatorPool
      * @param Url $urlModel
      * @param Resolver $layerResolver
      * @param Json $serializer
@@ -58,12 +63,12 @@ class AjaxNavigationResult extends Layout
      * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
-        View\Element\Template\Context $context,
-        View\LayoutFactory $layoutFactory,
-        View\Layout\ReaderPool $layoutReaderPool,
-        Framework\Translate\InlineInterface $translateInline,
-        View\Layout\BuilderFactory $layoutBuilderFactory,
-        View\Layout\GeneratorPool $generatorPool,
+        Context $context,
+        LayoutFactory $layoutFactory,
+        ReaderPool $layoutReaderPool,
+        InlineInterface $translateInline,
+        BuilderFactory $layoutBuilderFactory,
+        GeneratorPool $generatorPool,
         Url $urlModel,
         Resolver $layerResolver,
         Json $serializer,

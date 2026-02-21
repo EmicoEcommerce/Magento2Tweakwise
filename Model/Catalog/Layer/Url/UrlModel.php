@@ -138,7 +138,7 @@ class UrlModel extends MagentoUrl
         }
 
         if ($filterType === QueryFilterType::TYPE_SPECIFIC) {
-            return \in_array($param, $this->config->getQueryFilterArguments(), true);
+            return in_array($param, $this->config->getQueryFilterArguments(), true);
         }
 
         return true;

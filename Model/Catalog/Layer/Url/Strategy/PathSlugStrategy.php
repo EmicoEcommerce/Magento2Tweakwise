@@ -282,7 +282,7 @@ class PathSlugStrategy implements
 
         $filters = $this->getLayer()->getState()->getFilters();
         // @phpstan-ignore-next-line
-        if (!\is_array($filters)) {
+        if (!is_array($filters)) {
             return [];
         }
 
@@ -564,7 +564,7 @@ class PathSlugStrategy implements
                 continue;
             }
 
-            if (strpos($requestPath, $fileExtension, -\strlen($fileExtension)) !== false) {
+            if (strpos($requestPath, $fileExtension, -strlen($fileExtension)) !== false) {
                 return true;
             }
         }
@@ -589,7 +589,7 @@ class PathSlugStrategy implements
 
         $category = $this->strategyHelper->getCategoryFromItem($item);
         // @phpstan-ignore-next-line
-        $categoryUrlPath = \parse_url($category->getUrl(), PHP_URL_PATH);
+        $categoryUrlPath = parse_url($category->getUrl(), PHP_URL_PATH);
 
         // @phpstan-ignore-next-line
         $url = $this->magentoUrl->getDirectUrl($categoryUrlPath);

@@ -10,12 +10,12 @@
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
 use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template\Context;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
 use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Framework\Pricing\Helper\Data as PriceHelper;
-use Magento\Framework\View\Element\Template;
 use Magento\Framework\Serialize\Serializer\Json;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
@@ -43,7 +43,7 @@ class SliderRenderer extends DefaultRenderer
      * @param Config $config
      * @param NavigationConfig $navigationConfig
      * @param FilterHelper $filterHelper
-     * @param Template\Context $context
+     * @param Context $context
      * @param Json $jsonSerializer
      * @param Helper $helper
      * @param Escaper $escaper
@@ -56,7 +56,7 @@ class SliderRenderer extends DefaultRenderer
         Config $config,
         NavigationConfig $navigationConfig,
         FilterHelper $filterHelper,
-        Template\Context $context,
+        Context $context,
         Json $jsonSerializer,
         Helper $helper,
         protected Escaper $escaper,

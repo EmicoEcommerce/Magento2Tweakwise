@@ -65,7 +65,6 @@ class AutocompleteResponse extends Response implements AutocompleteProductRespon
     {
         $ids = [];
         foreach ($this->getItems() as $item) {
-            // @phpstan-ignore-next-line
             $ids[] = $this->helper->getStoreId($item->getId());
         }
 
@@ -80,7 +79,7 @@ class AutocompleteResponse extends Response implements AutocompleteProductRespon
         $result = [];
         foreach ($this->getItems() as $item) {
             $result[] = [
-                'id' => $this->helper->getStoreId($item->getId()), // @phpstan-ignore-line
+                'id' => $this->helper->getStoreId($item->getId()),
                 'tweakwise_price' => (float) $item->getPrice(),
                 'tweakwise_final_price' => (float) $item->getFinalPrice(),
             ];

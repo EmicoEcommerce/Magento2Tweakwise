@@ -20,7 +20,7 @@ $hasHiddenItems = $block->hasHiddenItems();
      attribute-id="<?= $escaper->escapeHtmlAttr($swatchData['attribute_id']) ?>"
      data-mage-init='{"tweakwiseNavigationSort":[]}'>
     <?php if ($block->isSearchable()): ?>
-        <input data-max-visible="<?= $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>" type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $escaper->escapeHtmlAttr($block->getSearchPlaceholder()); ?>" >
+        <input tabindex="-1" data-max-visible="<?= $escaper->escapeHtmlAttr($block->getMaxItemsShown())?>" type="text" class="tw_filtersearch js-skip-submit" name="tw_filtersearch" placeholder="<?= $escaper->escapeHtmlAttr($block->getSearchPlaceholder()); ?>" >
         <div style="display: none" class="search_no_results"><?= $escaper->escapeHtmlAttr($block->getSearchNoResultsText()); ?></div>
     <?php endif; ?>
     <div class="swatch-attribute-options clearfix">
@@ -28,7 +28,9 @@ $hasHiddenItems = $block->hasHiddenItems();
             <?php $item = $block->getItemForSwatch($option);?>
             <?php if (!$item) continue; ?>
             <a <?= /* @noEscape */ $block->renderAnchorHtmlTagAttributes($item);?>
-                aria-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
+                tabindex="0"
+                role="button"
+                aria-labelledby="<?= $escaper->escapeHtmlAttr($item->getFilter()->getUrlKey()) ?> <?= $escaper->escapeHtmlAttr($item->getCssId()) ?>"
                 class="swatch-option-link-layered <?php /* @noEscape */ if ($block->shouldDisplayProductCountOnLayer()): ?>swatch-with-count<?php endif; ?><?= /* @noEscape */ $block->itemDefaultHidden($item) ? ' default-hidden' : ''?>"
             >
                 <?php $cssId = $item->getCssId();?>
@@ -37,7 +39,7 @@ $hasHiddenItems = $block->hasHiddenItems();
                        type="checkbox" <?=/* @noEscape */ ($item->isSelected() ? 'checked="checked"' : '')?>
                        value="<?=$escaper->escapeHtmlAttr($item->getLabel())?>"
                 >
-                <label for="<?=$escaper->escapeHtmlAttr($cssId)?>">
+                <label aria-label="<?= $escaper->escapeHtmlAttr($label['label']); ?>" for="<?= $escaper->escapeHtmlAttr($cssId) ?>">
                 <?php if (isset($swatchData['swatches'][$option]['type'])) { ?>
                     <?php switch ($swatchData['swatches'][$option]['type']) {
                         case '3':

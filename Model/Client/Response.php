@@ -67,6 +67,14 @@ class Response extends Type
 
             if (!empty($simple['type'])) {
                 $configurable['type'] = $simple['type'];
+                // Add visual url to visual item
+                if ($simple['type'] === 'visual') {
+                    $configurable['url'] = $simple['url'];
+                }
+            }
+
+            if (!empty($simple['itemno'])) {
+                $configurable['tw_id'] = (int)substr($simple['itemno'], 5);
             }
 
             $items[] = $configurable;

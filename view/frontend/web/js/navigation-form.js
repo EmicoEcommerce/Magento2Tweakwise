@@ -29,7 +29,7 @@ define([
             urlStrategy: '',
             twRequestId: '',
             analyticsEvents: false,
-            productSelector: '.product-item-info',
+            productSelector: 'product-item-info',
             analyticsEndpoint: '/tweakwise/ajax/analytics',
         },
 

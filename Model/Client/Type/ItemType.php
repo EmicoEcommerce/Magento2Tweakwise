@@ -14,6 +14,20 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
  */
 class ItemType extends Type
 {
+    public const ID = 'itemno';
+    public const TYPE = 'type';
+    public const ORDER = 'order';
+    public const TITLE = 'title';
+    public const PRICE = 'price';
+    public const BRAND = 'brand';
+    public const IMAGE = 'image';
+    public const URL = 'url';
+    public const ATTRIBUTES = 'attributes';
+    public const TWEAKWISE_ID = 'tw_id';
+    public const VISUAL_PROPERTIES = 'visualproperties';
+    public const COLSPAN = 'colspan';
+    public const ROWSPAN = 'rowspan';
+
     /**
      * @param LabelType[]|array[] $labels
      * @return $this
@@ -36,12 +50,19 @@ class ItemType extends Type
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getId()
     {
-        // @phpstan-ignore-next-line
-        return (int) $this->getDataValue('itemno');
+        return (int)$this->getDataValue(self::ID);
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return (string)$this->getDataValue(self::TYPE);
     }
 
     /**
@@ -49,7 +70,7 @@ class ItemType extends Type
      */
     public function getOrder()
     {
-        return (string) $this->getDataValue('order');
+        return (string)$this->getDataValue(self::ORDER);
     }
 
     /**
@@ -57,25 +78,24 @@ class ItemType extends Type
      */
     public function getTitle()
     {
-        return (string) $this->getDataValue('title');
+        return (string)$this->getDataValue(self::TITLE);
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getPrice()
     {
-        // @phpstan-ignore-next-line
-        return (float) $this->getDataValue('price');
+        return (float)$this->getDataValue(self::PRICE);
     }
 
     /**
      * Only works if the final_price is added on the tweakwise side. Contact tweakwise support if you want to add the final_price to the TW response
-     * @return int
+     * @return float
      */
     public function getFinalPrice()
     {
-        $attributes = $this->getDataValue('attributes');
+        $attributes = $this->getDataValue(self::ATTRIBUTES);
         if (!empty($attributes['attribute'])) {
             foreach ($attributes['attribute'] as $attribute) {
                 //only one result
@@ -88,14 +108,12 @@ class ItemType extends Type
                     $attribute['name'] === 'final_price' &&
                     isset($attribute['values']['value'])
                 ) {
-                    // @phpstan-ignore-next-line
                     return (float)($attribute['values']['value']);
                 }
             }
         }
 
-        // @phpstan-ignore-next-line
-        return (float) 0;
+        return 0.0;
     }
 
     /**
@@ -103,7 +121,7 @@ class ItemType extends Type
      */
     public function getBrand()
     {
-        return (string) $this->getDataValue('brand');
+        return (string) $this->getDataValue(self::BRAND);
     }
 
     /**
@@ -111,7 +129,7 @@ class ItemType extends Type
      */
     public function getImage()
     {
-        return (string) $this->getDataValue('image');
+        return (string) $this->getDataValue(self::IMAGE);
     }
 
     /**
@@ -119,7 +137,7 @@ class ItemType extends Type
      */
     public function getUrl()
     {
-        return (string) $this->getDataValue('url');
+        return (string) $this->getDataValue(self::URL);
     }
 
     /**
@@ -127,7 +145,7 @@ class ItemType extends Type
      */
     public function getGroupCodeFromAttributes(): string
     {
-        $attributes = $this->getDataValue('attributes');
+        $attributes = $this->getDataValue(self::ATTRIBUTES);
 
         foreach ($attributes as $attribute) {
             if (!is_array($attribute)) {
@@ -144,5 +162,47 @@ class ItemType extends Type
         }
 
         return '';
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTweakwiseId(): ?string
+    {
+        return (string)$this->getDataValue(self::TWEAKWISE_ID);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getColspan(): ?int
+    {
+        $visualProperties = $this->getVisualProperties();
+        if (!$visualProperties) {
+            return null;
+        }
+
+        return (int)$visualProperties[self::COLSPAN];
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getRowspan(): ?int
+    {
+        $visualProperties = $this->getVisualProperties();
+        if (!$visualProperties) {
+            return null;
+        }
+
+        return (int)$visualProperties[self::ROWSPAN];
+    }
+
+    /**
+     * @return array|null
+     */
+    protected function getVisualProperties(): ?array
+    {
+        return $this->getDataValue(self::VISUAL_PROPERTIES);
     }
 }

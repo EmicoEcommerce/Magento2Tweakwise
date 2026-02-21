@@ -6,6 +6,8 @@ interface VisualInterface
 {
     public const IMAGE_URL = 'image';
     public const URL = 'url';
+    public const COLSPAN = 'colspan';
+    public const ROWSPAN = 'rowspan';
 
     /**
      * @return string
@@ -28,4 +30,26 @@ interface VisualInterface
      * @return self
      */
     public function setUrl(string $url): self;
+
+    /**
+     * @return int|null
+     */
+    public function getColspan(): ?int;
+
+    /**
+     * @param int $colspan
+     * @return self
+     */
+    public function setColspan(int $colspan): self;
+
+    /**
+     * @return int|null
+     */
+    public function getRowspan(): ?int;
+
+    /**
+     * @param int $rowspan
+     * @return self
+     */
+    public function setRowspan(int $rowspan): self;
 }

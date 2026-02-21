@@ -35,7 +35,7 @@
         }
     },
     "require-dev": {
-        "emico/code-quality": "^10.5",
+        "emico/code-quality": "10.5.11",
         "magento/framework": "^103.0"
     },
     "config": {

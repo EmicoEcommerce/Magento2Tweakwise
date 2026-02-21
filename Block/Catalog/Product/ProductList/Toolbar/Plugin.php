@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Toolbar;
 
 use Closure;
+use Exception;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
@@ -136,7 +137,7 @@ class Plugin
                 $response = $this->context->getResponse();
                 // @phpstan-ignore-next-line
                 $result = $response->getProperties()->getNumberOfItems();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->logger->critical($e->getMessage());
             }
         }

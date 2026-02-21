@@ -5,6 +5,8 @@
  * See COPYING.txt for license details.
  */
 
+use Magento\TestFramework\Bootstrap;
+
 return [
     'db-host' => '127.0.0.1',
     'db-user' => 'root',
@@ -15,9 +17,9 @@ return [
     'search-engine' => 'elasticsearch7',
     'elasticsearch-host' => 'localhost',
     'elasticsearch-port' => 9200,
-    'admin-user' => \Magento\TestFramework\Bootstrap::ADMIN_NAME, // @phpstan-ignore-line
-    'admin-password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD, // @phpstan-ignore-line
-    'admin-email' => \Magento\TestFramework\Bootstrap::ADMIN_EMAIL, // @phpstan-ignore-line
-    'admin-firstname' => \Magento\TestFramework\Bootstrap::ADMIN_FIRSTNAME, // @phpstan-ignore-line
-    'admin-lastname' => \Magento\TestFramework\Bootstrap::ADMIN_LASTNAME, // @phpstan-ignore-line
+    'admin-user' => Bootstrap::ADMIN_NAME, // @phpstan-ignore-line
+    'admin-password' => Bootstrap::ADMIN_PASSWORD, // @phpstan-ignore-line
+    'admin-email' => Bootstrap::ADMIN_EMAIL, // @phpstan-ignore-line
+    'admin-firstname' => Bootstrap::ADMIN_FIRSTNAME, // @phpstan-ignore-line
+    'admin-lastname' => Bootstrap::ADMIN_LASTNAME, // @phpstan-ignore-line
 ];

@@ -48,7 +48,7 @@ class PreparePostDataFactory
     public function getPreparePostData(): ?ArgumentInterface
     {
         /** @noinspection ClassConstantCanBeUsedInspection */
-        return $this->isMagento24() && \class_exists('\\Magento\\Catalog\\ViewModel\\Product\\Listing\\PreparePostData')
+        return $this->isMagento24() && class_exists('\\Magento\\Catalog\\ViewModel\\Product\\Listing\\PreparePostData')
             ? $this->objectManager->get('\\Magento\\Catalog\\ViewModel\\Product\\Listing\\PreparePostData')
             : null;
     }

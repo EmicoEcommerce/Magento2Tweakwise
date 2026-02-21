@@ -11,14 +11,14 @@ use Magento\Framework\DB\Ddl\Table;
 class ChangePrimaryKeyTweakwiseAttributeSlugTable implements SchemaPatchInterface
 {
     /**
-     * @var SchemaSetupInterface
+     * @param SchemaSetupInterface $schemaSetup
      */
     public function __construct(private readonly SchemaSetupInterface $schemaSetup)
     {
     }
 
     /**
-     * @return void
+     * @return $this
      */
     public function apply()
     {
@@ -49,6 +49,8 @@ class ChangePrimaryKeyTweakwiseAttributeSlugTable implements SchemaPatchInterfac
         $connection->addIndex($tableName, 'ATTRIBUTE', ['attribute', 'store_id'], 'unique');
 
         $setup->endSetup();
+
+        return $this;
     }
 
     /**

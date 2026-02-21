@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
+use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -29,7 +31,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
      * @param StoreManagerInterface $storeManager
      * @param RequestInterface $request
      * @param Json $jsonSerializer
-     * @param ProductRepositoryInterface $product
+     * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
         private readonly Config $tweakwiseConfig,
@@ -72,21 +74,13 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     private function getGroupedProductId(int $productId, int $storeId): string
     {
         try {
+            /** @var Product $product */
             $product = $this->productRepository->getById($productId);
             if ($product->getTypeId() === Type::TYPE_SIMPLE) {
                 return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
             }
 
-            match ($product->getTypeId()) {
-                Configurable::TYPE_CODE => $associatedProducts = $product->getTypeInstance()->getUsedProducts($product),
-                Grouped::TYPE_CODE => $associatedProducts = $product->getTypeInstance()->getAssociatedProducts($product),
-                Type::TYPE_BUNDLE => $associatedProducts = $product->getTypeInstance()->getSelectionsCollection(
-                    $product->getTypeInstance()->getOptionsIds($product),
-                    $product
-                ),
-                default => $associatedProducts = [],
-            };
-
+            $associatedProducts = $this->getAssociatedProducts($product);
             if (!empty($associatedProducts)) {
                 $firstAssociatedProduct = reset($associatedProducts);
                 $productId = $firstAssociatedProduct->getId();
@@ -172,5 +166,23 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
         );
 
         return $this->jsonSerializer->serialize($eventsData);
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    protected function getAssociatedProducts(Product $product): array
+    {
+        $typeInstance = $product->getTypeInstance();
+        return match (true) {
+            $typeInstance instanceof Configurable => $typeInstance->getUsedProducts($product),
+            $typeInstance instanceof Grouped => $typeInstance->getAssociatedProducts($product),
+            $typeInstance instanceof Bundle => $typeInstance->getSelectionsCollection(
+                $typeInstance->getOptionsIds($product),
+                $product
+            )->getItems(),
+            default => [],
+        };
     }
 }

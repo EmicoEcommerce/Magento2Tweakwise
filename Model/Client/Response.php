@@ -73,6 +73,10 @@ class Response extends Type
                 }
             }
 
+            if (!empty($simple['itemno'])) {
+                $configurable['tw_id'] = (int)substr($simple['itemno'], 5);
+            }
+
             $items[] = $configurable;
         }
 

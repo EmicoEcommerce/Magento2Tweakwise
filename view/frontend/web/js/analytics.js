@@ -7,7 +7,7 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
                 return;
             }
 
-            const product = $(event.target).closest(`${config.productSelector}`)[0];
+            const product = $(event.target).closest(`.${config.productSelector}`)[0];
             let productId;
 
             if (!product || !product.id) {

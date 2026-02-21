@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\RequestInterface;
+use Magento\Catalog\Model\Product\Type;
+use Magento\GroupedProduct\Model\Product\Type\Grouped;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Class PersonalMerchandisingAnalytics
@@ -24,6 +29,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
      * @param StoreManagerInterface $storeManager
      * @param RequestInterface $request
      * @param Json $jsonSerializer
+     * @param ProductRepositoryInterface $product
      */
     public function __construct(
         private readonly Config $tweakwiseConfig,
@@ -31,6 +37,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
         private readonly StoreManagerInterface $storeManager,
         private readonly RequestInterface $request,
         private readonly Json $jsonSerializer,
+        private readonly ProductRepositoryInterface $productRepository,
     ) {
     }
 
@@ -46,6 +53,46 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
 
         if (!$productId) {
             return '0';
+        }
+
+        if (!$this->tweakwiseConfig->isGroupedProductsEnabled()) {
+            return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+        }
+
+        return $this->getGroupedProductId((int)$productId, (int)$storeId);
+    }
+
+    /**
+     * Get the grouped product ID.
+     *
+     * @param int $productId
+     * @param int $storeId
+     * @return string
+     */
+    private function getGroupedProductId(int $productId, int $storeId): string
+    {
+        try {
+            $product = $this->productRepository->getById($productId);
+            if ($product->getTypeId() === Type::TYPE_SIMPLE) {
+                return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+            }
+
+            match ($product->getTypeId()) {
+                Configurable::TYPE_CODE => $associatedProducts = $product->getTypeInstance()->getUsedProducts($product),
+                Grouped::TYPE_CODE => $associatedProducts = $product->getTypeInstance()->getAssociatedProducts($product),
+                Type::TYPE_BUNDLE => $associatedProducts = $product->getTypeInstance()->getSelectionsCollection(
+                    $product->getTypeInstance()->getOptionsIds($product),
+                    $product
+                ),
+                default => $associatedProducts = [],
+            };
+
+            if (!empty($associatedProducts)) {
+                $firstAssociatedProduct = reset($associatedProducts);
+                $productId = $firstAssociatedProduct->getId();
+            }
+        } catch (NoSuchEntityException $e) {
+            // Do nothing
         }
 
         return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);

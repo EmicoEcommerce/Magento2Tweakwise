@@ -69,14 +69,23 @@ class SendAddToWishlistEvent implements ObserverInterface
             return;
         }
 
+        $productId = (int)$product->getId();
+
+        if ($this->config->isGroupedProductsEnabled()) {
+            $children = $product->getExtensionAttributes()->getConfigurableProductLinks();
+            if (!empty($children)) {
+                $productId = (int)array_first($children);
+            }
+        }
+
         $tweakwiseRequest = $this->requestFactory->create();
-        $tweakwiseRequest->setParameter('ProfileKey', $this->config->getProfileKey());
+        $tweakwiseRequest->setProfileKey($this->config->getProfileKey());
         $tweakwiseRequest->setParameter('SessionKey', $this->eventService->getSessionKey());
         $tweakwiseRequest->setParameter(
             'ProductKey',
             $this->helper->getTweakwiseId(
                 (int)$this->storeManager->getStore()->getId(),
-                (int)$product->getId()
+                $productId
             )
         );
         $tweakwiseRequest->setPath('addtowishlist');

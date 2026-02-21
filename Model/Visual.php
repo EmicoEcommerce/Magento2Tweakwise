@@ -40,4 +40,38 @@ class Visual extends Product implements VisualInterface
     {
         return $this->setData(self::URL, $url);
     }
+
+    /**
+     * @return int|null
+     */
+    public function getColspan(): ?int
+    {
+        return $this->getData(self::COLSPAN);
+    }
+
+    /**
+     * @param int $colspan
+     * @return VisualInterface
+     */
+    public function setColspan(int $colspan): VisualInterface
+    {
+        return $this->setData(self::COLSPAN, $colspan);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getRowspan(): ?int
+    {
+        return $this->getData(self::ROWSPAN);
+    }
+
+    /**
+     * @param int $rowspan
+     * @return VisualInterface
+     */
+    public function setRowspan(int $rowspan): VisualInterface
+    {
+        return $this->setData(self::ROWSPAN, $rowspan);
+    }
 }

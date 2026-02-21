@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\Observer\Event;
 
 use Exception;
+use Magento\Catalog\Api\Data\ProductExtension;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Event\ObserverInterface;
@@ -72,7 +73,9 @@ class SendAddToWishlistEvent implements ObserverInterface
         $productId = (int)$product->getId();
 
         if ($this->config->isGroupedProductsEnabled()) {
-            $children = $product->getExtensionAttributes()->getConfigurableProductLinks();
+            /** @var ProductExtension $extensionAttributes */
+            $extensionAttributes = $product->getExtensionAttributes();
+            $children = $extensionAttributes->getConfigurableProductLinks();
             if (!empty($children)) {
                 $productId = (int)array_first($children);
             }

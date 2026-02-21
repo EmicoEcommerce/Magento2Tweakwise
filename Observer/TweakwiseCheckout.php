@@ -6,7 +6,7 @@ namespace Tweakwise\Magento2Tweakwise\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Sales\Block\Order\Items;
+use Magento\Sales\Model\Order\Item;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
@@ -55,7 +55,7 @@ class TweakwiseCheckout implements ObserverInterface
     }
 
     /**
-     * @param Items $items
+     * @param Item[] $items
      * @param float $totalExclTax
      *
      * @return void
@@ -84,7 +84,6 @@ class TweakwiseCheckout implements ObserverInterface
             );
         }
 
-        // @phpstan-ignore-next-line
         foreach ($items as $item) {
             $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
         }

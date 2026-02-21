@@ -130,7 +130,6 @@ class FilterSlugManager
                 }
 
                 $this->getLookupTable();
-                // @phpstan-ignore-next-line
                 if ($optionLabel instanceof Phrase) {
                     $optionLabel = $optionLabel->render();
                 }
@@ -144,7 +143,6 @@ class FilterSlugManager
                 }
 
                 $attributeSlugEntity = $this->attributeSlugFactory->create();
-                // @phpstan-ignore-next-line
                 $attributeSlugEntity->setAttribute($optionLabel);
                 $attributeSlugEntity->setStoreId((int)$storeId);
                 $attributeSlugEntity->setSlug($this->translitUrl->filter($optionLabel));
@@ -233,8 +231,8 @@ class FilterSlugManager
     }
 
     /**
-     * @param array $option
-     * @param int|string $storeId
+     * @param Option $option
+     * @param int $storeId
      * @return void
      */
     public function createFilterSlugByOption(Option $option, int $storeId): void

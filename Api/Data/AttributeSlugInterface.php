@@ -14,6 +14,12 @@ interface AttributeSlugInterface
     public function getAttribute(): ?string;
 
     /**
+     * @param string|null $attribute
+     * @return void
+     */
+    public function setAttribute(?string $attribute): void;
+
+    /**
      * @return string
      */
     public function getSlug(): string;

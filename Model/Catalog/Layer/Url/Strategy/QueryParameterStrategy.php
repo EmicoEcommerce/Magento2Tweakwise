@@ -244,7 +244,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         if (!$this->getSearch($request)) {
             // @phpstan-ignore-next-line
             $categoryUrl = $category->getUrl();
-            $categoryUrlPath = \parse_url($categoryUrl, PHP_URL_PATH);
+            $categoryUrlPath = parse_url($categoryUrl, PHP_URL_PATH);
 
             $url = $this->url->getDirectUrl(
                 sprintf(
@@ -480,7 +480,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         if (!$sortOrder) {
             $memorizedSortOrder = $this->toolbarMemorizer->getOrder();
 
-            if ($memorizedSortOrder) {
+            if ($memorizedSortOrder && is_string($memorizedSortOrder)) {
                 $navigationRequest->setOrder($memorizedSortOrder);
             }
         }

@@ -58,6 +58,7 @@ class Response extends Type
             $configurable = $this->getConfigurable($group);
 
             if (!$configurable) {
+                $items[] = $simple;
                 continue;
             }
 
@@ -78,6 +79,10 @@ class Response extends Type
             }
 
             $items[] = $configurable;
+            if ($simple['type'] !== 'product') {
+                continue;
+            }
+            $items[] = $simple;
         }
 
         $this->setItems($items);

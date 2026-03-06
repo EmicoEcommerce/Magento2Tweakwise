@@ -177,6 +177,7 @@ class Collection extends AbstractCollection
         $this->applyCollectionSizeValues();
         $this->enrichProducts();
         $this->addVisuals();
+        $this->removeDuplicatedProducts();
 
         return $this;
     }
@@ -334,5 +335,24 @@ class Collection extends AbstractCollection
 
         // @phpstan-ignore-next-line
         return $response->getProductData() ?? [];
+    }
+
+    /**
+     * @return void
+     */
+    protected function removeDuplicatedProducts(): void
+    {
+        if ($this->config->isGroupedProductsEnabled()) {
+            foreach ($this->_items as $key => $item) {
+                if (!$item instanceof ProductInterface) {
+                    continue;
+                }
+
+                $twId = (int)$item->getData('tw_id') ?? '0';
+                if (isset($this->_items[$twId]) && $key !== $twId) {
+                    unset($this->_items[$twId]);
+                }
+            }
+        }
     }
 }

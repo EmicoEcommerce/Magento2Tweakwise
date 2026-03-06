@@ -352,9 +352,11 @@ class Collection extends AbstractCollection
             }
 
             $twId = (int)$item->getData('tw_id') ?? '0';
-            if (isset($this->_items[$twId]) && $key !== $twId) {
-                unset($this->_items[$twId]);
+            if (!isset($this->_items[$twId]) || $key === $twId) {
+                continue;
             }
+
+            unset($this->_items[$twId]);
         }
     }
 }

@@ -342,16 +342,18 @@ class Collection extends AbstractCollection
      */
     protected function removeDuplicatedProducts(): void
     {
-        if ($this->config->isGroupedProductsEnabled()) {
-            foreach ($this->_items as $key => $item) {
-                if (!$item instanceof ProductInterface) {
-                    continue;
-                }
+        if (!$this->config->isGroupedProductsEnabled()) {
+            return;
+        }
 
-                $twId = (int)$item->getData('tw_id') ?? '0';
-                if (isset($this->_items[$twId]) && $key !== $twId) {
-                    unset($this->_items[$twId]);
-                }
+        foreach ($this->_items as $key => $item) {
+            if (!$item instanceof ProductInterface) {
+                continue;
+            }
+
+            $twId = (int)$item->getData('tw_id') ?? '0';
+            if (isset($this->_items[$twId]) && $key !== $twId) {
+                unset($this->_items[$twId]);
             }
         }
     }

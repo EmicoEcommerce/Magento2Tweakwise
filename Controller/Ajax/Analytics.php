@@ -119,6 +119,9 @@ class Analytics extends Action
 
                 $this->sessionStartEventService->handleSessionStartType($tweakwiseRequest);
                 break;
+            case 'page_impression':
+                $this->handlePageImpressionType($tweakwiseRequest, $eventData['requestId']);
+                break;
             default:
                 throw new InvalidArgumentException('Invalid type parameter.');
         }
@@ -176,5 +179,17 @@ class Analytics extends Action
         $tweakwiseRequest->setParameter('RequestId', $requestId);
         $tweakwiseRequest->setParameter('ItemId', $itemId);
         $tweakwiseRequest->setPath('itemclick');
+    }
+
+    /**
+     * @param Request $tweakwiseRequest
+     * @param string $requestId
+     * @return void
+     */
+    private function handlePageImpressionType(Request $tweakwiseRequest, string $requestId): void
+    {
+        $tweakwiseRequest->setParameter('SessionKey', $this->sessionStartEventService->getSessionKey());
+        $tweakwiseRequest->setParameter('RequestId', $requestId);
+        $tweakwiseRequest->setPath('pageimpression');
     }
 }

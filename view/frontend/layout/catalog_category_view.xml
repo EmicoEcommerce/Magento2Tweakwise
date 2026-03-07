@@ -25,6 +25,10 @@
         </referenceContainer>
         <referenceBlock name="tweakwise.analytics">
             <arguments>
+                <argument name="analyticsTypes" xsi:type="array">
+                    <item name="session_start" xsi:type="string">session_start</item>
+                    <item name="page_impression_lister" xsi:type="string">page_impression</item>
+                </argument>
                 <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
             </arguments>
         </referenceBlock>

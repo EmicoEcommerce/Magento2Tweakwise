@@ -12,13 +12,14 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
      */
     public function getProductIds()
     {
-        $ids = [];
-        // @phpstan-ignore-next-line
-        foreach ($this->getItems() as $item) {
-            $ids[] = $this->helper->getStoreId($item->getId());
+        $items = $this->getItems() ?? [];
+
+        if (empty($items)) {
+            return [];
         }
 
-        return $ids;
+        return array_map(fn($item) => $this->helper->getStoreId($item->getId()), $items);
+
     }
 
     /**
@@ -33,9 +34,30 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
                 'id' => $this->helper->getStoreId($item->getId()),
                 'tweakwise_price' => (float) $item->getPrice(),
                 'tweakwise_final_price' => (float) $item->getFinalPrice(),
+                'tweakwise_id' => $item->getId()
             ];
         }
 
         return $result;
+    }
+
+    public function setBlocks(array $blocks): self
+    {
+        $blocks = $this->normalizeArray($blocks, 'block');
+        $items = [];
+        foreach ($blocks as $block) {
+            if (!isset($block['items'])) {
+                continue;
+            }
+            $blockItems = $block['items'] ?? [];
+            $blockItems = $this->normalizeArray($blockItems, 'item');
+            foreach ($blockItems as $item) {
+                $items[] = $item;
+            }
+        }
+
+        $this->setItems($items);
+        $this->data['blocks'] = $blocks;
+        return $this;
     }
 }

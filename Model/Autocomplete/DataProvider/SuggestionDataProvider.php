@@ -59,6 +59,11 @@ class SuggestionDataProvider implements DataProviderInterface
     protected $client;
 
     /**
+     * @var SuggestionBlockItemFactory
+     */
+    protected $suggestionBlockItemFactory;
+
+    /**
      * AutocompleteDataProvider constructor.
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
@@ -68,6 +73,7 @@ class SuggestionDataProvider implements DataProviderInterface
      * @param RequestFactory $suggestionRequestFactory
      * @param Client $client
      * @param Request $request
+     * @param SuggestionBlockItemFactory $suggestionBlockItemFactory
      */
     public function __construct(
         Config $config,
@@ -77,7 +83,8 @@ class SuggestionDataProvider implements DataProviderInterface
         RequestFactory $productSuggestionRequestFactory,
         RequestFactory $suggestionRequestFactory,
         Client $client,
-        Request $request
+        Request $request,
+        SuggestionBlockItemFactory $suggestionBlockItemFactory
     ) {
         $this->config = $config;
         $this->cookieManager = $cookieManager;
@@ -87,6 +94,7 @@ class SuggestionDataProvider implements DataProviderInterface
         $this->suggestionRequestFactory = $suggestionRequestFactory;
         $this->client = $client;
         $this->request = $request;
+        $this->suggestionBlockItemFactory = $suggestionBlockItemFactory;
     }
 
     /**
@@ -158,6 +166,10 @@ class SuggestionDataProvider implements DataProviderInterface
         $responses = Utils::unwrap($promises);
         foreach ($responses as $response) {
             if ($response instanceof AutocompleteProductResponseInterface) {
+                if ($this->dataProviderHelper->useBlocks()) {
+                    $results[] = $this->getSuggestionBlocks($response);
+                    continue;
+                }
                 $results[] = $this->dataProviderHelper->getProductItems($response);
             }
 
@@ -182,6 +194,35 @@ class SuggestionDataProvider implements DataProviderInterface
         $groups = $response->getGroups() ? $response->getGroups() : [];
         foreach ($groups as $suggestionGroup) {
             $results[] = $this->suggestionGroupItemFactory->create(['group' => $suggestionGroup]);
+        }
+
+        return $results;
+    }
+
+    protected function getSuggestionBlocks(AutocompleteProductResponseInterface $response)
+    {
+        $results = [];
+
+        $blocks = $response->getBlocks() ? $response->getBlocks() : [];
+        $products = $this->dataProviderHelper->getProductItems($response);
+        foreach ($blocks as $suggestionBlock) {
+            if (empty($suggestionBlock['items'])) {
+                continue;
+            }
+
+            $items = isset($suggestionBlock['items']['item'][0]) ? $suggestionBlock['items']['item'] : $suggestionBlock['items'];
+
+            foreach ($items as &$item) {
+                foreach ($products as $product) {
+                    if ((string)$item['itemno'] === (string)$product->getProduct()->getData('tweakwise_id')) {
+                        $item = array_merge($item, $product->toArray());
+                    }
+                }
+            }
+            unset($item);
+
+            $suggestionBlock['items'] = $items;
+            $results[] = $this->suggestionBlockItemFactory->create(['data' => ['block' => $suggestionBlock]]);
         }
 
         return $results;

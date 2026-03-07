@@ -130,6 +130,7 @@ class Response extends Type
         }
 
         $this->data['items'] = $values;
+
         return $this;
     }
 }

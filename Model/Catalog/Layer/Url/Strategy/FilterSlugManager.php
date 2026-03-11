@@ -119,6 +119,7 @@ class FilterSlugManager
      */
     public function createFilterSlugByAttributeOptions(Attribute $options)
     {
+        $attributeCode = (string)$options->getAttributeCode();
         $allTranslations = $options->toArray();
         if (!isset($allTranslations['option']['value'])) {
             return;
@@ -146,6 +147,7 @@ class FilterSlugManager
                 $attributeSlugEntity->setAttribute($optionLabel);
                 $attributeSlugEntity->setStoreId((int)$storeId);
                 $attributeSlugEntity->setSlug($this->translitUrl->filter($optionLabel));
+                $attributeSlugEntity->setData('attribute_code', $attributeCode ?: null);
 
                 $this->attributeSlugRepository->save($attributeSlugEntity);
                 $this->cache->remove(self::CACHE_KEY);
@@ -233,9 +235,10 @@ class FilterSlugManager
     /**
      * @param Option $option
      * @param int $storeId
+     * @param string|null $attributeCode
      * @return void
      */
-    public function createFilterSlugByOption(Option $option, int $storeId): void
+    public function createFilterSlugByOption(Option $option, int $storeId, ?string $attributeCode = null): void
     {
         if (empty($this->translitUrl->filter($option['label'])) || ctype_space((string)$option['label'])) {
             return;
@@ -245,6 +248,7 @@ class FilterSlugManager
         $attributeSlugEntity->setAttribute($option['label']);
         $attributeSlugEntity->setStoreId((int)$storeId);
         $attributeSlugEntity->setSlug($this->translitUrl->filter($option['label']));
+        $attributeSlugEntity->setData('attribute_code', $attributeCode ?: null);
         $this->attributeSlugRepository->save($attributeSlugEntity);
     }
 }

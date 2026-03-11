@@ -119,38 +119,100 @@ class FilterSlugManager
      */
     public function createFilterSlugByAttributeOptions(Attribute $options)
     {
-        $allTranslations = $options->toArray();
-        if (!isset($allTranslations['option']['value'])) {
+        $attributeCode = (string)$options->getAttributeCode();
+        $optionValueTranslations = $this->getOptionValueTranslations($options);
+        if ($optionValueTranslations === []) {
             return;
         }
-        foreach ($allTranslations['option']['value'] as $optionTranslations) {
+
+        $this->getLookupTable();
+
+        foreach ($optionValueTranslations as $optionTranslations) {
             foreach ($optionTranslations as $storeId => $optionLabel) {
-                if (empty($optionLabel) || ctype_space((string)$optionLabel)) {
+                $normalizedOptionLabel = $this->normalizeOptionLabel($optionLabel);
+                if ($normalizedOptionLabel === null) {
                     continue;
                 }
 
-                $this->getLookupTable();
-                if ($optionLabel instanceof Phrase) {
-                    $optionLabel = $optionLabel->render();
-                }
-
-                if (empty($this->translitUrl->filter($optionLabel))) {
+                $slug = $this->translitUrl->filter($normalizedOptionLabel);
+                if ($this->shouldSkipOptionLabelForStore((int)$storeId, $normalizedOptionLabel, $slug)) {
                     continue;
                 }
 
-                if (isset($this->lookupTable[$storeId][strtolower($optionLabel)])) {
-                    continue;
-                }
-
-                $attributeSlugEntity = $this->attributeSlugFactory->create();
-                $attributeSlugEntity->setAttribute($optionLabel);
-                $attributeSlugEntity->setStoreId((int)$storeId);
-                $attributeSlugEntity->setSlug($this->translitUrl->filter($optionLabel));
-
-                $this->attributeSlugRepository->save($attributeSlugEntity);
-                $this->cache->remove(self::CACHE_KEY);
+                $this->saveAttributeSlugForOptionLabel(
+                    $normalizedOptionLabel,
+                    (int)$storeId,
+                    $attributeCode !== '' ? $attributeCode : null,
+                    $slug
+                );
             }
         }
+    }
+
+    /**
+     * @param Attribute $options
+     * @return array
+     */
+    private function getOptionValueTranslations(Attribute $options): array
+    {
+        $allTranslations = $options->toArray();
+
+        return $allTranslations['option']['value'] ?? [];
+    }
+
+    /**
+     * @param mixed $optionLabel
+     * @return string|null
+     */
+    private function normalizeOptionLabel($optionLabel): ?string
+    {
+        if ($optionLabel instanceof Phrase) {
+            $optionLabel = $optionLabel->render();
+        }
+
+        if (empty($optionLabel) || ctype_space((string)$optionLabel)) {
+            return null;
+        }
+
+        return (string)$optionLabel;
+    }
+
+    /**
+     * @param int $storeId
+     * @param string $optionLabel
+     * @param string $slug
+     * @return bool
+     */
+    private function shouldSkipOptionLabelForStore(int $storeId, string $optionLabel, string $slug): bool
+    {
+        if (empty($slug)) {
+            return true;
+        }
+
+        return isset($this->lookupTable[$storeId][strtolower($optionLabel)]);
+    }
+
+    /**
+     * @param string $optionLabel
+     * @param int $storeId
+     * @param string|null $attributeCode
+     * @param string $slug
+     * @return void
+     */
+    private function saveAttributeSlugForOptionLabel(
+        string $optionLabel,
+        int $storeId,
+        ?string $attributeCode,
+        string $slug
+    ): void {
+        $attributeSlugEntity = $this->attributeSlugFactory->create();
+        $attributeSlugEntity->setAttribute($optionLabel);
+        $attributeSlugEntity->setStoreId($storeId);
+        $attributeSlugEntity->setSlug($slug);
+        $attributeSlugEntity->setData('attribute_code', $attributeCode);
+
+        $this->attributeSlugRepository->save($attributeSlugEntity);
+        $this->cache->remove(self::CACHE_KEY);
     }
 
     /**
@@ -233,9 +295,10 @@ class FilterSlugManager
     /**
      * @param Option $option
      * @param int $storeId
+     * @param string|null $attributeCode
      * @return void
      */
-    public function createFilterSlugByOption(Option $option, int $storeId): void
+    public function createFilterSlugByOption(Option $option, int $storeId, ?string $attributeCode = null): void
     {
         if (empty($this->translitUrl->filter($option['label'])) || ctype_space((string)$option['label'])) {
             return;
@@ -245,6 +308,7 @@ class FilterSlugManager
         $attributeSlugEntity->setAttribute($option['label']);
         $attributeSlugEntity->setStoreId((int)$storeId);
         $attributeSlugEntity->setSlug($this->translitUrl->filter($option['label']));
+        $attributeSlugEntity->setData('attribute_code', $attributeCode ? $attributeCode : null);
         $this->attributeSlugRepository->save($attributeSlugEntity);
     }
 }

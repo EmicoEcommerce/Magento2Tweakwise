@@ -79,7 +79,7 @@ class Response extends Type
             }
 
             $items[] = $configurable;
-            if ($simple['type'] !== 'product') {
+            if (!isset($simple['type']) || $simple['type'] !== 'product') {
                 continue;
             }
             $items[] = $simple;

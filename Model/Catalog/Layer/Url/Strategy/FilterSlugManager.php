@@ -142,7 +142,7 @@ class FilterSlugManager
                 $this->saveAttributeSlugForOptionLabel(
                     $normalizedOptionLabel,
                     (int)$storeId,
-                    $attributeCode ?: null,
+                    $attributeCode !== '' ? $attributeCode : null,
                     $slug
                 );
             }

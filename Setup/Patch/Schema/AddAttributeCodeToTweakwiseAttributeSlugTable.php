@@ -21,7 +21,8 @@ class AddAttributeCodeToTweakwiseAttributeSlugTable implements SchemaPatchInterf
         $connection = $setup->getConnection();
         $tableName = $setup->getTable('tweakwise_attribute_slug');
 
-        if ($connection->isTableExists($tableName)
+        if (
+            $connection->isTableExists($tableName)
             && !$connection->tableColumnExists($tableName, 'attribute_code')
         ) {
             $connection->addColumn($tableName, 'attribute_code', [
@@ -50,4 +51,3 @@ class AddAttributeCodeToTweakwiseAttributeSlugTable implements SchemaPatchInterf
         return [];
     }
 }
-

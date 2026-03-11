@@ -202,17 +202,16 @@ class NavigationContext
      */
     public function resetPagination(): self
     {
-        $params = $this->request->getParameters();
         $params['resetPagination'] = true;
         $params['tn_fk_p'] = 1;
         $params['tn_p'] = 1;
 
         // @phpstan-ignore-next-line
         $this->request = null;
-        $request = $this->getRequest()->setParameters($params);
+        $this->request = $this->getRequest()->setParameters($params);
         $this->response = null;
 
-        return $this->initializeRequest($request);
+        return $this;
     }
 
     /**

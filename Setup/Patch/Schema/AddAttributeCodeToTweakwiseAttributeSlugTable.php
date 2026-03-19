@@ -10,10 +10,18 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 
 class AddAttributeCodeToTweakwiseAttributeSlugTable implements SchemaPatchInterface
 {
+    /**
+     * Constructor.
+     *
+     * @param SchemaSetupInterface $schemaSetup
+     */
     public function __construct(private readonly SchemaSetupInterface $schemaSetup)
     {
     }
 
+    /**
+     * @return $this|AddAttributeCodeToTweakwiseAttributeSlugTable
+     */
     public function apply()
     {
         $setup = $this->schemaSetup;
@@ -39,6 +47,9 @@ class AddAttributeCodeToTweakwiseAttributeSlugTable implements SchemaPatchInterf
         return $this;
     }
 
+    /**
+     * @return class-string[]
+     */
     public static function getDependencies()
     {
         return [
@@ -46,6 +57,9 @@ class AddAttributeCodeToTweakwiseAttributeSlugTable implements SchemaPatchInterf
         ];
     }
 
+    /**
+     * @return array|string[]
+     */
     public function getAliases()
     {
         return [];

@@ -170,6 +170,7 @@ class SuggestionDataProvider implements DataProviderInterface
                     $results[] = $this->getSuggestionBlocks($response);
                     continue;
                 }
+
                 $results[] = $this->dataProviderHelper->getProductItems($response);
             }
 
@@ -199,29 +200,41 @@ class SuggestionDataProvider implements DataProviderInterface
         return $results;
     }
 
-    protected function getSuggestionBlocks(AutocompleteProductResponseInterface $response)
+    protected function getSuggestionBlocks(AutocompleteProductResponseInterface $response): array
     {
         $results = [];
 
         $blocks = $response->getBlocks() ? $response->getBlocks() : [];
+        if (empty($blocks)) {
+            return $results;
+        }
+
         $products = $this->dataProviderHelper->getProductItems($response);
+
+        $productItemsByTweakwiseId = [];
+        foreach ($products as $product) {
+            $productItemsByTweakwiseId[(string)$product->getProduct()->getData('tweakwise_id')] = $product->toArray();
+        }
+
         foreach ($blocks as $suggestionBlock) {
             if (empty($suggestionBlock['items'])) {
                 continue;
             }
 
             $items = isset($suggestionBlock['items']['item'][0]) ? $suggestionBlock['items']['item'] : $suggestionBlock['items'];
+            $resolvedItems = [];
 
-            foreach ($items as &$item) {
-                foreach ($products as $product) {
-                    if ((string)$item['itemno'] === (string)$product->getProduct()->getData('tweakwise_id')) {
-                        $item = array_merge($item, $product->toArray());
-                    }
+            foreach ($items as $item) {
+                $itemNumber = (string)($item['itemno'] ?? '');
+                if (!isset($productItemsByTweakwiseId[$itemNumber])) {
+                    $resolvedItems[] = $item;
+                    continue;
                 }
-            }
-            unset($item);
 
-            $suggestionBlock['items'] = $items;
+                $resolvedItems[] = array_merge($item, $productItemsByTweakwiseId[$itemNumber]);
+            }
+
+            $suggestionBlock['items'] = $resolvedItems;
             $results[] = $this->suggestionBlockItemFactory->create(['data' => ['block' => $suggestionBlock]]);
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
 use Magento\Framework\DataObject;
@@ -18,9 +20,11 @@ class SuggestionBlockItem extends DataObject
     {
         parent::__construct($data);
 
-        if (isset($data['block'])) {
-            $this->setBlock($data['block']);
+        if (!isset($data['block'])) {
+            return;
         }
+
+        $this->setBlock($data['block']);
     }
 
     /**

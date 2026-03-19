@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tweakwise\Magento2Tweakwise\Model\Client\Type;
 
-use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeAbstract;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeFactory;
 
 /**

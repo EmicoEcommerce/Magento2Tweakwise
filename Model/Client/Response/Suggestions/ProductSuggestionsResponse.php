@@ -19,7 +19,6 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
         }
 
         return array_map(fn($item) => $this->helper->getStoreId($item->getId()), $items);
-
     }
 
     /**

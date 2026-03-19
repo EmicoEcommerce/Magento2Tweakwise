@@ -54,39 +54,70 @@ class Response extends Type
         $items = [];
         $groups = $this->normalizeArray($groups, 'group');
         foreach ($groups as $group) {
-            $simple = $this->getMostSuitableVariant($group);
-            $configurable = $this->getConfigurable($group);
-
-            if (!$configurable) {
-                $items[] = $simple;
-                continue;
+            foreach ($this->getGroupItems($group) as $item) {
+                $items[] = $item;
             }
-
-            if (!empty($simple['image'])) {
-                $configurable['image'] = $simple['image'];
-            }
-
-            if (!empty($simple['type'])) {
-                $configurable['type'] = $simple['type'];
-                // Add visual url to visual item
-                if ($simple['type'] === 'visual') {
-                    $configurable['url'] = $simple['url'];
-                }
-            }
-
-            if (!empty($simple['itemno'])) {
-                $configurable['tw_id'] = (int)substr($simple['itemno'], 5);
-            }
-
-            $items[] = $configurable;
-            if (!isset($simple['type']) || $simple['type'] !== 'product') {
-                continue;
-            }
-            $items[] = $simple;
         }
 
         $this->setItems($items);
         return $this;
+    }
+
+    /**
+     * @param array $group
+     * @return array[]
+     */
+    protected function getGroupItems(array $group): array
+    {
+        $simple = $this->getMostSuitableVariant($group);
+        $configurable = $this->getConfigurable($group);
+
+        if (!$configurable) {
+            return [$simple];
+        }
+
+        $items = [$this->applySimpleDataToConfigurable($configurable, $simple)];
+        if ($this->shouldAppendSimpleItem($simple)) {
+            $items[] = $simple;
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param array $configurable
+     * @param array $simple
+     * @return array
+     */
+    protected function applySimpleDataToConfigurable(array $configurable, array $simple): array
+    {
+        if (!empty($simple['image'])) {
+            $configurable['image'] = $simple['image'];
+        }
+
+        if (!empty($simple['type'])) {
+            $configurable['type'] = $simple['type'];
+
+            // Add visual url to visual item
+            if ($simple['type'] === 'visual') {
+                $configurable['url'] = $simple['url'];
+            }
+        }
+
+        if (!empty($simple['itemno'])) {
+            $configurable['tw_id'] = (int)substr($simple['itemno'], 5);
+        }
+
+        return $configurable;
+    }
+
+    /**
+     * @param array $simple
+     * @return bool
+     */
+    protected function shouldAppendSimpleItem(array $simple): bool
+    {
+        return isset($simple['type']) && $simple['type'] === 'product';
     }
 
     /**

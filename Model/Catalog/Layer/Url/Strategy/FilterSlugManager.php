@@ -207,8 +207,8 @@ class FilterSlugManager
     ): void {
         $attributeSlugEntity = $this->attributeSlugFactory->create();
         $attributeSlugEntity->setAttribute($optionLabel);
-        $attributeSlugEntity->setStoreId($storeId);
-        $attributeSlugEntity->setSlug($slug);
+        $attributeSlugEntity->setStoreId((int)$storeId);
+        $attributeSlugEntity->setSlug($this->translitUrl->filter($optionLabel));
         $attributeSlugEntity->setData('attribute_code', $attributeCode);
 
         $this->attributeSlugRepository->save($attributeSlugEntity);

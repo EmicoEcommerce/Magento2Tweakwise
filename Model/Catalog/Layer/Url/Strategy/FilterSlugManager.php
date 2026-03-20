@@ -134,8 +134,7 @@ class FilterSlugManager
                     continue;
                 }
 
-                $slug = $this->translitUrl->filter($normalizedOptionLabel);
-                if ($this->shouldSkipOptionLabelForStore((int)$storeId, $normalizedOptionLabel, $slug)) {
+                if ($this->shouldSkipOptionLabelForStore($normalizedOptionLabel, (int)$storeId)) {
                     continue;
                 }
 
@@ -143,7 +142,6 @@ class FilterSlugManager
                     $normalizedOptionLabel,
                     (int)$storeId,
                     $attributeCode !== '' ? $attributeCode : null,
-                    $slug
                 );
             }
         }
@@ -180,12 +178,11 @@ class FilterSlugManager
     /**
      * @param int $storeId
      * @param string $optionLabel
-     * @param string $slug
      * @return bool
      */
-    private function shouldSkipOptionLabelForStore(int $storeId, string $optionLabel, string $slug): bool
+    private function shouldSkipOptionLabelForStore(int $storeId, string $optionLabel): bool
     {
-        if (empty($slug)) {
+        if (empty($this->translitUrl->filter($optionLabel))) {
             return true;
         }
 
@@ -196,14 +193,12 @@ class FilterSlugManager
      * @param string $optionLabel
      * @param int $storeId
      * @param string|null $attributeCode
-     * @param string $slug
      * @return void
      */
     private function saveAttributeSlugForOptionLabel(
         string $optionLabel,
         int $storeId,
         ?string $attributeCode,
-        string $slug
     ): void {
         $attributeSlugEntity = $this->attributeSlugFactory->create();
         $attributeSlugEntity->setAttribute($optionLabel);

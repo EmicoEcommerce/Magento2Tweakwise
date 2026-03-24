@@ -85,7 +85,11 @@ class RegenerateFilterUrlSlugs extends Command
                             )
                         );
 
-                        $this->regenerateSlugsForAttributeOption($option, (int)$store->getId());
+                        $this->regenerateSlugsForAttributeOption(
+                            $option,
+                            (int)$store->getId(),
+                            (string)$attribute->getAttributeCode()
+                        );
 
                         $counter++;
                     }
@@ -130,10 +134,14 @@ class RegenerateFilterUrlSlugs extends Command
     /**
      * @param Option $option
      * @param int $storeId
+     * @param string|null $attributeCode
      * @return void
      */
-    protected function regenerateSlugsForAttributeOption(Option $option, int $storeId): void
-    {
-        $this->filterSlugManager->createFilterSlugByOption($option, $storeId);
+    protected function regenerateSlugsForAttributeOption(
+        Option $option,
+        int $storeId,
+        ?string $attributeCode = null
+    ): void {
+        $this->filterSlugManager->createFilterSlugByOption($option, $storeId, $attributeCode);
     }
 }

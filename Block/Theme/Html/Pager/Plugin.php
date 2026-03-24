@@ -41,11 +41,11 @@ class Plugin
     /**
      * @param Pager $subject
      * @param Closure $proceed
-     * @param string $route
+     * @param string|null $route
      * @param array $params
      * @return string
      */
-    public function aroundGetUrl(Pager $subject, Closure $proceed, string $route = '', array $params = []): string
+    public function aroundGetUrl(Pager $subject, Closure $proceed, ?string $route = '', array $params = []): string
     {
         if (!$this->config->isLayeredEnabled()) {
             return $proceed($route, $params);

@@ -26,8 +26,9 @@
                 <argument name="analyticsTypes" xsi:type="array">
                     <item name="session_start" xsi:type="string">session_start</item>
                     <item name="search" xsi:type="string">search</item>
+                    <item name="page_impression_search" xsi:type="string">page_impression</item>
                 </argument>
-                <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
+                <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>
             </arguments>
         </referenceBlock>
         <referenceBlock name="search.result">

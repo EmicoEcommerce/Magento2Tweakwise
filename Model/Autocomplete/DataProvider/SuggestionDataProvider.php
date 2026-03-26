@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
+use Magento\Catalog\Model\Category;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderInterface;
@@ -15,6 +16,7 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use GuzzleHttp\Promise\Utils;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Search\Model\Autocomplete\ItemInterface;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionBlockItemFactory;
 
 class SuggestionDataProvider implements DataProviderInterface
 {
@@ -59,11 +61,6 @@ class SuggestionDataProvider implements DataProviderInterface
     protected $client;
 
     /**
-     * @var SuggestionBlockItemFactory
-     */
-    protected $suggestionBlockItemFactory;
-
-    /**
      * AutocompleteDataProvider constructor.
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
@@ -84,7 +81,7 @@ class SuggestionDataProvider implements DataProviderInterface
         RequestFactory $suggestionRequestFactory,
         Client $client,
         Request $request,
-        SuggestionBlockItemFactory $suggestionBlockItemFactory
+        protected readonly SuggestionBlockItemFactory $suggestionBlockItemFactory
     ) {
         $this->config = $config;
         $this->cookieManager = $cookieManager;
@@ -94,7 +91,6 @@ class SuggestionDataProvider implements DataProviderInterface
         $this->suggestionRequestFactory = $suggestionRequestFactory;
         $this->client = $client;
         $this->request = $request;
-        $this->suggestionBlockItemFactory = $suggestionBlockItemFactory;
     }
 
     /**
@@ -181,8 +177,9 @@ class SuggestionDataProvider implements DataProviderInterface
      * Build suggestions request with common parameters
      *
      * @param string $query
-     * @param mixed $category Category object or category ID
+     * @param Category|int $category Category object or category ID
      * @param string|null $profileKeyCookie
+     *
      * @return Request
      */
     private function buildSuggestionsRequest(string $query, $category, ?string $profileKeyCookie): Request
@@ -200,8 +197,9 @@ class SuggestionDataProvider implements DataProviderInterface
      * Build product suggestions request with common parameters
      *
      * @param string $query
-     * @param mixed $category Category object or category ID
+     * @param Category|int $category Category object or category ID
      * @param string|null $profileKeyCookie
+     *
      * @return Request
      */
     private function buildProductSuggestionsRequest(string $query, $category, ?string $profileKeyCookie): Request
@@ -236,7 +234,7 @@ class SuggestionDataProvider implements DataProviderInterface
     /**
      * Process a single response and return items
      *
-     * @param mixed $response
+     * @param AutocompleteProductResponseInterface|SuggestionsResponse $response
      * @return array
      */
     private function processResponse($response): array
@@ -254,6 +252,12 @@ class SuggestionDataProvider implements DataProviderInterface
         return [];
     }
 
+    /**
+     * @param AutocompleteProductResponseInterface $response
+     *
+     * @return array
+     * @throws LocalizedException
+     */
     protected function getSuggestionBlocks(AutocompleteProductResponseInterface $response): array
     {
         $results = [];

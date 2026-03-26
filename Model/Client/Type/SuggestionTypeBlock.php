@@ -12,10 +12,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeF
  */
 class SuggestionTypeBlock extends Type
 {
-    /**
-     * @var SuggestionTypeFactory
-     */
-    protected $suggestionTypeFactory;
 
     /**
      * @var string
@@ -28,10 +24,9 @@ class SuggestionTypeBlock extends Type
      * @param array $data
      */
     public function __construct(
-        SuggestionTypeFactory $suggestionTypeFactory,
+        protected readonly SuggestionTypeFactory $suggestionTypeFactory,
         array $data = []
     ) {
-        $this->suggestionTypeFactory = $suggestionTypeFactory;
         parent::__construct($data);
     }
 
@@ -47,7 +42,7 @@ class SuggestionTypeBlock extends Type
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -56,7 +51,7 @@ class SuggestionTypeBlock extends Type
      * @param array $block
      * @return $this
      */
-    public function setBlock(array $block)
+    public function setBlock(array $block): self
     {
         $this->data['blocks'] = $block;
         return $this;
@@ -65,7 +60,7 @@ class SuggestionTypeBlock extends Type
     /**
      * @return array
      */
-    public function getBlock()
+    public function getBlock(): array
     {
         return $this->data['blocks'] ?? [];
     }

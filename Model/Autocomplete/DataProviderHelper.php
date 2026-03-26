@@ -185,6 +185,9 @@ class DataProviderHelper
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function useBlocks(): bool
     {
         return (bool)$this->request->getParam('blocks');

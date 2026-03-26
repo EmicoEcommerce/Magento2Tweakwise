@@ -40,6 +40,11 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
         return $result;
     }
 
+    /**
+     * @param array $blocks
+     *
+     * @return $this
+     */
     public function setBlocks(array $blocks): self
     {
         $blocks = $this->normalizeArray($blocks, 'block');

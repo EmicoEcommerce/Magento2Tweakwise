@@ -9,11 +9,11 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Config\Source;
 
-use Tweakwise\Magento2Tweakwise\Controller\Ajax\FacetAttributes;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Magento\Framework\Data\OptionSourceInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\FacetAttributesResponse;
 
 class FacetAttribute implements OptionSourceInterface
 {
@@ -50,9 +50,8 @@ class FacetAttribute implements OptionSourceInterface
     protected function buildOptions()
     {
         $request = $this->requestFactory->create();
-        /** @var FacetAttributes $response */
+        /** @var FacetAttributesResponse $response */
         $response = $this->client->request($request);
-        // @phpstan-ignore-next-line
         foreach ($response->getAttributes() as $attribute) {
             $result[] = ['value' => $attribute['title'], 'label' => $attribute['title']];
         }

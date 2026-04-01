@@ -81,16 +81,28 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             $baseSlug = $attributeSlug->getSlug();
             $storeId = $attributeSlug->getStoreId();
 
+            try {
+                /** @var AttributeSlug $existingAttributeSlug */
+                $existingAttributeSlug = $this->findByAttributeAndStore((string)$attributeSlug->getAttribute(), $storeId);
+                $attributeSlug->setData('id', (int)$existingAttributeSlug->getData('id'));
+            } catch (NoSuchEntityException $e) {
+                // do nothing, this slug will be inserted
+            }
+
             $newSlug = $baseSlug;
             $counter = 0;
 
             while (true) {
                 try {
                     /** @var AttributeSlug $existingSlug */
-                    $existingSlug = $this->findBySlug($newSlug, $storeId);
+                    $existingSlug = $this->findBySlug($newSlug);
 
-                    if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
-                        return $attributeSlug;
+                    if (
+                        $existingSlug->getAttribute() === $attributeSlug->getAttribute()
+                        && (int)$existingSlug->getStoreId() === $storeId
+                    ) {
+                        $attributeSlug->setData('id', (int)$existingSlug->getData('id'));
+                        break;
                     }
 
                     $counter++;
@@ -172,16 +184,34 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
     }
 
     /**
-     * @param string $slug
+     * @param string $attribute
      * @param int $storeId
      * @return AttributeSlugInterface
      * @throws NoSuchEntityException
      */
-    public function findBySlug(string $slug, int $storeId = 0): AttributeSlugInterface
+    private function findByAttributeAndStore(string $attribute, int $storeId): AttributeSlugInterface
     {
         $collection = $this->collectionFactory->create()
-            ->addFieldToFilter('slug', $slug)
+            ->addFieldToFilter('attribute', $attribute)
             ->addFieldToFilter('store_id', (string)$storeId);
+        if (!$collection->getSize()) {
+            throw new NoSuchEntityException(__('No slug found for attribute "%1".', $attribute));
+        }
+
+        /** @var AttributeSlug $attributeSlug */
+        $attributeSlug = $collection->getFirstItem();
+        return $attributeSlug;
+    }
+
+    /**
+     * @param string $slug
+     * @return AttributeSlugInterface
+     * @throws NoSuchEntityException
+     */
+    public function findBySlug(string $slug): AttributeSlugInterface
+    {
+        $collection = $this->collectionFactory->create()
+            ->addFieldToFilter('slug', $slug);
         if (!$collection->getSize()) {
             throw new NoSuchEntityException(__('No slug found for attribute "%1".', $slug));
         }

@@ -12,7 +12,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionType\SuggestionTypeF
  */
 class SuggestionTypeBlock extends Type
 {
-
     /**
      * @var string
      */
@@ -34,7 +33,7 @@ class SuggestionTypeBlock extends Type
      * @param string $type
      * @return void
      */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }

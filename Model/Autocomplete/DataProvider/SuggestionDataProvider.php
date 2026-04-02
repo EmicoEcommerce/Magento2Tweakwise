@@ -150,10 +150,10 @@ class SuggestionDataProvider implements DataProviderInterface
      * Build async requests for suggestions and products
      *
      * @param string $query
-     * @param mixed $category Category object or category ID
+     * @param int|Category $category Category object or category ID
      * @return array
      */
-    private function buildRequests(string $query, $category): array
+    private function buildRequests(string $query, int|Category $category): array
     {
         $profileKeyCookie = $this->cookieManager->getCookie(
             $this->config->getPersonalMerchandisingCookieName(),
@@ -182,7 +182,7 @@ class SuggestionDataProvider implements DataProviderInterface
      *
      * @return Request
      */
-    private function buildSuggestionsRequest(string $query, $category, ?string $profileKeyCookie): Request
+    private function buildSuggestionsRequest(string $query, int|Category $category, ?string $profileKeyCookie): Request
     {
         $request = $this->suggestionRequestFactory->create();
         // @phpstan-ignore-next-line
@@ -202,7 +202,7 @@ class SuggestionDataProvider implements DataProviderInterface
      *
      * @return Request
      */
-    private function buildProductSuggestionsRequest(string $query, $category, ?string $profileKeyCookie): Request
+    private function buildProductSuggestionsRequest(string $query, int|Category $category, ?string $profileKeyCookie): Request
     {
         /** @var ProductSuggestionsRequest $request */
         $request = $this->productSuggestionRequestFactory->create();
@@ -280,6 +280,7 @@ class SuggestionDataProvider implements DataProviderInterface
             }
 
             $items = isset($suggestionBlock['items']['item'][0]) ? $suggestionBlock['items']['item'] : $suggestionBlock['items'];
+
             $resolvedItems = [];
 
             foreach ($items as $item) {

@@ -4,6 +4,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Client\Response\Suggestions;
 
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AutocompleteProductResponseInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 
 class ProductSuggestionsResponse extends Response implements AutocompleteProductResponseInterface
 {
@@ -49,19 +50,71 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
     {
         $blocks = $this->normalizeArray($blocks, 'block');
         $items = [];
-        foreach ($blocks as $block) {
-            if (!isset($block['items'])) {
-                continue;
+        $groups = [];
+        foreach ($blocks as $key => $block) {
+            if (isset($block['items'])) {
+                $blockItems = $block['items'] ?? [];
+                $blockItems = $this->normalizeArray($blockItems, 'item');
+                foreach ($blockItems as $item) {
+                    $items[] = $item;
+                }
             }
-            $blockItems = $block['items'] ?? [];
+
+            if (isset($block['groups'])) {
+                $blockGroupItems = [];
+                $blockGroups = $block['groups'] ?? [];
+                $blockGroups = $this->normalizeArray($blockGroups, 'group');
+                foreach ($blockGroups as $group) {
+                    $groups[] = $group;
+                }
+                $this->setGroups($blockGroups);
+                $blocks[$key]['items'] = $this->convertItemTypesToArrays(
+                    $this->getDataValue('items') ?? []
+                );
+                unset($blocks[$key]['groups']);
+            }
+        }
+
+        if (!empty($groups)) {
+            //backwards compatibility, set all groups
+            $this->setGroups($groups);
+        }
+
+        if (!empty($items)) {
+            //backwards compatibility, set all items
+            $this->setItems($items);
+        }
+        $this->data['blocks'] = $blocks;
+        return $this;
+    }
+
+    /**
+     * @param array $blockItems
+     *
+     * @return array
+     */
+    private function setBlockItems(array $blockItems): array {
+        $items = [];
+        if ($blockItems) {
             $blockItems = $this->normalizeArray($blockItems, 'item');
             foreach ($blockItems as $item) {
                 $items[] = $item;
             }
         }
+        return $items;
+    }
 
-        $this->setItems($items);
-        $this->data['blocks'] = $blocks;
-        return $this;
+    /**
+     * Convert ItemType objects to plain arrays for block storage
+     *
+     * @param array $items
+     * @return array
+     */
+    private function convertItemTypesToArrays(array $items): array
+    {
+        return array_map(
+            fn($item) => $item instanceof ItemType ? $item->toArray() : $item,
+            $items
+        );
     }
 }

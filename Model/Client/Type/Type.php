@@ -81,6 +81,14 @@ class Type
     }
 
     /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+
+    /**
      * @param array $data
      * @return $this
      */

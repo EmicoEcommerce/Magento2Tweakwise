@@ -112,9 +112,11 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
             $this->setGroups($allGroups);
         }
 
-        if (!empty($allItems)) {
-            $this->setItems($allItems);
+        if (empty($allItems)) {
+            return;
         }
+
+        $this->setItems($allItems);
     }
 
     /**

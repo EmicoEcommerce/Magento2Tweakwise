@@ -42,9 +42,10 @@ class Response extends Type
     /**
      * Function to get items from groups and set the items
      * @param array $groups
+     * @param bool $addSimple
      * @return $this
      */
-    public function setGroups(array $groups): self
+    public function setGroups(array $groups, bool $addSimple = true): self
     {
         if (!$groups) {
             $this->setItems([]);
@@ -79,9 +80,10 @@ class Response extends Type
             }
 
             $items[] = $configurable;
-            if ($simple['type'] !== 'product') {
+            if ($simple['type'] !== 'product' || !$addSimple) {
                 continue;
             }
+
             $items[] = $simple;
         }
 

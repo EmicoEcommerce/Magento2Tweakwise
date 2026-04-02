@@ -49,30 +49,39 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
     public function setBlocks(array $blocks): self
     {
         $blocks = $this->normalizeArray($blocks, 'block');
+        if (empty($blocks)) {
+            $this->data['blocks'] = [];
+            return $this;
+        }
+
         $items = [];
         $groups = [];
+
         foreach ($blocks as $key => $block) {
+            if (!isset($block['items']) && !isset($block['groups'])) {
+                continue;
+            }
+
             if (isset($block['items'])) {
-                $blockItems = $block['items'] ?? [];
-                $blockItems = $this->normalizeArray($blockItems, 'item');
-                foreach ($blockItems as $item) {
+                foreach ($this->setBlockItems($block['items'] ?? []) as $item) {
                     $items[] = $item;
                 }
             }
 
-            if (isset($block['groups'])) {
-                $blockGroupItems = [];
-                $blockGroups = $block['groups'] ?? [];
-                $blockGroups = $this->normalizeArray($blockGroups, 'group');
-                foreach ($blockGroups as $group) {
-                    $groups[] = $group;
-                }
-                $this->setGroups($blockGroups);
-                $blocks[$key]['items'] = $this->convertItemTypesToArrays(
-                    $this->getDataValue('items') ?? []
-                );
-                unset($blocks[$key]['groups']);
+            if (!isset($block['groups'])) {
+                continue;
             }
+
+            $blockGroups = $this->normalizeArray($block['groups'] ?? [], 'group');
+            foreach ($blockGroups as $group) {
+                $groups[] = $group;
+            }
+
+            $this->setGroups($blockGroups, false);
+            $blocks[$key]['items'] = $this->convertItemTypesToArrays(
+                $this->getDataValue('items') ?? []
+            );
+            unset($blocks[$key]['groups']);
         }
 
         if (!empty($groups)) {
@@ -84,6 +93,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
             //backwards compatibility, set all items
             $this->setItems($items);
         }
+
         $this->data['blocks'] = $blocks;
         return $this;
     }
@@ -93,7 +103,8 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
      *
      * @return array
      */
-    private function setBlockItems(array $blockItems): array {
+    private function setBlockItems(array $blockItems): array
+    {
         $items = [];
         if ($blockItems) {
             $blockItems = $this->normalizeArray($blockItems, 'item');

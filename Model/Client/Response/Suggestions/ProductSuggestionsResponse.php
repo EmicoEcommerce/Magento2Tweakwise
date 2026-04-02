@@ -54,8 +54,8 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
             return $this;
         }
 
-        $items = [];
-        $groups = [];
+        $allItems = [];
+        $allGroups = [];
 
         foreach ($blocks as $key => $block) {
             if (!isset($block['items']) && !isset($block['groups'])) {
@@ -63,60 +63,62 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
             }
 
             if (isset($block['items'])) {
-                foreach ($this->setBlockItems($block['items'] ?? []) as $item) {
-                    $items[] = $item;
-                }
+                array_push($allItems, ...$this->normalizeArray($block['items'], 'item'));
             }
 
             if (!isset($block['groups'])) {
                 continue;
             }
 
-            $blockGroups = $this->normalizeArray($block['groups'] ?? [], 'group');
-            foreach ($blockGroups as $group) {
-                $groups[] = $group;
-            }
-
-            $this->setGroups($blockGroups, false);
-            $blocks[$key]['items'] = $this->convertItemTypesToArrays(
-                $this->getDataValue('items') ?? []
-            );
-            unset($blocks[$key]['groups']);
+            $blockGroups = $this->normalizeArray($block['groups'], 'group');
+            array_push($allGroups, ...$blockGroups);
+            $blocks[$key] = $this->resolveBlockGroups($block, $blockGroups);
         }
 
-        if (!empty($groups)) {
-            //backwards compatibility, set all groups
-            $this->setGroups($groups);
-        }
-
-        if (!empty($items)) {
-            //backwards compatibility, set all items
-            $this->setItems($items);
-        }
+        $this->applyBackwardsCompatibleData($allGroups, $allItems);
 
         $this->data['blocks'] = $blocks;
         return $this;
     }
 
     /**
-     * @param array $blockItems
+     * Convert a block's groups into items by running them through setGroups.
      *
+     * @param array $block
+     * @param array $blockGroups
      * @return array
      */
-    private function setBlockItems(array $blockItems): array
+    private function resolveBlockGroups(array $block, array $blockGroups): array
     {
-        $items = [];
-        if ($blockItems) {
-            $blockItems = $this->normalizeArray($blockItems, 'item');
-            foreach ($blockItems as $item) {
-                $items[] = $item;
-            }
-        }
-        return $items;
+        $this->setGroups($blockGroups, false);
+        $block['items'] = $this->convertItemTypesToArrays(
+            $this->getDataValue('items') ?? []
+        );
+        unset($block['groups']);
+
+        return $block;
     }
 
     /**
-     * Convert ItemType objects to plain arrays for block storage
+     * Set backwards-compatible items data from all collected groups and items.
+     *
+     * @param array $allGroups
+     * @param array $allItems
+     * @return void
+     */
+    private function applyBackwardsCompatibleData(array $allGroups, array $allItems): void
+    {
+        if (!empty($allGroups)) {
+            $this->setGroups($allGroups);
+        }
+
+        if (!empty($allItems)) {
+            $this->setItems($allItems);
+        }
+    }
+
+    /**
+     * Convert ItemType objects to plain arrays for blocks
      *
      * @param array $items
      * @return array

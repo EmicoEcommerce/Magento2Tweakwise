@@ -55,40 +55,63 @@ class Response extends Type
         $items = [];
         $groups = $this->normalizeArray($groups, 'group');
         foreach ($groups as $group) {
-            $simple = $this->getMostSuitableVariant($group);
-            $configurable = $this->getConfigurable($group);
-
-            if (!$configurable) {
-                $items[] = $simple;
-                continue;
-            }
-
-            if (!empty($simple['image'])) {
-                $configurable['image'] = $simple['image'];
-            }
-
-            if (!empty($simple['type'])) {
-                $configurable['type'] = $simple['type'];
-                // Add visual url to visual item
-                if ($simple['type'] === 'visual') {
-                    $configurable['url'] = $simple['url'];
-                }
-            }
-
-            if (!empty($simple['itemno'])) {
-                $configurable['tw_id'] = (int)substr($simple['itemno'], 5);
-            }
-
-            $items[] = $configurable;
-            if ($simple['type'] !== 'product' || !$addSimple) {
-                continue;
-            }
-
-            $items[] = $simple;
+            array_push($items, ...$this->buildGroupItems($group, $addSimple));
         }
 
         $this->setItems($items);
         return $this;
+    }
+
+    /**
+     * Build the item list for a single group.
+     * @param array $group
+     * @param bool $addSimple
+     * @return array
+     */
+    private function buildGroupItems(array $group, bool $addSimple): array
+    {
+        $simple = $this->getMostSuitableVariant($group);
+        $configurable = $this->getConfigurable($group);
+
+        if (!$configurable) {
+            return [$simple];
+        }
+
+        $configurable = $this->enrichConfigurable($configurable, $simple);
+        $items = [$configurable];
+
+        if ($addSimple && ($simple['type'] ?? '') === 'product') {
+            $items[] = $simple;
+        }
+
+        return $items;
+    }
+
+    /**
+     * Copy relevant simple-variant data onto the configurable item.
+     * @param array $configurable
+     * @param array $simple
+     * @return array
+     */
+    private function enrichConfigurable(array $configurable, array $simple): array
+    {
+        if (!empty($simple['image'])) {
+            $configurable['image'] = $simple['image'];
+        }
+
+        if (!empty($simple['type'])) {
+            $configurable['type'] = $simple['type'];
+            // Add visual url to visual item
+            if ($simple['type'] === 'visual') {
+                $configurable['url'] = $simple['url'];
+            }
+        }
+
+        if (!empty($simple['itemno'])) {
+            $configurable['tw_id'] = (int)substr($simple['itemno'], 5);
+        }
+
+        return $configurable;
     }
 
     /**

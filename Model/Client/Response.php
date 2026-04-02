@@ -55,7 +55,7 @@ class Response extends Type
         $items = [];
         $groups = $this->normalizeArray($groups, 'group');
         foreach ($groups as $group) {
-            array_push($items, ...$this->buildGroupItems($group, $addSimple));
+            array_push($items, ...$this->getGroupItems($group, $addSimple));
         }
 
         $this->setItems($items);
@@ -63,12 +63,11 @@ class Response extends Type
     }
 
     /**
-     * Build the item list for a single group.
      * @param array $group
      * @param bool $addSimple
-     * @return array
+     * @return array[]
      */
-    private function buildGroupItems(array $group, bool $addSimple): array
+    protected function getGroupItems(array $group, bool $addSimple = true): array
     {
         $simple = $this->getMostSuitableVariant($group);
         $configurable = $this->getConfigurable($group);
@@ -77,10 +76,8 @@ class Response extends Type
             return [$simple];
         }
 
-        $configurable = $this->enrichConfigurable($configurable, $simple);
-        $items = [$configurable];
-
-        if ($addSimple && ($simple['type'] ?? '') === 'product') {
+        $items = [$this->applySimpleDataToConfigurable($configurable, $simple)];
+        if ($addSimple && $this->shouldAppendSimpleItem($simple)) {
             $items[] = $simple;
         }
 
@@ -88,12 +85,11 @@ class Response extends Type
     }
 
     /**
-     * Copy relevant simple-variant data onto the configurable item.
      * @param array $configurable
      * @param array $simple
      * @return array
      */
-    private function enrichConfigurable(array $configurable, array $simple): array
+    protected function applySimpleDataToConfigurable(array $configurable, array $simple): array
     {
         if (!empty($simple['image'])) {
             $configurable['image'] = $simple['image'];
@@ -101,6 +97,7 @@ class Response extends Type
 
         if (!empty($simple['type'])) {
             $configurable['type'] = $simple['type'];
+
             // Add visual url to visual item
             if ($simple['type'] === 'visual') {
                 $configurable['url'] = $simple['url'];
@@ -112,6 +109,15 @@ class Response extends Type
         }
 
         return $configurable;
+    }
+
+    /**
+     * @param array $simple
+     * @return bool
+     */
+    protected function shouldAppendSimpleItem(array $simple): bool
+    {
+        return isset($simple['type']) && $simple['type'] === 'product';
     }
 
     /**
@@ -155,7 +161,6 @@ class Response extends Type
         }
 
         $this->data['items'] = $values;
-
         return $this;
     }
 }

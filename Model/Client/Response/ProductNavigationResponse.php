@@ -107,6 +107,11 @@ class ProductNavigationResponse extends Response
                 $data[ItemType::TWEAKWISE_ID] = $tweakwiseId;
             }
 
+            $groupCode = $item->getGroupCodeFromAttributes();
+            if (!empty($groupCode)) {
+                $data[ItemType::GROUPCODE] = $groupCode;
+            }
+
             $data[ItemType::COLSPAN] = $item->getColspan();
             $data[ItemType::ROWSPAN] = $item->getRowspan();
 

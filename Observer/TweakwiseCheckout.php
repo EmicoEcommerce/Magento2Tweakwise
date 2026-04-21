@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Observer;
 
+use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order\Item;
@@ -42,16 +43,21 @@ class TweakwiseCheckout implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
-        if (!$this->config->isAnalyticsEnabled()) {
+        try {
+            if (!$this->config->isAnalyticsEnabled()) {
+                return;
+            }
+
+            $order = $observer->getEvent()->getOrder();
+            $totalExclTax = (float)$order->getBaseSubtotal();
+            // Get the order items
+            $items = $order->getAllItems();
+
+            $this->sendCheckout($items, $totalExclTax);
+        } catch (Exception $e) {
+            $this->logger->error('Tweakwise checkout event could not be sent', ['message' => $e->getMessage()]);
             return;
         }
-
-        $order = $observer->getEvent()->getOrder();
-        $totalExclTax = (float)$order->getBaseSubtotal();
-        // Get the order items
-        $items = $order->getAllItems();
-
-        $this->sendCheckout($items, $totalExclTax);
     }
 
     /**
@@ -63,6 +69,10 @@ class TweakwiseCheckout implements ObserverInterface
      */
     private function sendCheckout($items, float $totalExclTax): void
     {
+        if (empty($items) && !is_array($items)) {
+            return;
+        }
+
         $storeId = (int)$this->storeManager->getStore()->getId();
         $profileKey = $this->config->getProfileKey();
         $tweakwiseRequest = $this->requestFactory->create();
@@ -73,30 +83,34 @@ class TweakwiseCheckout implements ObserverInterface
         $tweakwiseRequest->setPath('purchase');
 
         if ($this->config->isGroupedProductsEnabled()) {
-            $items = array_filter(
-                $items,
-                fn($item) => $item->getParentItem() !== null
-            );
+            $filteredItems = [];
+
+            foreach ($items as $originalItem) {
+                $returnedItem = $originalItem->getParentItem() ?? $originalItem;
+                $returnedItem->setData('groupCode', $originalItem->getProductId());
+                $filteredItems[(int)$returnedItem->getId()] = $returnedItem;
+            }
+
+            $items = array_values($filteredItems);
         } else {
-            $items = array_filter(
+            $items = array_values(array_filter(
                 $items,
-                fn($item) => $item->getParentItem() === null
-            );
+                fn (Item $item): bool => $item->getParentItem() === null
+            ));
         }
 
-        foreach ($items as $item) {
-            $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
-        }
+         foreach ($items as $item) {
+             $groupCode = null;
+             if ($this->config->isGroupedProductsEnabled()) {
+                 $groupCode = $item->getData('groupCode');
+                 if (!empty($groupCode)) {
+                     $groupCode = (int)$this->helper->getTweakwiseId($storeId, (int)$groupCode);
+                 }
+             }
+             $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId(), $groupCode);
+         }
 
-        // @phpstan-ignore-next-line
-        $tweakwiseRequest->setParameterArray('ProductKeys', $productTwId);
-
-        // @phpcs:disable
-        try {
-            $this->client->request($tweakwiseRequest);
-        } catch (\Exception $e) {
-            // Do nothing so that the checkout process can continue
-        }
-        // @phpcs:enable
+         $tweakwiseRequest->setParameterArray('ProductKeys', $productTwId);
+         $this->client->request($tweakwiseRequest);
     }
 }

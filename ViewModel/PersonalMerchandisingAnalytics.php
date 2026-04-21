@@ -74,10 +74,11 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     private function getGroupedProductId(int $productId, int $storeId): string
     {
         try {
-            /** @var Product $product */
+            $groupcode = $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+                /** @var Product $product */
             $product = $this->productRepository->getById($productId);
             if ($product->getTypeId() === Type::TYPE_SIMPLE) {
-                return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+                return $this->helper->getTweakwiseId((int)$storeId, (int)$productId, (int)$groupcode);
             }
 
             $associatedProducts = $this->getAssociatedProducts($product);
@@ -89,7 +90,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
             // Do nothing
         }
 
-        return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+        return $this->helper->getTweakwiseId((int)$storeId, (int)$productId, (int)$groupcode);
     }
 
     /**

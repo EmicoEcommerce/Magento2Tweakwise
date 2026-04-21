@@ -137,6 +137,8 @@ class Analytics extends Action
      */
     private function handleProductType(Request $tweakwiseRequest, string $productKey): void
     {
+        $productKey = $this->getProductKey($productKey);
+
         $tweakwiseRequest->setParameter('SessionKey', $this->sessionStartEventService->getSessionKey());
         $tweakwiseRequest->setParameter('ProductKey', $productKey);
         $tweakwiseRequest->setPath('pageview');
@@ -170,10 +172,7 @@ class Analytics extends Action
             throw new InvalidArgumentException('Missing requestId for itemclick.');
         }
 
-        if (ctype_digit($itemId)) {
-            // @phpstan-ignore-next-line
-            $itemId = $this->helper->getTweakwiseId($storeId, $itemId);
-        }
+        $itemId = $this->getProductKey($itemId);
 
         $tweakwiseRequest->setParameter('SessionKey', $this->sessionStartEventService->getSessionKey());
         $tweakwiseRequest->setParameter('RequestId', $requestId);
@@ -191,5 +190,21 @@ class Analytics extends Action
         $tweakwiseRequest->setParameter('SessionKey', $this->sessionStartEventService->getSessionKey());
         $tweakwiseRequest->setParameter('RequestId', $requestId);
         $tweakwiseRequest->setPath('pageimpression');
+    }
+
+    private function getProductKey(string $itemId) {
+        $groupCode = null;
+        if (strpos($itemId, Helper::GROUP_CODE_DELIMITER) !== false) {
+            [$itemId, $groupCode] = explode(Helper::GROUP_CODE_DELIMITER, $itemId, 2);
+        }
+
+        if (ctype_digit($itemId)) {
+            if ($groupCode && ctype_digit($groupCode)) {
+                $groupCode = $this->helper->getTweakwiseId($this->storeManager->getStore()->getId(), (int)$groupCode);
+            }
+            $itemId = $this->helper->getTweakwiseId($this->storeManager->getStore()->getId(), (int)$itemId, $groupCode);
+        }
+
+        return $itemId;
     }
 }

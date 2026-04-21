@@ -145,7 +145,8 @@ class ProductListItem implements ArgumentInterface
             ->setData('show_description', $showDescription)
             ->setData('pos', $parentBlock->getPositioned())
             ->setData('output_helper', $parentBlock->getData('outputHelper'))
-            ->setData('template_type', $templateType);
+            ->setData('template_type', $templateType)
+            ->setData('tw_id', $product->getData('tw_id') ? $product->getId() . '|'. $product->getData('tw_id') : $product->getId());
 
         return $itemRendererBlock->toHtml();
     }

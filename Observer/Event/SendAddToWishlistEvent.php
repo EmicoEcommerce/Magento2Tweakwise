@@ -78,7 +78,7 @@ class SendAddToWishlistEvent implements ObserverInterface
             /** @var ProductExtension $extensionAttributes */
             $extensionAttributes = $product->getExtensionAttributes();
             $children = $extensionAttributes->getConfigurableProductLinks();
-            $groupCode = (int)$this->helper->getTweakwiseId($storeId,$productId);
+            $groupCode = (int)$this->helper->getTweakwiseId($storeId, $productId);
             if (!empty($children)) {
                 $productId = (int)array_first($children);
             }

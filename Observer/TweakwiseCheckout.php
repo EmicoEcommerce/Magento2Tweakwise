@@ -102,21 +102,21 @@ class TweakwiseCheckout implements ObserverInterface
             ));
         }
 
-         foreach ($items as $item) {
-             $originalItem = $item->getProductId();
-             if ($this->config->isGroupedProductsEnabled()) {
-                 $originalItem = $item->getData('groupCode');
-                 if (!empty($originalItem)) {
-                     $groupcode =(int)$this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
-                 }
+        foreach ($items as $item) {
+            $originalItem = $item->getProductId();
+            if ($this->config->isGroupedProductsEnabled()) {
+                $originalItem = $item->getData('groupCode');
+                if (!empty($originalItem)) {
+                    $groupcode =(int)$this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
+                }
 
-                 $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$originalItem, $groupcode ?? null);
-             } else {
-                 $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
-             }
-         }
+                $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$originalItem, $groupcode ?? null);
+            } else {
+                $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
+            }
+        }
 
-         $tweakwiseRequest->setParameterArray('ProductKeys', $productTwId);
-         $this->client->request($tweakwiseRequest);
+        $tweakwiseRequest->setParameterArray('ProductKeys', $productTwId);
+        $this->client->request($tweakwiseRequest);
     }
 }

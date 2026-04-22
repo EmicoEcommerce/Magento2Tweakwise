@@ -20,7 +20,6 @@ use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use InvalidArgumentException;
-use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class Analytics extends Action
 {
@@ -45,7 +44,6 @@ class Analytics extends Action
         private readonly StoreManagerInterface $storeManager,
         private readonly JsonSerializer $jsonSerializer,
         private readonly SessionStartEventService $sessionStartEventService,
-        private readonly Config $tweakwiseConfig,
     ) {
         parent::__construct($context);
     }

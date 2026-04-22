@@ -51,7 +51,6 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     public function getProductKey(): string
     {
         $productId = $this->request->getParam('id');
-        $storeId = $this->storeManager->getStore()->getId();
 
         if (!$productId) {
             return '0';
@@ -61,15 +60,14 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
             return $productId;
         }
 
-        return (string)$this->getGroupedProductId((int)$productId, (int)$storeId);
+        return (string)$this->getGroupedProductId((int)$productId);
     }
 
     /**
      * @param int $productId
-     * @param int $storeId
      * @return int|tring
      */
-    private function getGroupedProductId(int $productId, int $storeId): int|string
+    private function getGroupedProductId(int $productId): int|string
     {
         try {
             /** @var Product $product */

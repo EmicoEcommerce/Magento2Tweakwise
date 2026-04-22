@@ -107,7 +107,7 @@ class TweakwiseCheckout implements ObserverInterface
             if ($this->config->isGroupedProductsEnabled()) {
                 $originalItem = $item->getData('groupCode');
                 if (!empty($originalItem)) {
-                    $groupcode =(int)$this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
+                    $groupcode = (int)$this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
                 }
 
                 $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$originalItem, $groupcode ?? null);

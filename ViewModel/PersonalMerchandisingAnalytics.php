@@ -58,39 +58,42 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
         }
 
         if (!$this->tweakwiseConfig->isGroupedProductsEnabled()) {
-            return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+            return $productId;
         }
 
-        return $this->getGroupedProductId((int)$productId, (int)$storeId);
+        return (string)$this->getGroupedProductId((int)$productId, (int)$storeId);
     }
 
     /**
-     * Get the grouped product ID.
-     *
      * @param int $productId
      * @param int $storeId
-     * @return string
+     * @return int|tring
      */
-    private function getGroupedProductId(int $productId, int $storeId): string
+    private function getGroupedProductId(int $productId, int $storeId): int|string
     {
         try {
-            $groupcode = $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
-                /** @var Product $product */
+            /** @var Product $product */
             $product = $this->productRepository->getById($productId);
-            if ($product->getTypeId() === Type::TYPE_SIMPLE) {
-                return $this->helper->getTweakwiseId((int)$storeId, (int)$productId, (int)$groupcode);
-            }
-
-            $associatedProducts = $this->getAssociatedProducts($product);
-            if (!empty($associatedProducts)) {
-                $firstAssociatedProduct = reset($associatedProducts);
-                $productId = $firstAssociatedProduct->getId();
-            }
         } catch (NoSuchEntityException $e) {
-            // Do nothing
+            return $productId;
         }
 
-        return $this->helper->getTweakwiseId((int)$storeId, (int)$productId, (int)$groupcode);
+        if ($product->getTypeId() === Type::TYPE_SIMPLE) {
+            return $productId;
+        }
+
+        $associatedProducts = $this->getAssociatedProducts($product);
+        if (empty($associatedProducts)) {
+            return $productId;
+        }
+
+        $firstAssociatedProduct = reset($associatedProducts);
+        $simpleId = $firstAssociatedProduct->getId();
+        if ($simpleId === 0 || $simpleId === $productId) {
+            return $productId;
+        }
+
+        return $simpleId . Helper::GROUP_CODE_DELIMITER . $productId;
     }
 
     /**

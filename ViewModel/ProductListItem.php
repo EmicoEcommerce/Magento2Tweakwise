@@ -14,6 +14,7 @@ use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 use Tweakwise\Magento2Tweakwise\Model\Visual;
 use Magento\Store\Model\StoreManagerInterface;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class ProductListItem implements ArgumentInterface
 {
@@ -146,7 +147,7 @@ class ProductListItem implements ArgumentInterface
             ->setData('pos', $parentBlock->getPositioned())
             ->setData('output_helper', $parentBlock->getData('outputHelper'))
             ->setData('template_type', $templateType)
-            ->setData('tw_id', $product->getData('tw_id') ? $product->getId() . '|'. $product->getData('tw_id') : $product->getId());
+            ->setData('tw_id', $product->getData('tw_id') ? $product->getData('tw_id')  . Helper::GROUP_CODE_DELIMITER . $product->getId() : $product->getId());
 
         return $itemRendererBlock->toHtml();
     }

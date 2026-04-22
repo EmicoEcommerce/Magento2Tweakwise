@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Observer;
 
-use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order\Item;
+use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2Tweakwise\Service\Event\EventService;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
+use Throwable;
 
 class TweakwiseCheckout implements ObserverInterface
 {
@@ -24,6 +25,7 @@ class TweakwiseCheckout implements ObserverInterface
      * @param StoreManagerInterface $storeManager
      * @param PersonalMerchandisingConfig $config
      * @param EventService $eventService
+     * @param LoggerInterface $logger
      */
     public function __construct(
         private readonly RequestFactory $requestFactory,
@@ -32,6 +34,7 @@ class TweakwiseCheckout implements ObserverInterface
         private readonly StoreManagerInterface $storeManager,
         private readonly PersonalMerchandisingConfig $config,
         private readonly EventService $eventService,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -54,7 +57,7 @@ class TweakwiseCheckout implements ObserverInterface
             $items = $order->getAllItems();
 
             $this->sendCheckout($items, $totalExclTax);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Tweakwise checkout event could not be sent', ['message' => $e->getMessage()]);
             return;
         }
@@ -100,14 +103,17 @@ class TweakwiseCheckout implements ObserverInterface
         }
 
          foreach ($items as $item) {
-             $groupCode = null;
+             $originalItem = $item->getProductId();
              if ($this->config->isGroupedProductsEnabled()) {
-                 $groupCode = $item->getData('groupCode');
-                 if (!empty($groupCode)) {
-                     $groupCode = (int)$this->helper->getTweakwiseId($storeId, (int)$groupCode);
+                 $originalItem = $item->getData('groupCode');
+                 if (!empty($originalItem)) {
+                     $groupcode =(int)$this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
                  }
+
+                 $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$originalItem, $groupcode ?? null);
+             } else {
+                 $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
              }
-             $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId(), $groupCode);
          }
 
          $tweakwiseRequest->setParameterArray('ProductKeys', $productTwId);

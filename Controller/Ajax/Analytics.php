@@ -31,7 +31,6 @@ class Analytics extends Action
      * @param PersonalMerchandisingConfig $config
      * @param RequestFactory $requestFactory
      * @param Helper $helper
-     * @param StoreManagerInterface $storeManager
      * @param JsonSerializer $jsonSerializer
      * @param SessionStartEventService $sessionStartEventService
      * @param PersonalMerchandisingAnalytics $personalMerchandisingAnalytics
@@ -43,7 +42,6 @@ class Analytics extends Action
         private PersonalMerchandisingConfig $config,
         private readonly RequestFactory $requestFactory,
         private readonly Helper $helper,
-        private readonly StoreManagerInterface $storeManager,
         private readonly JsonSerializer $jsonSerializer,
         private readonly SessionStartEventService $sessionStartEventService,
         private readonly PersonalMerchandisingAnalytics $personalMerchandisingAnalytics,
@@ -199,9 +197,9 @@ class Analytics extends Action
      */
     private function getProductKey(string $itemId): string
     {
-        $storeId = (int)$this->storeManager->getStore()->getId();
+        $storeId = (int)$this->personalMerchandisingAnalytics->storeManager->getStore()->getId();
 
-        if (!$this->config->isGroupedProductsEnabled($this->storeManager->getStore())) {
+        if (!$this->config->isGroupedProductsEnabled($this->personalMerchandisingAnalytics->storeManager->getStore())) {
             return $this->helper->getTweakwiseId($storeId, (int)$itemId);
         }
 

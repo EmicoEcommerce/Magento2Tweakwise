@@ -36,7 +36,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     public function __construct(
         private readonly Config $tweakwiseConfig,
         private readonly Helper $helper,
-        private readonly StoreManagerInterface $storeManager,
+        public readonly StoreManagerInterface $storeManager,
         private readonly RequestInterface $request,
         private readonly Json $jsonSerializer,
         private readonly ProductRepositoryInterface $productRepository,

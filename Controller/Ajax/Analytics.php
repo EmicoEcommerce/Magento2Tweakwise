@@ -17,7 +17,6 @@ use Magento\Framework\Controller\ResultInterface;
 use Tweakwise\Magento2Tweakwise\Service\Event\SessionStartEventService;
 use Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use InvalidArgumentException;

@@ -15,6 +15,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultInterface;
 use Tweakwise\Magento2Tweakwise\Service\Event\SessionStartEventService;
+use Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
@@ -33,6 +34,7 @@ class Analytics extends Action
      * @param StoreManagerInterface $storeManager
      * @param JsonSerializer $jsonSerializer
      * @param SessionStartEventService $sessionStartEventService
+     * @param PersonalMerchandisingAnalytics $personalMerchandisingAnalytics
      */
     public function __construct(
         Context $context,
@@ -44,6 +46,7 @@ class Analytics extends Action
         private readonly StoreManagerInterface $storeManager,
         private readonly JsonSerializer $jsonSerializer,
         private readonly SessionStartEventService $sessionStartEventService,
+        private readonly PersonalMerchandisingAnalytics $personalMerchandisingAnalytics,
     ) {
         parent::__construct($context);
     }
@@ -205,6 +208,11 @@ class Analytics extends Action
         $groupCode = null;
         if (str_contains($itemId, Helper::GROUP_CODE_DELIMITER)) {
             [$itemId, $groupCode] = explode(Helper::GROUP_CODE_DELIMITER, $itemId, 2);
+        } else {
+            $groupedProductId = (string)$this->personalMerchandisingAnalytics->getGroupedProductId((int)$itemId);
+            if (str_contains($groupedProductId, Helper::GROUP_CODE_DELIMITER)) {
+                [$itemId, $groupCode] = explode(Helper::GROUP_CODE_DELIMITER, $groupedProductId, 2);
+            }
         }
 
         $itemTweakwiseId = $this->helper->getTweakwiseId($storeId, (int)$itemId);

@@ -65,9 +65,9 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
 
     /**
      * @param int $productId
-     * @return int|tring
+     * @return int|string
      */
-    private function getGroupedProductId(int $productId): int|string
+    public function getGroupedProductId(int $productId): int|string
     {
         try {
             /** @var Product $product */

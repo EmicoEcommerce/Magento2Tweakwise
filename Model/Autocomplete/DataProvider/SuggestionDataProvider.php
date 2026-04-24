@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider;
 
+use Magento\Catalog\Model\Category;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderInterface;
@@ -15,6 +16,7 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use GuzzleHttp\Promise\Utils;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Search\Model\Autocomplete\ItemInterface;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionBlockItemFactory;
 
 class SuggestionDataProvider implements DataProviderInterface
 {
@@ -68,6 +70,7 @@ class SuggestionDataProvider implements DataProviderInterface
      * @param RequestFactory $suggestionRequestFactory
      * @param Client $client
      * @param Request $request
+     * @param SuggestionBlockItemFactory $suggestionBlockItemFactory
      */
     public function __construct(
         Config $config,
@@ -77,7 +80,8 @@ class SuggestionDataProvider implements DataProviderInterface
         RequestFactory $productSuggestionRequestFactory,
         RequestFactory $suggestionRequestFactory,
         Client $client,
-        Request $request
+        Request $request,
+        protected readonly SuggestionBlockItemFactory $suggestionBlockItemFactory
     ) {
         $this->config = $config;
         $this->cookieManager = $cookieManager;
@@ -109,66 +113,21 @@ class SuggestionDataProvider implements DataProviderInterface
             return [];
         }
 
-        $category = $this->dataProviderHelper->getCategory();
-        $promises = [];
-
-        $profileKeyCookie = $this->cookieManager->getCookie(
-            $this->config->getPersonalMerchandisingCookieName(),
-            null
-        );
-
-        $suggestionsRequest = $this->suggestionRequestFactory->create();
-        // @phpstan-ignore-next-line
-        $suggestionsRequest->setSearch($query);
-
-        if ($profileKeyCookie) {
-            $profileKey = $this->request->setProfileKey($profileKeyCookie);
-            // @phpstan-ignore-next-line
-            $suggestionsRequest->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
-        }
-
-        $suggestionsRequest->addCategoryFilter($category);
-        $promises['suggestions'] = $this->client->request(
-            $suggestionsRequest,
-            true
-        );
-
-        /** @var ProductSuggestionsRequest $productSuggestionsRequest */
-        $productSuggestionsRequest = $this->productSuggestionRequestFactory->create();
-        $productSuggestionsRequest->setSearch($query);
-
-        if ($profileKeyCookie) {
-            // @phpstan-ignore-next-line
-            $productSuggestionsRequest->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
-        }
-
-        $productSuggestionsRequest->addCategoryFilter($category);
-        $promises['product_suggestions'] = $this->client->request(
-            $productSuggestionsRequest,
-            true
-        );
-
-        // @phpstan-ignore-next-line
+        $promises = $this->buildRequests($query, $this->dataProviderHelper->getCategory());
         if (empty($promises)) {
             return [];
         }
 
-        $results = [];
         // @phpstan-ignore-next-line
         $responses = Utils::unwrap($promises);
+        $results = [];
+
         foreach ($responses as $response) {
-            if ($response instanceof AutocompleteProductResponseInterface) {
-                $results[] = $this->dataProviderHelper->getProductItems($response);
-            }
-
-            if (!($response instanceof SuggestionsResponse)) {
-                continue;
-            }
-
-            $results[] = $this->getSuggestionGroups($response);
+            $results[] = $this->processResponse($response);
         }
 
-        return !empty($results) ? array_merge(...$results) : [];
+        $flattened = array_filter(array_merge(...$results));
+        return !empty($flattened) ? $flattened : [];
     }
 
     /**
@@ -182,6 +141,163 @@ class SuggestionDataProvider implements DataProviderInterface
         $groups = $response->getGroups() ? $response->getGroups() : [];
         foreach ($groups as $suggestionGroup) {
             $results[] = $this->suggestionGroupItemFactory->create(['group' => $suggestionGroup]);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Build async requests for suggestions and products
+     *
+     * @param string $query
+     * @param int|Category $category Category object or category ID
+     * @return array
+     */
+    private function buildRequests(string $query, int|Category $category): array
+    {
+        $profileKeyCookie = $this->cookieManager->getCookie(
+            $this->config->getPersonalMerchandisingCookieName(),
+            null
+        );
+
+        $promises = [];
+        $promises['suggestions'] = $this->client->request(
+            $this->buildSuggestionsRequest($query, $category, $profileKeyCookie),
+            true
+        );
+        $promises['product_suggestions'] = $this->client->request(
+            $this->buildProductSuggestionsRequest($query, $category, $profileKeyCookie),
+            true
+        );
+
+        return $promises;
+    }
+
+    /**
+     * Build suggestions request with common parameters
+     *
+     * @param string $query
+     * @param Category|int $category Category object or category ID
+     * @param string|null $profileKeyCookie
+     *
+     * @return Request
+     */
+    private function buildSuggestionsRequest(string $query, int|Category $category, ?string $profileKeyCookie): Request
+    {
+        $request = $this->suggestionRequestFactory->create();
+        // @phpstan-ignore-next-line
+        $request->setSearch($query);
+        $this->addProfileKeyToRequest($request, $profileKeyCookie);
+        $request->addCategoryFilter($category);
+
+        return $request;
+    }
+
+    /**
+     * Build product suggestions request with common parameters
+     *
+     * @param string $query
+     * @param Category|int $category Category object or category ID
+     * @param string|null $profileKeyCookie
+     *
+     * @return Request
+     */
+    private function buildProductSuggestionsRequest(string $query, int|Category $category, ?string $profileKeyCookie): Request
+    {
+        /** @var ProductSuggestionsRequest $request */
+        $request = $this->productSuggestionRequestFactory->create();
+        $request->setSearch($query);
+        $this->addProfileKeyToRequest($request, $profileKeyCookie);
+        $request->addCategoryFilter($category);
+
+        return $request;
+    }
+
+    /**
+     * Add profile key parameter to request if available
+     *
+     * @param Request $request
+     * @param string|null $profileKeyCookie
+     * @return void
+     */
+    private function addProfileKeyToRequest(Request $request, ?string $profileKeyCookie): void
+    {
+        if (!$profileKeyCookie) {
+            return;
+        }
+
+        $profileKey = $this->request->setProfileKey($profileKeyCookie);
+        // @phpstan-ignore-next-line
+        $request->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
+    }
+
+    /**
+     * Process a single response and return items
+     *
+     * @param AutocompleteProductResponseInterface|SuggestionsResponse $response
+     * @return array
+     */
+    private function processResponse($response): array
+    {
+        if ($response instanceof AutocompleteProductResponseInterface) {
+            return $this->dataProviderHelper->useBlocks()
+                ? $this->getSuggestionBlocks($response)
+                : $this->dataProviderHelper->getProductItems($response);
+        }
+
+        if ($response instanceof SuggestionsResponse) {
+            return $this->getSuggestionGroups($response);
+        }
+
+        return [];
+    }
+
+    /**
+     * @param AutocompleteProductResponseInterface $response
+     *
+     * @return array
+     * @throws LocalizedException
+     */
+    protected function getSuggestionBlocks(AutocompleteProductResponseInterface $response): array
+    {
+        $results = [];
+
+        $blocks = $response->getBlocks() ? $response->getBlocks() : [];
+        if (empty($blocks)) {
+            return $results;
+        }
+
+        $products = $this->dataProviderHelper->getProductItems($response);
+
+        $productItemsByTweakwiseId = [];
+        foreach ($products as $product) {
+            $productItemsByTweakwiseId[(string)$product->getProduct()->getData('tweakwise_id')] = $product->toArray();
+        }
+
+        foreach ($blocks as $suggestionBlock) {
+            if (empty($suggestionBlock['items'])) {
+                continue;
+            }
+
+            $items = isset($suggestionBlock['items']['item'][0]) ? $suggestionBlock['items']['item'] : $suggestionBlock['items'];
+
+            $resolvedItems = [];
+
+            foreach ($items as $item) {
+                $itemNumber = (string)($item['itemno'] ?? '');
+                if (!isset($productItemsByTweakwiseId[$itemNumber])) {
+                    $resolvedItems[] = $item;
+                    continue;
+                }
+
+                $resolvedItems[] = [
+                    ...$item,
+                    ...$productItemsByTweakwiseId[$itemNumber],
+                ];
+            }
+
+            $suggestionBlock['items'] = $resolvedItems;
+            $results[] = $this->suggestionBlockItemFactory->create(['data' => ['block' => $suggestionBlock]]);
         }
 
         return $results;

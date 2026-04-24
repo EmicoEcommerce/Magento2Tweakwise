@@ -177,10 +177,19 @@ class DataProviderHelper
 
             $product->setData('tweakwise_price', $item['tweakwise_price']);
             $product->setData('tweakwise_final_price', $item['tweakwise_final_price']);
+            $product->setData('tweakwise_id', $item['tweakwise_id']);
 
             $result[] = $this->productItemFactory->create(['product' => $product]);
         }
 
         return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useBlocks(): bool
+    {
+        return (bool)$this->request->getParam('blocks');
     }
 }

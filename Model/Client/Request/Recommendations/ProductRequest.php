@@ -67,6 +67,19 @@ class ProductRequest extends FeaturedRequest
         }
 
         $productTweakwiseId = $this->helper->getTweakwiseId($this->product->getStoreId(), $this->product->getId());
+
+        if ($this->config->isGroupedProductsEnabled($this->product->getStore())) {
+            $groupCode = $this->product->getData('groupcode');
+
+            if (empty($groupCode)) {
+                $groupCode = $this->product->getId();
+            }
+
+            $groupCode = $this->helper->getTweakwiseId($this->product->getStoreId(), $groupCode);
+
+            $productTweakwiseId = $this->helper->getTweakwiseId($this->product->getStoreId(), $this->product->getId(), $groupCode);
+        }
+
         // @phpstan-ignore-next-line
         if (is_int($this->templateId)) {
             return parent::getPathSuffix() . '/' . $productTweakwiseId;
@@ -86,6 +99,7 @@ class ProductRequest extends FeaturedRequest
         $children = $product->getTypeInstance()->getUsedProducts($product);
         foreach ($children as $child) {
             if ($child->isSaleable() && $child->getTypeId() === Type::TYPE_SIMPLE) {
+                $child->setData('groupcode', $product->getId());
                 return $child;
             }
         }

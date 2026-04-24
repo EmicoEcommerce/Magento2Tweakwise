@@ -24,7 +24,7 @@ $pos = $block->getData('pos');
 $_helper = $block->getData('output_helper');
 $templateType = $block->getData('template_type');
 $showDescription = $block->getData('show_description');
-$productId = $_product->getData('tw_id') ?: $_product->getId();
+$productId = $block->getData('tw_id');
 ?>
 <li class="item product product-item">
     <div class="product-item-info"

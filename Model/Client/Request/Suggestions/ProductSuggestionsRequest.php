@@ -14,9 +14,9 @@ class ProductSuggestionsRequest extends Request implements SearchRequestInterfac
     /**
      * @var string
      */
-    protected $path = 'suggestions/products';
+    protected $path = 'suggestions/items';
 
-    protected $groupedPath = 'suggestions/products/grouped';
+    protected $groupedPath = 'suggestions/items/grouped';
 
     /**
      * @return string

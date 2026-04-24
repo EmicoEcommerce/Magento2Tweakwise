@@ -69,15 +69,15 @@ class ProductRequest extends FeaturedRequest
         $productTweakwiseId = $this->helper->getTweakwiseId($this->product->getStoreId(), $this->product->getId());
 
         if ($this->config->isGroupedProductsEnabled($this->product->getStore())) {
-            $groupcode = $this->product->getData('groupcode');
+            $groupCode = $this->product->getData('groupcode');
 
-            if (empty($groupcode)) {
-                $groupcode = $this->product->getId();
+            if (empty($groupCode)) {
+                $groupCode = $this->product->getId();
             }
 
-            $groupcode = $this->helper->getTweakwiseId($this->product->getStoreId(), $groupcode);
+            $groupCode = $this->helper->getTweakwiseId($this->product->getStoreId(), $groupCode);
 
-            $productTweakwiseId = $this->helper->getTweakwiseId($this->product->getStoreId(), $this->product->getId(), $groupcode);
+            $productTweakwiseId = $this->helper->getTweakwiseId($this->product->getStoreId(), $this->product->getId(), $groupCode);
         }
 
         // @phpstan-ignore-next-line

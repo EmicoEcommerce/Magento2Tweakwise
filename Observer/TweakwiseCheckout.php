@@ -8,13 +8,13 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order\Item;
 use Psr\Log\LoggerInterface;
+use Throwable;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2Tweakwise\Service\Event\EventService;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Magento\Store\Model\StoreManagerInterface;
-use Throwable;
 
 class TweakwiseCheckout implements ObserverInterface
 {
@@ -102,15 +102,16 @@ class TweakwiseCheckout implements ObserverInterface
             ));
         }
 
+        $productTwId = [];
+
         foreach ($items as $item) {
-            $originalItem = $item->getProductId();
             if ($this->config->isGroupedProductsEnabled()) {
                 $originalItem = $item->getData('groupCode');
                 if (!empty($originalItem)) {
-                    $groupcode = (int)$this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
+                    $groupCode = (int)$this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
                 }
 
-                $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$originalItem, $groupcode ?? null);
+                $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$originalItem, $groupCode ?? null);
             } else {
                 $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$item->getProductId());
             }

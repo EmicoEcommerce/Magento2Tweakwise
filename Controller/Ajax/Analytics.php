@@ -196,9 +196,9 @@ class Analytics extends Action
      */
     private function getProductKey(string $itemId): string
     {
-        $storeId = (int)$this->personalMerchandisingAnalytics->storeManager->getStore()->getId();
+        $storeId = (int)$this->personalMerchandisingAnalytics->getStoreManager()->getStore()->getId();
 
-        if (!$this->config->isGroupedProductsEnabled($this->personalMerchandisingAnalytics->storeManager->getStore())) {
+        if (!$this->config->isGroupedProductsEnabled($this->personalMerchandisingAnalytics->getStoreManager()->getStore())) {
             return $this->helper->getTweakwiseId($storeId, (int)$itemId);
         }
 

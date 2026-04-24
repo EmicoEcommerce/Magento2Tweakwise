@@ -44,6 +44,16 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     }
 
     /**
+     * Get the store manager.
+     *
+     * @return StoreManagerInterface
+     */
+    public function getStoreManager(): StoreManagerInterface
+    {
+        return $this->storeManager;
+    }
+
+    /**
      * Get the product key.
      *
      * @return string
@@ -51,45 +61,47 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     public function getProductKey(): string
     {
         $productId = $this->request->getParam('id');
-        $storeId = $this->storeManager->getStore()->getId();
 
         if (!$productId) {
             return '0';
         }
 
         if (!$this->tweakwiseConfig->isGroupedProductsEnabled()) {
-            return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+            return $productId;
         }
 
-        return $this->getGroupedProductId((int)$productId, (int)$storeId);
+        return (string)$this->getGroupedProductId((int)$productId);
     }
 
     /**
-     * Get the grouped product ID.
-     *
      * @param int $productId
-     * @param int $storeId
-     * @return string
+     * @return int|string
      */
-    private function getGroupedProductId(int $productId, int $storeId): string
+    public function getGroupedProductId(int $productId): int|string
     {
         try {
             /** @var Product $product */
             $product = $this->productRepository->getById($productId);
-            if ($product->getTypeId() === Type::TYPE_SIMPLE) {
-                return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
-            }
-
-            $associatedProducts = $this->getAssociatedProducts($product);
-            if (!empty($associatedProducts)) {
-                $firstAssociatedProduct = reset($associatedProducts);
-                $productId = $firstAssociatedProduct->getId();
-            }
         } catch (NoSuchEntityException $e) {
-            // Do nothing
+            return $productId;
         }
 
-        return $this->helper->getTweakwiseId((int)$storeId, (int)$productId);
+        if ($product->getTypeId() === Type::TYPE_SIMPLE) {
+            return $productId;
+        }
+
+        $associatedProducts = $this->getAssociatedProducts($product);
+        if (empty($associatedProducts)) {
+            return $productId;
+        }
+
+        $firstAssociatedProduct = reset($associatedProducts);
+        $simpleId = $firstAssociatedProduct->getId();
+        if ($simpleId === 0 || $simpleId === $productId) {
+            return $productId;
+        }
+
+        return $simpleId . Helper::GROUP_CODE_DELIMITER . $productId;
     }
 
     /**

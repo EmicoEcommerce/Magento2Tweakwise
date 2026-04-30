@@ -140,7 +140,13 @@ class Response extends Type
      */
     protected function getConfigurable(array $group): array
     {
-        return ['itemno' => $group['code']];
+        $configurable = ['itemno' => $group['code']];
+
+        if (isset($group[ItemType::VISUAL_PROPERTIES])) {
+            $configurable[ItemType::VISUAL_PROPERTIES] = $group[ItemType::VISUAL_PROPERTIES];
+        }
+
+        return $configurable;
     }
 
     /**

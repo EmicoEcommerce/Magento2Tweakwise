@@ -74,4 +74,21 @@ class Visual extends Product implements VisualInterface
     {
         return $this->setData(self::ROWSPAN, $rowspan);
     }
+
+    /**
+     * @return string
+     */
+    public function getGridStyle(): string
+    {
+        $style = '';
+        $colspan = $this->getColspan();
+        if ($colspan && $colspan > 1) {
+            $style .= 'grid-column: span ' . $colspan . ';';
+        }
+        $rowspan = $this->getRowspan();
+        if ($rowspan && $rowspan > 1) {
+            $style .= 'grid-row: span ' . $rowspan . ';';
+        }
+        return $style;
+    }
 }

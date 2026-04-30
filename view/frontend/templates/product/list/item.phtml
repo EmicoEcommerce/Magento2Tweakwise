@@ -5,6 +5,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\Escaper;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Tweakwise\Magento2Tweakwise\ViewModel\ProductListItem;
 
 /**
  * @var AbstractProduct $block
@@ -25,8 +26,12 @@ $_helper = $block->getData('output_helper');
 $templateType = $block->getData('template_type');
 $showDescription = $block->getData('show_description');
 $productId = $block->getData('tw_id');
+
+/** @var ProductListItem $tweakwiseViewModel */
+$tweakwiseViewModel = $parentBlock->getData('view_model_product_list_item');
+$gridStyle = $tweakwiseViewModel ? $tweakwiseViewModel->getGridStyle($_product) : '';
 ?>
-<li class="item product product-item">
+<li class="item product product-item"<?= $gridStyle ? ' style="' . $escaper->escapeHtmlAttr($gridStyle) . '"' : '' ?>>
     <div class="product-item-info"
          id="product-item-info_<?=  $escaper->escapeHtmlAttr($productId) ?>"
          data-container="product-<?=  $escaper->escapeHtmlAttr($viewMode) ?>">

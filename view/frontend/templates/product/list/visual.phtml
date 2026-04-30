@@ -15,9 +15,10 @@ if (!$visual) {
     return;
 }
 $hasUrl = !empty($visual->getUrl());
+$gridStyle = $visual->getGridStyle();
 ?>
 
-<li class="item product product-item">
+<li class="item product product-item"<?= $gridStyle ? ' style="' . $escaper->escapeHtmlAttr($gridStyle) . '"' : '' ?>>
     <?php if ($hasUrl): ?>
         <a href="<?= $escaper->escapeUrl($visual->getUrl()); ?>">
     <?php endif; ?>

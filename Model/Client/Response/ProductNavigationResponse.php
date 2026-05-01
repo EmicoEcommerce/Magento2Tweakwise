@@ -115,8 +115,10 @@ class ProductNavigationResponse extends Response
             // never silently overwritten by a subsequent item with a lower value.
             $colspan = (int) $item->getColspan();
             $rowspan = (int) $item->getRowspan();
-            $data[ItemType::COLSPAN] = max($colspan, (int) ($data[ItemType::COLSPAN] ?? 0)) ?: null;
-            $data[ItemType::ROWSPAN] = max($rowspan, (int) ($data[ItemType::ROWSPAN] ?? 0)) ?: null;
+            $colspanMax = max($colspan, (int) ($data[ItemType::COLSPAN] ?? 0));
+            $data[ItemType::COLSPAN] = $colspanMax !== 0 ? $colspanMax : null;
+            $rowspanMax = max($rowspan, (int) ($data[ItemType::ROWSPAN] ?? 0));
+            $data[ItemType::ROWSPAN] = $rowspanMax !== 0 ? $rowspanMax : null;
 
             $productData[$storeId] = $data;
         }

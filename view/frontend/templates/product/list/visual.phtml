@@ -15,7 +15,18 @@ if (!$visual) {
     return;
 }
 $hasUrl = !empty($visual->getUrl());
-$gridStyle = $visual->getGridStyle();
+
+// Build inline grid-column / grid-row spans from Tweakwise visualproperties
+// (colspan/rowspan) so the product list grid honors the configured layout.
+$gridStyle = '';
+$colspan = (int) $visual->getColspan();
+if ($colspan > 1) {
+    $gridStyle .= 'grid-column: span ' . $colspan . ';';
+}
+$rowspan = (int) $visual->getRowspan();
+if ($rowspan > 1) {
+    $gridStyle .= 'grid-row: span ' . $rowspan . ';';
+}
 ?>
 
 <li class="item product product-item"<?= $gridStyle ? ' style="' . $escaper->escapeHtmlAttr($gridStyle) . '"' : '' ?>>

@@ -12,7 +12,6 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
-use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 use Tweakwise\Magento2Tweakwise\Model\Visual;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
@@ -170,26 +169,5 @@ class ProductListItem implements ArgumentInterface
         $visualRendererBlock->setData('visual', $visual);
 
         return $visualRendererBlock->toHtml();
-    }
-
-    /**
-     * Returns an inline CSS style string for grid-column/grid-row spanning based on
-     * the colspan/rowspan set by Tweakwise on a regular product item.
-     *
-     * @param Product $product
-     * @return string
-     */
-    public function getGridStyle(Product $product): string
-    {
-        $style = '';
-        $colspan = (int)$product->getData(ItemType::COLSPAN);
-        if ($colspan > 1) {
-            $style .= 'grid-column: span ' . $colspan . ';';
-        }
-        $rowspan = (int)$product->getData(ItemType::ROWSPAN);
-        if ($rowspan > 1) {
-            $style .= 'grid-row: span ' . $rowspan . ';';
-        }
-        return $style;
     }
 }

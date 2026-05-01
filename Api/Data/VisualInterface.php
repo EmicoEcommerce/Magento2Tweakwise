@@ -52,12 +52,4 @@ interface VisualInterface
      * @return self
      */
     public function setRowspan(int $rowspan): self;
-
-    /**
-     * Returns an inline CSS style string for grid-column/grid-row spanning,
-     * e.g. "grid-column: span 2;grid-row: span 2;" — empty string when not applicable.
-     *
-     * @return string
-     */
-    public function getGridStyle(): string;
 }

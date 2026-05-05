@@ -95,9 +95,9 @@ class ProductNavigationResponse extends Response
         $productData = [];
         // @phpstan-ignore-next-line
         foreach ($this->getItems() as $item) {
-            $storeId = $this->helper->getStoreId($item->getId());
+            $itemId = $this->helper->getStoreId($item->getId());
 
-            $data = $productData[$storeId] ?? [];
+            $data = $productData[$itemId] ?? [];
 
             if ($item->getImage()) {
                 // Remove domain and media path when full url is used
@@ -120,7 +120,7 @@ class ProductNavigationResponse extends Response
             $rowspanMax = max($rowspan, (int) ($data[ItemType::ROWSPAN] ?? 0));
             $data[ItemType::ROWSPAN] = $rowspanMax !== 0 ? $rowspanMax : null;
 
-            $productData[$storeId] = $data;
+            $productData[$itemId] = $data;
         }
 
         return $productData;

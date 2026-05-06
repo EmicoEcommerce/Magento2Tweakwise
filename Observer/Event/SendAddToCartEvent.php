@@ -76,21 +76,26 @@ class SendAddToCartEvent implements ObserverInterface
         $totalAmount = $quoteItem->getQtyToAdd() * $product->getPriceModel()->getFinalPrice($quoteItem->getQtyToAdd(), $product);
 
         $productId = $quoteItem->getProductId();
+        $groupCode = null;
 
         if ($this->config->isGroupedProductsEnabled()) {
+            $groupCode = (int)$this->helper->getTweakwiseId((int)$this->storeManager->getStore()->getId(), (int)$quoteItem->getProductId());
             if (!empty($quoteItem->getQtyOptions())) {
                 $productId = array_key_first($quoteItem->getQtyOptions());
             }
         }
 
+        $productId = $this->helper->getTweakwiseId(
+            (int)$this->storeManager->getStore()->getId(),
+            (int)$productId,
+            $groupCode,
+        );
+
         $tweakwiseRequest->setProfileKey($this->config->getProfileKey());
         $tweakwiseRequest->setParameter('SessionKey', $this->eventService->getSessionKey());
         $tweakwiseRequest->setParameter(
             'ProductKey',
-            $this->helper->getTweakwiseId(
-                (int)$this->storeManager->getStore()->getId(),
-                (int)$productId
-            )
+            $productId
         );
         $tweakwiseRequest->setParameter('Quantity', (string)$quoteItem->getQtyToAdd());
         $tweakwiseRequest->setParameter('TotalAmount', (string)$totalAmount);

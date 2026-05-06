@@ -42,9 +42,10 @@ class Response extends Type
     /**
      * Function to get items from groups and set the items
      * @param array $groups
+     * @param bool $addSimple
      * @return $this
      */
-    public function setGroups(array $groups): self
+    public function setGroups(array $groups, bool $addSimple = true): self
     {
         if (!$groups) {
             $this->setItems([]);
@@ -54,9 +55,7 @@ class Response extends Type
         $items = [];
         $groups = $this->normalizeArray($groups, 'group');
         foreach ($groups as $group) {
-            foreach ($this->getGroupItems($group) as $item) {
-                $items[] = $item;
-            }
+            array_push($items, ...$this->getGroupItems($group, $addSimple));
         }
 
         $this->setItems($items);
@@ -65,9 +64,10 @@ class Response extends Type
 
     /**
      * @param array $group
+     * @param bool $addSimple
      * @return array[]
      */
-    protected function getGroupItems(array $group): array
+    protected function getGroupItems(array $group, bool $addSimple = true): array
     {
         $simple = $this->getMostSuitableVariant($group);
         $configurable = $this->getConfigurable($group);
@@ -77,7 +77,7 @@ class Response extends Type
         }
 
         $items = [$this->applySimpleDataToConfigurable($configurable, $simple)];
-        if ($this->shouldAppendSimpleItem($simple)) {
+        if ($addSimple && $this->shouldAppendSimpleItem($simple)) {
             $items[] = $simple;
         }
 

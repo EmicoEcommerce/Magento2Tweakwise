@@ -56,6 +56,11 @@ if (!$block->canShowBlock()) {
         <?php endif; ?>
 
         <?php if ($hasFilters): ?>
+            <?php if ($renderFilterButton): ?>
+                <?php $showItemsLabel = __('Show %count% items'); ?>
+                <?php $productCount = $block->getLayer()->getProductCollection()->getSize(); ?>
+                <?php $showItemsText = __('Show %1 items', $productCount); ?>
+            <?php endif; ?>
             <strong
                 role="heading"
                 aria-level="2"
@@ -122,9 +127,10 @@ if (!$block->canShowBlock()) {
                                 type="button"
                                 class="btn btn-primary btn-block js-btn-filter"
                                 tabindex="0"
-                                aria-label="<?= $escaper->escapeHtmlAttr(__(sprintf('Show %s items', $block->getLayer()->getProductCount()))); ?>"
+                                data-count-label="<?= $escaper->escapeHtmlAttr((string)$showItemsLabel) ?>"
+                                aria-label="<?= $escaper->escapeHtmlAttr((string)$showItemsText) ?>"
                             >
-                                <?= $escaper->escapeHtml(__(sprintf('Show %s items', $block->getLayer()->getProductCount()))); ?>
+                                <?= $escaper->escapeHtml((string)$showItemsText) ?>
                             </button>
                         </div>
                     <?php endif;?>

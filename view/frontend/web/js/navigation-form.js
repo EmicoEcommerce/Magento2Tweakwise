@@ -16,6 +16,7 @@ define([
             formFilters: false,
             seoEnabled: false,
             ajaxEndpoint: '/tweakwise/ajax/navigation',
+            countEndpoint: '/tweakwise/ajax/productcount',
             filterSelector: '#layered-filter-block',
             productListSelector: '.products.wrapper',
             toolbarSelector: '.toolbar.toolbar-products',
@@ -34,6 +35,7 @@ define([
         },
 
         currentXhr: null,
+        currentCountXhr: null,
         deletedFilters: [],
 
         _create: function () {
@@ -76,6 +78,64 @@ define([
             if (this.options.ajaxFilters) {
                 this._bindPopChangeHandler();
             }
+
+            if (this.options.formFilters) {
+                this._bindCountUpdateEvents();
+            }
+        },
+
+        /**
+         * Bind change events on filter inputs to update the "Show X items" button count.
+         * Only active when formFilters is enabled.
+         *
+         * @private
+         */
+        _bindCountUpdateEvents: function () {
+            this.element.on(
+                'change',
+                ':input:not(.js-skip-submit)',
+                this._fetchAndUpdateCount.bind(this)
+            );
+        },
+
+        /**
+         * Fire a lightweight AJAX request to retrieve the product count for the current
+         * filter selection and update all "Show X items" buttons in the filter block.
+         *
+         * @private
+         */
+        _fetchAndUpdateCount: function () {
+            if (this.currentCountXhr) {
+                this.currentCountXhr.abort();
+            }
+
+            var params = this._getFilterParameters();
+
+            this.currentCountXhr = $.ajax({
+                url: this.options.countEndpoint,
+                data: params,
+                cache: false,
+                success: function (response) {
+                    if (typeof response.product_count !== 'undefined') {
+                        this._updateFilterButtonCount(response.product_count);
+                    }
+                }.bind(this)
+            });
+        },
+
+        /**
+         * Update the label of all "Show X items" buttons with the given product count.
+         *
+         * @param {number} count
+         * @private
+         */
+        _updateFilterButtonCount: function (count) {
+            this.element.find('.js-btn-filter').each(function (index, button) {
+                var $button = $(button);
+                var label = $button.data('count-label') || '';
+                var text = label.replace('%count%', count);
+                $button.text(text).attr('aria-label', text);
+            });
         },
 
         /**

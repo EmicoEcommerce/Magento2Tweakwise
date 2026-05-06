@@ -96,6 +96,26 @@
         </arguments>
     </type>
 
+    <!-- Count-only initializer map for the lightweight product count endpoint -->
+    <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\ProductCount">
+        <arguments>
+            <argument name="initializerMap" xsi:type="array">
+                <item name="category" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CategoryCountInitializer</item>
+                <item name="search" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\SearchCountInitializer</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CategoryCountInitializer">
+        <arguments>
+            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category</argument>
+        </arguments>
+    </type>
+    <type name="Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\SearchCountInitializer">
+        <arguments>
+            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
+        </arguments>
+    </type>
+
     <type name="Magento\Search\Model\Autocomplete">
         <arguments>
             <argument name="dataProviders" xsi:type="array">

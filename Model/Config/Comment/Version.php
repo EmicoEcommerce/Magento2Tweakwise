@@ -10,16 +10,10 @@ use Magento\Framework\Composer\ComposerInformation;
 class Version implements CommentInterface
 {
     /**
-     * @var ComposerInformation
-     */
-    private readonly ComposerInformation $composerInformation;
-
-    /**
      * @param ComposerInformation $composerInformation
      */
-    public function __construct(ComposerInformation $composerInformation)
+    public function __construct(private readonly ComposerInformation $composerInformation)
     {
-        $this->composerInformation = $composerInformation;
     }
 
     /**
@@ -28,7 +22,7 @@ class Version implements CommentInterface
      * @param string $elementValue
      * @return string
      */
-    public function getCommentText($elementValue): string
+    public function getCommentText($elementValue): string // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
     {
         $installedPackages = $this->composerInformation->getInstalledMagentoPackages();
 

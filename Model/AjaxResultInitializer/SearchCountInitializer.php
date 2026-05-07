@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 
-use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\App\RequestInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
 
 /**
- * Initializes only the search layer for product count AJAX requests.
+ * Initializes a CountNavigationContext for search pages and returns the total
+ * product count from the Tweakwise API response.
  * Applies filter query params directly to the NavigationContext so that the
  * count reflects the current checkbox selection, regardless of the URL strategy.
  */
@@ -35,24 +36,26 @@ class SearchCountInitializer implements CountInitializerInterface
     ];
 
     /**
-     * @param Resolver $layerResolver
      * @param NavigationContext $navigationContext
      */
     public function __construct(
-        private readonly Resolver $layerResolver,
         private readonly NavigationContext $navigationContext,
     ) {
     }
 
     /**
      * @param RequestInterface $request
-     * @return void
+     * @return int
      */
     public function initializeForCount(
         RequestInterface $request
-    ): void {
-        $this->layerResolver->create(Resolver::CATALOG_LAYER_SEARCH);
+    ): int {
         $this->applyFilterParams($request);
+
+        /** @var PropertiesType $properties */
+        $properties = $this->navigationContext->getResponse()->getProperties();
+
+        return $properties->getNumberOfItems();
     }
 
     /**

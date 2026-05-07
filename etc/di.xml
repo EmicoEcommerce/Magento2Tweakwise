@@ -107,12 +107,12 @@
     </type>
     <type name="Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CategoryCountInitializer">
         <arguments>
-            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category</argument>
+            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\CountNavigationContext\Category</argument>
         </arguments>
     </type>
     <type name="Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\SearchCountInitializer">
         <arguments>
-            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search</argument>
+            <argument name="navigationContext" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\CountNavigationContext\Search</argument>
         </arguments>
     </type>
 
@@ -219,6 +219,18 @@
         </arguments>
     </virtualType>
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Search" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\ProductSearchRequest</argument>
+            <argument name="filterableAttributes" xsi:type="object">Magento\Catalog\Model\Layer\Search\FilterableAttributeList</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\CountNavigationContext\Category" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\CountNavigationContext">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\ProductNavigationRequest</argument>
+            <argument name="filterableAttributes" xsi:type="object">Magento\Catalog\Model\Layer\Category\FilterableAttributeList</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\CountNavigationContext\Search" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\CountNavigationContext">
         <arguments>
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\ProductSearchRequest</argument>
             <argument name="filterableAttributes" xsi:type="object">Magento\Catalog\Model\Layer\Search\FilterableAttributeList</argument>

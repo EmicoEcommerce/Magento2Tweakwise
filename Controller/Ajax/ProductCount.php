@@ -54,9 +54,8 @@ class ProductCount extends Action
             throw new InvalidArgumentException('No product count initializer found for type ' . $type);
         }
 
-        $this->initializerMap[$type]->initializeForCount(
-            $request
-        );
+        $count = $this->initializerMap[$type]->initializeForCount($request);
+        $this->ajaxProductCountResult->setCount($count);
 
         return $this->ajaxProductCountResult;
     }

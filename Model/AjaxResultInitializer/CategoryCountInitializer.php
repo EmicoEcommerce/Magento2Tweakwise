@@ -6,15 +6,16 @@ namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
 
 /**
- * Initializes only the category layer for product count AJAX requests.
+ * Initializes a CountNavigationContext for category pages and returns the total
+ * product count from the Tweakwise API response.
  * Applies filter query params directly to the NavigationContext so that the
  * count reflects the current checkbox selection, regardless of the URL strategy.
  */
@@ -39,13 +40,11 @@ class CategoryCountInitializer implements CountInitializerInterface
     ];
 
     /**
-     * @param Resolver $layerResolver
      * @param Registry $registry
      * @param CategoryRepositoryInterface $categoryRepository
      * @param NavigationContext $navigationContext
      */
     public function __construct(
-        private readonly Resolver $layerResolver,
         private readonly Registry $registry,
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly NavigationContext $navigationContext,
@@ -54,16 +53,20 @@ class CategoryCountInitializer implements CountInitializerInterface
 
     /**
      * @param RequestInterface $request
-     * @return void
+     * @return int
      * @throws NoSuchEntityException
      */
     public function initializeForCount(
         RequestInterface $request
-    ): void {
-        $this->layerResolver->create(Resolver::CATALOG_LAYER_CATEGORY);
+    ): int {
         $category = $this->initializeRegistry($request);
         $this->navigationContext->getRequest()->addCategoryFilter($category);
         $this->applyFilterParams($request);
+
+        /** @var PropertiesType $properties */
+        $properties = $this->navigationContext->getResponse()->getProperties();
+
+        return $properties->getNumberOfItems();
     }
 
     /**

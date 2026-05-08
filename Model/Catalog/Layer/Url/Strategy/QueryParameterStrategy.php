@@ -492,7 +492,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
 
         $page = $this->getPage($request);
 
-        if ($page && (bool) $navigationRequest->getParameter('resetPagination') === false) {
+        if ($page) {
             $navigationRequest->setPage($page);
         }
 

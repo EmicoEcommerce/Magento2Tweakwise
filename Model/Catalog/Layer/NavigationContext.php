@@ -198,23 +198,6 @@ class NavigationContext
     }
 
     /**
-     * @return $this
-     */
-    public function resetPagination(): self
-    {
-        $params['resetPagination'] = true;
-        $params['tn_fk_p'] = 1;
-        $params['tn_p'] = 1;
-
-        // @phpstan-ignore-next-line
-        $this->request = null;
-        $this->request = $this->getRequest()->setParameters($params);
-        $this->response = null;
-
-        return $this;
-    }
-
-    /**
      * @param array $attributeCodes
      * @return Attribute[]
      */

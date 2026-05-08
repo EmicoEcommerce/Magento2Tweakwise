@@ -167,7 +167,7 @@ class DefaultRenderer extends Template
         }
 
         foreach ($items as $item) {
-            if ($item->getAttribute()->getValue('attributeid') === $tweakwiseCategoryId) {
+            if ((int)$item->getAttribute()->getValue('attributeid') === (int)$tweakwiseCategoryId) {
                 if (!empty($item->getChildren())) {
                     return $item->getChildren();
                 }

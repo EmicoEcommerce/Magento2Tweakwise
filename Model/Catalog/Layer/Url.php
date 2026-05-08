@@ -25,6 +25,7 @@ use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Exception;
 
 /**
  * Class Url will later implement logic to use implementation selected in configuration.
@@ -185,7 +186,7 @@ class Url
 
         try {
             $navigationRequest = $this->currentContext->getRequest();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 

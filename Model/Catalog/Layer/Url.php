@@ -10,13 +10,16 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer;
 
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\UrlStrategyFactory;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlModel;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper as ExportHelper;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
@@ -72,13 +75,18 @@ class Url
      * @param MagentoHttpRequest $request
      * @param CategoryRepositoryInterface $categoryRepository
      * @param ExportHelper $exportHelper
+     * @param UrlModel $magentoUrl
+     * @param Config $config
+     * @param CurrentContext $currentContext
      */
     public function __construct(
         UrlStrategyFactory $urlStrategyFactory,
         MagentoHttpRequest $request,
         CategoryRepositoryInterface $categoryRepository,
         ExportHelper $exportHelper,
-        UrlModel $magentoUrl
+        UrlModel $magentoUrl,
+        protected readonly Config $config,
+        protected readonly CurrentContext $currentContext
     ) {
         $this->urlStrategyFactory = $urlStrategyFactory;
         $this->categoryRepository = $categoryRepository;
@@ -143,11 +151,45 @@ class Url
             ->getFacetSettings();
 
         if ($settings->getSource() === SettingsType::SOURCE_CATEGORY) {
+            if ($this->shouldUseTweakwiseCategoryUrl($item)) {
+                return $item->getAttribute()->getLink();
+            }
+
             return $this->getCategoryUrlStrategy()
                 ->getCategoryFilterSelectUrl($this->request, $item);
         }
 
         return $this->addBaseUrl($this->getUrlStrategy()->getAttributeSelectUrl($this->request, $item));
+    }
+
+    /**
+     * Determine whether the Tweakwise-provided category URL should be used for a filter item.
+     * Returns true when:
+     * - the "Use category URL from Tweakwise" setting is enabled
+     * - the item carries a non-empty link from Tweakwise
+     * - the current request is not a search request
+     *
+     * @param Item $item
+     * @return bool
+     */
+    protected function shouldUseTweakwiseCategoryUrl(Item $item): bool
+    {
+        if (!$this->config->isCategoryUrlFromTweakwiseEnabled()) {
+            return false;
+        }
+
+        $tweakwiseUrl = $item->getAttribute()->getLink();
+        if (empty($tweakwiseUrl)) {
+            return false;
+        }
+
+        try {
+            $navigationRequest = $this->currentContext->getRequest();
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return !($navigationRequest instanceof ProductSearchRequest);
     }
 
     /**

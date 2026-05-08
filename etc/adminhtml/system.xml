@@ -116,6 +116,14 @@
                         <field id="default_link_renderer">0</field>
                     </depends>
                 </field>
+                <field id="use_category_url_from_tweakwise" translate="label,comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use category URL from Tweakwise</label>
+                    <comment>When enabled, category facet links use the URL provided by Tweakwise instead of Magento-generated URLs. Only applies on category pages, not on search results.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
             <group id="seo" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <depends>

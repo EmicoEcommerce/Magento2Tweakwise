@@ -108,8 +108,13 @@ class DefaultRenderer extends Template
     {
         $catUrl = $item->getUrl();
 
-        if (strpos($catUrl, $this->getBaseUrl()) === false) {
-            $catUrl = $this->getBaseUrl() . $item->getUrl();
+        // Compare scheme-agnostically to handle http vs https mismatches between
+        // the Tweakwise-provided link and the Magento base URL.
+        $catUrlWithoutScheme = preg_replace('#^https?://#', '', $catUrl);
+        $baseUrlWithoutScheme = preg_replace('#^https?://#', '', $this->getBaseUrl());
+
+        if (strpos($catUrlWithoutScheme, $baseUrlWithoutScheme) === false) {
+            $catUrl = $this->getBaseUrl() . $catUrl;
         }
 
         return $catUrl;

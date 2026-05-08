@@ -664,6 +664,15 @@ class Config
     }
 
     /**
+     * @param Store|null $store
+     * @return bool
+     */
+    public function isCategoryUrlFromTweakwiseEnabled(?Store $store = null): bool
+    {
+        return (bool) $this->getStoreConfig('tweakwise/layered/use_category_url_from_tweakwise', $store);
+    }
+
+    /**
      * @return int
      */
     public function getProductCardLifetime(): int

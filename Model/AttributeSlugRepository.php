@@ -81,6 +81,21 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
             $baseSlug = $attributeSlug->getSlug();
             $storeId = $attributeSlug->getStoreId();
 
+            // If a row for this (attribute, store_id) already exists, reuse its
+            // primary key so resource->save() issues an UPDATE instead of an INSERT.
+            try {
+                $existing = $this->findByAttributeAndStore((string)$attributeSlug->getAttribute(), $storeId);
+                $attributeSlug->setData('id', (int)$existing->getData('id'));
+
+                // The slug is already persisted correctly; nothing more to do.
+                if ($existing->getSlug() === $baseSlug) {
+                    return $attributeSlug;
+                }
+            } catch (NoSuchEntityException $e) {
+                // No existing row — we will INSERT below.
+            }
+
+            // Resolve slug collisions within the same store scope.
             $newSlug = $baseSlug;
             $counter = 0;
 
@@ -90,12 +105,14 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                     $existingSlug = $this->findBySlug($newSlug, $storeId);
 
                     if ($existingSlug->getAttribute() === $attributeSlug->getAttribute()) {
-                        return $attributeSlug;
+                        // Same attribute already owns this slug in this store; done.
+                        break;
                     }
 
                     $counter++;
                     $newSlug = sprintf('%s-%s', $baseSlug, $counter);
                 } catch (NoSuchEntityException $e) {
+                    // Slug is free; use it.
                     break;
                 }
             }
@@ -112,6 +129,27 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
                 )
             );
         }
+    }
+
+    /**
+     * @param string $attribute
+     * @param int $storeId
+     * @return AttributeSlugInterface
+     * @throws NoSuchEntityException
+     */
+    private function findByAttributeAndStore(string $attribute, int $storeId): AttributeSlugInterface
+    {
+        $collection = $this->collectionFactory->create()
+            ->addFieldToFilter('attribute', $attribute)
+            ->addFieldToFilter('store_id', (string)$storeId);
+
+        if (!$collection->getSize()) {
+            throw new NoSuchEntityException(__('No slug found for attribute "%1".', $attribute));
+        }
+
+        /** @var AttributeSlug $attributeSlug */
+        $attributeSlug = $collection->getFirstItem();
+        return $attributeSlug;
     }
 
     /**

@@ -26,48 +26,60 @@ class FixSlugUniqueIndexOnTweakwiseAttributeSlugTable implements SchemaPatchInte
         $connection = $setup->getConnection();
         $tableName = $setup->getTable('tweakwise_attribute_slug');
 
-        if (!$connection->isTableExists($tableName)) {
-            $setup->endSetup();
-            return $this;
+        if ($connection->isTableExists($tableName)) {
+            $this->dropGlobalSlugIndex($tableName);
+            $this->addCompositeSlugStoreIndex($tableName);
         }
 
-        $indexes = $connection->getIndexList($tableName);
+        $setup->endSetup();
 
-        // Drop the old global unique index on slug (added by InstallSchema).
-        // The index name Magento generates is based on the table + column names.
-        foreach ($indexes as $indexName => $indexData) {
+        return $this;
+    }
+
+    /**
+     * Drops the global unique index on `slug` that was created by InstallSchema.
+     *
+     * @param string $tableName
+     * @return void
+     */
+    private function dropGlobalSlugIndex(string $tableName): void
+    {
+        $connection = $this->schemaSetup->getConnection();
+
+        foreach ($connection->getIndexList($tableName) as $indexName => $indexData) {
             $columns = array_map('strtolower', $indexData['COLUMNS_LIST'] ?? []);
             if ($columns === ['slug'] && strtoupper($indexData['INDEX_TYPE'] ?? '') === 'UNIQUE') {
                 $connection->dropIndex($tableName, $indexName);
                 break;
             }
         }
+    }
 
-        // Add composite unique index on (slug, store_id) if it doesn't exist yet.
-        $compositeExists = false;
+    /**
+     * Adds a composite unique index on `(slug, store_id)` if it does not exist yet.
+     *
+     * @param string $tableName
+     * @return void
+     */
+    private function addCompositeSlugStoreIndex(string $tableName): void
+    {
+        $setup = $this->schemaSetup;
+        $connection = $setup->getConnection();
+
         foreach ($connection->getIndexList($tableName) as $indexData) {
             $columns = array_map('strtolower', $indexData['COLUMNS_LIST'] ?? []);
             sort($columns);
-            $expected = ['slug', 'store_id'];
-            sort($expected);
-            if ($columns === $expected && strtoupper($indexData['INDEX_TYPE'] ?? '') === 'UNIQUE') {
-                $compositeExists = true;
-                break;
+            if ($columns === ['slug', 'store_id'] && strtoupper($indexData['INDEX_TYPE'] ?? '') === 'UNIQUE') {
+                return;
             }
         }
 
-        if (!$compositeExists) {
-            $connection->addIndex(
-                $tableName,
-                $setup->getIdxName($tableName, ['slug', 'store_id'], 'unique'),
-                ['slug', 'store_id'],
-                'unique'
-            );
-        }
-
-        $setup->endSetup();
-
-        return $this;
+        $connection->addIndex(
+            $tableName,
+            $setup->getIdxName($tableName, ['slug', 'store_id'], 'unique'),
+            ['slug', 'store_id'],
+            'unique'
+        );
     }
 
     /**

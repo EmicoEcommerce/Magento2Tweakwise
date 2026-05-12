@@ -1,12 +1,15 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
+
+declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Model\Config;
 
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Framework\Registry;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption;
-use Magento\Catalog\Model\Category;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\CategoryRepository;
 
 class TemplateFinder
@@ -27,11 +30,14 @@ class TemplateFinder
     protected $categoryRepository;
 
     /**
-     * TemplateFinder constructor.
      * @param Config $config
      */
-    public function __construct(Config $config, Registry $registry, CategoryRepository $categoryRepository)
-    {
+    public function __construct(
+        Config $config,
+        Registry $registry,
+        CategoryRepository $categoryRepository,
+        private readonly CategoryCollectionFactory $categoryCollectionFactory,
+    ) {
         $this->config = $config;
         $this->registry = $registry;
         $this->categoryRepository = $categoryRepository;
@@ -104,17 +110,22 @@ class TemplateFinder
     }
 
     /**
+     * Find the recommendation template for a category by walking up the category path.
+     * Uses a single batch collection load for all ancestors to avoid N+1 DB queries.
+     *
      * @param Category $category
      * @param string $type
-     * @return int|string
+     * @return int|string|null
      */
     public function forCategory(Category $category, $type)
     {
         $attribute = $this->getAttribute($type);
+        $groupAttribute = $this->getGroupCodeAttribute($type);
+
+        // Check the category itself first (no DB call needed).
         $templateId = (int) $category->getData($attribute);
 
         if ($templateId === RecommendationOption::OPTION_CODE) {
-            $groupAttribute = $this->getGroupCodeAttribute($type);
             return (string) $category->getData($groupAttribute);
         }
 
@@ -122,12 +133,49 @@ class TemplateFinder
             return $templateId;
         }
 
-        if ($category->getParentId()) {
-            $parent = $category->getParentCategory();
-            return $this->forCategory($parent, $type);
+        // Build the ordered list of ancestor IDs from the path string (no DB call).
+        // getPathIds() splits the already-loaded `path` field, e.g. "1/2/5/12".
+        // We want to walk from closest ancestor up to the root, so reverse the list
+        // and skip the category itself (last element).
+        $pathIds = $category->getPathIds();
+        // Remove current category id from ancestors list.
+        $ancestorIds = array_reverse(array_slice($pathIds, 0, -1));
+
+        if (empty($ancestorIds)) {
+            return null;
         }
 
-        // @phpstan-ignore-next-line
+        // Load all ancestors in a single query with only the needed attributes.
+        $collection = $this->categoryCollectionFactory->create();
+        $collection->addAttributeToFilter('entity_id', ['in' => $ancestorIds]);
+        $collection->addAttributeToSelect($attribute);
+        $collection->addAttributeToSelect($groupAttribute);
+
+        /** @var array<int, Category> $categoriesById */
+        $categoriesById = [];
+        foreach ($collection as $item) {
+            $categoriesById[(int) $item->getId()] = $item;
+        }
+
+        // Walk up the path from closest to furthest ancestor.
+        foreach ($ancestorIds as $ancestorId) {
+            $ancestorId = (int) $ancestorId;
+            if (!isset($categoriesById[$ancestorId])) {
+                continue;
+            }
+
+            $ancestor = $categoriesById[$ancestorId];
+            $ancestorTemplateId = (int) $ancestor->getData($attribute);
+
+            if ($ancestorTemplateId === RecommendationOption::OPTION_CODE) {
+                return (string) $ancestor->getData($groupAttribute);
+            }
+
+            if ($ancestorTemplateId) {
+                return $ancestorTemplateId;
+            }
+        }
+
         return null;
     }
 

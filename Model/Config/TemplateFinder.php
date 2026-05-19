@@ -111,7 +111,7 @@ class TemplateFinder
 
     /**
      * Find the recommendation template for a category by walking up the category path.
-     * Uses a single batch collection load for all ancestors to avoid N+1 DB queries.
+     * Uses a single batch collection load for all path categories to avoid N+1 DB queries.
      *
      * @param Category $category
      * @param string $type
@@ -122,32 +122,12 @@ class TemplateFinder
         $attribute = $this->getAttribute($type);
         $groupAttribute = $this->getGroupCodeAttribute($type);
 
-        // Check the category itself first (no DB call needed).
-        $templateId = (int) $category->getData($attribute);
+        // getPathIds() splits the already-loaded `path` field (e.g. "1/2/5/12") — no DB call.
+        // Reverse so we walk from the category itself up to the root.
+        $pathIds = array_reverse($category->getPathIds());
 
-        if ($templateId === RecommendationOption::OPTION_CODE) {
-            return (string) $category->getData($groupAttribute);
-        }
-
-        if ($templateId) {
-            return $templateId;
-        }
-
-        // Build the ordered list of ancestor IDs from the path string (no DB call).
-        // getPathIds() splits the already-loaded `path` field, e.g. "1/2/5/12".
-        // We want to walk from closest ancestor up to the root, so reverse the list
-        // and skip the category itself (last element).
-        $pathIds = $category->getPathIds();
-        // Remove current category id from ancestors list.
-        $ancestorIds = array_reverse(array_slice($pathIds, 0, -1));
-
-        if (empty($ancestorIds)) {
-            return null;
-        }
-
-        // Load all ancestors in a single query with only the needed attributes.
         $collection = $this->categoryCollectionFactory->create();
-        $collection->addAttributeToFilter('entity_id', ['in' => $ancestorIds]);
+        $collection->addAttributeToFilter('entity_id', ['in' => $pathIds]);
         $collection->addAttributeToSelect($attribute);
         $collection->addAttributeToSelect($groupAttribute);
 
@@ -157,22 +137,20 @@ class TemplateFinder
             $categoriesById[(int) $item->getId()] = $item;
         }
 
-        // Walk up the path from closest to furthest ancestor.
-        foreach ($ancestorIds as $ancestorId) {
-            $ancestorId = (int) $ancestorId;
-            if (!isset($categoriesById[$ancestorId])) {
+        foreach ($pathIds as $pathId) {
+            $pathId = (int) $pathId;
+            if (!isset($categoriesById[$pathId])) {
                 continue;
             }
 
-            $ancestor = $categoriesById[$ancestorId];
-            $ancestorTemplateId = (int) $ancestor->getData($attribute);
+            $templateId = (int) $categoriesById[$pathId]->getData($attribute);
 
-            if ($ancestorTemplateId === RecommendationOption::OPTION_CODE) {
-                return (string) $ancestor->getData($groupAttribute);
+            if ($templateId === RecommendationOption::OPTION_CODE) {
+                return (string) $categoriesById[$pathId]->getData($groupAttribute);
             }
 
-            if ($ancestorTemplateId) {
-                return $ancestorTemplateId;
+            if ($templateId) {
+                return $templateId;
             }
         }
 

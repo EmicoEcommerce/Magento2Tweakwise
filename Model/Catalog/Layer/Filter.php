@@ -278,7 +278,7 @@ class Filter extends AbstractFilter implements FilterInterface
      */
     public function getName()
     {
-        return (string) $this->facet->getFacetSettings()->getTitle();
+        return $this->facet->getFacetSettings()->getTitle();
     }
 
     /**

@@ -21,8 +21,9 @@ class Version implements CommentInterface
      *
      * @param string $elementValue
      * @return string
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
      */
-    public function getCommentText($elementValue): string // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
+    public function getCommentText($elementValue): string
     {
         $installedPackages = $this->composerInformation->getInstalledMagentoPackages();
 

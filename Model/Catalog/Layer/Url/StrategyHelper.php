@@ -121,7 +121,7 @@ class StrategyHelper
             return $this->categoryCache[$categoryId][$storeId];
         }
 
-        return $this->categoryRepository->get($categoryId, $storeId ?: null);
+        return $this->categoryRepository->get($categoryId, $storeId !== 0 ? $storeId : null);
     }
 
     /**
@@ -138,10 +138,12 @@ class StrategyHelper
             $ids[] = (int) $this->exportHelper->getStoreId($tweakwiseCategoryId);
 
             $children = $item->getChildren();
-            if (!empty($children)) {
-                foreach ($this->collectCategoryIds($children) as $childId) {
-                    $ids[] = $childId;
-                }
+            if (empty($children)) {
+                continue;
+            }
+
+            foreach ($this->collectCategoryIds($children) as $childId) {
+                $ids[] = $childId;
             }
         }
 
@@ -178,9 +180,11 @@ class StrategyHelper
             }
 
             $category = $this->categoryCache[$categoryId][$storeId];
-            if ($category->getData('url') === null) {
-                $category->setData('request_path', $rewrite->getRequestPath());
+            if ($category->getData('url') !== null) {
+                continue;
             }
+
+            $category->setData('request_path', $rewrite->getRequestPath());
         }
     }
 }

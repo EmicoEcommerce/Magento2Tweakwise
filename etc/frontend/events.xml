@@ -15,4 +15,8 @@
     <event name="view_block_abstract_to_html_before">
         <observer name="tweakwise-magento2tweakwise-navigation-override" instance="Tweakwise\Magento2Tweakwise\Model\Observer\NavigationHtmlOverride" />
     </event>
+
+    <event name="core_layout_block_create_after">
+        <observer name="tweakwise-magento2tweakwise-paginated-canonical" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CategoryPaginatedCanonical" />
+    </event>
 </config>

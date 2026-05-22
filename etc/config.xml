@@ -46,6 +46,9 @@ cid
                     <product_card_lifetime>3600</product_card_lifetime>
                 </personal_merchandising>
             </merchandising_builder>
+            <seo>
+                <paginated_canonical_enabled>0</paginated_canonical_enabled>
+            </seo>
             <recommendations>
                 <crosssell_enabled>0</crosssell_enabled>
                 <crosssell_template />

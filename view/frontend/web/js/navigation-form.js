@@ -249,6 +249,7 @@ define([
                 success: function (response) {
                     this._updateBlocks(response.html);
                     this._updateState(response);
+                    this._updateCanonical(response.canonical);
                 }.bind(this),
                 error: function (jqXHR, errorStatus) {
                     if (errorStatus !== 'abort') {
@@ -381,6 +382,23 @@ define([
         _updateState: function (response) {
             const newUrl = this._buildUrlWithQueryString(response, true);
             window.history.pushState({html: response.html}, '', newUrl);
+        },
+
+        /**
+         * Updates the canonical link tag in the document head to reflect the current navigation state.
+         *
+         * @param {string} canonical
+         * @private
+         */
+        _updateCanonical: function (canonical) {
+            if (!canonical) {
+                return;
+            }
+
+            var $canonicalTag = $('link[rel="canonical"]');
+            if ($canonicalTag.length) {
+                $canonicalTag.attr('href', canonical);
+            }
         },
 
         /**

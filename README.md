@@ -45,7 +45,8 @@ Below is a rundown of all configuration options
     The reason this is an AND check is because otherwise indexation will still happen on the non whitelisted filters and it is unclear which url is present (an arbitrary amount of filters could be selected).
     Suppose max allowed facet is 1 and only "size" is in the whitelist. Then filter "color" with value "red" is not indexable (since "color" is not in the whitelist).
     If we now allow the size filter to still be indexable then url example.com/category/color/red/size/M would be indexable whereas example.com/category/color/red is not which is incorrect.
-    This would lead to infinite crawling on filter urls which is undesirable 
+    This would lead to infinite crawling on filter urls which is undesirable
+4) Enable Paginated Canonical URLs: When enabled, the canonical tag in the page `<head>` is updated after each AJAX navigation to reflect the current URL including active filters and the page parameter (e.g. `?p=2`). This ensures the canonical stays accurate as the user navigates without a full page reload. Only updates an existing canonical tag — if the page has no canonical tag (i.e. `catalog/seo/category_canonical_tag` is disabled), nothing is added.
     
 #### Autocomplete (All settings depend on Enabled having value yes)
 1) Enabled: Use tweakwise autocomplete results or not.

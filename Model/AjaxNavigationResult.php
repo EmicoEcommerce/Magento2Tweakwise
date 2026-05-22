@@ -104,7 +104,7 @@ class AjaxNavigationResult extends Layout
         $html = preg_replace('/\t+/', ' ', $html);
         $url  = $this->getResponseUrl();
 
-        $responseData = $this->serializer->serialize(['url' => $url, 'html' => $html]);
+        $responseData = $this->serializer->serialize(['url' => $url, 'html' => $html, 'canonical' => $this->getCanonicalUrl($url)]);
         $this->translateInline->processResponseBody($responseData, true);
 
         if (!$this->isResponseCacheable()) {
@@ -126,6 +126,36 @@ class AjaxNavigationResult extends Layout
         $layer = $this->layerResolver->get();
         $activeFilters = $layer->getState()->getFilters();
         return $this->urlModel->getFilterUrl($activeFilters);
+    }
+
+    /**
+     * @param string $responseUrl
+     * @return string
+     */
+    public function getCanonicalUrl(string $responseUrl): string
+    {
+        if (!$this->config->isPaginatedCanonicalEnabled()) {
+            return '';
+        }
+
+        $page = (int) $this->request->getParam('p');
+        if ($page < 2) {
+            return $responseUrl;
+        }
+
+        $urlParts = parse_url($responseUrl);
+        $query = [];
+        if (isset($urlParts['query'])) {
+            parse_str($urlParts['query'], $query);
+        }
+
+        $query['p'] = $page;
+        $urlParts['query'] = http_build_query($query);
+
+        return (isset($urlParts['scheme']) ? $urlParts['scheme'] . '://' : '')
+            . ($urlParts['host'] ?? '')
+            . ($urlParts['path'] ?? '')
+            . '?' . $urlParts['query'];
     }
 
     /**

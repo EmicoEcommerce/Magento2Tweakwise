@@ -33,6 +33,7 @@ class SetSlugColumnCollationTweakwiseAttributeSlugTable implements SchemaPatchIn
         $connection = $setup->getConnection();
         $tableName = $connection->quoteIdentifier($setup->getTable('tweakwise_attribute_slug'));
 
+        // phpcs:ignore Magento2.SQL.RawQuery.FoundRawSql -- modifyColumn() does not support per-column collation; ALTER TABLE is the only option
         $connection->query(
             'ALTER TABLE ' . $tableName
             . ' MODIFY COLUMN `slug` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL'

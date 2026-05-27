@@ -275,10 +275,6 @@ class Collection extends AbstractCollection
      */
     protected function addVisuals(): void
     {
-        if ($this->navigationContext->getRequest() instanceof ProductSearchRequest) {
-            return;
-        }
-
         try {
             $response = $this->navigationContext->getResponse();
         } catch (Exception $e) {

@@ -52,4 +52,17 @@ interface VisualInterface
      * @return self
      */
     public function setRowspan(int $rowspan): self;
+
+    /**
+     * Returns all Tweakwise item attributes as a flat key => value(s) array.
+     *
+     * @return array<string, string|string[]>
+     */
+    public function getVisualAttributes(): array;
+
+    /**
+     * @param array<string, string|string[]> $attributes
+     * @return self
+     */
+    public function setVisualAttributes(array $attributes): self;
 }

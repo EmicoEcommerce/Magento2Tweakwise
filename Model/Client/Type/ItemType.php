@@ -195,6 +195,37 @@ class ItemType extends Type
     }
 
     /**
+     * Returns all item attributes as a flat key => value(s) array.
+     * Each key is the attribute name; the value is a single string when only one value is present,
+     * or an array of strings when multiple values exist.
+     *
+     * @return array<string, string|string[]>
+     */
+    public function getAttributeValues(): array
+    {
+        $raw = $this->getDataValue(self::ATTRIBUTES);
+        $attributes = is_array($raw) ? $this->normalizeArray($raw, 'attribute') : [];
+
+        $result = [];
+        foreach ($attributes as $attribute) {
+            if (!isset($attribute['name'])) {
+                continue;
+            }
+
+            $name = (string) $attribute['name'];
+            $value = $attribute['values']['value'] ?? null;
+
+            if ($value === null) {
+                continue;
+            }
+
+            $result[$name] = is_array($value) ? array_map('strval', $value) : (string) $value;
+        }
+
+        return $result;
+    }
+
+    /**
      * @return array|null
      */
     protected function getVisualProperties(): ?array

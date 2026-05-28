@@ -21,6 +21,7 @@ Below is a rundown of all configuration options
 #### General:
 1) Authentication key: This is used to communicate with tweakwise and determines your navigator instance, it should be the same as the key found in the navigator under `Connectivity > End points`.
 2) Grouped producets: Enable this after the grouped export has been enabled and imported in tweakwise. This wil enable filtering based on variant data and enabled the product image to be controlled by tweakwise so that the correct color is shown based on selected filters. This requires the image url in tweakwise to be configured correctly. If this is not enabled and you've exported grouped products the catalog may be empty.
+3) Internal traffic IP addresses: Comma-separated list of IP addresses that should be tagged as internal traffic. When a visitor's IP matches one of the configured addresses, all Tweakwise API requests triggered by that visit will include a `TWN-Source: Internal-Traffic` header. This allows you to filter out internal traffic (e.g. employees, testers) from Tweakwise Analytics reports. See [Tweakwise docs](https://docs.tweakwise.com/reference/identify-requests-as-internal-traffic) for details.
 
 #### Layered Navigation (All settings depend on Enabled having value yes):
 1) Enabled: Use tweakwise results in navigation, if disabled the standard magento navigation is used. Don't disable the anchor tag on main categories, this causes al products to be shown. The anchor tag can be disabled on sub-categories.

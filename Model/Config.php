@@ -670,4 +670,17 @@ class Config
     {
         return (int) $this->config->getValue(self::PRODUCT_CARD_LIFETIME_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
+
+    /**
+     * @return string[]
+     */
+    public function getInternalIpAddresses(): array
+    {
+        $value = $this->getStoreConfig('tweakwise/general/internal_ip_addresses');
+        if (empty($value)) {
+            return [];
+        }
+
+        return array_filter(array_map('trim', explode(',', $value)));
+    }
 }

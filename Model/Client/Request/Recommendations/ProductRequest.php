@@ -68,7 +68,7 @@ class ProductRequest extends FeaturedRequest
 
         $productTweakwiseId = $this->helper->getTweakwiseId($this->product->getStoreId(), $this->product->getId());
 
-        if ($this->config->isGroupedProductsEnabled($this->product->getStore())) {
+        if ($this->config->isGroupedProductsEnabled($this->product->getStore()) && $this->path !== 'recommendations/featured') {
             $groupCode = $this->product->getData('groupcode');
 
             if (empty($groupCode)) {

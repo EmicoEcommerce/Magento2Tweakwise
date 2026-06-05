@@ -72,7 +72,11 @@ class ProductRequest extends FeaturedRequest
             $groupCode = $this->product->getData('groupcode');
 
             if (empty($groupCode)) {
-                $groupCode = $this->product->getId();
+                if ($this->product->hasData('parent_id')) {
+                    $groupCode = $this->product->getData('parent_id');
+                } else {
+                    $groupCode = $this->product->getId();
+                }
             }
 
             $groupCode = $this->helper->getTweakwiseId($this->product->getStoreId(), $groupCode);

@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Block\Navigation\FilterRenderer;
 
 use Closure;
+use Magento\Framework\View\Element\BlockInterface;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRenderer;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SwatchRenderer;
@@ -44,7 +45,7 @@ class Plugin
     /**
      * Filter renderer block types
      *
-     * @var string[]
+     * @var array<string, class-string<BlockInterface>>
      */
     protected $blockTypes = [
         SettingsType::SELECTION_TYPE_TREE => TreeRenderer::class,
@@ -135,7 +136,7 @@ class Plugin
 
     /**
      * @param SettingsType $settings
-     * @return string
+     * @return class-string<BlockInterface>
      */
     protected function getBlockType(SettingsType $settings)
     {

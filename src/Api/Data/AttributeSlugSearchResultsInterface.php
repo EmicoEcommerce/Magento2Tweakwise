@@ -1,0 +1,13 @@
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+
+namespace Tweakwise\Magento2Tweakwise\Api\Data;
+
+use Magento\Framework\Api\SearchResultsInterface;
+
+interface AttributeSlugSearchResultsInterface extends SearchResultsInterface
+{
+    /**
+     * @return \Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface[]
+     */
+    public function getItems(): array;
+}

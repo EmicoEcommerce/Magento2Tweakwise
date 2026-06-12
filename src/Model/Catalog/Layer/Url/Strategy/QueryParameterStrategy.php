@@ -1,0 +1,652 @@
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+
+/**
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
+ *
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy;
+
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Serialize\SerializerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\CategoryUrlInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\FilterApplierInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\StrategyHelper;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\UrlModel;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
+use Tweakwise\Magento2Tweakwise\Model\Config as TweakwiseConfig;
+use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\Product\ProductList\ToolbarMemorizer;
+use Magento\Framework\App\Request\Http as MagentoHttpRequest;
+use Magento\Framework\Stdlib\CookieManagerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Magento\Search\Helper\Data;
+
+/**
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
+ */
+class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, CategoryUrlInterface
+{
+    /**
+     * Separator used in category tree urls
+     */
+    public const CATEGORY_TREE_SEPARATOR = '-';
+
+    /**
+     * Extra ignored page parameters
+     */
+    public const PARAM_MODE = 'product_list_mode';
+    public const PARAM_CATEGORY = 'categorie';
+    public const PARAM_CACHE = '_';
+
+    /**
+     * Commonly used query parameters from headers
+     */
+    public const PARAM_LIMIT = 'product_list_limit';
+    public const PARAM_ORDER = 'product_list_order';
+    public const PARAM_PAGE = 'p';
+    public const PARAM_SEARCH = 'q';
+
+    /**
+     * Parameters to be ignored as attribute filters
+     *
+     * @var string[]
+     */
+    protected $ignoredQueryParameters = [
+        self::PARAM_CATEGORY,
+        self::PARAM_ORDER,
+        self::PARAM_LIMIT,
+        self::PARAM_MODE,
+        self::PARAM_SEARCH,
+        self::PARAM_CACHE,
+    ];
+
+    /**
+     * @var UrlModel
+     */
+    protected $url;
+
+    /**
+     * @var StrategyHelper
+     */
+    protected $strategyHelper;
+
+    /**
+     * @var CookieManagerInterface
+     */
+    protected $cookieManager;
+
+    /**
+     * @var TweakwiseConfig
+     */
+    protected $tweakwiseConfig;
+
+    /**
+     * @var array
+     */
+    private $queryUrlCache = [];
+
+    /**
+     * @var Url
+     */
+    protected $layerUrl;
+
+    /**
+     * Magento constructor.
+     *
+     * @param UrlModel $url
+     * @param StrategyHelper $strategyHelper
+     * @param CookieManagerInterface $cookieManager
+     * @param TweakwiseConfig $config
+     * @param Url $layerUrl
+     * @param Data $searchConfig
+     * @param SerializerInterface $serializer
+     * @param ToolbarMemorizer $toolbarMemorizer
+     */
+    public function __construct(
+        UrlModel $url,
+        StrategyHelper $strategyHelper,
+        CookieManagerInterface $cookieManager,
+        TweakwiseConfig $config,
+        Url $layerUrl,
+        private Data $searchConfig,
+        private SerializerInterface $serializer,
+        private readonly ToolbarMemorizer $toolbarMemorizer
+    ) {
+        $this->url = $url;
+        $this->strategyHelper = $strategyHelper;
+        $this->cookieManager = $cookieManager;
+        $this->tweakwiseConfig = $config;
+        $this->layerUrl = $layerUrl;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClearUrl(MagentoHttpRequest $request, array $activeFilterItems): string
+    {
+        $query = [];
+        /** @var Item $item */
+        foreach ($activeFilterItems as $item) {
+            $filter = $item->getFilter();
+
+            $urlKey = $filter->getUrlKey();
+            $query[$urlKey] = $filter->getCleanValue();
+        }
+
+        return $this->getCurrentQueryUrl($request, $query);
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @param array $query
+     * @return string
+     */
+    protected function getCurrentQueryUrl(MagentoHttpRequest $request, array $query)
+    {
+        $selectedFilters = $request->getQuery();
+        $reservedParams = [
+            self::PARAM_PAGE,
+            self::PARAM_CATEGORY,
+        ];
+
+        foreach ($selectedFilters as $filter => $value) {
+            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
+            if (array_key_exists($filter, $query) || (in_array($filter, $reservedParams))) {
+                continue;
+            }
+
+            $query[$filter] = $value;
+        }
+
+        $params['_query'] = $query;
+        $params['_escape'] = false;
+
+        //remove p=1 from url
+        if (!empty($params['_query']['p']) && ($params['_query']['p'] === '1')) {
+            unset($params['_query']['p']);
+        }
+
+        $originalUrl = $request->getQuery('__tw_original_url');
+        if ($originalUrl) {
+            if (!empty($request->getParam('q'))) {
+                $params['_query']['q'] = $request->getParam('q');
+            }
+
+            $newOriginalUrl = $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
+
+            return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
+        }
+
+        $url = $this->url->getDirectUrl($this->getOriginalUrl($request), $params);
+
+        if (strpos($url, 'catalogsearch') !== false) {
+            $params['_current'] = true;
+            $params['_use_rewrite'] = true;
+            $url = $this->url->getUrl('*/*/*', $params);
+        }
+
+        return $url;
+    }
+
+    /**
+     * Fetch current selected values
+     *
+     * @param MagentoHttpRequest $request
+     * @param Item $item
+     * @return string[]|string|null
+     */
+    protected function getRequestValues(MagentoHttpRequest $request, Item $item)
+    {
+        $filter = $item->getFilter();
+        $settings = $filter
+            ->getFacet()
+            ->getFacetSettings();
+
+        $urlKey = $filter->getUrlKey();
+
+        $data = $request->getQuery($urlKey);
+        if (!$data) {
+            if ($settings->getIsMultipleSelect()) {
+                return [];
+            }
+
+            return null;
+        }
+
+        if ($settings->getIsMultipleSelect()) {
+            if (!is_array($data)) {
+                $data = [$data];
+            }
+
+            return array_map('strval', $data);
+        }
+
+        return (string) $data;
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @param Item $item
+     * @return string
+     * @throws NoSuchEntityException
+     * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
+     */
+    public function getCategoryFilterSelectUrl(MagentoHttpRequest $request, Item $item): string
+    {
+        $category = $this->strategyHelper->getCategoryFromItem($item);
+        if (!$this->getSearch($request)) {
+            // @phpstan-ignore-next-line
+            $categoryUrl = $category->getUrl();
+            $categoryUrlPath = parse_url($categoryUrl, PHP_URL_PATH);
+
+            $categoryFilters = $this->getAttributeFilters($request);
+            unset($categoryFilters[self::PARAM_PAGE]);
+
+            $url = $this->url->getDirectUrl(
+                sprintf(
+                    '%s/',
+                    trim($categoryUrlPath, '/'), // @phpstan-ignore-line
+                ),
+                [
+                    '_query' => $categoryFilters
+                ]
+            );
+
+            /*
+             We explode the url so that we can capture its parts and find the double values in order to remove them.
+             This is needed because the categoryUrlPath contains the store code in some cases and the directUrl as well.
+             These two are the only unique parts in this situation and so need to be removed.
+             */
+
+            $hadTrailingSlash = substr($url, -1) === '/';
+            $explode = explode('/', $url);
+
+            // @phpstan-ignore-next-line
+            if (is_array($explode)) {
+                $url = implode('/', array_unique($explode));
+
+                if ($hadTrailingSlash && substr($url, -1) !== '/') {
+                    $url .= '/';
+                }
+            }
+
+            $url = str_replace($this->url->getBaseUrl(), '', $url);
+
+            if ($this->tweakwiseConfig->getUseDefaultLinkRenderer()) {
+                $url = '/' . $url;
+            }
+
+            return $url;
+        }
+
+        $urlKey = $item->getFilter()->getUrlKey();
+
+        $value[] = $category->getId();
+        /** @var Category|CategoryInterface $category */
+        while ((int)$category->getParentId() !== 1) {
+            $value[] = $category->getParentId();
+            $category = $category->getParentCategory();
+        }
+
+        $value = implode(self::CATEGORY_TREE_SEPARATOR, array_reverse($value));
+
+        $query = [$urlKey => $value];
+        return $this->getCurrentQueryUrl($request, $query);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCategoryFilterRemoveUrl(MagentoHttpRequest $request, Item $item): string
+    {
+        $filter = $item->getFilter();
+        $urlKey = $filter->getUrlKey();
+
+        $query = [$urlKey => $filter->getCleanValue()];
+        return $this->getCurrentQueryUrl($request, $query);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttributeSelectUrl(MagentoHttpRequest $request, Item $item): string
+    {
+        $settings = $item
+            ->getFilter()
+            ->getFacet()
+            ->getFacetSettings();
+        $attribute = $item->getAttribute();
+
+        $urlKey = $settings->getUrlKey();
+        $value = $attribute->getTitle();
+
+        $values = $this->getRequestValues($request, $item);
+
+        if ($settings->getIsMultipleSelect()) {
+            // @phpstan-ignore-next-line
+            $values[] = $value;
+            $values = array_unique($values);
+
+            $queryParams = [];
+            foreach ($values as $key => $value) {
+                $queryParams[] = '__VALUE.' . $key . '__';
+            }
+
+            $query = [$urlKey => $queryParams];
+        } else {
+            $query = [$urlKey => '__VALUE.0__'];
+        }
+
+        $hash = sha1($this->serializer->serialize($query));
+        if (!isset($this->queryUrlCache[$hash])) {
+            $this->queryUrlCache[$hash] = $this->getCurrentQueryUrl($request, $query);
+        }
+
+        $queryUrl = $this->queryUrlCache[$hash];
+
+        if (!$settings->getIsMultipleSelect()) {
+            // @phpstan-ignore-next-line
+            $values[] = $value;
+        }
+
+        // @phpstan-ignore-next-line
+        foreach ($values as $key => $value) {
+            $queryUrl = str_replace('__VALUE.' . $key . '__', $value, $queryUrl);
+        }
+
+        return $queryUrl;
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @param Item[] $filters
+     * @return string
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
+     */
+    public function buildFilterUrl(MagentoHttpRequest $request, array $filters = []): string
+    {
+        $attributeFilters = $this->getAttributeFilters($request);
+        return $this->getCurrentQueryUrl($request, $attributeFilters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttributeRemoveUrl(MagentoHttpRequest $request, Item $item): string
+    {
+        $filter = $item->getFilter();
+        $settings = $filter->getFacet()->getFacetSettings();
+
+        $urlKey = $settings->getUrlKey();
+
+        if ($settings->getIsMultipleSelect()) {
+            $attribute = $item->getAttribute();
+            $value = $attribute->getTitle();
+            $values = $this->getRequestValues($request, $item);
+
+            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
+            // @phpstan-ignore-next-line
+            $index = array_search($value, $values, false);
+            if ($index !== false) {
+                /** @noinspection OffsetOperationsInspection */
+                unset($values[$index]);
+            }
+
+            $query = [$urlKey => $values];
+        } else {
+            $query = [$urlKey => $filter->getCleanValue()];
+        }
+
+        return $this->getCurrentQueryUrl($request, $query);
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @return array
+     */
+    protected function getCategoryFilters(MagentoHttpRequest $request)
+    {
+        $categories = $request->getQuery(self::PARAM_CATEGORY);
+        $categories = explode(self::CATEGORY_TREE_SEPARATOR, $categories ?? '');
+        $categories = array_map('intval', $categories);
+        $categories = array_filter($categories);
+        $categories = array_unique($categories);
+
+        return $categories;
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @return array
+     */
+    public function getAttributeFilters(MagentoHttpRequest $request)
+    {
+        $result = [];
+        foreach ($request->getQuery() as $attribute => $value) {
+            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
+            if (in_array(mb_strtolower($attribute), $this->ignoredQueryParameters, false)) {
+                continue;
+            }
+
+            $result[$attribute] = $value;
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSliderUrl(MagentoHttpRequest $request, Item $item): string
+    {
+        $query = [$item->getFilter()->getUrlKey() => '{{from}}-{{to}}'];
+
+        return $this->getCurrentQueryUrl($request, $query);
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @param ProductNavigationRequest $navigationRequest
+     * @return FilterApplierInterface
+     * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
+     */
+    public function apply(
+        MagentoHttpRequest $request,
+        ProductNavigationRequest $navigationRequest
+    ): FilterApplierInterface {
+        $attributeFilters = $this->getAttributeFilters($request);
+        foreach ($attributeFilters as $attribute => $values) {
+            if (!is_array($values)) {
+                $values = [$values];
+            }
+
+            foreach ($values as $value) {
+                $navigationRequest->addAttributeFilter($attribute, $value);
+            }
+        }
+
+        $sortOrder = $this->getSortOrder($request);
+        if ($sortOrder) {
+            //fix spaces/special chars in sort order and add the correct value to the request
+            $sortOrder = urldecode($sortOrder);
+            $query = $request->getQuery();
+            $query->set(self::PARAM_ORDER, $sortOrder);
+            $request->setQuery($query);
+
+            $navigationRequest->setOrder($sortOrder);
+        }
+
+        if (!$sortOrder) {
+            $memorizedSortOrder = $this->toolbarMemorizer->getOrder();
+
+            if ($memorizedSortOrder && is_string($memorizedSortOrder)) {
+                $navigationRequest->setOrder($memorizedSortOrder);
+            }
+        }
+
+        $page = $this->getPage($request);
+
+        if ($page) {
+            $navigationRequest->setPage($page);
+        }
+
+        $limit = $this->getLimit($request);
+        if ($limit) {
+            $navigationRequest->setLimit($limit);
+        }
+
+        if ($this->tweakwiseConfig->isPersonalMerchandisingActive()) {
+            $profileKey = $this->cookieManager->getCookie(
+                $this->tweakwiseConfig->getPersonalMerchandisingCookieName(),
+                null
+            );
+
+            if ($profileKey) {
+                $navigationRequest->setProfileKey($profileKey);
+            }
+        }
+
+        $categories = $this->getCategoryFilters($request);
+
+        if ($categories) {
+            $navigationRequest->addCategoryPathFilter($categories);
+        }
+
+        $search = $this->getSearch($request);
+        if ($navigationRequest instanceof ProductSearchRequest && $search) {
+            /** @var ProductSearchRequest $navigationRequest */
+            $navigationRequest->setSearch($search);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @return string|null
+     */
+    protected function getSortOrder(MagentoHttpRequest $request)
+    {
+        return $request->getQuery(self::PARAM_ORDER);
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @return int|null
+     */
+    protected function getPage(MagentoHttpRequest $request)
+    {
+        return $request->getQuery(self::PARAM_PAGE);
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @return int|null
+     */
+    protected function getLimit(MagentoHttpRequest $request)
+    {
+        return $request->getQuery(self::PARAM_LIMIT);
+    }
+
+    /**
+     * @param MagentoHttpRequest $request
+     * @return string|null
+     */
+    protected function getSearch(MagentoHttpRequest $request)
+    {
+        $searchLength = 100;
+        $search = $request->getQuery(self::PARAM_SEARCH);
+        $maxQueryLength = $this->searchConfig->getMaxQueryLength();
+
+        if ($maxQueryLength) {
+            if ($maxQueryLength < $searchLength) {
+                $searchLength = $maxQueryLength;
+            }
+        }
+
+        // @phpstan-ignore-next-line
+        $search = mb_substr((string) $search, 0, $searchLength);
+
+        return $search;
+    }
+
+    /**
+     * Determine if this UrlInterface is allowed in the current context
+     *
+     * @return boolean
+     */
+    public function isAllowed(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalUrl(MagentoHttpRequest $request): string
+    {
+        $originalUrl = $request->getQuery('__tw_original_url');
+        if ($originalUrl) {
+            $urlArray = explode('/', $originalUrl);
+            $newOriginalUrl = '';
+            foreach ($urlArray as $url) {
+                $newOriginalUrl .= '/' . filter_var($url, FILTER_SANITIZE_ENCODED);
+            }
+
+            //check if string should start with an / to prevent double slashes later
+            if (mb_stripos($originalUrl, '/') === 0) {
+                $newOriginalUrl = mb_substr($newOriginalUrl, 1);
+            }
+
+            // This seems ugly, perhaps there is another way?
+            $query = [];
+            // Add page and sort
+            $sort = $request->getParam('product_list_order');
+            $limit = $request->getParam('product_list_limit');
+            $mode = $request->getParam('product_list_mode');
+
+            if ($sort) {
+                $query['product_list_order'] = $sort;
+            }
+
+            if ($limit) {
+                $query['product_list_limit'] = $limit;
+            }
+
+            if ($mode) {
+                $query['product_list_mode'] = $mode;
+            }
+
+            $newOriginalUrl = $this->url->getDirectUrl($newOriginalUrl, ['_query' => $query]);
+
+            return str_replace($this->url->getBaseUrl(), '', $newOriginalUrl);
+        }
+
+        return $this->getCurrentUrl($request);
+    }
+
+    private function getCurrentUrl(MagentoHttpRequest $request): string
+    {
+        $url = $request->getOriginalPathInfo();
+
+        if (strpos($url, 'ajax/navigation') !== false) {
+            $params['_current'] = true;
+            $params['_use_rewrite'] = true;
+            $params['_escape'] = false;
+            return $this->url->getUrl('*/*/*', $params);
+        }
+
+        $url = ltrim($url, '/');
+
+        return str_replace($this->url->getBaseUrl(), '', $url);
+    }
+}

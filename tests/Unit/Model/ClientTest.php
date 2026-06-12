@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Model;
 
 use Emico\CodeCept\Test\Unit;
-use GuzzleHttp\Psr7\Request as HttpRequest;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\UrlInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client;

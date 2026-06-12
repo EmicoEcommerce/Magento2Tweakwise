@@ -73,4 +73,3 @@ class ConfigTest extends Unit
         );
     }
 }
-

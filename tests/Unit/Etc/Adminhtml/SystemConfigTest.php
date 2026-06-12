@@ -36,4 +36,3 @@ class SystemConfigTest extends Unit
         );
     }
 }
-

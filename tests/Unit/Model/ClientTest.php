@@ -142,25 +142,3 @@ class ClientTest extends Unit
         );
     }
 }
-
-class ClientExposed extends Client
-{
-    /**
-     * @param Request $request
-     * @return HttpRequest
-     */
-    public function createGetRequestPublic(Request $request): HttpRequest
-    {
-        return parent::createGetRequest($request);
-    }
-
-    /**
-     * @param Request $request
-     * @return HttpRequest
-     */
-    public function createPostRequestPublic(Request $request): HttpRequest
-    {
-        return parent::createPostRequest($request);
-    }
-}
-

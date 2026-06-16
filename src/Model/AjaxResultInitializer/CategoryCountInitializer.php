@@ -6,6 +6,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -60,11 +61,13 @@ class CategoryCountInitializer implements CountInitializerInterface
         RequestInterface $request
     ): int {
         $category = $this->initializeRegistry($request);
-        $this->navigationContext->getRequest()->addCategoryFilter($category);
+        $this->navigationContext->getRequest()->addCategoryFilter(
+            $category instanceof Category ? $category : (int) $category->getId()
+        );
         $this->applyFilterParams($request);
 
         /** @var PropertiesType $properties */
-        $properties = $this->navigationContext->getResponse()->getProperties();
+        $properties = $this->navigationContext->getResponse()->getValue('properties');
 
         return $properties->getNumberOfItems();
     }

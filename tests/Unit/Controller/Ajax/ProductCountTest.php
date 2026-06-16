@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Controller\Ajax;
 
 use Emico\CodeCept\Test\Unit;
+use InvalidArgumentException;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -83,7 +84,7 @@ class ProductCountTest extends Unit
             ['category' => $this->initializer],
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Incorrect/modified form parameters');
         $subject->execute();
     }
@@ -106,7 +107,7 @@ class ProductCountTest extends Unit
             ['category' => $this->initializer],
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No product count initializer found for type missing');
         $subject->execute();
     }

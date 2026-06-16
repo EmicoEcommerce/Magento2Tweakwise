@@ -53,7 +53,7 @@ class SearchCountInitializer implements CountInitializerInterface
         $this->applyFilterParams($request);
 
         /** @var PropertiesType $properties */
-        $properties = $this->navigationContext->getResponse()->getProperties();
+        $properties = $this->navigationContext->getResponse()->getValue('properties');
 
         return $properties->getNumberOfItems();
     }

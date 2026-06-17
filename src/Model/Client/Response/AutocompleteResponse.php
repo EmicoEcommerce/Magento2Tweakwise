@@ -1,0 +1,91 @@
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+
+/**
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
+ *
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+namespace Tweakwise\Magento2Tweakwise\Model\Client\Response;
+
+use Tweakwise\Magento2Tweakwise\Model\Client\Response;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\InstantSearchType;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\SuggestionTypeAutocomplete;
+
+/**
+ * Class ProductNavigationResponse
+ *
+ * @method ItemType[] getItems();
+ * @method SuggestionTypeAutocomplete[] getSuggestions();
+ * @method InstantSearchType getInstantSearch();
+ */
+class AutocompleteResponse extends Response implements AutocompleteProductResponseInterface
+{
+    /**
+     * @param SuggestionTypeAutocomplete[]|array[] $suggestions
+     * @return $this
+     */
+    public function setSuggestions(array $suggestions)
+    {
+        $suggestions = $this->normalizeArray($suggestions, 'suggestion');
+
+        $values = [];
+        foreach ($suggestions as $value) {
+            if (!$value instanceof SuggestionTypeAutocomplete) {
+                $value = new SuggestionTypeAutocomplete($value);
+            }
+
+            $values[] = $value;
+        }
+
+        $this->data['suggestions'] = $values;
+        return $this;
+    }
+
+    /**
+     * @param InstantSearchType|array $instantSearch
+     * @return $this
+     */
+    public function setInstantSearch($instantSearch)
+    {
+        if (!$instantSearch instanceof InstantSearchType) {
+            $instantSearch = new InstantSearchType($instantSearch);
+        }
+
+        $this->data['instant_search'] = $instantSearch;
+        return $this;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getProductIds()
+    {
+        $ids = [];
+        foreach ($this->getItems() as $item) {
+            $ids[] = $this->helper->getStoreId($item->getId());
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductData()
+    {
+        $result = [];
+        foreach ($this->getItems() as $item) {
+            $result[] = [
+                'id' => $this->helper->getStoreId($item->getId()),
+                'tweakwise_price' => (float) $item->getPrice(),
+                'tweakwise_final_price' => (float) $item->getFinalPrice(),
+                'tweakwise_id' => $item->getId(),
+            ];
+        }
+
+        return $result;
+    }
+}

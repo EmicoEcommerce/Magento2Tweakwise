@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tweakwise\Test\Unit\Model\Config;
 
-if (!class_exists(\Magento\Catalog\Model\ResourceModel\Category\CollectionFactory::class)) {
+if (!class_exists(CollectionFactory::class)) {
     require_once __DIR__ . '/../../../Support/Stubs/Magento/Catalog/Model/ResourceModel/Category/CollectionFactory.php';
 }
 
@@ -53,6 +53,11 @@ class TemplateFinderTest extends Unit
     private TemplateFinder $templateFinder;
 
     /**
+     * @var string[]
+     */
+    private array $capturedSelectedAttributes = [];
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -95,13 +100,11 @@ class TemplateFinderTest extends Unit
             ->with('current_category')
             ->willReturn($currentCategory);
 
-        $selectedAttributes = [];
         $collection = $this->createCategoryCollection(
             [
                 $this->createLoadedCategory(13, [$attribute => 0, $groupAttribute => null]),
                 $this->createLoadedCategory(10, [$attribute => 21, $groupAttribute => null]),
             ],
-            $selectedAttributes,
         );
 
         $collection->expects($this->once())
@@ -116,7 +119,7 @@ class TemplateFinderTest extends Unit
         $result = $this->templateFinder->forProduct($product, $type);
 
         $this->assertSame(21, $result);
-        $this->assertEqualsCanonicalizing([$attribute, $groupAttribute], $selectedAttributes);
+        $this->assertEqualsCanonicalizing([$attribute, $groupAttribute], $this->capturedSelectedAttributes);
     }
 
     /**
@@ -139,13 +142,11 @@ class TemplateFinderTest extends Unit
             ->with('current_category')
             ->willReturn(null);
 
-        $selectedAttributes = [];
         $collection = $this->createCategoryCollection(
             [
                 $this->createLoadedCategory(5, [$attribute => 33, $groupAttribute => null]),
                 $this->createLoadedCategory(2, [$attribute => 99, $groupAttribute => null]),
             ],
-            $selectedAttributes,
         );
 
         $collection->expects($this->once())
@@ -162,7 +163,7 @@ class TemplateFinderTest extends Unit
         $result = $this->templateFinder->forProduct($product, $type);
 
         $this->assertSame(33, $result);
-        $this->assertEqualsCanonicalizing([$attribute, $groupAttribute], $selectedAttributes);
+        $this->assertEqualsCanonicalizing([$attribute, $groupAttribute], $this->capturedSelectedAttributes);
     }
 
     /**
@@ -213,11 +214,11 @@ class TemplateFinderTest extends Unit
 
     /**
      * @param Category[] $categories
-     * @param string[] $selectedAttributes
      * @return CategoryCollection
      */
-    private function createCategoryCollection(array $categories, array &$selectedAttributes): CategoryCollection
+    private function createCategoryCollection(array $categories): CategoryCollection
     {
+        $this->capturedSelectedAttributes = [];
         $collection = $this->getMockBuilder(CategoryCollection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addAttributeToFilter', 'addAttributeToSelect', 'getIterator'])
@@ -225,8 +226,8 @@ class TemplateFinderTest extends Unit
 
         $collection->expects($this->exactly(2))
             ->method('addAttributeToSelect')
-            ->willReturnCallback(function (string $attribute) use (&$selectedAttributes, $collection): CategoryCollection {
-                $selectedAttributes[] = $attribute;
+            ->willReturnCallback(function (string $attribute) use ($collection): CategoryCollection {
+                $this->capturedSelectedAttributes[] = $attribute;
                 return $collection;
             });
 

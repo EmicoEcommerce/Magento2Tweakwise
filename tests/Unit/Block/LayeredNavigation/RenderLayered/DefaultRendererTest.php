@@ -77,4 +77,3 @@ class DefaultRendererTest extends Unit
         return $renderer;
     }
 }
-

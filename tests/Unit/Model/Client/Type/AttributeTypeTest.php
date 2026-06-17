@@ -32,4 +32,3 @@ class AttributeTypeTest extends Unit
         $this->assertSame('', $attribute->getLink());
     }
 }
-

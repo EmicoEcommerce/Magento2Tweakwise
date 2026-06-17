@@ -1,0 +1,285 @@
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+/**
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
+ *
+ * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Layer;
+
+use Exception;
+use Magento\Framework\Exception\LocalizedException;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
+use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\ProductAttributes;
+use Magento\Catalog\Helper\Product\ProductList;
+use Magento\Catalog\Model\Layer\FilterableAttributeListInterface;
+use Magento\Catalog\Model\Product\ProductList\Toolbar as ToolbarModel;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\Catalog\Model\ResourceModel\Attribute;
+
+/**
+ * Class to keep navigation context for page request.
+ * This ensures a single request for navigation data facet's and products.
+ */
+class NavigationContext
+{
+    /**
+     * Visibility attribute code
+     */
+    public const VISIBILITY_ATTRIBUTE = 'visibility';
+
+    /**
+     * @var ProductNavigationRequest
+     */
+    protected $request = null;
+
+    /**
+     * @var RequestFactory
+     */
+    protected $requestFactory;
+
+    /**
+     * @var Client
+     */
+    protected $client;
+
+    /**
+     * @var ProductNavigationResponse|null
+     */
+    protected $response = null;
+
+    /**
+     * @var Url
+     */
+    protected $url;
+
+    /**
+     * @var FilterableAttributeListInterface
+     */
+    protected $filterableAttributes;
+
+    /**
+     * @var Attribute[]
+     */
+    protected $filterAttributeMap;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
+     * @var ProductList
+     */
+    protected $productListHelper;
+
+    /**
+     * @var ToolbarModel
+     */
+    protected $toolbarModel;
+
+    /**
+     * @var Visibility
+     */
+    protected $visibility;
+
+    /**
+     * @var ProductAttributes
+     */
+    protected $productAttributes;
+
+    /**
+     * NavigationContext constructor.
+     *
+     * @param Config $config
+     * @param RequestFactory $requestFactory
+     * @param Client $client
+     * @param Url $url
+     * @param FilterableAttributeListInterface $filterableAttributes
+     * @param CurrentContext $currentContext
+     * @param ProductList $productListHelper
+     * @param ToolbarModel $toolbarModel
+     * @param ProductAttributes $productAttributes
+     * @param Visibility $visibility
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
+     */
+    public function __construct(
+        Config $config,
+        RequestFactory $requestFactory,
+        Client $client,
+        Url $url,
+        FilterableAttributeListInterface $filterableAttributes,
+        CurrentContext $currentContext,
+        ProductList $productListHelper,
+        ToolbarModel $toolbarModel,
+        ProductAttributes $productAttributes,
+        Visibility $visibility
+    ) {
+        $this->config = $config;
+        $this->requestFactory = $requestFactory;
+        $this->client = $client;
+        $this->url = $url;
+        $this->filterableAttributes = $filterableAttributes;
+        $this->productListHelper = $productListHelper;
+        $this->toolbarModel = $toolbarModel;
+        $this->visibility = $visibility;
+        $this->productAttributes = $productAttributes;
+
+        $currentContext->setContext($this);
+    }
+
+    /**
+     * @return ProductNavigationRequest
+     */
+    public function getRequest(): ProductNavigationRequest
+    {
+        // @phpstan-ignore-next-line
+        if (!$this->request) {
+            // @phpstan-ignore-next-line
+            $this->request = $this->requestFactory->create();
+        }
+
+        return $this->request;
+    }
+
+    /**
+     * @return ProductNavigationResponse
+     * @throws Exception
+     * @throws ApiException
+     */
+    public function getResponse(): ProductNavigationResponse
+    {
+        if (!$this->response) {
+            $request = $this->getRequest();
+
+            $this->initializeRequest($request);
+
+            if ($this->config->getTweakwiseExceptionTrown()) {
+                throw new ApiException('Tweakwise API is not reachable');
+            }
+
+            try {
+                // @phpstan-ignore-next-line
+                $this->response = $this->client->request($request);
+            } catch (ApiException $e) {
+                //no api response
+                throw $e;
+            }
+        }
+
+        // @phpstan-ignore-next-line
+        return $this->response;
+    }
+
+    /**
+     * @return bool
+     */
+    public function showSearchBanners(): bool
+    {
+        return $this->config->isSearchBannersActive();
+    }
+
+    /**
+     * Can be called if there was a response without triggering the creation of one.
+     *
+     * @return bool
+     */
+    public function hasResponse(): bool
+    {
+        return $this->response !== null;
+    }
+
+    /**
+     * @param array $attributeCodes
+     * @return Attribute[]
+     */
+    public function getFilterAttributeMap(?array $attributeCodes = null): array
+    {
+        if ($this->filterAttributeMap === null) {
+            $map = [];
+            foreach ($this->productAttributes->getAttributesToExport($attributeCodes) as $attribute) {
+                $map[$attribute->getData('attribute_code')] = $attribute;
+            }
+
+            // @phpstan-ignore-next-line
+            $this->filterAttributeMap = $map;
+        }
+
+        // @phpstan-ignore-next-line
+        return $this->filterAttributeMap;
+    }
+
+    /**
+     * Retrieve current View mode simplified version
+     * @see \Magento\Catalog\Block\Product\ProductList\Toolbar::getCurrentMode()
+     *
+     * @return string
+     */
+    public function getCurrentViewMode()
+    {
+        $availableModes = $this->productListHelper->getAvailableViewMode();
+        $mode = $this->toolbarModel->getMode();
+
+        /** @noinspection OffsetOperationsInspection */
+        if ($mode && isset($availableModes[$mode])) {
+            // @phpstan-ignore-next-line
+            return $mode;
+        }
+
+        return $this->productListHelper->getDefaultViewMode($availableModes);
+    }
+
+    /**
+     * @param ProductNavigationRequest $request
+     * @return $this
+     */
+    protected function initializeRequest(ProductNavigationRequest $request)
+    {
+        // Apply magento config values
+        $request->setLimit($this->productListHelper->getDefaultLimitPerPageValue($this->getCurrentViewMode()));
+        $this->addVisibilityFilter($request);
+        // Apply tweakwise config values
+        if ($request instanceof ProductSearchRequest) {
+            $templateId = $this->config->getSearchTemplateId();
+            if ($templateId) {
+                $request->setTemplateId($templateId);
+            }
+        }
+
+        // Apply url values
+        $this->url->apply($request);
+
+        return $this;
+    }
+
+    /**
+     * Add correct visibility filters based on type of Request
+     * @param ProductNavigationRequest $request
+     * @return void
+     * @throws LocalizedException
+     */
+    public function addVisibilityFilter(ProductNavigationRequest $request)
+    {
+        $visibilityAttribute = $this->config->isGroupedProductsEnabled()
+            ? sprintf('parent_%s', self::VISIBILITY_ATTRIBUTE)
+            : self::VISIBILITY_ATTRIBUTE;
+
+        if ($request instanceof ProductSearchRequest) {
+            $visibilityValues = $this->visibility->getVisibleInSearchIds();
+        } else {
+            $visibilityValues = $this->visibility->getVisibleInCatalogIds();
+        }
+
+        foreach ($visibilityValues as $visibilityValue) {
+            $request->addHiddenParameter($visibilityAttribute, $visibilityValue);
+        }
+    }
+}

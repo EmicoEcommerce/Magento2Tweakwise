@@ -9,15 +9,12 @@ use Magento\Framework\Composer\ComposerInformation;
 
 class Version implements CommentInterface
 {
-    /**
-     * @param ComposerInformation $composerInformation
-     */
     public function __construct(private readonly ComposerInformation $composerInformation)
     {
     }
 
     /**
-     * Returns the installed Tweakwise module version as a comment string.
+     * Returns installed Tweakwise module version as comment string.
      *
      * @param string $elementValue
      * @return string

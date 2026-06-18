@@ -158,8 +158,10 @@ class FilterSlugManagerTest extends Unit
             ->with($attributeSlugEntity)
             ->willReturn($savedSlug);
 
-        $option = new Option();
-        $option->setData('label', 'Blue');
+        $option = $this->createMock(Option::class);
+        $option->method('offsetGet')->willReturnMap([
+            ['label', 'Blue'],
+        ]);
 
         $this->subject->createFilterSlugByOption($option, 1);
 

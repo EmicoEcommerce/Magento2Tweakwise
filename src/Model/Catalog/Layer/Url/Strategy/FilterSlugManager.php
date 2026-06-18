@@ -48,7 +48,7 @@ class FilterSlugManager
     protected $cache;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $lookupTable;
 

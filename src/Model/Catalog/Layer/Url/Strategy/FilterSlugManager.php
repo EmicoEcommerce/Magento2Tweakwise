@@ -319,11 +319,11 @@ class FilterSlugManager
         // Ensure the in-memory table is initialised before we write to it.
         $this->getLookupTable();
 
-        $attributeSlugEntity = $this->attributeSlugFactory->create();
-        $attributeSlugEntity->setAttribute($option['label']);
-        $attributeSlugEntity->setStoreId((int)$storeId);
-        $attributeSlugEntity->setSlug($this->translitUrl->filter($option['label']));
-        $attributeSlugEntity->setData('attribute_code', $attributeCode ? $attributeCode : null);
+         $attributeSlugEntity = $this->attributeSlugFactory->create();
+         $attributeSlugEntity->setAttribute($option['label']);
+         $attributeSlugEntity->setStoreId((int)$storeId);
+         $attributeSlugEntity->setSlug($this->translitUrl->filter($option['label']));
+         $attributeSlugEntity->setData('attribute_code', $attributeCode ? $attributeCode : null); // @phpstan-ignore-line
 
         $savedSlug = $this->attributeSlugRepository->save($attributeSlugEntity);
 

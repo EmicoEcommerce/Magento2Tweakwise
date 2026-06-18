@@ -7,7 +7,6 @@ namespace Tweakwise\Test\Unit\Model;
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Model\AttributeSlug;

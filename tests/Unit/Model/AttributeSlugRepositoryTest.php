@@ -75,7 +75,7 @@ class AttributeSlugRepositoryTest extends Unit
      */
     public function testSaveReusesExistingPrimaryKeyAndSkipsWriteWhenSlugIsUnchanged(): void
     {
-        $attributeSlug = $this->createMock(AttributeSlugInterface::class);
+        $attributeSlug = $this->createMock(AttributeSlug::class);
         $attributeSlug->method('getSlug')->willReturn('color');
         $attributeSlug->method('getStoreId')->willReturn(1);
         $attributeSlug->method('getAttribute')->willReturn('color');
@@ -106,7 +106,7 @@ class AttributeSlugRepositoryTest extends Unit
      */
     public function testSaveReusesExistingPrimaryKeyAndPersistsUpdatedSlug(): void
     {
-        $attributeSlug = $this->createMock(AttributeSlugInterface::class);
+        $attributeSlug = $this->createMock(AttributeSlug::class);
         $attributeSlug->method('getSlug')->willReturn('color');
         $attributeSlug->method('getStoreId')->willReturn(1);
         $attributeSlug->method('getAttribute')->willReturn('color');
@@ -139,4 +139,3 @@ class AttributeSlugRepositoryTest extends Unit
         $this->assertSame($attributeSlug, $result);
     }
 }
-

@@ -17,6 +17,7 @@ use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterface;
+use Tweakwise\Magento2Tweakwise\Model\AttributeSlug;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\FilterSlugManager;
 use Tweakwise\Test\Support\UnitTester;
@@ -98,7 +99,7 @@ class FilterSlugManagerTest extends Unit
 
         $this->translitUrl->method('filter')->with('color')->willReturn('color');
 
-        $attributeSlugEntity = $this->createMock(AttributeSlugInterface::class);
+        $attributeSlugEntity = $this->createMock(AttributeSlug::class);
         $attributeSlugEntity->expects($this->once())->method('setAttribute')->with('color');
         $attributeSlugEntity->expects($this->once())->method('setStoreId')->with(1);
         $attributeSlugEntity->expects($this->once())->method('setSlug')->with('color');
@@ -139,7 +140,7 @@ class FilterSlugManagerTest extends Unit
 
         $this->translitUrl->method('filter')->with('Blue')->willReturn('blue');
 
-        $attributeSlugEntity = $this->createMock(AttributeSlugInterface::class);
+        $attributeSlugEntity = $this->createMock(AttributeSlug::class);
         $attributeSlugEntity->expects($this->once())->method('setAttribute')->with('Blue');
         $attributeSlugEntity->expects($this->once())->method('setStoreId')->with(1);
         $attributeSlugEntity->expects($this->once())->method('setSlug')->with('blue');
@@ -208,4 +209,3 @@ class FilterSlugManagerTest extends Unit
         $this->assertSame([1 => ['color' => 'new-slug']], $this->subject->getLookupTable());
     }
 }
-

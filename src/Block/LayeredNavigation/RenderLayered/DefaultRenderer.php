@@ -114,7 +114,7 @@ class DefaultRenderer extends Template
         $baseUrlWithoutScheme = preg_replace('#^https?://#', '', $this->getBaseUrl());
 
         if (strpos($catUrlWithoutScheme, $baseUrlWithoutScheme) === false) {
-            $catUrl = $this->getBaseUrl() . $catUrl;
+            $catUrl = rtrim($this->getBaseUrl(), '/') . '/' . ltrim($catUrl, '/');
         }
 
         return $catUrl;

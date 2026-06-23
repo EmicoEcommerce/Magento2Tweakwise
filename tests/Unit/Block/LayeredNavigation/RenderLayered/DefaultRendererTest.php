@@ -5,16 +5,10 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Block\LayeredNavigation\RenderLayered;
 
 use Emico\CodeCept\Test\Unit;
-use Magento\Framework\Escaper;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\View\Element\Template\Context;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery;
+use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\DefaultRenderer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
-use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
-use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Test\Support\UnitTester;
 
 class DefaultRendererTest extends Unit
@@ -22,18 +16,30 @@ class DefaultRendererTest extends Unit
     protected UnitTester $tester;
 
     /**
+     * @var DefaultRenderer|MockInterface
+     */
+    private DefaultRenderer|MockInterface $renderer;
+
+    /**
+     * @return void
+     * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     */
+    public function _before(): void
+    {
+        $this->mockRenderer();
+    }
+
+    /**
      * @return void
      */
     public function testGetCategoryUrlDoesNotPrependDomainWhenOnlySchemeDiffers(): void
     {
-        $renderer = $this->createRendererWithBaseUrl('https://magento2.test/');
+        $url = 'http://magento2.test/default/women/tops-women2/';
+        $item = $this->mockItem($url);
 
-        $item = $this->createMock(Item::class);
-        $item->method('getUrl')->willReturn('http://magento2.test/default/women/tops-women2/');
-
-        $this->assertSame(
-            'http://magento2.test/default/women/tops-women2/',
-            $renderer->getCategoryUrl($item)
+        $this->assertEquals(
+            $url,
+            $this->renderer->getCategoryUrl($item)
         );
     }
 
@@ -42,38 +48,36 @@ class DefaultRendererTest extends Unit
      */
     public function testGetCategoryUrlPrependsBaseUrlForRelativeFacetLink(): void
     {
-        $renderer = $this->createRendererWithBaseUrl('https://magento2.test/');
+        $item = $this->mockItem('/default/women/tops-women2/');
 
-        $item = $this->createMock(Item::class);
-        $item->method('getUrl')->willReturn('/default/women/tops-women2/');
-
-        $this->assertSame(
-            'https://magento2.test//default/women/tops-women2/',
-            $renderer->getCategoryUrl($item)
+        $this->assertEquals(
+            'https://magento2.test/default/women/tops-women2/',
+            $this->renderer->getCategoryUrl($item)
         );
     }
 
     /**
-     * @param string $baseUrl
-     * @return DefaultRenderer|MockObject
+     * @return void
      */
-    private function createRendererWithBaseUrl(string $baseUrl): DefaultRenderer|MockObject
+    private function mockRenderer(): void
     {
-        $renderer = $this->getMockBuilder(DefaultRenderer::class)
-            ->setConstructorArgs([
-                $this->createMock(Context::class),
-                $this->createMock(Config::class),
-                $this->createMock(NavigationConfig::class),
-                $this->createMock(FilterHelper::class),
-                $this->createMock(Json::class),
-                $this->createMock(Helper::class),
-                $this->createMock(Escaper::class),
-            ])
-            ->onlyMethods(['getBaseUrl'])
-            ->getMock();
+        $renderer = Mockery::mock(DefaultRenderer::class)->makePartial();
+        $renderer->shouldReceive('getBaseUrl')->andReturn('https://magento2.test/');
+        $this->tester->mockService(DefaultRenderer::class, $renderer);
 
-        $renderer->method('getBaseUrl')->willReturn($baseUrl);
+        $this->renderer = $renderer;
+    }
 
-        return $renderer;
+    /**
+     * @param string $url
+     * @return Item|MockInterface
+     */
+    private function mockItem(string $url): Item|MockInterface
+    {
+        $item = Mockery::mock(Item::class);
+        $item->shouldReceive('getUrl')->andReturn($url);
+        $this->tester->mockService(Item::class, $item);
+
+        return $item;
     }
 }

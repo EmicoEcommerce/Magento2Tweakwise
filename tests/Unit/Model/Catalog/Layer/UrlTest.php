@@ -8,7 +8,8 @@ use Emico\CodeCept\Test\Unit;
 use Exception;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery;
+use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
@@ -30,44 +31,29 @@ class UrlTest extends Unit
     protected UnitTester $tester;
 
     /**
-     * @var UrlStrategyFactory|MockObject
+     * @var UrlStrategyFactory|MockInterface
      */
-    private UrlStrategyFactory|MockObject $urlStrategyFactory;
+    private UrlStrategyFactory|MockInterface $urlStrategyFactory;
 
     /**
-     * @var MagentoHttpRequest|MockObject
+     * @var MagentoHttpRequest|MockInterface
      */
-    private MagentoHttpRequest|MockObject $request;
+    private MagentoHttpRequest|MockInterface $request;
 
     /**
-     * @var CategoryRepositoryInterface|MockObject
+     * @var Config|MockInterface
      */
-    private CategoryRepositoryInterface|MockObject $categoryRepository;
+    private Config|MockInterface $config;
 
     /**
-     * @var ExportHelper|MockObject
+     * @var CurrentContext|MockInterface
      */
-    private ExportHelper|MockObject $exportHelper;
+    private CurrentContext|MockInterface $currentContext;
 
     /**
-     * @var UrlModel|MockObject
+     * @var CategoryUrlInterface|MockInterface
      */
-    private UrlModel|MockObject $magentoUrl;
-
-    /**
-     * @var Config|MockObject
-     */
-    private Config|MockObject $config;
-
-    /**
-     * @var CurrentContext|MockObject
-     */
-    private CurrentContext|MockObject $currentContext;
-
-    /**
-     * @var CategoryUrlInterface|MockObject
-     */
-    private CategoryUrlInterface|MockObject $categoryUrlStrategy;
+    private CategoryUrlInterface|MockInterface $categoryUrlStrategy;
 
     /**
      * @var Url
@@ -76,29 +62,25 @@ class UrlTest extends Unit
 
     /**
      * @return void
+     * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
-    protected function setUp(): void
+    public function _before(): void
     {
-        parent::setUp();
+        $this->urlStrategyFactory = Mockery::mock(UrlStrategyFactory::class);
+        $this->request = Mockery::mock(MagentoHttpRequest::class);
+        $this->config = Mockery::mock(Config::class);
+        $this->currentContext = Mockery::mock(CurrentContext::class);
+        $this->categoryUrlStrategy = Mockery::mock(CategoryUrlInterface::class);
 
-        $this->urlStrategyFactory = $this->createMock(UrlStrategyFactory::class);
-        $this->request = $this->createMock(MagentoHttpRequest::class);
-        $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
-        $this->exportHelper = $this->createMock(ExportHelper::class);
-        $this->magentoUrl = $this->createMock(UrlModel::class);
-        $this->config = $this->createMock(Config::class);
-        $this->currentContext = $this->createMock(CurrentContext::class);
-        $this->categoryUrlStrategy = $this->createMock(CategoryUrlInterface::class);
+        $this->tester->mockService(UrlStrategyFactory::class, $this->urlStrategyFactory);
+        $this->tester->mockService(MagentoHttpRequest::class, $this->request);
+        $this->tester->mockService(CategoryRepositoryInterface::class, Mockery::mock(CategoryRepositoryInterface::class));
+        $this->tester->mockService(ExportHelper::class, Mockery::mock(ExportHelper::class));
+        $this->tester->mockService(UrlModel::class, Mockery::mock(UrlModel::class));
+        $this->tester->mockService(Config::class, $this->config);
+        $this->tester->mockService(CurrentContext::class, $this->currentContext);
 
-        $this->subject = new Url(
-            $this->urlStrategyFactory,
-            $this->request,
-            $this->categoryRepository,
-            $this->exportHelper,
-            $this->magentoUrl,
-            $this->config,
-            $this->currentContext,
-        );
+        $this->subject = $this->tester->getObjectManager()->create(Url::class);
     }
 
     /**
@@ -107,14 +89,13 @@ class UrlTest extends Unit
     public function testGetSelectFilterReturnsTweakwiseCategoryLinkOnCategoryPageWhenEnabled(): void
     {
         $item = $this->createCategoryItem('https://magento2.test/default/women/tops-women2/');
-        $this->config->method('isCategoryUrlFromTweakwiseEnabled')->willReturn(true);
-        $this->currentContext->method('getRequest')->willReturn($this->createMock(ProductNavigationRequest::class));
-
-        $this->urlStrategyFactory->expects($this->never())->method('create');
+        $this->config->shouldReceive('isCategoryUrlFromTweakwiseEnabled')->andReturn(true);
+        $this->currentContext->shouldReceive('getRequest')->andReturn(Mockery::mock(ProductNavigationRequest::class));
+        $this->urlStrategyFactory->shouldNotReceive('create');
 
         $result = $this->subject->getSelectFilter($item);
 
-        $this->assertSame('https://magento2.test/default/women/tops-women2/', $result);
+        $this->assertEquals('https://magento2.test/default/women/tops-women2/', $result);
     }
 
     /**
@@ -123,23 +104,22 @@ class UrlTest extends Unit
     public function testGetSelectFilterFallsBackToMagentoCategoryUrlWhenSettingIsDisabled(): void
     {
         $item = $this->createCategoryItem('https://magento2.test/default/women/tops-women2/');
-        $this->config->method('isCategoryUrlFromTweakwiseEnabled')->willReturn(false);
-
-        $this->currentContext->expects($this->never())->method('getRequest');
+        $this->config->shouldReceive('isCategoryUrlFromTweakwiseEnabled')->andReturn(false);
+        $this->currentContext->shouldNotReceive('getRequest');
         $this->urlStrategyFactory
-            ->expects($this->once())
-            ->method('create')
+            ->shouldReceive('create')
             ->with(CategoryUrlInterface::class)
-            ->willReturn($this->categoryUrlStrategy);
+            ->once()
+            ->andReturn($this->categoryUrlStrategy);
         $this->categoryUrlStrategy
-            ->expects($this->once())
-            ->method('getCategoryFilterSelectUrl')
+            ->shouldReceive('getCategoryFilterSelectUrl')
             ->with($this->request, $item)
-            ->willReturn('/default/women/tops-women2/facet/');
+            ->once()
+            ->andReturn('/default/women/tops-women2/facet/');
 
         $result = $this->subject->getSelectFilter($item);
 
-        $this->assertSame('/default/women/tops-women2/facet/', $result);
+        $this->assertEquals('/default/women/tops-women2/facet/', $result);
     }
 
     /**
@@ -148,23 +128,22 @@ class UrlTest extends Unit
     public function testGetSelectFilterFallsBackToMagentoCategoryUrlWhenLinkIsEmpty(): void
     {
         $item = $this->createCategoryItem('');
-        $this->config->method('isCategoryUrlFromTweakwiseEnabled')->willReturn(true);
-
-        $this->currentContext->expects($this->never())->method('getRequest');
+        $this->config->shouldReceive('isCategoryUrlFromTweakwiseEnabled')->andReturn(true);
+        $this->currentContext->shouldNotReceive('getRequest');
         $this->urlStrategyFactory
-            ->expects($this->once())
-            ->method('create')
+            ->shouldReceive('create')
             ->with(CategoryUrlInterface::class)
-            ->willReturn($this->categoryUrlStrategy);
+            ->once()
+            ->andReturn($this->categoryUrlStrategy);
         $this->categoryUrlStrategy
-            ->expects($this->once())
-            ->method('getCategoryFilterSelectUrl')
+            ->shouldReceive('getCategoryFilterSelectUrl')
             ->with($this->request, $item)
-            ->willReturn('/default/women/tops-women2/facet/');
+            ->once()
+            ->andReturn('/default/women/tops-women2/facet/');
 
         $result = $this->subject->getSelectFilter($item);
 
-        $this->assertSame('/default/women/tops-women2/facet/', $result);
+        $this->assertEquals('/default/women/tops-women2/facet/', $result);
     }
 
     /**
@@ -173,23 +152,22 @@ class UrlTest extends Unit
     public function testGetSelectFilterFallsBackToMagentoCategoryUrlOnSearchRequest(): void
     {
         $item = $this->createCategoryItem('https://magento2.test/default/women/tops-women2/');
-        $this->config->method('isCategoryUrlFromTweakwiseEnabled')->willReturn(true);
-        $this->currentContext->method('getRequest')->willReturn($this->createMock(ProductSearchRequest::class));
-
+        $this->config->shouldReceive('isCategoryUrlFromTweakwiseEnabled')->andReturn(true);
+        $this->currentContext->shouldReceive('getRequest')->andReturn(Mockery::mock(ProductSearchRequest::class));
         $this->urlStrategyFactory
-            ->expects($this->once())
-            ->method('create')
+            ->shouldReceive('create')
             ->with(CategoryUrlInterface::class)
-            ->willReturn($this->categoryUrlStrategy);
+            ->once()
+            ->andReturn($this->categoryUrlStrategy);
         $this->categoryUrlStrategy
-            ->expects($this->once())
-            ->method('getCategoryFilterSelectUrl')
+            ->shouldReceive('getCategoryFilterSelectUrl')
             ->with($this->request, $item)
-            ->willReturn('/catalogsearch/result/?cat=tops-women2');
+            ->once()
+            ->andReturn('/catalogsearch/result/?cat=tops-women2');
 
         $result = $this->subject->getSelectFilter($item);
 
-        $this->assertSame('/catalogsearch/result/?cat=tops-women2', $result);
+        $this->assertEquals('/catalogsearch/result/?cat=tops-women2', $result);
     }
 
     /**
@@ -198,45 +176,46 @@ class UrlTest extends Unit
     public function testGetSelectFilterFallsBackToMagentoCategoryUrlWhenContextIsUnavailable(): void
     {
         $item = $this->createCategoryItem('https://magento2.test/default/women/tops-women2/');
-        $this->config->method('isCategoryUrlFromTweakwiseEnabled')->willReturn(true);
-        $this->currentContext->method('getRequest')->willThrowException(new Exception('No active context'));
-
+        $this->config->shouldReceive('isCategoryUrlFromTweakwiseEnabled')->andReturn(true);
+        $this->currentContext->shouldReceive('getRequest')->andThrow(new Exception('No active context'));
         $this->urlStrategyFactory
-            ->expects($this->once())
-            ->method('create')
+            ->shouldReceive('create')
             ->with(CategoryUrlInterface::class)
-            ->willReturn($this->categoryUrlStrategy);
+            ->once()
+            ->andReturn($this->categoryUrlStrategy);
         $this->categoryUrlStrategy
-            ->expects($this->once())
-            ->method('getCategoryFilterSelectUrl')
+            ->shouldReceive('getCategoryFilterSelectUrl')
             ->with($this->request, $item)
-            ->willReturn('/default/women/tops-women2/facet/');
+            ->once()
+            ->andReturn('/default/women/tops-women2/facet/');
 
         $result = $this->subject->getSelectFilter($item);
 
-        $this->assertSame('/default/women/tops-women2/facet/', $result);
+        $this->assertEquals('/default/women/tops-women2/facet/', $result);
     }
 
     /**
      * @param string $link
-     * @return Item
+     * @return Item|MockInterface
      */
-    private function createCategoryItem(string $link): Item
+    private function createCategoryItem(string $link): Item|MockInterface
     {
-        $settings = new SettingsType(['source' => SettingsType::SOURCE_CATEGORY]);
+        $settings = $this->tester->getObjectManager()->create(SettingsType::class, [
+            'data' => ['source' => SettingsType::SOURCE_CATEGORY],
+        ]);
 
-        $facetType = new FacetType();
+        $facetType = $this->tester->getObjectManager()->create(FacetType::class);
         $facetType->setFacetSettings($settings);
 
-        $filter = $this->createMock(Filter::class);
-        $filter->method('getFacet')->willReturn($facetType);
+        $filter = Mockery::mock(Filter::class);
+        $filter->shouldReceive('getFacet')->andReturn($facetType);
 
-        $attribute = $this->createMock(AttributeType::class);
-        $attribute->method('getLink')->willReturn($link);
+        $attribute = Mockery::mock(AttributeType::class);
+        $attribute->shouldReceive('getLink')->andReturn($link);
 
-        $item = $this->createMock(Item::class);
-        $item->method('getFilter')->willReturn($filter);
-        $item->method('getAttribute')->willReturn($attribute);
+        $item = Mockery::mock(Item::class);
+        $item->shouldReceive('getFilter')->andReturn($filter);
+        $item->shouldReceive('getAttribute')->andReturn($attribute);
 
         return $item;
     }

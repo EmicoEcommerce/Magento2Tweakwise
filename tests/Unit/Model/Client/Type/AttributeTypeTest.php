@@ -17,7 +17,9 @@ class AttributeTypeTest extends Unit
      */
     public function testGetLinkReturnsMappedLinkValue(): void
     {
-        $attribute = new AttributeType(['link' => 'https://magento2.test/default/women/tops-women2/']);
+        $attribute = $this->tester->getObjectManager()->create(AttributeType::class, [
+            'data' => ['link' => 'https://magento2.test/default/women/tops-women2/'],
+        ]);
 
         $this->assertSame('https://magento2.test/default/women/tops-women2/', $attribute->getLink());
     }
@@ -27,7 +29,7 @@ class AttributeTypeTest extends Unit
      */
     public function testGetLinkReturnsEmptyStringWhenLinkIsMissing(): void
     {
-        $attribute = new AttributeType();
+        $attribute = $this->tester->getObjectManager()->create(AttributeType::class);
 
         $this->assertSame('', $attribute->getLink());
     }

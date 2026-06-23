@@ -16,7 +16,7 @@ class CategoryLinkTest extends Unit
      */
     public function testCategoryFacetLinksUseMagentoUrlWhenSettingDisabled(): void
     {
-        $this->tester->setConfig('tweakwise/layered/use_category_url_from_tweakwise', '0');
+        $this->tester->mockConfig('tweakwise/layered/use_category_url_from_tweakwise', '0');
 
         $this->tester->amOnPage('/default/women/tops-women2/');
         $this->tester->dontSeeInSource('http://');
@@ -27,7 +27,7 @@ class CategoryLinkTest extends Unit
      */
     public function testCategoryFacetLinksUseTweakwiseUrlWhenSettingEnabled(): void
     {
-        $this->tester->setConfig('tweakwise/layered/use_category_url_from_tweakwise', '1');
+        $this->tester->mockConfig('tweakwise/layered/use_category_url_from_tweakwise', '1');
 
         $this->tester->amOnPage('/default/women/tops-women2/');
         $this->tester->seeInSource('tweakwise.test');
@@ -38,7 +38,7 @@ class CategoryLinkTest extends Unit
      */
     public function testCategoryFacetLinksContainNoDuplicatedDomain(): void
     {
-        $this->tester->setConfig('tweakwise/layered/use_category_url_from_tweakwise', '1');
+        $this->tester->mockConfig('tweakwise/layered/use_category_url_from_tweakwise', '1');
 
         $this->tester->amOnPage('/default/women/tops-women2/');
         $this->tester->dontSeeInSource('tweakwise.testtweakwise.test');
@@ -50,7 +50,7 @@ class CategoryLinkTest extends Unit
      */
     public function testCategoryFacetLinksUseMagentoUrlOnSearchResultsPageEvenWhenEnabled(): void
     {
-        $this->tester->setConfig('tweakwise/layered/use_category_url_from_tweakwise', '1');
+        $this->tester->mockConfig('tweakwise/layered/use_category_url_from_tweakwise', '1');
 
         $this->tester->amOnPage('/catalogsearch/result/?q=top');
         // Search page must not leak the raw Tweakwise link field (which would be category page URL)

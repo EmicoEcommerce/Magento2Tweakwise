@@ -9,7 +9,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\AttributeType;
 
 class AttributeTypeTest extends Unit
 {
-
     /**
      * @return void
      */

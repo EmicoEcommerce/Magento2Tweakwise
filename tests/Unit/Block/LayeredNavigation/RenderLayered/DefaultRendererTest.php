@@ -63,7 +63,6 @@ class DefaultRendererTest extends Unit
     {
         $renderer = Mockery::mock(DefaultRenderer::class)->makePartial();
         $renderer->shouldReceive('getBaseUrl')->andReturn('https://magento2.test/');
-        $this->tester->mockService(DefaultRenderer::class, $renderer);
 
         $this->renderer = $renderer;
     }
@@ -76,7 +75,6 @@ class DefaultRendererTest extends Unit
     {
         $item = Mockery::mock(Item::class);
         $item->shouldReceive('getUrl')->andReturn($url);
-        $this->tester->mockService(Item::class, $item);
 
         return $item;
     }

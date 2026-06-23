@@ -72,15 +72,15 @@ class UrlTest extends Unit
         $this->currentContext = Mockery::mock(CurrentContext::class);
         $this->categoryUrlStrategy = Mockery::mock(CategoryUrlInterface::class);
 
-        $this->tester->mockService(UrlStrategyFactory::class, $this->urlStrategyFactory);
-        $this->tester->mockService(MagentoHttpRequest::class, $this->request);
-        $this->tester->mockService(CategoryRepositoryInterface::class, Mockery::mock(CategoryRepositoryInterface::class));
-        $this->tester->mockService(ExportHelper::class, Mockery::mock(ExportHelper::class));
-        $this->tester->mockService(UrlModel::class, Mockery::mock(UrlModel::class));
-        $this->tester->mockService(Config::class, $this->config);
-        $this->tester->mockService(CurrentContext::class, $this->currentContext);
-
-        $this->subject = $this->tester->getObjectManager()->create(Url::class);
+        $this->subject = new Url(
+            $this->urlStrategyFactory,
+            $this->request,
+            Mockery::mock(CategoryRepositoryInterface::class),
+            Mockery::mock(ExportHelper::class),
+            Mockery::mock(UrlModel::class),
+            $this->config,
+            $this->currentContext,
+        );
     }
 
     /**
@@ -200,11 +200,9 @@ class UrlTest extends Unit
      */
     private function createCategoryItem(string $link): Item|MockInterface
     {
-        $settings = $this->tester->getObjectManager()->create(SettingsType::class, [
-            'data' => ['source' => SettingsType::SOURCE_CATEGORY],
-        ]);
+        $settings = new SettingsType(['source' => SettingsType::SOURCE_CATEGORY]);
 
-        $facetType = $this->tester->getObjectManager()->create(FacetType::class);
+        $facetType = new FacetType();
         $facetType->setFacetSettings($settings);
 
         $filter = Mockery::mock(Filter::class);

@@ -87,7 +87,7 @@ class Plugin
         }
 
         /** @var SortFieldType[] $sortFields */
-        $sortFields = $this->context->getResponse()->getProperties()->getSortFields(); // @phpstan-ignore-line
+        $sortFields = $this->context->getResponse()->getProperties()->getSortFields() ?? []; // @phpstan-ignore-line
 
         $result = [];
         foreach ($sortFields as $field) {

@@ -7,6 +7,7 @@ namespace Tweakwise\Test\Unit\Model;
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\UrlInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
@@ -46,7 +47,7 @@ class ClientTest extends Unit
         $request->method('getPathSuffix')->willReturn('');
         $request->method('getParameters')->willReturn(['tn_ps' => '12']);
 
-        $httpRequest = $client->createGetRequestPublic($request);
+        $httpRequest = $client->createGetRequest($request);
 
         $this->assertSame('Internal-Traffic', $httpRequest->getHeaderLine('TWN-Source'));
     }
@@ -74,7 +75,7 @@ class ClientTest extends Unit
         $request->method('getPathSuffix')->willReturn('');
         $request->method('getParameters')->willReturn(['tn_ps' => '12']);
 
-        $httpRequest = $client->createGetRequestPublic($request);
+        $httpRequest = $client->createGetRequest($request);
 
         $this->assertSame('', $httpRequest->getHeaderLine('TWN-Source'));
     }
@@ -97,7 +98,7 @@ class ClientTest extends Unit
         $remoteAddress = $this->createMock(RemoteAddress::class);
         $remoteAddress->method('getRemoteAddress')->willReturn('127.0.0.1');
 
-        $client = new ClientExposed(
+        $client = new Client(
             $config,
             $this->createMock(Logger::class),
             $this->createMock(ResponseFactory::class),
@@ -112,7 +113,7 @@ class ClientTest extends Unit
         $request->method('getApiUrl')->willReturn('https://navigator-analytics.tweakwise.com');
         $request->method('getParameters')->willReturn(['event' => 'click']);
 
-        $httpRequest = $client->createPostRequestPublic($request);
+        $httpRequest = $client->createPostRequest($request);
 
         $this->assertSame('Internal-Traffic', $httpRequest->getHeaderLine('TWN-Source'));
         $this->assertSame('123456', $httpRequest->getHeaderLine('Instance-Key'));
@@ -122,14 +123,14 @@ class ClientTest extends Unit
      * @param Config $config
      * @param EndpointManager $endpointManager
      * @param RemoteAddress $remoteAddress
-     * @return ClientExposed
+     * @return Client
      */
     private function createClient(
         Config $config,
         EndpointManager $endpointManager,
         RemoteAddress $remoteAddress
-    ): ClientExposed {
-        return new ClientExposed(
+    ): Client {
+        return new Client(
             $config,
             $this->createMock(Logger::class),
             $this->createMock(ResponseFactory::class),

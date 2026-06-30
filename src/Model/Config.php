@@ -74,6 +74,9 @@ class Config
     private const PRODUCT_CARD_LIFETIME_XML_PATH =
         'tweakwise/merchandising_builder/personal_merchandising/product_card_lifetime';
 
+    private const INTERNAL_IP_ADDRESSES_XML_PATH =
+        'tweakwise/general/internal_ip_addresses';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -676,7 +679,7 @@ class Config
      */
     public function getInternalIpAddresses(): array
     {
-        $value = $this->getStoreConfig('tweakwise/general/internal_ip_addresses');
+        $value = $this->getStoreConfig(self::INTERNAL_IP_ADDRESSES_XML_PATH);
         if (empty($value)) {
             return [];
         }

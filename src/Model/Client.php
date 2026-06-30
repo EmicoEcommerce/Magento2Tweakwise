@@ -81,7 +81,10 @@ class Client
         EndpointManager $endpointManager,
         Timer $timer,
         private UrlInterface $urlBuilder,
-        private RemoteAddress $remoteAddress
+        /**
+         * @var RemoteAddress
+         */
+        private readonly RemoteAddress $remoteAddress
     ) {
         $this->config = $config;
         $this->log = $log;
@@ -111,7 +114,7 @@ class Client
     }
 
     /**
-     * @return array<string, string>
+     * @return array
      */
     protected function buildInternalTrafficHeader(): array
     {
@@ -145,7 +148,7 @@ class Client
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
-    protected function createPostRequest(Request $tweakwiseRequest): HttpRequest
+    public function createPostRequest(Request $tweakwiseRequest): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();
         $headers = $this->buildInternalTrafficHeader();
@@ -164,7 +167,7 @@ class Client
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
-    protected function createGetRequest(Request $tweakwiseRequest): HttpRequest
+    public function createGetRequest(Request $tweakwiseRequest): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();

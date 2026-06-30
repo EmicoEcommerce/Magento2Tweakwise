@@ -15,7 +15,7 @@
         "magento/module-swatches": "*",
         "magento/module-search": "^101.1",
         "magento/module-grouped-product": "*",
-        "symfony/config": "^6.4 || ^7.0"
+        "symfony/config": "^6.4"
     },
     "type": "magento2-module",
     "autoload": {

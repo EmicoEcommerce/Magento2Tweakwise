@@ -20,28 +20,35 @@ Below is a rundown of all configuration options
 
 #### General:
 1) Authentication key: This is used to communicate with tweakwise and determines your navigator instance, it should be the same as the key found in the navigator under `Connectivity > End points`.
-2) Grouped producets: Enable this after the grouped export has been enabled and imported in tweakwise. This wil enable filtering based on variant data and enabled the product image to be controlled by tweakwise so that the correct color is shown based on selected filters. This requires the image url in tweakwise to be configured correctly. If this is not enabled and you've exported grouped products the catalog may be empty.
+2) Send analytics events to Tweakwise: Enable server-side analytics event sending (product views, searches, purchases). Only enable this if you are not using a JavaScript tracking script to send these events to Tweakwise; enabling both will result in duplicate events.
+3) Cookie name: Name of the cookie that holds the Tweakwise profile id. This is usually set by the Tweakwise measure script. When analytics is enabled the cookie is managed automatically and this field can be left empty.
+4) Grouped products: Enable this after the grouped export has been enabled and imported in tweakwise. This wil enable filtering based on variant data and enabled the product image to be controlled by tweakwise so that the correct color is shown based on selected filters. This requires the image url in tweakwise to be configured correctly. If this is not enabled and you've exported grouped products the catalog may be empty.
+5) Language: The language used by the store, passed to Tweakwise to determine word conjugations and spelling corrections in search results.
 
 #### Layered Navigation (All settings depend on Enabled having value yes):
 1) Enabled: Use tweakwise results in navigation, if disabled the standard magento navigation is used. Don't disable the anchor tag on main categories, this causes al products to be shown. The anchor tag can be disabled on sub-categories.
 2) Hide facets with only one option: Given a result set from tweakwise in which a filter has only one option show that filter or not?
 3) Use default magento filter renderer: Use Magento standard filter templates or use templates bundled by the module.
    If you want to make full use of the features provided by this module then this should be set to No (i.e. make use of tweakwise template files).
-4) Filter form: This depends on 'Use default magento filter renderer' having value No. Render all filters in a form with filter buttons so that the user can select a set of filters and then navigate to the result instead of immediately navigating to the results when a filter is clicked.
-5) Filter url query parameters: Tweakwise filter urls will have all query parameters of the page in it so also the "cid" and utm_source parameters if present.
+4) Ajax filtering: When enabled, filter results are fetched via AJAX instead of a full page navigation. Requires 'Use default magento filter renderer' to be set to No.
+5) Filter form: This depends on 'Use default magento filter renderer' having value No. Render all filters in a form with filter buttons so that the user can select a set of filters and then navigate to the result instead of immediately navigating to the results when a filter is clicked.
+6) Filter url query parameters: Tweakwise filter urls will have all query parameters of the page in it so also the "cid" and utm_source parameters if present.
    You can determine in which way you want to filter these out (if any).
-6) Filter url query arguments: This depends on 'Filter url query parameters' having any value not equal to 'Dont Filter'. This field specifies which parameters should be removed from the tweakwise filter urls.
-7) Url strategy: Has two options Query parameters and Seo path slug. If query parameters is selected then the tweakwise filter urls (and thus your navigation urls) will be constructed as
+7) Filter url query arguments: This depends on 'Filter url query parameters' having any value not equal to 'Dont Filter'. This field specifies which parameters should be removed from the tweakwise filter urls.
+8) Filter url query regex: Only visible when 'Filter url query parameters' is set to 'Regex'. Arguments matching this regex pattern will be filtered from the Tweakwise filter urls.
+9) Url strategy: Has two options Query parameters and Seo path slug. If query parameters is selected then the tweakwise filter urls (and thus your navigation urls) will be constructed as
     `www.example.com/example-category?color=red`.
     
     If Seo path slugs is selected the url is constructed as `www.example.com/example-category/color/red`.
+10) Category View: Determines the default category view layout used on category pages when Tweakwise layered navigation is active.
 
 #### Seo (All settings depend on Enabled having value yes)
 1) Enabled: use Seo options yes or no.
 2) Filter whitelist: A list of filters which should be indexable (all filters not selected here are not indexable). If a filter is marked as not indexable then its href attribute will be set to "#" its original url will be set in a data-seo-href attribute which will be used by javascript to navigate.
     Note that the category filter is always marked as indexable. This used to be a multiselect field containing magento attributes however tweakwise facilitates derived properties, these properties are not related to magento attributes and as such these filters would be not indexable.
     The field has changed to a comma separated text field so that these derived properties can be properly whitelisted.
-3) Max allowed facets: This combines with the Filter whitelist setting. Filters are indexable if and only if they are in the whitelist and the selected filter count does not go above max_allowed_facets.
+3) Filter Values Whitelist: Allows whitelisting specific filter values (instead of entire filters). Specify filter code and value pairs comma separated, for example: `size=xs,size=s,size=m`. Only the specified values are indexable; all other values of that filter remain non-indexable.
+4) Max allowed facets: This combines with the Filter whitelist setting. Filters are indexable if and only if they are in the whitelist and the selected filter count does not go above max_allowed_facets.
     The reason this is an AND check is because otherwise indexation will still happen on the non whitelisted filters and it is unclear which url is present (an arbitrary amount of filters could be selected).
     Suppose max allowed facet is 1 and only "size" is in the whitelist. Then filter "color" with value "red" is not indexable (since "color" is not in the whitelist).
     If we now allow the size filter to still be indexable then url example.com/category/color/red/size/M would be indexable whereas example.com/category/color/red is not which is incorrect.
@@ -52,23 +59,27 @@ Below is a rundown of all configuration options
 2) Use Suggestions Autocomplete: Use new suggestion api (Yes) or use the standard autocomplete api (No) 
 3) Show products *: Show product suggestions in autocomplete results.
 4) Show suggestions *: Show search suggestions in autocomplete results.
-5) Stay in category: Use the current category when getting autocomplete results.
-6) Maximum number of results *: At most this many autocomplete results will be show.
+5) Show parent category **: Show the parent category name alongside suggestion results.
+6) Stay in category: Use the current category when getting autocomplete results.
+7) Maximum number of results *: At most this many autocomplete results will be show.
 * Hidden when Use Suggestions Autocomplete is enabled. These settings are not used in the new suggestions api. The new suggestions api is configured in tweakwise itself.
+** Only visible when Use Suggestions Autocomplete is enabled.
 
 #### Search (All settings depend on Enabled having value yes)
 1) Enabled: Use tweakwise search of default magento search results
 2) Tweakwise search template: The tweakwise template to use for search results (this determines which filters are visible)
-3) Search language: This determines the language used by the store and is passed to tweakwise. Tweakwise uses this to determine word conjugations and also correct spelling errors when considering which results should be shown to the user.
-    An example: suppose Language is set to 'Dutch' and the user types 'Bed' (which is the same in English, namely the place where one sleeps) then tweakwise might suggest 'Bedden' (this is plural for 'Beds')
-    If Language is set to English then in the example above tweakwise might suggest 'Beds'.
-4) Searchbanners enabled: Show searchbanners in the search results. The searchbanners need to be configured in tweakwise.
+3) Searchbanners enabled: Show searchbanners in the search results. The searchbanners need to be configured in tweakwise.
 
 #### Merchandising Builder
-1) Enabled: Use Merchandising Builder (Yes/No) This is only available if you use ajax filtering.
-2) Cookie name: The cookie which holds the tweakwise profile id, this cookie is (usually) set with a tracking script. The value of this cookie will be added to the tweakwise request, the response will contain a personalized sort order for that particular customer.
 
-Note that Varnish must be enabled for this functionality to work correctly. Varnish is recommended by Magento anyway. The big advantage of Varnish Cache is of course the gain in speed. In addition, it ensures a lower load on the server and thus increases peak resistance.
+##### Personal Merchandising
+1) Enabled: Enable personal merchandising. When enabled, the product list on category pages is personalised based on the visitor's Tweakwise profile cookie. Requires Varnish to be enabled and properly configured.
+2) Product Card TTL: Cache lifetime (in seconds) for personalised product card tiles stored in Redis. Only relevant when personal merchandising is enabled.
+
+##### Visuals
+1) Enabled: Show visual merchandising banners (tiles) on the product listing page. This setting is only shown when personal merchandising is disabled; enabling personal merchandising automatically activates visuals as well.
+
+Note that Varnish must be enabled for personal merchandising to work correctly. Varnish is recommended by Magento anyway. The big advantage of Varnish Cache is of course the gain in speed. In addition, it ensures a lower load on the server and thus increases peak resistance.
 Using this feature means that all category pages have personalized content. As such, it is no longer possible cache navigation responses where this profile cookie name has been used.
 The product list is loaded via the merchandising builder only if the following conditions are met:
 
@@ -91,11 +102,12 @@ When the product list is loaded in such a manner the result will not be cacheabl
 8) Default Featured product template: The default template to use when rendering featured products.
     The template can also be set per category and falls back to this setting if not found on the category. The templates that can be selected correspond with the templates under 'recomendations->featured products' in tweakwise.
 9) Show Cross-sell items in the shoppingcart. Enables tweakwise cross-sell items in the shoppingcart. Magento shoppingcart crossell items should also be enabled under 'Stores->configuration->sales->checkout->Show Cross-sell items in the Shopping Cart'
-10) Default crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items. Only relevant when shoppingcart crosssell is enabled
-11) Default crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
-12) Crossell type: show crossell or featured products in shoppingcart
-13) Only show products from current category for featured products: Show product from current category in featured products.
-14) Limit group code recommendations: If group code is used for one/more recommendations, limit the total number of products returned. If empty or 0, all products are returned.  
+10) Default crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Crosssell'. Only relevant when shoppingcart crosssell is enabled
+11) Default crosssell template (featured). Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Featured'. Only relevant when shoppingcart crosssell is enabled
+12) Default crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
+13) Crossell type: show crossell or featured products in shoppingcart
+14) Only show products from current category for featured products: Show product from current category in featured products.
+15) Limit group code recommendations: If group code is used for one/more recommendations, limit the total number of products returned. If empty or 0, all products are returned.  
 
 ## Command
 There is an command for regenerting filter urls. This is only relevant when using SEO path slug urls. Only run this command to regenerate the urls if you have problems.

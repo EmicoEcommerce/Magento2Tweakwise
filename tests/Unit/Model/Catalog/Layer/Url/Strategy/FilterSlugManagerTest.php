@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Model\Catalog\Layer\Url\Strategy;
 
 use Emico\CodeCept\Test\Unit;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use Magento\Eav\Model\Entity\Attribute\Option;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\DataObject;
@@ -12,7 +15,6 @@ use Magento\Framework\Filter\TranslitUrl;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
@@ -24,32 +26,34 @@ use Tweakwise\Test\Support\UnitTester;
 
 class FilterSlugManagerTest extends Unit
 {
+    use MockeryPHPUnitIntegration;
+
     protected UnitTester $tester;
 
     /**
-     * @var TranslitUrl&MockObject
+     * @var TranslitUrl&MockInterface
      */
-    private TranslitUrl|MockObject $translitUrl;
+    private TranslitUrl&MockInterface $translitUrl;
 
     /**
-     * @var AttributeSlugRepositoryInterface&MockObject
+     * @var AttributeSlugRepositoryInterface&MockInterface
      */
-    private AttributeSlugRepositoryInterface|MockObject $attributeSlugRepository;
+    private AttributeSlugRepositoryInterface&MockInterface $attributeSlugRepository;
 
     /**
-     * @var AttributeSlugInterfaceFactory&MockObject
+     * @var AttributeSlugInterfaceFactory&MockInterface
      */
-    private AttributeSlugInterfaceFactory|MockObject $attributeSlugFactory;
+    private AttributeSlugInterfaceFactory&MockInterface $attributeSlugFactory;
 
     /**
-     * @var CacheInterface&MockObject
+     * @var CacheInterface&MockInterface
      */
-    private CacheInterface|MockObject $cache;
+    private CacheInterface&MockInterface $cache;
 
     /**
-     * @var StoreManagerInterface&MockObject
+     * @var StoreManagerInterface&MockInterface
      */
-    private StoreManagerInterface|MockObject $storeManager;
+    private StoreManagerInterface&MockInterface $storeManager;
 
     private FilterSlugManager $subject;
 
@@ -62,15 +66,15 @@ class FilterSlugManagerTest extends Unit
     {
         parent::setUp();
 
-        $store = $this->createMock(StoreInterface::class);
-        $store->method('getId')->willReturn(1);
+        $store = Mockery::mock(StoreInterface::class);
+        $store->shouldReceive('getId')->andReturn(1);
 
-        $this->translitUrl = $this->createMock(TranslitUrl::class);
-        $this->attributeSlugRepository = $this->createMock(AttributeSlugRepositoryInterface::class);
-        $this->attributeSlugFactory = $this->createMock(AttributeSlugInterfaceFactory::class);
-        $this->cache = $this->createMock(CacheInterface::class);
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->storeManager->method('getStore')->willReturn($store);
+        $this->translitUrl = Mockery::mock(TranslitUrl::class);
+        $this->attributeSlugRepository = Mockery::mock(AttributeSlugRepositoryInterface::class);
+        $this->attributeSlugFactory = Mockery::mock(AttributeSlugInterfaceFactory::class);
+        $this->cache = Mockery::mock(CacheInterface::class);
+        $this->storeManager = Mockery::mock(StoreManagerInterface::class);
+        $this->storeManager->shouldReceive('getStore')->andReturn($store);
         $this->serializer = new Json();
 
         $this->subject = new FilterSlugManager(
@@ -88,37 +92,35 @@ class FilterSlugManagerTest extends Unit
      */
     public function testGetSlugForFilterItemCachesSavedSlugInMemory(): void
     {
-        $this->cache->expects($this->once())
-            ->method('load')
+        $this->cache
+            ->shouldReceive('load')
+            ->once()
             ->with('tweakwise.slug.lookup')
-            ->willReturn($this->serializer->serialize([]));
+            ->andReturn($this->serializer->serialize([]));
 
-        $this->cache->expects($this->once())
-            ->method('remove')
-            ->with('tweakwise.slug.lookup');
+        $this->cache->shouldReceive('remove')->once()->with('tweakwise.slug.lookup');
 
-        $this->translitUrl->method('filter')->with('color')->willReturn('color');
+        $this->translitUrl->shouldReceive('filter')->once()->with('color')->andReturn('color');
 
-        $attributeSlugEntity = $this->createMock(AttributeSlug::class);
-        $attributeSlugEntity->expects($this->once())->method('setAttribute')->with('color');
-        $attributeSlugEntity->expects($this->once())->method('setStoreId')->with(1);
-        $attributeSlugEntity->expects($this->once())->method('setSlug')->with('color');
+        $attributeSlugEntity = Mockery::mock(AttributeSlug::class);
+        $attributeSlugEntity->shouldReceive('setAttribute')->once()->with('color');
+        $attributeSlugEntity->shouldReceive('setStoreId')->once()->with(1);
+        $attributeSlugEntity->shouldReceive('setSlug')->once()->with('color');
 
-        $this->attributeSlugFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($attributeSlugEntity);
+        $this->attributeSlugFactory->shouldReceive('create')->once()->andReturn($attributeSlugEntity);
 
-        $savedSlug = $this->createMock(AttributeSlugInterface::class);
-        $savedSlug->method('getSlug')->willReturn('color');
+        $savedSlug = Mockery::mock(AttributeSlugInterface::class);
+        $savedSlug->shouldReceive('getSlug')->twice()->andReturn('color');
 
-        $this->attributeSlugRepository->expects($this->once())
-            ->method('save')
+        $this->attributeSlugRepository
+            ->shouldReceive('save')
+            ->once()
             ->with($attributeSlugEntity)
-            ->willReturn($savedSlug);
+            ->andReturn($savedSlug);
 
         $filterAttribute = new DataObject(['title' => 'Color']);
-        $filterItem = $this->createMock(Item::class);
-        $filterItem->method('getAttribute')->willReturn($filterAttribute);
+        $filterItem = Mockery::mock(Item::class);
+        $filterItem->shouldReceive('getAttribute')->twice()->andReturn($filterAttribute);
 
         $this->assertSame('color', $this->subject->getSlugForFilterItem($filterItem));
         $this->assertSame('color', $this->subject->getSlugForFilterItem($filterItem));
@@ -129,39 +131,35 @@ class FilterSlugManagerTest extends Unit
      */
     public function testCreateFilterSlugByOptionInitializesLookupTableAndUpdatesInMemoryMapping(): void
     {
-        $this->cache->expects($this->once())
-            ->method('load')
+        $this->cache
+            ->shouldReceive('load')
+            ->once()
             ->with('tweakwise.slug.lookup')
-            ->willReturn($this->serializer->serialize([]));
+            ->andReturn($this->serializer->serialize([]));
 
-        $this->cache->expects($this->once())
-            ->method('remove')
-            ->with('tweakwise.slug.lookup');
+        $this->cache->shouldReceive('remove')->once()->with('tweakwise.slug.lookup');
 
-        $this->translitUrl->method('filter')->with('Blue')->willReturn('blue');
+        $this->translitUrl->shouldReceive('filter')->times(2)->with('Blue')->andReturn('blue');
 
-        $attributeSlugEntity = $this->createMock(AttributeSlug::class);
-        $attributeSlugEntity->expects($this->once())->method('setAttribute')->with('Blue');
-        $attributeSlugEntity->expects($this->once())->method('setStoreId')->with(1);
-        $attributeSlugEntity->expects($this->once())->method('setSlug')->with('blue');
-        $attributeSlugEntity->expects($this->once())->method('setData')->with('attribute_code', null);
+        $attributeSlugEntity = Mockery::mock(AttributeSlug::class);
+        $attributeSlugEntity->shouldReceive('setAttribute')->once()->with('Blue');
+        $attributeSlugEntity->shouldReceive('setStoreId')->once()->with(1);
+        $attributeSlugEntity->shouldReceive('setSlug')->once()->with('blue');
+        $attributeSlugEntity->shouldReceive('setData')->once()->with('attribute_code', null);
 
-        $this->attributeSlugFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($attributeSlugEntity);
+        $this->attributeSlugFactory->shouldReceive('create')->once()->andReturn($attributeSlugEntity);
 
-        $savedSlug = $this->createMock(AttributeSlugInterface::class);
-        $savedSlug->method('getSlug')->willReturn('blue');
+        $savedSlug = Mockery::mock(AttributeSlugInterface::class);
+        $savedSlug->shouldReceive('getSlug')->once()->andReturn('blue');
 
-        $this->attributeSlugRepository->expects($this->once())
-            ->method('save')
+        $this->attributeSlugRepository
+            ->shouldReceive('save')
+            ->once()
             ->with($attributeSlugEntity)
-            ->willReturn($savedSlug);
+            ->andReturn($savedSlug);
 
-        $option = $this->createMock(Option::class);
-        $option->method('offsetGet')->willReturnMap([
-            ['label', 'Blue'],
-        ]);
+        $option = Mockery::mock(Option::class);
+        $option->shouldReceive('offsetGet')->times(5)->with('label')->andReturn('Blue');
 
         $this->subject->createFilterSlugByOption($option, 1);
 
@@ -173,36 +171,33 @@ class FilterSlugManagerTest extends Unit
      */
     public function testTruncateSlugTableReloadsLookupTableFromDatabase(): void
     {
-        $this->cache->expects($this->exactly(2))
-            ->method('load')
+        $this->cache
+            ->shouldReceive('load')
+            ->twice()
             ->with('tweakwise.slug.lookup')
-            ->willReturnOnConsecutiveCalls(
+            ->andReturn(
                 $this->serializer->serialize([1 => ['color' => 'old-slug']]),
                 false,
             );
 
-        $this->cache->expects($this->once())
-            ->method('remove')
-            ->with('tweakwise.slug.lookup');
+        $this->cache->shouldReceive('remove')->once()->with('tweakwise.slug.lookup');
 
-        $this->cache->expects($this->once())
-            ->method('save')
+        $this->cache
+            ->shouldReceive('save')
+            ->once()
             ->with($this->serializer->serialize([1 => ['color' => 'new-slug']]), 'tweakwise.slug.lookup');
 
-        $this->attributeSlugRepository->expects($this->once())
-            ->method('truncateSlugTable');
+        $this->attributeSlugRepository->shouldReceive('truncateSlugTable')->once();
 
-        $attributeSlug = $this->createMock(AttributeSlugInterface::class);
-        $attributeSlug->method('getStoreId')->willReturn(1);
-        $attributeSlug->method('getAttribute')->willReturn('color');
-        $attributeSlug->method('getSlug')->willReturn('new-slug');
+        $attributeSlug = Mockery::mock(AttributeSlugInterface::class);
+        $attributeSlug->shouldReceive('getStoreId')->once()->andReturn(1);
+        $attributeSlug->shouldReceive('getAttribute')->once()->andReturn('color');
+        $attributeSlug->shouldReceive('getSlug')->once()->andReturn('new-slug');
 
-        $searchResults = $this->createMock(AttributeSlugSearchResultsInterface::class);
-        $searchResults->method('getItems')->willReturn([$attributeSlug]);
+        $searchResults = Mockery::mock(AttributeSlugSearchResultsInterface::class);
+        $searchResults->shouldReceive('getItems')->once()->andReturn([$attributeSlug]);
 
-        $this->attributeSlugRepository->expects($this->once())
-            ->method('getList')
-            ->willReturn($searchResults);
+        $this->attributeSlugRepository->shouldReceive('getList')->once()->andReturn($searchResults);
 
         $this->assertSame([1 => ['color' => 'old-slug']], $this->subject->getLookupTable());
 

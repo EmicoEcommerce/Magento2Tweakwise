@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Model;
 
 use Emico\CodeCept\Test\Unit;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Model\AttributeSlug;
@@ -18,32 +20,34 @@ use Tweakwise\Test\Support\UnitTester;
 
 class AttributeSlugRepositoryTest extends Unit
 {
+    use MockeryPHPUnitIntegration;
+
     protected UnitTester $tester;
 
     /**
-     * @var AttributeSlugResource&MockObject
+     * @var AttributeSlugResource&MockInterface
      */
-    private AttributeSlugResource|MockObject $resource;
+    private AttributeSlugResource&MockInterface $resource;
 
     /**
-     * @var AttributeSlugInterfaceFactory&MockObject
+     * @var AttributeSlugInterfaceFactory&MockInterface
      */
-    private AttributeSlugInterfaceFactory|MockObject $entityFactory;
+    private AttributeSlugInterfaceFactory&MockInterface $entityFactory;
 
     /**
-     * @var CollectionFactory&MockObject
+     * @var CollectionFactory&MockInterface
      */
-    private CollectionFactory|MockObject $collectionFactory;
+    private CollectionFactory&MockInterface $collectionFactory;
 
     /**
-     * @var AttributeSlugSearchResultsInterfaceFactory&MockObject
+     * @var AttributeSlugSearchResultsInterfaceFactory&MockInterface
      */
-    private AttributeSlugSearchResultsInterfaceFactory|MockObject $searchResultsFactory;
+    private AttributeSlugSearchResultsInterfaceFactory&MockInterface $searchResultsFactory;
 
     /**
-     * @var CollectionProcessorInterface&MockObject
+     * @var CollectionProcessorInterface&MockInterface
      */
-    private CollectionProcessorInterface|MockObject $collectionProcessor;
+    private CollectionProcessorInterface&MockInterface $collectionProcessor;
 
     private AttributeSlugRepository $subject;
 
@@ -54,11 +58,11 @@ class AttributeSlugRepositoryTest extends Unit
     {
         parent::setUp();
 
-        $this->resource = $this->createMock(AttributeSlugResource::class);
-        $this->entityFactory = $this->createMock(AttributeSlugInterfaceFactory::class);
-        $this->collectionFactory = $this->createMock(CollectionFactory::class);
-        $this->searchResultsFactory = $this->createMock(AttributeSlugSearchResultsInterfaceFactory::class);
-        $this->collectionProcessor = $this->createMock(CollectionProcessorInterface::class);
+        $this->resource = Mockery::mock(AttributeSlugResource::class);
+        $this->entityFactory = Mockery::mock(AttributeSlugInterfaceFactory::class);
+        $this->collectionFactory = Mockery::mock(CollectionFactory::class);
+        $this->searchResultsFactory = Mockery::mock(AttributeSlugSearchResultsInterfaceFactory::class);
+        $this->collectionProcessor = Mockery::mock(CollectionProcessorInterface::class);
 
         $this->subject = new AttributeSlugRepository(
             $this->resource,
@@ -74,26 +78,24 @@ class AttributeSlugRepositoryTest extends Unit
      */
     public function testSaveReusesExistingPrimaryKeyAndSkipsWriteWhenSlugIsUnchanged(): void
     {
-        $attributeSlug = $this->createMock(AttributeSlug::class);
-        $attributeSlug->method('getSlug')->willReturn('color');
-        $attributeSlug->method('getStoreId')->willReturn(1);
-        $attributeSlug->method('getAttribute')->willReturn('color');
-        $attributeSlug->expects($this->once())->method('setData')->with('id', 25);
+        $attributeSlug = Mockery::mock(AttributeSlug::class);
+        $attributeSlug->shouldReceive('getSlug')->once()->andReturn('color');
+        $attributeSlug->shouldReceive('getStoreId')->once()->andReturn(1);
+        $attributeSlug->shouldReceive('getAttribute')->once()->andReturn('color');
+        $attributeSlug->shouldReceive('setData')->once()->with('id', 25);
 
-        $existingByAttributeAndStore = $this->createMock(AttributeSlug::class);
-        $existingByAttributeAndStore->method('getData')->with('id')->willReturn(25);
-        $existingByAttributeAndStore->method('getSlug')->willReturn('color');
+        $existingByAttributeAndStore = Mockery::mock(AttributeSlug::class);
+        $existingByAttributeAndStore->shouldReceive('getData')->once()->with('id')->andReturn(25);
+        $existingByAttributeAndStore->shouldReceive('getSlug')->once()->andReturn('color');
 
-        $existingCollection = $this->createMock(Collection::class);
-        $existingCollection->method('addFieldToFilter')->willReturnSelf();
-        $existingCollection->method('getSize')->willReturn(1);
-        $existingCollection->method('getFirstItem')->willReturn($existingByAttributeAndStore);
+        $existingCollection = Mockery::mock(Collection::class);
+        $existingCollection->shouldReceive('addFieldToFilter')->twice()->andReturnSelf();
+        $existingCollection->shouldReceive('getSize')->once()->andReturn(1);
+        $existingCollection->shouldReceive('getFirstItem')->once()->andReturn($existingByAttributeAndStore);
 
-        $this->collectionFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($existingCollection);
+        $this->collectionFactory->shouldReceive('create')->once()->andReturn($existingCollection);
 
-        $this->resource->expects($this->never())->method('save');
+        $this->resource->shouldNotReceive('save');
 
         $result = $this->subject->save($attributeSlug);
 
@@ -105,33 +107,32 @@ class AttributeSlugRepositoryTest extends Unit
      */
     public function testSaveReusesExistingPrimaryKeyAndPersistsUpdatedSlug(): void
     {
-        $attributeSlug = $this->createMock(AttributeSlug::class);
-        $attributeSlug->method('getSlug')->willReturn('color');
-        $attributeSlug->method('getStoreId')->willReturn(1);
-        $attributeSlug->method('getAttribute')->willReturn('color');
-        $attributeSlug->expects($this->once())->method('setData')->with('id', 25);
-        $attributeSlug->expects($this->once())->method('setSlug')->with('color');
+        $attributeSlug = Mockery::mock(AttributeSlug::class);
+        $attributeSlug->shouldReceive('getSlug')->once()->andReturn('color');
+        $attributeSlug->shouldReceive('getStoreId')->once()->andReturn(1);
+        $attributeSlug->shouldReceive('getAttribute')->once()->andReturn('color');
+        $attributeSlug->shouldReceive('setData')->once()->with('id', 25);
+        $attributeSlug->shouldReceive('setSlug')->once()->with('color');
 
-        $existingByAttributeAndStore = $this->createMock(AttributeSlug::class);
-        $existingByAttributeAndStore->method('getData')->with('id')->willReturn(25);
-        $existingByAttributeAndStore->method('getSlug')->willReturn('old-color');
+        $existingByAttributeAndStore = Mockery::mock(AttributeSlug::class);
+        $existingByAttributeAndStore->shouldReceive('getData')->once()->with('id')->andReturn(25);
+        $existingByAttributeAndStore->shouldReceive('getSlug')->once()->andReturn('old-color');
 
-        $existingCollection = $this->createMock(Collection::class);
-        $existingCollection->method('addFieldToFilter')->willReturnSelf();
-        $existingCollection->method('getSize')->willReturn(1);
-        $existingCollection->method('getFirstItem')->willReturn($existingByAttributeAndStore);
+        $existingCollection = Mockery::mock(Collection::class);
+        $existingCollection->shouldReceive('addFieldToFilter')->twice()->andReturnSelf();
+        $existingCollection->shouldReceive('getSize')->once()->andReturn(1);
+        $existingCollection->shouldReceive('getFirstItem')->once()->andReturn($existingByAttributeAndStore);
 
-        $emptyCollection = $this->createMock(Collection::class);
-        $emptyCollection->method('addFieldToFilter')->willReturnSelf();
-        $emptyCollection->method('getSize')->willReturn(0);
+        $emptyCollection = Mockery::mock(Collection::class);
+        $emptyCollection->shouldReceive('addFieldToFilter')->twice()->andReturnSelf();
+        $emptyCollection->shouldReceive('getSize')->once()->andReturn(0);
 
-        $this->collectionFactory->expects($this->exactly(2))
-            ->method('create')
-            ->willReturnOnConsecutiveCalls($existingCollection, $emptyCollection);
+        $this->collectionFactory
+            ->shouldReceive('create')
+            ->twice()
+            ->andReturn($existingCollection, $emptyCollection);
 
-        $this->resource->expects($this->once())
-            ->method('save')
-            ->with($attributeSlug);
+        $this->resource->shouldReceive('save')->once()->with($attributeSlug);
 
         $result = $this->subject->save($attributeSlug);
 

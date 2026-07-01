@@ -18,48 +18,20 @@ use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\Framework\Registry;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
+use Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption;
 use Tweakwise\Test\Support\UnitTester;
 
 class TemplateFinderTest extends Unit
 {
-    /**
-     * @var UnitTester
-     */
     protected UnitTester $tester;
-
-    /**
-     * @var Config
-     */
     private Config $config;
-
-    /**
-     * @var Registry
-     */
     private Registry $registry;
-
-    /**
-     * @var CategoryRepository
-     */
     private CategoryRepository $categoryRepository;
-
-    /**
-     * @var CollectionFactory
-     */
     private CollectionFactory $categoryCollectionFactory;
-
-    /**
-     * @var TemplateFinder
-     */
-    private TemplateFinder $templateFinder;
-
-    /**
-     * @var string[]
-     */
+    private TemplateFinder $subject;
     private array $capturedSelectedAttributes = [];
+    private array $capturedPathFilter = [];
 
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -68,7 +40,7 @@ class TemplateFinderTest extends Unit
         $this->registry = $this->createMock(Registry::class);
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->categoryCollectionFactory = $this->createMock(CollectionFactory::class);
-        $this->templateFinder = new TemplateFinder(
+        $this->subject = new TemplateFinder(
             $this->config,
             $this->registry,
             $this->categoryRepository,
@@ -76,9 +48,6 @@ class TemplateFinderTest extends Unit
         );
     }
 
-    /**
-     * @return void
-     */
     public function testForProductInheritsTemplateFromClosestAncestor(): void
     {
         $type = 'upsell';
@@ -88,17 +57,10 @@ class TemplateFinderTest extends Unit
 
         $product = $this->createMock(Product::class);
         $product->method('getData')->with($attribute)->willReturn(0);
-        $product->expects($this->never())->method('getCategory');
-        $product->expects($this->never())->method('getCategoryIds');
 
-        $currentCategory = $this->createMock(Category::class);
-        $currentCategory->expects($this->once())->method('getPathIds')->willReturn(array_reverse($pathIds));
-        $currentCategory->expects($this->never())->method('getParentCategory');
+        $currentCategory = $this->createPathCategory(array_reverse($pathIds));
 
-        $this->registry->expects($this->once())
-            ->method('registry')
-            ->with('current_category')
-            ->willReturn($currentCategory);
+        $this->registry->method('registry')->with('current_category')->willReturn($currentCategory);
 
         $collection = $this->createCategoryCollection(
             [
@@ -107,24 +69,16 @@ class TemplateFinderTest extends Unit
             ],
         );
 
-        $collection->expects($this->once())
-            ->method('addAttributeToFilter')
-            ->with('entity_id', ['in' => $pathIds])
-            ->willReturnSelf();
+        $this->categoryCollectionFactory->method('create')->willReturn($collection);
+        $this->categoryRepository->expects($this->never())->method('get');
 
-        $this->categoryCollectionFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($collection);
-
-        $result = $this->templateFinder->forProduct($product, $type);
+        $result = $this->subject->forProduct($product, $type);
 
         $this->assertSame(21, $result);
+        $this->assertSame($pathIds, $this->capturedPathFilter);
         $this->assertEqualsCanonicalizing([$attribute, $groupAttribute], $this->capturedSelectedAttributes);
     }
 
-    /**
-     * @return void
-     */
     public function testForProductUsesDirectCategoryTemplateBeforeParent(): void
     {
         $type = 'crosssell';
@@ -135,12 +89,9 @@ class TemplateFinderTest extends Unit
         $product = $this->createMock(Product::class);
         $product->method('getData')->with($attribute)->willReturn(0);
         $product->method('getCategory')->willReturn($this->createPathCategory(array_reverse($pathIds)));
-        $product->expects($this->never())->method('getCategoryIds');
+        $product->method('getCategoryIds')->willReturn([]);
 
-        $this->registry->expects($this->once())
-            ->method('registry')
-            ->with('current_category')
-            ->willReturn(null);
+        $this->registry->method('registry')->with('current_category')->willReturn(null);
 
         $collection = $this->createCategoryCollection(
             [
@@ -149,26 +100,17 @@ class TemplateFinderTest extends Unit
             ],
         );
 
-        $collection->expects($this->once())
-            ->method('addAttributeToFilter')
-            ->with('entity_id', ['in' => $pathIds])
-            ->willReturnSelf();
-
-        $this->categoryCollectionFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($collection);
+        $this->categoryCollectionFactory->method('create')->willReturn($collection);
 
         $this->categoryRepository->expects($this->never())->method('get');
 
-        $result = $this->templateFinder->forProduct($product, $type);
+        $result = $this->subject->forProduct($product, $type);
 
         $this->assertSame(33, $result);
+        $this->assertSame($pathIds, $this->capturedPathFilter);
         $this->assertEqualsCanonicalizing([$attribute, $groupAttribute], $this->capturedSelectedAttributes);
     }
 
-    /**
-     * @return void
-     */
     public function testForProductUsesProductLevelTemplateBeforeCategories(): void
     {
         $product = $this->createMock(Product::class);
@@ -181,12 +123,9 @@ class TemplateFinderTest extends Unit
         $this->categoryCollectionFactory->expects($this->never())->method('create');
         $this->categoryRepository->expects($this->never())->method('get');
 
-        $this->assertSame(77, $this->templateFinder->forProduct($product, 'upsell'));
+        $this->assertSame(77, $this->subject->forProduct($product, 'upsell'));
     }
 
-    /**
-     * @return void
-     */
     public function testForProductFallsBackToGlobalDefaultTemplateWhenUnsetEverywhere(): void
     {
         $type = 'upsell';
@@ -196,10 +135,7 @@ class TemplateFinderTest extends Unit
         $product->method('getCategory')->willReturn(null);
         $product->method('getCategoryIds')->willReturn([]);
 
-        $this->registry->expects($this->once())
-            ->method('registry')
-            ->with('current_category')
-            ->willReturn(null);
+        $this->registry->method('registry')->with('current_category')->willReturn(null);
 
         $this->config->expects($this->once())
             ->method('getRecommendationsTemplate')
@@ -209,25 +145,62 @@ class TemplateFinderTest extends Unit
         $this->categoryCollectionFactory->expects($this->never())->method('create');
         $this->categoryRepository->expects($this->never())->method('get');
 
-        $this->assertSame(19, $this->templateFinder->forProduct($product, $type));
+        $this->assertSame(19, $this->subject->forProduct($product, $type));
     }
 
-    /**
-     * @param Category[] $categories
-     * @return CategoryCollection
-     */
+    public function testForProductReturnsGroupCodeWhenAncestorUsesGroupOption(): void
+    {
+        $type = 'upsell';
+        $attribute = 'tweakwise_upsell_template';
+        $groupAttribute = 'tweakwise_upsell_group_code';
+        $pathIds = [13, 10, 2, 1];
+
+        $product = $this->createMock(Product::class);
+        $product->method('getData')->with($attribute)->willReturn(0);
+        $product->method('getCategory')->willReturn($this->createPathCategory(array_reverse($pathIds)));
+        $product->method('getCategoryIds')->willReturn([]);
+
+        $this->registry->method('registry')->with('current_category')->willReturn(null);
+
+        $collection = $this->createCategoryCollection(
+            [
+                $this->createLoadedCategory(13, [$attribute => RecommendationOption::OPTION_CODE, $groupAttribute => 'upsell-group']),
+            ],
+        );
+
+        $this->categoryCollectionFactory->method('create')->willReturn($collection);
+
+        $result = $this->subject->forProduct($product, $type);
+
+        $this->assertSame('upsell-group', $result);
+        $this->assertSame($pathIds, $this->capturedPathFilter);
+    }
+
     private function createCategoryCollection(array $categories): CategoryCollection
     {
         $this->capturedSelectedAttributes = [];
+        $this->capturedPathFilter = [];
+
         $collection = $this->getMockBuilder(CategoryCollection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addAttributeToFilter', 'addAttributeToSelect', 'getIterator'])
             ->getMock();
 
-        $collection->expects($this->exactly(2))
-            ->method('addAttributeToSelect')
-            ->willReturnCallback(function (string $attribute) use ($collection): CategoryCollection {
-                $this->capturedSelectedAttributes[] = $attribute;
+        $collection->method('addAttributeToFilter')
+            ->willReturnCallback(function (string $attribute, array $condition) use ($collection): CategoryCollection {
+                if ($attribute === 'entity_id') {
+                    $this->capturedPathFilter = $condition['in'] ?? [];
+                }
+
+                return $collection;
+            });
+
+        $collection->method('addAttributeToSelect')
+            ->willReturnCallback(function ($attribute) use ($collection): CategoryCollection {
+                foreach ((array) $attribute as $selectedAttribute) {
+                    $this->capturedSelectedAttributes[] = (string) $selectedAttribute;
+                }
+
                 return $collection;
             });
 
@@ -236,23 +209,14 @@ class TemplateFinderTest extends Unit
         return $collection;
     }
 
-    /**
-     * @param int[] $pathIds
-     * @return Category
-     */
     private function createPathCategory(array $pathIds): Category
     {
         $category = $this->createMock(Category::class);
-        $category->expects($this->once())->method('getPathIds')->willReturn($pathIds);
+        $category->method('getPathIds')->willReturn($pathIds);
 
         return $category;
     }
 
-    /**
-     * @param int $id
-     * @param array<string, int|string|null> $attributes
-     * @return Category
-     */
     private function createLoadedCategory(int $id, array $attributes): Category
     {
         $category = $this->createMock(Category::class);

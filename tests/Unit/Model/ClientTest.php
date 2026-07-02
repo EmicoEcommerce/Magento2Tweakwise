@@ -6,41 +6,50 @@ namespace Tweakwise\Test\Unit\Model;
 
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
-use Magento\Framework\UrlInterface;
+use Mockery;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
-use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
-use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
-use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2TweakwiseExport\Model\Logger;
-use Tweakwise\Test\Support\UnitTester;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\AnalyticsRequest;
+use Magento\Framework\UrlInterface;
+use Tweakwise\Test\Support\UnitTester;
 
 class ClientTest extends Unit
 {
-    /**
-     * @var UnitTester
-     */
     protected UnitTester $tester;
+
+    /**
+     * @return void
+     * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     */
+    protected function _before(): void
+    {
+        parent::_before();
+    }
 
     /**
      * @return void
      */
     public function testCreateGetRequestAddsInternalTrafficHeaderForMatchingIp(): void
     {
-        $config = $this->createMock(Config::class);
-        $config->method('getInternalIpAddresses')->willReturn(['127.0.0.1']);
-        $config->method('getGeneralAuthenticationKey')->willReturn('123456');
-        $config->method('getRecommendationsFeaturedCategory')->willReturn(false);
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('getInternalIpAddresses')->andReturn(['84.35.11.109']);
+        $config->shouldReceive('getGeneralAuthenticationKey')->andReturn('12345abc');
+        $config->shouldReceive('getRecommendationsFeaturedCategory')->andReturn(false);
 
-        $endpointManager = $this->createMock(EndpointManager::class);
-        $endpointManager->method('getServerUrl')->willReturn('https://gateway.tweakwisenavigator.net');
+        $remoteAddress = Mockery::mock(RemoteAddress::class);
+        $remoteAddress->shouldReceive('getRemoteAddress')->andReturn('84.35.11.109');
 
-        $remoteAddress = $this->createMock(RemoteAddress::class);
-        $remoteAddress->method('getRemoteAddress')->willReturn('127.0.0.1');
+        $endpointManager = Mockery::mock(EndpointManager::class);
+        $endpointManager->shouldReceive('getServerUrl')->andReturn('https://gateway.tweakwisenavigator.net');
 
-        $client = $this->createClient($config, $endpointManager, $remoteAddress);
+        $this->tester->mockService(Config::class, $config);
+        $this->tester->mockService(RemoteAddress::class, $remoteAddress);
+        $this->tester->mockService(EndpointManager::class, $endpointManager);
+
+        /** @var Client $client */
+        $client = $this->tester->getObjectManager()->get(Client::class);
 
         $request = $this->createMock(Request::class);
         $request->method('getPath')->willReturn('navigation');
@@ -57,18 +66,23 @@ class ClientTest extends Unit
      */
     public function testCreateGetRequestSkipsInternalTrafficHeaderForNonMatchingIp(): void
     {
-        $config = $this->createMock(Config::class);
-        $config->method('getInternalIpAddresses')->willReturn(['10.0.0.99']);
-        $config->method('getGeneralAuthenticationKey')->willReturn('123456');
-        $config->method('getRecommendationsFeaturedCategory')->willReturn(false);
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('getInternalIpAddresses')->andReturn(['10.0.0.99']);
+        $config->shouldReceive('getGeneralAuthenticationKey')->andReturn('12345abc');
+        $config->shouldReceive('getRecommendationsFeaturedCategory')->andReturn(false);
 
-        $endpointManager = $this->createMock(EndpointManager::class);
-        $endpointManager->method('getServerUrl')->willReturn('https://gateway.tweakwisenavigator.net');
+        $remoteAddress = Mockery::mock(RemoteAddress::class);
+        $remoteAddress->shouldReceive('getRemoteAddress')->andReturn('84.35.11.109');
 
-        $remoteAddress = $this->createMock(RemoteAddress::class);
-        $remoteAddress->method('getRemoteAddress')->willReturn('127.0.0.1');
+        $endpointManager = Mockery::mock(EndpointManager::class);
+        $endpointManager->shouldReceive('getServerUrl')->andReturn('https://gateway.tweakwisenavigator.net');
 
-        $client = $this->createClient($config, $endpointManager, $remoteAddress);
+        $this->tester->mockService(Config::class, $config);
+        $this->tester->mockService(RemoteAddress::class, $remoteAddress);
+        $this->tester->mockService(EndpointManager::class, $endpointManager);
+
+        /** @var Client $client */
+        $client = $this->tester->getObjectManager()->get(Client::class);
 
         $request = $this->createMock(Request::class);
         $request->method('getPath')->willReturn('navigation');
@@ -85,59 +99,36 @@ class ClientTest extends Unit
      */
     public function testCreatePostRequestAddsInternalTrafficHeaderForAnalyticsRequests(): void
     {
-        $config = $this->createMock(Config::class);
-        $config->method('getInternalIpAddresses')->willReturn(['127.0.0.1']);
-        $config->method('getGeneralAuthenticationKey')->willReturn('123456');
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('getInternalIpAddresses')->andReturn(['84.35.11.109']);
+        $config->shouldReceive('getGeneralAuthenticationKey')->andReturn('12345abc');
 
-        $urlBuilder = $this->createMock(UrlInterface::class);
-        $urlBuilder->expects($this->once())
-            ->method('getUrl')
-            ->with('https://navigator-analytics.tweakwise.com/analytics')
-            ->willReturn('https://navigator-analytics.tweakwise.com/analytics');
+        $remoteAddress = Mockery::mock(RemoteAddress::class);
+        $remoteAddress->shouldReceive('getRemoteAddress')->andReturn('84.35.11.109');
 
-        $remoteAddress = $this->createMock(RemoteAddress::class);
-        $remoteAddress->method('getRemoteAddress')->willReturn('127.0.0.1');
+        $urlBuilder = Mockery::mock(UrlInterface::class);
+        $urlBuilder->shouldReceive('getUrl')->andReturnUsing(static fn (string $url) => $url);
 
-        $client = new Client(
-            $config,
-            $this->createMock(Logger::class),
-            $this->createMock(ResponseFactory::class),
-            $this->createMock(EndpointManager::class),
-            $this->createMock(Timer::class),
-            $urlBuilder,
-            $remoteAddress
-        );
+        $this->tester->mockService(Config::class, $config);
+        $this->tester->mockService(RemoteAddress::class, $remoteAddress);
+        $this->tester->mockService(UrlInterface::class, $urlBuilder);
+
+        /** @var Client $client */
+        $client = $this->tester->getObjectManager()->get(Client::class);
 
         $request = $this->createMock(AnalyticsRequest::class);
-        $request->method('getPath')->willReturn('analytics');
+        $request->method('getPath')->willReturn('pageview');
         $request->method('getApiUrl')->willReturn('https://navigator-analytics.tweakwise.com');
-        $request->method('getParameters')->willReturn(['event' => 'click']);
-
+        $request->method('getParameters')->willReturn(
+            [
+                'ProfileKey' => 'asdfasf325235sdafsf',
+                'SessionKey' => 'LADy42zTNxj0Ub9dm9rKGhmXOZUz6ypD',
+                'ProductKey' => '100019',
+            ]
+        );
         $httpRequest = $client->createPostRequest($request);
 
         $this->assertSame('Internal-Traffic', $httpRequest->getHeaderLine('TWN-Source'));
-        $this->assertSame('123456', $httpRequest->getHeaderLine('Instance-Key'));
-    }
-
-    /**
-     * @param Config $config
-     * @param EndpointManager $endpointManager
-     * @param RemoteAddress $remoteAddress
-     * @return Client
-     */
-    private function createClient(
-        Config $config,
-        EndpointManager $endpointManager,
-        RemoteAddress $remoteAddress
-    ): Client {
-        return new Client(
-            $config,
-            $this->createMock(Logger::class),
-            $this->createMock(ResponseFactory::class),
-            $endpointManager,
-            $this->createMock(Timer::class),
-            $this->createMock(UrlInterface::class),
-            $remoteAddress
-        );
+        $this->assertSame('12345abc', $httpRequest->getHeaderLine('Instance-Key'));
     }
 }

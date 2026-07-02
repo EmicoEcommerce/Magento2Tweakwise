@@ -19,8 +19,6 @@ class ClientTest extends Unit
 {
     protected UnitTester $tester;
 
-    // No custom setup required. Use parent _before from test framework.
-
     /**
      * @return void
      */

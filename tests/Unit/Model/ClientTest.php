@@ -19,14 +19,7 @@ class ClientTest extends Unit
 {
     protected UnitTester $tester;
 
-    /**
-     * @return void
-     * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
-     */
-    protected function _before(): void
-    {
-        parent::_before();
-    }
+    // No custom setup required. Use parent _before from test framework.
 
     /**
      * @return void

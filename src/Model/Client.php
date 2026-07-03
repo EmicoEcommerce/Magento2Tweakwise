@@ -108,6 +108,16 @@ class Client
         return $this->client;
     }
 
+    /**    
+     * Use for mocking with tests
+     * @param HttpClient $client
+     * @return void
+     */
+    public function setClient(HttpClient $client): void 
+    {
+        $this->client = $client;
+    }
+    
     /**
      * @param Request $tweakwiseRequest
      * @return HttpRequest

@@ -16,8 +16,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\Framework\Registry;
-use Mockery;
-use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption;
@@ -26,34 +25,26 @@ use Tweakwise\Test\Support\UnitTester;
 class TemplateFinderTest extends Unit
 {
     protected UnitTester $tester;
-    private MockInterface $config;
-    private MockInterface $registry;
-    private MockInterface $categoryRepository;
-    private MockInterface $categoryCollectionFactory;
+    private Config|MockObject $config;
+    private Registry|MockObject $registry;
+    private CategoryRepository|MockObject $categoryRepository;
+    private CollectionFactory|MockObject $categoryCollectionFactory;
     private TemplateFinder $subject;
     private array $capturedSelectedAttributes = [];
     private array $capturedPathFilter = [];
 
-    protected function setUp(): void
+    public function _before(): void
     {
-        parent::setUp();
-
-        $this->config = Mockery::mock(Config::class);
-        $this->registry = Mockery::mock(Registry::class);
-        $this->categoryRepository = Mockery::mock(CategoryRepository::class);
-        $this->categoryCollectionFactory = Mockery::mock(CollectionFactory::class);
+        $this->config = $this->createMock(Config::class);
+        $this->registry = $this->createMock(Registry::class);
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->categoryCollectionFactory = $this->createMock(CollectionFactory::class);
         $this->subject = new TemplateFinder(
             $this->config,
             $this->registry,
             $this->categoryRepository,
             $this->categoryCollectionFactory,
         );
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
     }
 
     public function testForProductInheritsTemplateFromClosestAncestor(): void
@@ -63,12 +54,14 @@ class TemplateFinderTest extends Unit
         $groupAttribute = 'tweakwise_upsell_group_code';
         $pathIds = [13, 10, 9, 2, 1];
 
-        $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getData')->with($attribute)->andReturn(0);
+        $product = $this->createMock(Product::class);
+        $product->method('getData')->willReturnMap([
+            [$attribute, 0],
+        ]);
 
         $currentCategory = $this->createPathCategory(array_reverse($pathIds));
 
-        $this->registry->shouldReceive('registry')->with('current_category')->andReturn($currentCategory);
+        $this->registry->method('registry')->with('current_category')->willReturn($currentCategory);
 
         $collection = $this->createCategoryCollection(
             [
@@ -77,8 +70,8 @@ class TemplateFinderTest extends Unit
             ],
         );
 
-        $this->categoryCollectionFactory->shouldReceive('create')->andReturn($collection);
-        $this->categoryRepository->shouldNotReceive('get');
+        $this->categoryCollectionFactory->method('create')->willReturn($collection);
+        $this->categoryRepository->expects($this->never())->method('get');
 
         $result = $this->subject->forProduct($product, $type);
 
@@ -94,12 +87,14 @@ class TemplateFinderTest extends Unit
         $groupAttribute = 'tweakwise_crosssell_group_code';
         $pathIds = [5, 2, 1];
 
-        $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getData')->with($attribute)->andReturn(0);
-        $product->shouldReceive('getCategory')->andReturn($this->createPathCategory(array_reverse($pathIds)));
-        $product->shouldReceive('getCategoryIds')->andReturn([]);
+        $product = $this->createMock(Product::class);
+        $product->method('getData')->willReturnMap([
+            [$attribute, 0],
+        ]);
+        $product->method('getCategory')->willReturn($this->createPathCategory(array_reverse($pathIds)));
+        $product->method('getCategoryIds')->willReturn([]);
 
-        $this->registry->shouldReceive('registry')->with('current_category')->andReturn(null);
+        $this->registry->method('registry')->with('current_category')->willReturn(null);
 
         $collection = $this->createCategoryCollection(
             [
@@ -108,9 +103,8 @@ class TemplateFinderTest extends Unit
             ],
         );
 
-        $this->categoryCollectionFactory->shouldReceive('create')->andReturn($collection);
-
-        $this->categoryRepository->shouldNotReceive('get');
+        $this->categoryCollectionFactory->method('create')->willReturn($collection);
+        $this->categoryRepository->expects($this->never())->method('get');
 
         $result = $this->subject->forProduct($product, $type);
 
@@ -121,15 +115,14 @@ class TemplateFinderTest extends Unit
 
     public function testForProductUsesProductLevelTemplateBeforeCategories(): void
     {
-        $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getData')
-            ->once()
-            ->with('tweakwise_upsell_template')
-            ->andReturn(77);
+        $product = $this->createMock(Product::class);
+        $product->method('getData')->willReturnMap([
+            ['tweakwise_upsell_template', 77],
+        ]);
 
-        $this->registry->shouldNotReceive('registry');
-        $this->categoryCollectionFactory->shouldNotReceive('create');
-        $this->categoryRepository->shouldNotReceive('get');
+        $this->registry->expects($this->never())->method('registry');
+        $this->categoryCollectionFactory->expects($this->never())->method('create');
+        $this->categoryRepository->expects($this->never())->method('get');
 
         $this->assertSame(77, $this->subject->forProduct($product, 'upsell'));
     }
@@ -138,20 +131,21 @@ class TemplateFinderTest extends Unit
     {
         $type = 'upsell';
 
-        $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getData')->with('tweakwise_upsell_template')->andReturn(0);
-        $product->shouldReceive('getCategory')->andReturn(null);
-        $product->shouldReceive('getCategoryIds')->andReturn([]);
+        $product = $this->createMock(Product::class);
+        $product->method('getData')->willReturnMap([
+            ['tweakwise_upsell_template', 0],
+        ]);
+        $product->method('getCategory')->willReturn(null);
+        $product->method('getCategoryIds')->willReturn([]);
 
-        $this->registry->shouldReceive('registry')->with('current_category')->andReturn(null);
+        $this->registry->method('registry')->with('current_category')->willReturn(null);
 
-        $this->config->shouldReceive('getRecommendationsTemplate')
-            ->once()
+        $this->config->method('getRecommendationsTemplate')
             ->with($type)
-            ->andReturn(19);
+            ->willReturn(19);
 
-        $this->categoryCollectionFactory->shouldNotReceive('create');
-        $this->categoryRepository->shouldNotReceive('get');
+        $this->categoryCollectionFactory->expects($this->never())->method('create');
+        $this->categoryRepository->expects($this->never())->method('get');
 
         $this->assertSame(19, $this->subject->forProduct($product, $type));
     }
@@ -163,12 +157,14 @@ class TemplateFinderTest extends Unit
         $groupAttribute = 'tweakwise_upsell_group_code';
         $pathIds = [13, 10, 2, 1];
 
-        $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getData')->with($attribute)->andReturn(0);
-        $product->shouldReceive('getCategory')->andReturn($this->createPathCategory(array_reverse($pathIds)));
-        $product->shouldReceive('getCategoryIds')->andReturn([]);
+        $product = $this->createMock(Product::class);
+        $product->method('getData')->willReturnMap([
+            [$attribute, 0],
+        ]);
+        $product->method('getCategory')->willReturn($this->createPathCategory(array_reverse($pathIds)));
+        $product->method('getCategoryIds')->willReturn([]);
 
-        $this->registry->shouldReceive('registry')->with('current_category')->andReturn(null);
+        $this->registry->method('registry')->with('current_category')->willReturn(null);
 
         $collection = $this->createCategoryCollection(
             [
@@ -176,7 +172,7 @@ class TemplateFinderTest extends Unit
             ],
         );
 
-        $this->categoryCollectionFactory->shouldReceive('create')->andReturn($collection);
+        $this->categoryCollectionFactory->method('create')->willReturn($collection);
 
         $result = $this->subject->forProduct($product, $type);
 
@@ -189,10 +185,10 @@ class TemplateFinderTest extends Unit
         $this->capturedSelectedAttributes = [];
         $this->capturedPathFilter = [];
 
-        $collection = Mockery::mock(CategoryCollection::class);
+        $collection = $this->createMock(CategoryCollection::class);
 
-        $collection->shouldReceive('addAttributeToFilter')
-            ->andReturnUsing(function (string $attribute, array $condition) use ($collection): CategoryCollection {
+        $collection->method('addAttributeToFilter')
+            ->willReturnCallback(function (string $attribute, array $condition) use ($collection): CategoryCollection {
                 if ($attribute === 'entity_id') {
                     $this->capturedPathFilter = $condition['in'] ?? [];
                 }
@@ -200,8 +196,8 @@ class TemplateFinderTest extends Unit
                 return $collection;
             });
 
-        $collection->shouldReceive('addAttributeToSelect')
-            ->andReturnUsing(function ($attribute) use ($collection): CategoryCollection {
+        $collection->method('addAttributeToSelect')
+            ->willReturnCallback(function ($attribute) use ($collection): CategoryCollection {
                 foreach ((array) $attribute as $selectedAttribute) {
                     $this->capturedSelectedAttributes[] = (string) $selectedAttribute;
                 }
@@ -209,24 +205,24 @@ class TemplateFinderTest extends Unit
                 return $collection;
             });
 
-        $collection->shouldReceive('getIterator')->andReturn(new ArrayIterator($categories));
+        $collection->method('getIterator')->willReturn(new ArrayIterator($categories));
 
         return $collection;
     }
 
     private function createPathCategory(array $pathIds): Category
     {
-        $category = Mockery::mock(Category::class);
-        $category->shouldReceive('getPathIds')->andReturn($pathIds);
+        $category = $this->createMock(Category::class);
+        $category->method('getPathIds')->willReturn($pathIds);
 
         return $category;
     }
 
     private function createLoadedCategory(int $id, array $attributes): Category
     {
-        $category = Mockery::mock(Category::class);
-        $category->shouldReceive('getId')->andReturn($id);
-        $category->shouldReceive('getData')->andReturnUsing(
+        $category = $this->createMock(Category::class);
+        $category->method('getId')->willReturn($id);
+        $category->method('getData')->willReturnCallback(
             static fn (string $attribute): int|string|null => $attributes[$attribute] ?? null,
         );
 

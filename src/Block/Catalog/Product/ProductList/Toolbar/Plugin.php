@@ -94,6 +94,10 @@ class Plugin
             $result[$field->getUrlValue()] = $field->getDisplayTitle();
         }
 
+        if (empty($result)) {
+            return $proceed();
+        }
+
         return $result;
     }
 

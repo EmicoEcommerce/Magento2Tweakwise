@@ -30,42 +30,18 @@ class FilterSlugManagerTest extends Unit
 
     protected UnitTester $tester;
 
-    /**
-     * @var TranslitUrl&MockInterface
-     */
     private TranslitUrl&MockInterface $translitUrl;
-
-    /**
-     * @var AttributeSlugRepositoryInterface&MockInterface
-     */
     private AttributeSlugRepositoryInterface&MockInterface $attributeSlugRepository;
-
-    /**
-     * @var AttributeSlugInterfaceFactory&MockInterface
-     */
     private AttributeSlugInterfaceFactory&MockInterface $attributeSlugFactory;
-
-    /**
-     * @var CacheInterface&MockInterface
-     */
     private CacheInterface&MockInterface $cache;
-
-    /**
-     * @var StoreManagerInterface&MockInterface
-     */
     private StoreManagerInterface&MockInterface $storeManager;
 
     private FilterSlugManager $subject;
 
     private Json $serializer;
 
-    /**
-     * @return void
-     */
-    protected function setUp(): void
+    protected function _before(): void
     {
-        parent::setUp();
-
         $store = Mockery::mock(StoreInterface::class);
         $store->shouldReceive('getId')->andReturn(1);
 
@@ -77,19 +53,16 @@ class FilterSlugManagerTest extends Unit
         $this->storeManager->shouldReceive('getStore')->andReturn($store);
         $this->serializer = new Json();
 
-        $this->subject = new FilterSlugManager(
-            $this->translitUrl,
-            $this->attributeSlugRepository,
-            $this->attributeSlugFactory,
-            $this->cache,
-            $this->serializer,
-            $this->storeManager,
-        );
+        $this->tester->mockService(TranslitUrl::class, $this->translitUrl);
+        $this->tester->mockService(AttributeSlugRepositoryInterface::class, $this->attributeSlugRepository);
+        $this->tester->mockService(AttributeSlugInterfaceFactory::class, $this->attributeSlugFactory);
+        $this->tester->mockService(CacheInterface::class, $this->cache);
+        $this->tester->mockService(StoreManagerInterface::class, $this->storeManager);
+        $this->tester->mockService(Json::class, $this->serializer);
+
+        $this->subject = $this->tester->getObjectManager()->get(FilterSlugManager::class);
     }
 
-    /**
-     * @return void
-     */
     public function testGetSlugForFilterItemCachesSavedSlugInMemory(): void
     {
         $this->cache
@@ -126,9 +99,6 @@ class FilterSlugManagerTest extends Unit
         $this->assertSame('color', $this->subject->getSlugForFilterItem($filterItem));
     }
 
-    /**
-     * @return void
-     */
     public function testCreateFilterSlugByOptionInitializesLookupTableAndUpdatesInMemoryMapping(): void
     {
         $this->cache
@@ -166,9 +136,6 @@ class FilterSlugManagerTest extends Unit
         $this->assertSame('blue', $this->subject->getAttributeBySlug('blue'));
     }
 
-    /**
-     * @return void
-     */
     public function testTruncateSlugTableReloadsLookupTableFromDatabase(): void
     {
         $this->cache
@@ -197,7 +164,10 @@ class FilterSlugManagerTest extends Unit
         $searchResults = Mockery::mock(AttributeSlugSearchResultsInterface::class);
         $searchResults->shouldReceive('getItems')->once()->andReturn([$attributeSlug]);
 
-        $this->attributeSlugRepository->shouldReceive('getList')->once()->andReturn($searchResults);
+        $this->attributeSlugRepository
+            ->shouldReceive('getList')
+            ->once()
+            ->andReturn($searchResults);
 
         $this->assertSame([1 => ['color' => 'old-slug']], $this->subject->getLookupTable());
 

@@ -24,58 +24,31 @@ class AttributeSlugRepositoryTest extends Unit
 
     protected UnitTester $tester;
 
-    /**
-     * @var AttributeSlugResource&MockInterface
-     */
     private AttributeSlugResource&MockInterface $resource;
-
-    /**
-     * @var AttributeSlugInterfaceFactory&MockInterface
-     */
     private AttributeSlugInterfaceFactory&MockInterface $entityFactory;
-
-    /**
-     * @var CollectionFactory&MockInterface
-     */
     private CollectionFactory&MockInterface $collectionFactory;
-
-    /**
-     * @var AttributeSlugSearchResultsInterfaceFactory&MockInterface
-     */
     private AttributeSlugSearchResultsInterfaceFactory&MockInterface $searchResultsFactory;
-
-    /**
-     * @var CollectionProcessorInterface&MockInterface
-     */
     private CollectionProcessorInterface&MockInterface $collectionProcessor;
 
     private AttributeSlugRepository $subject;
 
-    /**
-     * @return void
-     */
-    protected function setUp(): void
+    protected function _before(): void
     {
-        parent::setUp();
-
         $this->resource = Mockery::mock(AttributeSlugResource::class);
         $this->entityFactory = Mockery::mock(AttributeSlugInterfaceFactory::class);
         $this->collectionFactory = Mockery::mock(CollectionFactory::class);
         $this->searchResultsFactory = Mockery::mock(AttributeSlugSearchResultsInterfaceFactory::class);
         $this->collectionProcessor = Mockery::mock(CollectionProcessorInterface::class);
 
-        $this->subject = new AttributeSlugRepository(
-            $this->resource,
-            $this->entityFactory,
-            $this->collectionFactory,
-            $this->searchResultsFactory,
-            $this->collectionProcessor,
-        );
+        $this->tester->mockService(AttributeSlugResource::class, $this->resource);
+        $this->tester->mockService(AttributeSlugInterfaceFactory::class, $this->entityFactory);
+        $this->tester->mockService(CollectionFactory::class, $this->collectionFactory);
+        $this->tester->mockService(AttributeSlugSearchResultsInterfaceFactory::class, $this->searchResultsFactory);
+        $this->tester->mockService(CollectionProcessorInterface::class, $this->collectionProcessor);
+
+        $this->subject = $this->tester->getObjectManager()->get(AttributeSlugRepository::class);
     }
 
-    /**
-     * @return void
-     */
     public function testSaveReusesExistingPrimaryKeyAndSkipsWriteWhenSlugIsUnchanged(): void
     {
         $attributeSlug = Mockery::mock(AttributeSlug::class);
@@ -102,9 +75,6 @@ class AttributeSlugRepositoryTest extends Unit
         $this->assertSame($attributeSlug, $result);
     }
 
-    /**
-     * @return void
-     */
     public function testSaveReusesExistingPrimaryKeyAndPersistsUpdatedSlug(): void
     {
         $attributeSlug = Mockery::mock(AttributeSlug::class);

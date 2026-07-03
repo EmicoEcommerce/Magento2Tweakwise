@@ -1,5 +1,10 @@
 actor: UnitTester
 suite_namespace: Tweakwise\Test\Unit
 modules:
-    # enable helpers as array
-    enabled: []
+    enabled:
+        - \Emico\CodeCept\Module\Magento2
+        - \Emico\CodeCept\Module\Mocking
+    config:
+        \Emico\CodeCept\Module\Mocking:
+            depends:
+                - \Emico\CodeCept\Module\Magento2

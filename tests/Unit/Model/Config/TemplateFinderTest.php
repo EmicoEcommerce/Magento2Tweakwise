@@ -116,9 +116,9 @@ class TemplateFinderTest extends Unit
     public function testForProductUsesProductLevelTemplateBeforeCategories(): void
     {
         $product = $this->createMock(Product::class);
-        $product->method('getData')->willReturnMap([
-            ['tweakwise_upsell_template', 77],
-        ]);
+        $product->method('getData')->willReturnCallback(
+            static fn (string $attribute): int => $attribute === 'tweakwise_upsell_template' ? 77 : 0,
+        );
 
         $this->registry->expects($this->never())->method('registry');
         $this->categoryCollectionFactory->expects($this->never())->method('create');

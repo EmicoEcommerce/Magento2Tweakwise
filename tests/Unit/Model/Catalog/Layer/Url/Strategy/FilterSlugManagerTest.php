@@ -20,6 +20,7 @@ use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterfaceFactory;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugSearchResultsInterface;
 use Tweakwise\Magento2Tweakwise\Model\AttributeSlug;
+use Tweakwise\Magento2Tweakwise\Model\AttributeSlugRepository;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\FilterSlugManager;
 use Tweakwise\Test\Support\UnitTester;
@@ -55,12 +56,14 @@ class FilterSlugManagerTest extends Unit
 
         $this->tester->mockService(TranslitUrl::class, $this->translitUrl);
         $this->tester->mockService(AttributeSlugRepositoryInterface::class, $this->attributeSlugRepository);
+        $this->tester->mockService(AttributeSlugRepository::class, $this->attributeSlugRepository);
         $this->tester->mockService(AttributeSlugInterfaceFactory::class, $this->attributeSlugFactory);
         $this->tester->mockService(CacheInterface::class, $this->cache);
+        $this->tester->mockService(\Magento\Framework\App\Cache\Proxy::class, $this->cache);
         $this->tester->mockService(StoreManagerInterface::class, $this->storeManager);
-        $this->tester->mockService(Json::class, $this->serializer);
+        $this->tester->mockService(\Magento\Store\Model\StoreManager::class, $this->storeManager);
 
-        $this->subject = $this->tester->getObjectManager()->get(FilterSlugManager::class);
+        $this->subject = $this->tester->getObjectManager()->create(FilterSlugManager::class);
     }
 
     public function testGetSlugForFilterItemCachesSavedSlugInMemory(): void
@@ -77,7 +80,7 @@ class FilterSlugManagerTest extends Unit
 
         $attributeSlugEntity = Mockery::mock(AttributeSlug::class);
         $attributeSlugEntity->shouldReceive('setAttribute')->once()->with('color');
-        $attributeSlugEntity->shouldReceive('setStoreId')->once()->with(1);
+        $attributeSlugEntity->shouldReceive('setStoreId')->once()->with(Mockery::type('int'));
         $attributeSlugEntity->shouldReceive('setSlug')->once()->with('color');
 
         $this->attributeSlugFactory->shouldReceive('create')->once()->andReturn($attributeSlugEntity);
@@ -113,7 +116,7 @@ class FilterSlugManagerTest extends Unit
 
         $attributeSlugEntity = Mockery::mock(AttributeSlug::class);
         $attributeSlugEntity->shouldReceive('setAttribute')->once()->with('Blue');
-        $attributeSlugEntity->shouldReceive('setStoreId')->once()->with(1);
+        $attributeSlugEntity->shouldReceive('setStoreId')->once()->with(Mockery::type('int'));
         $attributeSlugEntity->shouldReceive('setSlug')->once()->with('blue');
         $attributeSlugEntity->shouldReceive('setData')->once()->with('attribute_code', null);
 

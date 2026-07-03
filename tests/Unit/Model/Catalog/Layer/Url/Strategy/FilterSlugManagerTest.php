@@ -9,11 +9,13 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use Magento\Eav\Model\Entity\Attribute\Option;
+use Magento\Framework\App\Cache\Proxy as CacheProxy;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Filter\TranslitUrl;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Api\AttributeSlugRepositoryInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\AttributeSlugInterface;
@@ -59,9 +61,9 @@ class FilterSlugManagerTest extends Unit
         $this->tester->mockService(AttributeSlugRepository::class, $this->attributeSlugRepository);
         $this->tester->mockService(AttributeSlugInterfaceFactory::class, $this->attributeSlugFactory);
         $this->tester->mockService(CacheInterface::class, $this->cache);
-        $this->tester->mockService(\Magento\Framework\App\Cache\Proxy::class, $this->cache);
+        $this->tester->mockService(CacheProxy::class, $this->cache);
         $this->tester->mockService(StoreManagerInterface::class, $this->storeManager);
-        $this->tester->mockService(\Magento\Store\Model\StoreManager::class, $this->storeManager);
+        $this->tester->mockService(StoreManager::class, $this->storeManager);
 
         $this->subject = $this->tester->getObjectManager()->create(FilterSlugManager::class);
     }

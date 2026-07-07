@@ -6,6 +6,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Config;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Framework\Registry;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -121,37 +122,62 @@ class TemplateFinder
     {
         $attribute = $this->getAttribute($type);
         $groupAttribute = $this->getGroupCodeAttribute($type);
-
-        // getPathIds() splits the already-loaded `path` field (e.g. "1/2/5/12") — no DB call.
-        // Reverse so we walk from the category itself up to the root.
         $pathIds = array_reverse($category->getPathIds());
 
-        $collection = $this->categoryCollectionFactory->create();
-        $collection->addAttributeToFilter('entity_id', ['in' => $pathIds]);
-        $collection->addAttributeToSelect($attribute);
-        $collection->addAttributeToSelect($groupAttribute);
+        $collection = $this->categoryCollectionFactory->create()
+            ->addAttributeToFilter('entity_id', ['in' => $pathIds])
+            ->addAttributeToSelect([$attribute, $groupAttribute]);
 
         /** @var array<int, Category> $categoriesById */
+        $categoriesById = $this->createCategoriesByIdLookup($collection);
+
+        foreach ($pathIds as $pathId) {
+            $pathCategory = $categoriesById[(int) $pathId] ?? null;
+
+            if (!$pathCategory) {
+                continue;
+            }
+
+            $value = $this->resolveRecommendationValue(
+                $pathCategory,
+                $attribute,
+                $groupAttribute,
+            );
+
+            if ($value !== null) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array<int, Category>
+     */
+    private function createCategoriesByIdLookup(Collection $collection): array
+    {
         $categoriesById = [];
         foreach ($collection as $item) {
             $categoriesById[(int) $item->getId()] = $item;
         }
 
-        foreach ($pathIds as $pathId) {
-            $pathId = (int) $pathId;
-            if (!isset($categoriesById[$pathId])) {
-                continue;
-            }
+        return $categoriesById;
+    }
 
-            $templateId = (int) $categoriesById[$pathId]->getData($attribute);
+    /**
+     * @return int|string|null
+     */
+    private function resolveRecommendationValue(Category $category, string $attribute, string $groupAttribute)
+    {
+        $templateId = (int) $category->getData($attribute);
 
-            if ($templateId === RecommendationOption::OPTION_CODE) {
-                return (string) $categoriesById[$pathId]->getData($groupAttribute);
-            }
+        if ($templateId === RecommendationOption::OPTION_CODE) {
+            return (string) $category->getData($groupAttribute);
+        }
 
-            if ($templateId) {
-                return $templateId;
-            }
+        if ($templateId) {
+            return $templateId;
         }
 
         return null;

@@ -356,7 +356,6 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $values[] = $value;
         }
 
-        // @phpstan-ignore-next-line
         foreach ($values as $key => $value) {
             $queryUrl = str_replace('__VALUE.' . $key . '__', $value, $queryUrl);
         }

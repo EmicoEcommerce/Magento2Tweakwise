@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Controller\Ajax;
 
 use Emico\CodeCept\Test\Unit;
-use InvalidArgumentException;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\Result\JsonFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tweakwise\Magento2Tweakwise\Controller\Ajax\ProductCount;
 use Tweakwise\Magento2Tweakwise\Model\AjaxProductCountResult;
@@ -25,6 +26,10 @@ class ProductCountTest extends Unit
 
     private HashInputProvider&MockObject $hashInputProvider;
 
+    private JsonFactory&MockObject $resultJsonFactory;
+
+    private Json&MockObject $jsonResult;
+
     private AjaxProductCountResult&MockObject $result;
 
     private CountInitializerInterface&MockObject $initializer;
@@ -36,6 +41,8 @@ class ProductCountTest extends Unit
         $this->context = $this->createMock(Context::class);
         $this->request = $this->createMock(RequestInterface::class);
         $this->hashInputProvider = $this->createMock(HashInputProvider::class);
+        $this->resultJsonFactory = $this->createMock(JsonFactory::class);
+        $this->jsonResult = $this->createMock(Json::class);
         $this->result = $this->createMock(AjaxProductCountResult::class);
         $this->initializer = $this->createMock(CountInitializerInterface::class);
 
@@ -62,6 +69,7 @@ class ProductCountTest extends Unit
 
         $subject = new ProductCount(
             $this->context,
+            $this->resultJsonFactory,
             $this->result,
             $this->hashInputProvider,
             ['category' => $this->initializer],
@@ -70,26 +78,37 @@ class ProductCountTest extends Unit
         $this->assertSame($this->result, $subject->execute());
     }
 
-    public function testExecuteRejectsInvalidHash(): void
+    public function testExecuteReturnsBadRequestJsonForInvalidHash(): void
     {
         $this->hashInputProvider->expects($this->once())
             ->method('validateHash')
             ->with($this->request)
             ->willReturn(false);
 
+        $this->resultJsonFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->jsonResult);
+        $this->jsonResult->expects($this->once())
+            ->method('setHttpResponseCode')
+            ->with(400)
+            ->willReturnSelf();
+        $this->jsonResult->expects($this->once())
+            ->method('setData')
+            ->with(['error' => 'Incorrect/modified form parameters'])
+            ->willReturnSelf();
+
         $subject = new ProductCount(
             $this->context,
+            $this->resultJsonFactory,
             $this->result,
             $this->hashInputProvider,
             ['category' => $this->initializer],
         );
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Incorrect/modified form parameters');
-        $subject->execute();
+        $this->assertSame($this->jsonResult, $subject->execute());
     }
 
-    public function testExecuteRejectsUnknownType(): void
+    public function testExecuteReturnsBadRequestJsonForUnknownType(): void
     {
         $this->request->expects($this->once())
             ->method('getParam')
@@ -99,16 +118,26 @@ class ProductCountTest extends Unit
             ->method('validateHash')
             ->with($this->request)
             ->willReturn(true);
+        $this->resultJsonFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->jsonResult);
+        $this->jsonResult->expects($this->once())
+            ->method('setHttpResponseCode')
+            ->with(400)
+            ->willReturnSelf();
+        $this->jsonResult->expects($this->once())
+            ->method('setData')
+            ->with(['error' => 'No product count initializer found for type missing'])
+            ->willReturnSelf();
 
         $subject = new ProductCount(
             $this->context,
+            $this->resultJsonFactory,
             $this->result,
             $this->hashInputProvider,
             ['category' => $this->initializer],
         );
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No product count initializer found for type missing');
-        $subject->execute();
+        $this->assertSame($this->jsonResult, $subject->execute());
     }
 }

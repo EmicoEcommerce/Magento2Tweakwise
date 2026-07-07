@@ -105,7 +105,12 @@ class AjaxNavigationResult extends Layout
         $url  = $this->getResponseUrl();
         $productCount = $this->getProductCount();
 
-        $responseData = $this->serializer->serialize(['url' => $url, 'html' => $html, 'product_count' => $productCount]);
+        $response = ['url' => $url, 'html' => $html];
+        if ($productCount !== null) {
+            $response['product_count'] = $productCount;
+        }
+
+        $responseData = $this->serializer->serialize($response);
         $this->translateInline->processResponseBody($responseData, true);
 
         if (!$this->isResponseCacheable()) {
@@ -120,10 +125,14 @@ class AjaxNavigationResult extends Layout
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getProductCount(): int
+    public function getProductCount(): ?int
     {
+        if (!$this->config->isFormFilters()) {
+            return null;
+        }
+
         $layer = $this->layerResolver->get();
         return (int) $layer->getProductCollection()->getSize();
     }

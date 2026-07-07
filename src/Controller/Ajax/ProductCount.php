@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\Controller\Ajax;
 
 use InvalidArgumentException;
-use Tweakwise\Magento2Tweakwise\Model\AjaxProductCountResult;
-use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CountInitializerInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Tweakwise\Magento2Tweakwise\Model\AjaxProductCountResult;
+use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CountInitializerInterface;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
 
 /**
@@ -22,12 +25,14 @@ class ProductCount extends Action
 {
     /**
      * @param Context $context
+     * @param JsonFactory $resultJsonFactory
      * @param AjaxProductCountResult $ajaxProductCountResult
      * @param HashInputProvider $hashInputProvider
      * @param CountInitializerInterface[] $initializerMap
      */
     public function __construct(
         Context $context,
+        private readonly JsonFactory $resultJsonFactory,
         private readonly AjaxProductCountResult $ajaxProductCountResult,
         private readonly HashInputProvider $hashInputProvider,
         private readonly array $initializerMap,
@@ -45,18 +50,32 @@ class ProductCount extends Action
         $hashIsValid = $this->hashInputProvider->validateHash($request);
 
         if (!$hashIsValid) {
-            throw new InvalidArgumentException('Incorrect/modified form parameters');
+            return $this->getBadRequestJsonResult('Incorrect/modified form parameters');
         }
 
         $type = $request->getParam('__tw_ajax_type');
 
         if (!isset($this->initializerMap[$type])) {
-            throw new InvalidArgumentException('No product count initializer found for type ' . $type);
+            return $this->getBadRequestJsonResult('No product count initializer found for type ' . $type);
         }
 
-        $count = $this->initializerMap[$type]->initializeForCount($request);
+        try {
+            $count = $this->initializerMap[$type]->initializeForCount($request);
+        } catch (NoSuchEntityException|InvalidArgumentException $exception) {
+            return $this->getBadRequestJsonResult($exception->getMessage());
+        }
+
         $this->ajaxProductCountResult->setCount($count);
 
         return $this->ajaxProductCountResult;
+    }
+
+    private function getBadRequestJsonResult(string $message): Json
+    {
+        $result = $this->resultJsonFactory->create();
+        $result->setHttpResponseCode(400);
+        $result->setData(['error' => $message]);
+
+        return $result;
     }
 }

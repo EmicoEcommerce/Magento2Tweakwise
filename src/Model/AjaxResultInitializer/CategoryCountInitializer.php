@@ -7,7 +7,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
-use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
@@ -20,26 +19,8 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
  * Applies filter query params directly to the NavigationContext so that the
  * count reflects the current checkbox selection, regardless of the URL strategy.
  */
-class CategoryCountInitializer implements CountInitializerInterface
+class CategoryCountInitializer extends AbstractCountInitializer
 {
-    /**
-     * Query parameters that carry Tweakwise system data or Magento toolbar state,
-     * not user-selected attribute filter values.
-     */
-    private const IGNORED_PARAMS = [
-        '__tw_ajax_type',
-        '__tw_object_id',
-        '__tw_original_url',
-        '__tw_hash',
-        'p',
-        'product_list_order',
-        'product_list_limit',
-        'product_list_mode',
-        'q',
-        '_',
-        'categorie',
-    ];
-
     /**
      * @param Registry $registry
      * @param CategoryRepositoryInterface $categoryRepository
@@ -64,7 +45,7 @@ class CategoryCountInitializer implements CountInitializerInterface
         $this->navigationContext->getRequest()->addCategoryFilter(
             $category instanceof Category ? $category : (int) $category->getId()
         );
-        $this->applyFilterParams($request);
+        $this->applyFilterParams($request, $this->navigationContext);
 
         /** @var PropertiesType $properties */
         $properties = $this->navigationContext->getResponse()->getValue('properties');
@@ -84,44 +65,14 @@ class CategoryCountInitializer implements CountInitializerInterface
             return $existing;
         }
 
-        $categoryId = (int) $request->getParam('__tw_object_id') !== 0
-            ? (int) $request->getParam('__tw_object_id')
-            : 2;
+        $categoryId = (int) $request->getParam('__tw_object_id');
+        if ($categoryId === 0) {
+            throw new NoSuchEntityException(__('No category provided for product count request.'));
+        }
+
         $category = $this->categoryRepository->get($categoryId);
         $this->registry->register('current_category', $category);
 
         return $category;
-    }
-
-    /**
-     * Reads attribute filter values from the query string and applies them directly
-     * to the Tweakwise navigation request, bypassing the URL strategy.
-     * This ensures the count reflects all checked checkboxes in the form.
-     *
-     * @param RequestInterface $request
-     * @return void
-     */
-    private function applyFilterParams(RequestInterface $request): void
-    {
-        if (!$request instanceof MagentoHttpRequest) {
-            return;
-        }
-
-        $navigationRequest = $this->navigationContext->getRequest();
-
-        foreach ($request->getQuery() as $attribute => $value) {
-            if (in_array(strtolower((string) $attribute), self::IGNORED_PARAMS, true)) {
-                continue;
-            }
-
-            $values = is_array($value) ? $value : [$value];
-            foreach ($values as $singleValue) {
-                if ($singleValue === '' || $singleValue === null) {
-                    continue;
-                }
-
-                $navigationRequest->addAttributeFilter((string) $attribute, $singleValue);
-            }
-        }
     }
 }

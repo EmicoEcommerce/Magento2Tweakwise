@@ -61,7 +61,7 @@ class ProductCount extends Action
 
         try {
             $count = $this->initializerMap[$type]->initializeForCount($request);
-        } catch (NoSuchEntityException|InvalidArgumentException $exception) {
+        } catch (NoSuchEntityException | InvalidArgumentException $exception) {
             return $this->getBadRequestJsonResult($exception->getMessage());
         }
 

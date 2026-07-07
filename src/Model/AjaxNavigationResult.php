@@ -105,12 +105,12 @@ class AjaxNavigationResult extends Layout
         $url  = $this->getResponseUrl();
         $productCount = $this->getProductCount();
 
-        $response = ['url' => $url, 'html' => $html];
+        $responsePayload = ['url' => $url, 'html' => $html];
         if ($productCount !== null) {
-            $response['product_count'] = $productCount;
+            $responsePayload['product_count'] = $productCount;
         }
 
-        $responseData = $this->serializer->serialize($response);
+        $responseData = $this->serializer->serialize($responsePayload);
         $this->translateInline->processResponseBody($responseData, true);
 
         if (!$this->isResponseCacheable()) {

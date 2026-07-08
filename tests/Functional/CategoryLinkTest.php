@@ -30,7 +30,12 @@ class CategoryLinkTest extends Unit
      */
     public function _before(): void
     {
-        $this->category = new CategoryFixture('Women Tops');
+        /** @var CategoryFixture $category */
+        $category = $this->tester->getObjectManager()->create(
+            CategoryFixture::class,
+            ['name' => 'Women Tops']
+        );
+        $this->category = $category;
         $this->tester->createFixture($this->category);
 
         $this->tester->mockConfig('tweakwise/general/enabled', '1');
@@ -174,7 +179,8 @@ class CategoryLinkTest extends Unit
             ],
         ];
 
-        $facet = new FacetType($facetData);
+        /** @var FacetType $facet */
+        $facet = $this->tester->getObjectManager()->create(FacetType::class, ['data' => $facetData]);
 
         /** @var ProductNavigationResponse $response */
         $response = $this->tester->getObjectManager()->create(

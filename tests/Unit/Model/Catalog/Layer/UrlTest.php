@@ -9,7 +9,6 @@ use Exception;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Mockery;
-use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
@@ -30,34 +29,11 @@ class UrlTest extends Unit
 {
     protected UnitTester $tester;
 
-    /**
-     * @var UrlStrategyFactory|MockInterface
-     */
-    private UrlStrategyFactory|MockInterface $urlStrategyFactory;
-
-    /**
-     * @var MagentoHttpRequest|MockInterface
-     */
-    private MagentoHttpRequest|MockInterface $request;
-
-    /**
-     * @var Config|MockInterface
-     */
-    private Config|MockInterface $config;
-
-    /**
-     * @var CurrentContext|MockInterface
-     */
-    private CurrentContext|MockInterface $currentContext;
-
-    /**
-     * @var CategoryUrlInterface|MockInterface
-     */
-    private CategoryUrlInterface|MockInterface $categoryUrlStrategy;
-
-    /**
-     * @var Url
-     */
+    private UrlStrategyFactory $urlStrategyFactory;
+    private MagentoHttpRequest $request;
+    private Config $config;
+    private CurrentContext $currentContext;
+    private CategoryUrlInterface $categoryUrlStrategy;
     private Url $subject;
 
     /**
@@ -105,7 +81,6 @@ class UrlTest extends Unit
     {
         $item = $this->createCategoryItem('https://magento2.test/default/women/tops-women2/');
         $this->config->shouldReceive('isCategoryUrlFromTweakwiseEnabled')->andReturn(false);
-        $this->currentContext->shouldNotReceive('getRequest');
         $this->urlStrategyFactory
             ->shouldReceive('create')
             ->with(CategoryUrlInterface::class)
@@ -129,7 +104,6 @@ class UrlTest extends Unit
     {
         $item = $this->createCategoryItem('');
         $this->config->shouldReceive('isCategoryUrlFromTweakwiseEnabled')->andReturn(true);
-        $this->currentContext->shouldNotReceive('getRequest');
         $this->urlStrategyFactory
             ->shouldReceive('create')
             ->with(CategoryUrlInterface::class)
@@ -196,14 +170,15 @@ class UrlTest extends Unit
 
     /**
      * @param string $link
-     * @return Item|MockInterface
+     * @return Item
      */
-    private function createCategoryItem(string $link): Item|MockInterface
+    private function createCategoryItem(string $link): Item
     {
-        $settings = new SettingsType(['source' => SettingsType::SOURCE_CATEGORY]);
+        $settings = Mockery::mock(SettingsType::class);
+        $settings->shouldReceive('getSource')->andReturn(SettingsType::SOURCE_CATEGORY);
 
-        $facetType = new FacetType();
-        $facetType->setFacetSettings($settings);
+        $facetType = Mockery::mock(FacetType::class);
+        $facetType->shouldReceive('getFacetSettings')->andReturn($settings);
 
         $filter = Mockery::mock(Filter::class);
         $filter->shouldReceive('getFacet')->andReturn($facetType);

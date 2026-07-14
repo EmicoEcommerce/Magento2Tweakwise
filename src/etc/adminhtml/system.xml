@@ -37,6 +37,10 @@
                     <label>Language</label>
                     <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\Language</source_model>
                 </field>
+                <field id="internal_ip_addresses" translate="label,comment" type="textarea" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Internal traffic IP addresses</label>
+                    <comment>Comma-separated list of IP addresses. Requests from these IPs will be tagged with TWN-Source: Internal-Traffic in Tweakwise API calls, allowing you to filter them from Tweakwise Analytics reports.</comment>
+                </field>
             </group>
             <group id="layered" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Layered navigation</label>

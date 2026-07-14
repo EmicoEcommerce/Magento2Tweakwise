@@ -71,7 +71,7 @@ class CurrentContext
      */
     public function getTweakwiseRequestId(): string
     {
-        $headers = $this->getContext()->getResponse()->getValue('headers');
+        $headers = $this->getContext()->getResponse()->getValue('headers') ?? [];
         $normalized = array_change_key_case($headers, CASE_LOWER);
 
         return $normalized['twn-request-id'][0] ?? '';

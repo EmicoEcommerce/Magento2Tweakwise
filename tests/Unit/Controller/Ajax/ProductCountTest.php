@@ -7,6 +7,7 @@ namespace Tweakwise\Test\Unit\Controller\Ajax;
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Mockery;
@@ -46,7 +47,7 @@ class ProductCountTest extends Unit
         $this->initializer = Mockery::mock(CountInitializerInterface::class);
 
         $this->context->shouldReceive('getRequest')->andReturn($this->request);
-        $this->context->shouldReceive('getResponse')->andReturn(Mockery::mock(\Magento\Framework\App\ResponseInterface::class));
+        $this->context->shouldReceive('getResponse')->andReturn(Mockery::mock(ResponseInterface::class));
     }
 
     public function _after(): void

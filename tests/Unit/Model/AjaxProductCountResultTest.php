@@ -7,7 +7,8 @@ namespace Tweakwise\Test\Unit\Model;
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\App\Response\HttpInterface;
 use Magento\Framework\Serialize\Serializer\Json;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery;
+use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Model\AjaxProductCountResult;
 use Tweakwise\Test\Support\UnitTester;
 
@@ -15,35 +16,38 @@ class AjaxProductCountResultTest extends Unit
 {
     protected UnitTester $tester;
 
-    private Json&MockObject $serializer;
+    private Json&MockInterface $serializer;
 
     /** @var array<int, array{0: string, 1: string, 2: bool}> */
     private array $headers = [];
 
-    protected function setUp(): void
+    public function _before(): void
     {
-        parent::setUp();
+        $this->serializer = Mockery::mock(Json::class);
+        $this->headers = [];
+    }
 
-        $this->serializer = $this->createMock(Json::class);
+    public function _after(): void
+    {
+        Mockery::close();
     }
 
     public function testRenderWritesProductCountJson(): void
     {
-        $response = $this->createMock(HttpInterface::class);
-        $this->headers = [];
-        $response->expects($this->exactly(2))
-            ->method('setHeader')
-            ->willReturnCallback(function (string $name, string $value, bool $replace): void {
+        $response = Mockery::mock(HttpInterface::class);
+        $response->shouldReceive('setHeader')
+            ->twice()
+            ->andReturnUsing(function (string $name, string $value, bool $replace): void {
                 $this->headers[] = [$name, $value, $replace];
             });
-        $response->expects($this->once())
-            ->method('appendBody')
+        $response->shouldReceive('appendBody')
+            ->once()
             ->with('{"product_count":42}');
 
-        $this->serializer->expects($this->once())
-            ->method('serialize')
+        $this->serializer->shouldReceive('serialize')
+            ->once()
             ->with(['product_count' => 42])
-            ->willReturn('{"product_count":42}');
+            ->andReturn('{"product_count":42}');
 
         $subject = new class ($this->serializer) extends AjaxProductCountResult {
             public function renderPublic(HttpInterface $response): static

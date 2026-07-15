@@ -9,7 +9,8 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\UrlInterface;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery;
+use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
@@ -22,47 +23,50 @@ class NavigationConfigTest extends Unit
 {
     protected UnitTester $tester;
 
-    private PersonalMerchandisingConfig&MockObject $config;
+    private PersonalMerchandisingConfig&MockInterface $config;
 
-    private UrlInterface&MockObject $url;
+    private UrlInterface&MockInterface $url;
 
-    private CurrentContext&MockObject $currentContext;
+    private CurrentContext&MockInterface $currentContext;
 
-    private ProductMetadataInterface&MockObject $productMetadata;
+    private ProductMetadataInterface&MockInterface $productMetadata;
 
-    private FilterFormInputProviderInterface&MockObject $filterFormInputProvider;
+    private FilterFormInputProviderInterface&MockInterface $filterFormInputProvider;
 
-    private Json&MockObject $jsonSerializer;
+    private Json&MockInterface $jsonSerializer;
 
-    private Http&MockObject $request;
+    private Http&MockInterface $request;
 
-    private HashInputProvider&MockObject $hashInputProvider;
+    private HashInputProvider&MockInterface $hashInputProvider;
 
-    protected function setUp(): void
+    public function _before(): void
     {
-        parent::setUp();
+        $this->config = Mockery::mock(PersonalMerchandisingConfig::class);
+        $this->url = Mockery::mock(UrlInterface::class);
+        $this->currentContext = Mockery::mock(CurrentContext::class);
+        $this->productMetadata = Mockery::mock(ProductMetadataInterface::class);
+        $this->filterFormInputProvider = Mockery::mock(FilterFormInputProviderInterface::class);
+        $this->jsonSerializer = Mockery::mock(Json::class);
+        $this->request = Mockery::mock(Http::class);
+        $this->hashInputProvider = Mockery::mock(HashInputProvider::class);
+    }
 
-        $this->config = $this->createMock(PersonalMerchandisingConfig::class);
-        $this->url = $this->createMock(UrlInterface::class);
-        $this->currentContext = $this->createMock(CurrentContext::class);
-        $this->productMetadata = $this->createMock(ProductMetadataInterface::class);
-        $this->filterFormInputProvider = $this->createMock(FilterFormInputProviderInterface::class);
-        $this->jsonSerializer = $this->createMock(Json::class);
-        $this->request = $this->createMock(Http::class);
-        $this->hashInputProvider = $this->createMock(HashInputProvider::class);
+    public function _after(): void
+    {
+        Mockery::close();
     }
 
     public function testJsFormConfigIncludesCountEndpoint(): void
     {
-        $this->config->method('isFormFilters')->willReturn(true);
-        $this->config->method('isAjaxFilters')->willReturn(true);
-        $this->config->method('isSeoEnabled')->willReturn(false);
-        $this->config->method('getUrlStrategy')->willReturn(QueryParameterStrategy::class);
-        $this->config->method('isAnalyticsEnabled')->willReturn(true);
-        $this->config->method('isPersonalMerchandisingActive')->willReturn(false);
+        $this->config->shouldReceive('isFormFilters')->andReturn(true);
+        $this->config->shouldReceive('isAjaxFilters')->andReturn(true);
+        $this->config->shouldReceive('isSeoEnabled')->andReturn(false);
+        $this->config->shouldReceive('getUrlStrategy')->andReturn(QueryParameterStrategy::class);
+        $this->config->shouldReceive('isAnalyticsEnabled')->andReturn(true);
+        $this->config->shouldReceive('isPersonalMerchandisingActive')->andReturn(false);
 
-        $this->currentContext->method('getTweakwiseRequestId')->willReturn('request-123');
-        $this->url->method('getUrl')->willReturnCallback(static function (string $route): string {
+        $this->currentContext->shouldReceive('getTweakwiseRequestId')->andReturn('request-123');
+        $this->url->shouldReceive('getUrl')->andReturnUsing(static function (string $route): string {
             return match ($route) {
                 'tweakwise/ajax/navigation' => 'https://example.test/tweakwise/ajax/navigation',
                 'tweakwise/ajax/productcount' => 'https://example.test/tweakwise/ajax/productcount',
@@ -70,7 +74,7 @@ class NavigationConfigTest extends Unit
                 default => 'https://example.test/' . $route,
             };
         });
-        $this->jsonSerializer->method('serialize')->willReturnCallback(
+        $this->jsonSerializer->shouldReceive('serialize')->andReturnUsing(
             static fn(array $data): string => json_encode($data, JSON_THROW_ON_ERROR)
         );
 

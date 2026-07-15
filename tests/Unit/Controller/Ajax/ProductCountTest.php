@@ -9,7 +9,8 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery;
+use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Controller\Ajax\ProductCount;
 use Tweakwise\Magento2Tweakwise\Model\AjaxProductCountResult;
 use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CountInitializerInterface;
@@ -20,51 +21,54 @@ class ProductCountTest extends Unit
 {
     protected UnitTester $tester;
 
-    private Context&MockObject $context;
+    private Context&MockInterface $context;
 
-    private RequestInterface&MockObject $request;
+    private RequestInterface&MockInterface $request;
 
-    private HashInputProvider&MockObject $hashInputProvider;
+    private HashInputProvider&MockInterface $hashInputProvider;
 
-    private JsonFactory&MockObject $resultJsonFactory;
+    private JsonFactory&MockInterface $resultJsonFactory;
 
-    private Json&MockObject $jsonResult;
+    private Json&MockInterface $jsonResult;
 
-    private AjaxProductCountResult&MockObject $result;
+    private AjaxProductCountResult&MockInterface $result;
 
-    private CountInitializerInterface&MockObject $initializer;
+    private CountInitializerInterface&MockInterface $initializer;
 
-    protected function setUp(): void
+    public function _before(): void
     {
-        parent::setUp();
+        $this->context = Mockery::mock(Context::class);
+        $this->request = Mockery::mock(RequestInterface::class);
+        $this->hashInputProvider = Mockery::mock(HashInputProvider::class);
+        $this->resultJsonFactory = Mockery::mock(JsonFactory::class);
+        $this->jsonResult = Mockery::mock(Json::class);
+        $this->result = Mockery::mock(AjaxProductCountResult::class);
+        $this->initializer = Mockery::mock(CountInitializerInterface::class);
 
-        $this->context = $this->createMock(Context::class);
-        $this->request = $this->createMock(RequestInterface::class);
-        $this->hashInputProvider = $this->createMock(HashInputProvider::class);
-        $this->resultJsonFactory = $this->createMock(JsonFactory::class);
-        $this->jsonResult = $this->createMock(Json::class);
-        $this->result = $this->createMock(AjaxProductCountResult::class);
-        $this->initializer = $this->createMock(CountInitializerInterface::class);
+        $this->context->shouldReceive('getRequest')->andReturn($this->request);
+    }
 
-        $this->context->method('getRequest')->willReturn($this->request);
+    public function _after(): void
+    {
+        Mockery::close();
     }
 
     public function testExecuteReturnsJsonResult(): void
     {
-        $this->request->expects($this->once())
-            ->method('getParam')
+        $this->request->shouldReceive('getParam')
+            ->once()
             ->with('__tw_ajax_type')
-            ->willReturn('category');
-        $this->hashInputProvider->expects($this->once())
-            ->method('validateHash')
+            ->andReturn('category');
+        $this->hashInputProvider->shouldReceive('validateHash')
+            ->once()
             ->with($this->request)
-            ->willReturn(true);
-        $this->initializer->expects($this->once())
-            ->method('initializeForCount')
+            ->andReturn(true);
+        $this->initializer->shouldReceive('initializeForCount')
+            ->once()
             ->with($this->request)
-            ->willReturn(27);
-        $this->result->expects($this->once())
-            ->method('setCount')
+            ->andReturn(27);
+        $this->result->shouldReceive('setCount')
+            ->once()
             ->with(27);
 
         $subject = new ProductCount(
@@ -80,22 +84,22 @@ class ProductCountTest extends Unit
 
     public function testExecuteReturnsBadRequestJsonForInvalidHash(): void
     {
-        $this->hashInputProvider->expects($this->once())
-            ->method('validateHash')
+        $this->hashInputProvider->shouldReceive('validateHash')
+            ->once()
             ->with($this->request)
-            ->willReturn(false);
+            ->andReturn(false);
 
-        $this->resultJsonFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($this->jsonResult);
-        $this->jsonResult->expects($this->once())
-            ->method('setHttpResponseCode')
+        $this->resultJsonFactory->shouldReceive('create')
+            ->once()
+            ->andReturn($this->jsonResult);
+        $this->jsonResult->shouldReceive('setHttpResponseCode')
+            ->once()
             ->with(400)
-            ->willReturnSelf();
-        $this->jsonResult->expects($this->once())
-            ->method('setData')
+            ->andReturnSelf();
+        $this->jsonResult->shouldReceive('setData')
+            ->once()
             ->with(['error' => 'Incorrect/modified form parameters'])
-            ->willReturnSelf();
+            ->andReturnSelf();
 
         $subject = new ProductCount(
             $this->context,
@@ -110,25 +114,25 @@ class ProductCountTest extends Unit
 
     public function testExecuteReturnsBadRequestJsonForUnknownType(): void
     {
-        $this->request->expects($this->once())
-            ->method('getParam')
+        $this->request->shouldReceive('getParam')
+            ->once()
             ->with('__tw_ajax_type')
-            ->willReturn('missing');
-        $this->hashInputProvider->expects($this->once())
-            ->method('validateHash')
+            ->andReturn('missing');
+        $this->hashInputProvider->shouldReceive('validateHash')
+            ->once()
             ->with($this->request)
-            ->willReturn(true);
-        $this->resultJsonFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($this->jsonResult);
-        $this->jsonResult->expects($this->once())
-            ->method('setHttpResponseCode')
+            ->andReturn(true);
+        $this->resultJsonFactory->shouldReceive('create')
+            ->once()
+            ->andReturn($this->jsonResult);
+        $this->jsonResult->shouldReceive('setHttpResponseCode')
+            ->once()
             ->with(400)
-            ->willReturnSelf();
-        $this->jsonResult->expects($this->once())
-            ->method('setData')
+            ->andReturnSelf();
+        $this->jsonResult->shouldReceive('setData')
+            ->once()
             ->with(['error' => 'No product count initializer found for type missing'])
-            ->willReturnSelf();
+            ->andReturnSelf();
 
         $subject = new ProductCount(
             $this->context,

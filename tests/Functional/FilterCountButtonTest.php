@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace Tweakwise\Test\Functional;
 
+use Emico\CodeCept\Models\Fixtures\ProductFixture;
 use Emico\CodeCept\Test\Unit;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
+use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 use Tweakwise\Test\Support\FunctionalTester;
 
 class FilterCountButtonTest extends Unit
 {
     protected FunctionalTester $tester;
+
+    private ProductFixture $product;
 
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
@@ -22,6 +26,14 @@ class FilterCountButtonTest extends Unit
      */
     public function _before(): void
     {
+        /** @var ProductFixture $product */
+        $product = $this->tester->getObjectManager()->create(
+            ProductFixture::class,
+            ['sku' => 'tweakwise-filter-count-button-test']
+        );
+        $this->product = $product;
+        $this->tester->createFixture($this->product);
+
         $this->tester->mockConfig('tweakwise/general/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/enabled', '1');
         $this->mockClientWithCheckboxFacet();
@@ -95,16 +107,31 @@ class FilterCountButtonTest extends Unit
         /** @var FacetType $facet */
         $facet = $this->tester->getObjectManager()->create(FacetType::class, ['data' => $facetData]);
 
+        /** @var ItemType $item */
+        $item = $this->tester->getObjectManager()->create(
+            ItemType::class,
+            [
+                'data' => [
+                    ItemType::ID    => $this->product->getId(),
+                    ItemType::TYPE  => 'visual',
+                    ItemType::TITLE => $this->product->getName(),
+                ],
+            ]
+        );
+
+        // Product collection must be non-empty, otherwise Magento's core
+        // Navigation::canShowBlock() hides the whole layered nav block (including the
+        // filter button) regardless of the facets present in the response.
         /** @var ProductNavigationResponse $response */
         $response = $this->tester->getObjectManager()->create(
             ProductNavigationResponse::class,
             [
                 'data' => [
                     'facets'     => [$facet],
-                    'items'      => [],
+                    'items'      => [$item],
                     'properties' => [
-                        'nrofitems'          => 0,
-                        'nrofpages'          => 0,
+                        'nrofitems'          => 1,
+                        'nrofpages'          => 1,
                         'currentpage'        => 1,
                         'nrofitemsperpage'   => 16,
                         'selectedcategoryid' => null,

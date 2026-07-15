@@ -38,7 +38,7 @@ class ProductCountTest extends Unit
 
     public function _before(): void
     {
-        $this->context = Mockery::mock(Context::class);
+        $this->context = Mockery::mock(Context::class)->shouldIgnoreMissing();
         $this->request = Mockery::mock(RequestInterface::class);
         $this->hashInputProvider = Mockery::mock(HashInputProvider::class);
         $this->resultJsonFactory = Mockery::mock(JsonFactory::class);

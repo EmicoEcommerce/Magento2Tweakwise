@@ -37,6 +37,10 @@
                     <label>Language</label>
                     <source_model>Tweakwise\Magento2Tweakwise\Model\Config\Source\Language</source_model>
                 </field>
+                <field id="internal_ip_addresses" translate="label,comment" type="textarea" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Internal traffic IP addresses</label>
+                    <comment>Comma-separated list of IP addresses. Requests from these IPs will be tagged with TWN-Source: Internal-Traffic in Tweakwise API calls, allowing you to filter them from Tweakwise Analytics reports.</comment>
+                </field>
             </group>
             <group id="layered" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Layered navigation</label>
@@ -114,6 +118,14 @@
                     <depends>
                         <field id="enabled">1</field>
                         <field id="default_link_renderer">0</field>
+                    </depends>
+                </field>
+                <field id="use_category_url_from_tweakwise" translate="label,comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use category URL from Tweakwise</label>
+                    <comment>When enabled, category facet links use the URL provided by Tweakwise instead of Magento-generated URLs. Only applies on category pages, not on search results.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
                     </depends>
                 </field>
             </group>

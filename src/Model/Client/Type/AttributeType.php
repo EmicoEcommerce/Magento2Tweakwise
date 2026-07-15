@@ -33,11 +33,11 @@ class AttributeType extends Type
     }
 
     /**
-     * @return string
+     * @return AttributeType[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
-        return $this->getDataValue('children');
+        return $this->getDataValue('children') ?? [];
     }
 
     /**
@@ -80,6 +80,14 @@ class AttributeType extends Type
     public function getUrl()
     {
         return (string) $this->getDataValue('url');
+    }
+
+    /**
+     * @return string
+     */
+    public function getLink(): string
+    {
+        return (string) $this->getDataValue('link');
     }
 
     /**

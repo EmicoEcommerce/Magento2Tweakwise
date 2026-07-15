@@ -74,6 +74,9 @@ class Config
     private const PRODUCT_CARD_LIFETIME_XML_PATH =
         'tweakwise/merchandising_builder/personal_merchandising/product_card_lifetime';
 
+    private const INTERNAL_IP_ADDRESSES_XML_PATH =
+        'tweakwise/general/internal_ip_addresses';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -664,10 +667,32 @@ class Config
     }
 
     /**
+     * @param Store|null $store
+     * @return bool
+     */
+    public function isCategoryUrlFromTweakwiseEnabled(?Store $store = null): bool
+    {
+        return (bool) $this->getStoreConfig('tweakwise/layered/use_category_url_from_tweakwise', $store);
+    }
+
+    /**
      * @return int
      */
     public function getProductCardLifetime(): int
     {
         return (int) $this->config->getValue(self::PRODUCT_CARD_LIFETIME_XML_PATH, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getInternalIpAddresses(): array
+    {
+        $value = $this->getStoreConfig(self::INTERNAL_IP_ADDRESSES_XML_PATH);
+        if (empty($value)) {
+            return [];
+        }
+
+        return array_filter(array_map('trim', explode(',', $value)));
     }
 }

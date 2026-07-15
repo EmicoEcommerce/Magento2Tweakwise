@@ -49,6 +49,7 @@ class FilterCountButtonTest extends Unit
     public function testFilterButtonRendersCountLabelWhenFormFiltersEnabled(): void
     {
         $this->tester->mockConfig('tweakwise/layered/form_filters', '1');
+        $this->tester->clearCache();
 
         $this->tester->amOnPage('/catalogsearch/result/?q=a');
         $this->tester->seeElement('.js-btn-filter[data-count-label]');
@@ -60,6 +61,7 @@ class FilterCountButtonTest extends Unit
     public function testFilterButtonNotRenderedWhenFormFiltersDisabled(): void
     {
         $this->tester->mockConfig('tweakwise/layered/form_filters', '0');
+        $this->tester->clearCache();
 
         $this->tester->amOnPage('/catalogsearch/result/?q=a');
         $this->tester->dontSeeElement('.js-btn-filter[data-count-label]');

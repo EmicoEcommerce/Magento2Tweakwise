@@ -46,6 +46,7 @@ class ProductCountTest extends Unit
         $this->initializer = Mockery::mock(CountInitializerInterface::class);
 
         $this->context->shouldReceive('getRequest')->andReturn($this->request);
+        $this->context->shouldReceive('getResponse')->andReturn(Mockery::mock(\Magento\Framework\App\ResponseInterface::class));
     }
 
     public function _after(): void

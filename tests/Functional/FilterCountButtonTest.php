@@ -7,7 +7,6 @@ namespace Tweakwise\Test\Functional;
 use Emico\CodeCept\Models\Fixtures\ProductFixture;
 use Emico\CodeCept\Test\Unit;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\Layer\FilterList;
 use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Mockery;
@@ -135,7 +134,12 @@ class FilterCountButtonTest extends Unit
             . 'empty database).'
         );
 
-        $filterCount = count($objectManager->get(FilterList::class)->getFilters($layer));
+        // Plain Magento\Catalog\Model\Layer\FilterList can't be instantiated directly -
+        // its FilterableAttributeListInterface argument is only bound for the
+        // "searchFilterList"/"categoryFilterList" virtual types (Magento core
+        // module-catalog/etc/di.xml). This test runs on a search results page, so use
+        // the same virtual type Magento's Navigation block resolves there.
+        $filterCount = count($objectManager->get('searchFilterList')->getFilters($layer));
         $this->assertGreaterThan(
             0,
             $filterCount,

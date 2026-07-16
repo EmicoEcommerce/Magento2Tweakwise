@@ -48,7 +48,7 @@ class FilterSlugManager
     protected $cache;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $lookupTable;
 
@@ -108,6 +108,12 @@ class FilterSlugManager
         $attributeSlugEntity->setStoreId($storeId);
 
         $savedSlug = $this->attributeSlugRepository->save($attributeSlugEntity);
+
+        // Update the in-memory lookup table immediately so subsequent calls in
+        // the same request return the cached value without hitting save() again.
+        $this->lookupTable[$storeId][$attribute] = $savedSlug->getSlug();
+
+        // Invalidate the shared cache so other processes pick up the new slug.
         $this->cache->remove(self::CACHE_KEY);
 
         return $savedSlug->getSlug();
@@ -211,7 +217,12 @@ class FilterSlugManager
         $attributeSlugEntity->setSlug($slug);
         $attributeSlugEntity->setData('attribute_code', $attributeCode); // @phpstan-ignore-line
 
-        $this->attributeSlugRepository->save($attributeSlugEntity);
+        $savedSlug = $this->attributeSlugRepository->save($attributeSlugEntity);
+
+        // Update the in-memory lookup table immediately so subsequent calls in
+        // the same request return the cached value without hitting save() again.
+        $this->lookupTable[$storeId][strtolower($optionLabel)] = $savedSlug->getSlug();
+
         $this->cache->remove(self::CACHE_KEY);
     }
 
@@ -289,6 +300,7 @@ class FilterSlugManager
     public function truncateSlugTable(): void
     {
         $this->attributeSlugRepository->truncateSlugTable();
+        $this->lookupTable = null;
         $this->cache->remove(self::CACHE_KEY);
     }
 
@@ -304,11 +316,21 @@ class FilterSlugManager
             return;
         }
 
+        // Ensure the in-memory table is initialised before we write to it.
+        $this->getLookupTable();
+
         $attributeSlugEntity = $this->attributeSlugFactory->create();
         $attributeSlugEntity->setAttribute($option['label']);
         $attributeSlugEntity->setStoreId((int)$storeId);
         $attributeSlugEntity->setSlug($this->translitUrl->filter($option['label']));
         $attributeSlugEntity->setData('attribute_code', $attributeCode ? $attributeCode : null); // @phpstan-ignore-line
-        $this->attributeSlugRepository->save($attributeSlugEntity);
+
+        $savedSlug = $this->attributeSlugRepository->save($attributeSlugEntity);
+
+        // Update the in-memory lookup table immediately so subsequent calls in
+        // the same request return the cached value without hitting save() again.
+        $this->lookupTable[(int)$storeId][strtolower($option['label'])] = $savedSlug->getSlug();
+
+        $this->cache->remove(self::CACHE_KEY);
     }
 }

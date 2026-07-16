@@ -9,6 +9,9 @@ use Magento\Framework\Composer\ComposerInformation;
 
 class Version implements CommentInterface
 {
+    /**
+     * @param ComposerInformation $composerInformation
+     */
     public function __construct(private readonly ComposerInformation $composerInformation)
     {
     }
@@ -16,11 +19,11 @@ class Version implements CommentInterface
     /**
      * Returns installed Tweakwise module version as comment string.
      *
-     * @param string $elementValue
+     * @param mixed $elementValue
      * @return string
      * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
      */
-    public function getCommentText($elementValue): string
+    public function getCommentText(mixed $elementValue): string
     {
         $installedPackages = $this->composerInformation->getInstalledMagentoPackages();
 

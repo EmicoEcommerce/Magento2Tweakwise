@@ -9,6 +9,7 @@ use Emico\CodeCept\Test\Unit;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
@@ -52,6 +53,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->clearCache();
 
         $this->tester->amOnPage('/catalogsearch/result/?q=a');
+        $this->assertNoTweakwiseFallback();
         $this->tester->seeElement('.js-btn-filter[data-count-label]');
     }
 
@@ -64,7 +66,29 @@ class FilterCountButtonTest extends Unit
         $this->tester->clearCache();
 
         $this->tester->amOnPage('/catalogsearch/result/?q=a');
+        $this->assertNoTweakwiseFallback();
         $this->tester->dontSeeElement('.js-btn-filter[data-count-label]');
+    }
+
+    /**
+     * Fail loudly instead of silently passing/failing via Magento's native Elasticsearch
+     * fallback. If any (unmocked) Tweakwise\Model\Client call fails elsewhere on the page
+     * (autosuggest, recommendations, analytics), Config::setTweakwiseExceptionThrown() is
+     * set and ItemCollectionProvider falls back to native search results instead of using
+     * our mocked facets/items - which behaves differently depending on real DB/index state.
+     *
+     * @return void
+     */
+    private function assertNoTweakwiseFallback(): void
+    {
+        /** @var Config $config */
+        $config = $this->tester->getObjectManager()->get(Config::class);
+        $this->assertFalse(
+            $config->getTweakwiseExceptionTrown(),
+            'Tweakwise client threw an exception somewhere on the page; the test is '
+            . 'exercising Magento\'s native Elasticsearch fallback instead of the mocked '
+            . 'Tweakwise response, which is DB/index-state dependent.'
+        );
     }
 
     /**

@@ -40,6 +40,7 @@ class FilterCountButtonTest extends Unit
 
         $this->tester->mockConfig('tweakwise/general/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/enabled', '1');
+        $this->tester->mockConfig('tweakwise/layered/default_link_renderer', '0');
         // Search results page uses Magento\Catalog\Model\Layer\Search; both the filter
         // list plugin and the item collection provider fall back to native Magento
         // behaviour on search pages unless this is enabled, ignoring the mocked client.

@@ -59,7 +59,13 @@ class FilterCountButtonTest extends Unit
         $this->tester->amOnPage('/catalogsearch/result/?q=a');
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
-        $this->tester->seeElement('.js-btn-filter[data-count-label]');
+        $this->tester->seeElement('#layered-filter-block');
+        $this->tester->seeInSource('"tweakwiseNavigationForm":{"formFilters":true');
+        $this->tester->seeElement('.js-btn-filter');
+
+        $countLabel = $this->tester->grabAttributeFrom('.js-btn-filter', 'data-count-label');
+        $this->assertNotNull($countLabel);
+        $this->assertNotSame('', trim($countLabel));
     }
 
     /**
@@ -72,7 +78,10 @@ class FilterCountButtonTest extends Unit
 
         $this->tester->amOnPage('/catalogsearch/result/?q=a');
         $this->assertNoTweakwiseFallback();
-        $this->tester->dontSeeElement('.js-btn-filter[data-count-label]');
+        $this->assertProductAndFiltersPresent();
+        $this->tester->seeElement('#layered-filter-block');
+        $this->tester->seeInSource('"tweakwiseNavigationForm":{"formFilters":false');
+        $this->tester->dontSeeElement('.js-btn-filter');
     }
 
     /**

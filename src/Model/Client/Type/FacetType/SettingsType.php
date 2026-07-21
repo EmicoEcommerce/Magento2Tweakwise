@@ -13,7 +13,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\Type;
 
 /**
  * @method int getFacetId();
- * @method string getTitle();
  * @method string getSource();
  */
 class SettingsType extends Type
@@ -32,6 +31,20 @@ class SettingsType extends Type
     public const SELECTION_TYPE_CHECKBOX = 'checkbox';
     public const SELECTION_TYPE_COLOR = 'color';
     public const SELECTION_TYPE_TREE = 'tree';
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        $title = $this->getDataValue('title');
+
+        if (is_array($title)) {
+            return '';
+        }
+
+        return (string) $title;
+    }
 
     /**
      * @return string

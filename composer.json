@@ -3,40 +3,48 @@
     "license": "OSL-3.0",
     "description": "Magento 2 module for Tweakwise integration",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-json": "*",
         "ext-pcre": "*",
         "ext-simplexml": "*",
         "ext-libxml": "*",
         "tweakwise/magento2-tweakwise-export": ">=7.8.3",
         "guzzlehttp/guzzle": ">=6.0",
-        "guzzlehttp/promises": ">=1.4"
+        "guzzlehttp/promises": ">=1.4",
+        "magento/module-layered-navigation": "^100.4",
+        "magento/module-swatches": "*",
+        "magento/module-search": "^101.1",
+        "magento/module-grouped-product": "*"
     },
     "type": "magento2-module",
     "autoload": {
         "files": [
-            "registration.php"
+            "src/registration.php"
         ],
         "psr-4": {
-            "Tweakwise\\Magento2Tweakwise\\": ""
+            "Tweakwise\\Magento2Tweakwise\\": "src/"
         }
     },
     "replace": {
         "emico/tweakwise": "v4.3.1"
     },
     "repositories": {
+        "emico": {
+            "type": "composer",
+            "url": "https://git.emico.io/api/v4/group/239/-/packages/composer/",
+            "only": [
+                "emico/code-quality",
+                "emico/codeception-m2",
+                "hipex/magento-2-psr7-bridge"
+            ]
+        },
         "magento": {
             "type": "composer",
             "url": "https://repo.magento.com/"
-        },
-        "emico/code-quality": {
-            "type": "vcs",
-            "url": "https://git.emico.io/composer-packages/generic/codequality.git"
         }
     },
     "require-dev": {
-        "emico/code-quality": "~10.6.0",
-        "magento/framework": "^103.0"
+        "emico/code-quality": "^10.8"
     },
     "config": {
         "sort-packages": true,

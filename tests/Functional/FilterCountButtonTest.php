@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tweakwise\Test\Functional;
 
+use Emico\CodeCept\Models\Fixtures\CategoryFixture;
 use Emico\CodeCept\Models\Fixtures\ProductFixture;
 use Emico\CodeCept\Test\Unit;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
+use Magento\Catalog\Model\Layer\Search as SearchLayer;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Client;
@@ -22,6 +24,8 @@ class FilterCountButtonTest extends Unit
 {
     protected FunctionalTester $tester;
 
+    private CategoryFixture $category;
+
     private ProductFixture $product;
 
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
@@ -30,22 +34,27 @@ class FilterCountButtonTest extends Unit
      */
     public function _before(): void
     {
+        /** @var CategoryFixture $category */
+        $category = $this->tester->getObjectManager()->create(
+            CategoryFixture::class,
+            ['name' => 'Filter Count Button Category']
+        );
+        $category->addAttribute('is_anchor', 1);
+        $this->category = $category;
+        $this->tester->createFixture($this->category);
+
         /** @var ProductFixture $product */
         $product = $this->tester->getObjectManager()->create(
             ProductFixture::class,
             ['sku' => 'tweakwise-filter-count-button-test']
         );
+        $product->assignToCategory($this->category);
         $this->product = $product;
         $this->tester->createFixture($this->product);
 
         $this->tester->mockConfig('tweakwise/general/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/default_link_renderer', '0');
-        $this->tester->mockConfig('catalog/search/min_query_length', '1');
-        // Search results page uses Magento\Catalog\Model\Layer\Search; both the filter
-        // list plugin and the item collection provider fall back to native Magento
-        // behaviour on search pages unless this is enabled, ignoring the mocked client.
-        $this->tester->mockConfig('tweakwise/search/enabled', '1');
         $this->mockClientWithCheckboxFacet();
     }
 
@@ -57,7 +66,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/form_filters', '1');
         $this->tester->clearCache();
 
-        $this->tester->amOnPage('/catalogsearch/result/?q=abc');
+        $this->tester->amOnPage('/' . $this->category->getUrlKey() . '.html');
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
         $this->tester->seeElement('#layered-filter-block');
@@ -77,7 +86,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/form_filters', '0');
         $this->tester->clearCache();
 
-        $this->tester->amOnPage('/catalogsearch/result/?q=abc');
+        $this->tester->amOnPage('/' . $this->category->getUrlKey() . '.html');
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
         $this->tester->seeElement('#layered-filter-block');
@@ -148,9 +157,9 @@ class FilterCountButtonTest extends Unit
         // Plain Magento\Catalog\Model\Layer\FilterList can't be instantiated directly -
         // its FilterableAttributeListInterface argument is only bound for the
         // "searchFilterList"/"categoryFilterList" virtual types (Magento core
-        // module-catalog/etc/di.xml). This test runs on a search results page, so use
-        // the same virtual type Magento's Navigation block resolves there.
-        $filterCount = count($objectManager->get('searchFilterList')->getFilters($layer));
+        // module-catalog/etc/di.xml). Resolve the same virtual type as the current layer.
+        $filterListType = $layer instanceof SearchLayer ? 'searchFilterList' : 'categoryFilterList';
+        $filterCount = count($objectManager->get($filterListType)->getFilters($layer));
         $this->assertGreaterThan(
             0,
             $filterCount,

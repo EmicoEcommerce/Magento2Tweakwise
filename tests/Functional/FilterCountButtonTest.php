@@ -14,6 +14,9 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise as TweakwiseFilterList;
+use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
@@ -62,7 +65,13 @@ class FilterCountButtonTest extends Unit
         $productAttributes->shouldReceive('getAttributesToExport')->andReturn([]);
         $this->tester->mockService(ProductAttributes::class, $productAttributes);
 
+        $templateFinder = Mockery::mock(TemplateFinder::class);
+        $templateFinder->shouldReceive('forCategory')->andReturn(null);
+        $templateFinder->shouldReceive('forProduct')->andReturn(null);
+        $this->tester->mockService(TemplateFinder::class, $templateFinder);
+
         $this->mockClientWithCheckboxFacet();
+        $this->mockFilterListService();
     }
 
     /**
@@ -258,5 +267,61 @@ class FilterCountButtonTest extends Unit
         $client->shouldReceive('request')->andReturn($response);
 
         $this->tester->mockService(Client::class, $client);
+    }
+
+    /**
+     * Avoid DB-dependent facet-to-attribute mapping queries in functional CI by
+     * mocking the filter list builder directly.
+     *
+     * @return void
+     */
+    private function mockFilterListService(): void
+    {
+        $service = Mockery::mock(TweakwiseFilterList::class);
+        $service->shouldReceive('getFilters')->andReturnUsing(function ($layer): array {
+            $facetData = [
+                'facetsettings' => [
+                    'source' => SettingsType::SOURCE_FEED,
+                    'title' => 'Color',
+                    'attributename' => 'tw_test_color',
+                    'urlkey' => 'color',
+                    'selectiontype' => SettingsType::SELECTION_TYPE_CHECKBOX,
+                    'isnrofresultsvisible' => 'true',
+                    'ismultiselect' => 'true',
+                    'iscollapsible' => 'false',
+                    'iscollapsed' => 'false',
+                    'isinfivisible' => 'false',
+                    'isvisible' => 'true',
+                    'nrofshownattributes' => 10,
+                ],
+                'attributes' => [
+                    [
+                        'title' => 'Red',
+                        'url' => 'https://tweakwise.test/default/color/red/',
+                        'link' => '',
+                        'nrofresults' => 5,
+                        'isselected' => 'true',
+                        'attributeid' => '100001',
+                    ],
+                ],
+            ];
+
+            /** @var FacetType $facet */
+            $facet = $this->tester->getObjectManager()->create(FacetType::class, ['data' => $facetData]);
+
+            /** @var Filter $filter */
+            $filter = $this->tester->getObjectManager()->create(
+                Filter::class,
+                [
+                    'layer' => $layer,
+                    'facet' => $facet,
+                    'attribute' => null,
+                ]
+            );
+
+            return [$filter];
+        });
+
+        $this->tester->mockService(TweakwiseFilterList::class, $service);
     }
 }

@@ -181,6 +181,7 @@ class FilterCountButtonTest extends Unit
             'facetsettings' => [
                 'source'       => SettingsType::SOURCE_FEED,
                 'title'        => 'Color',
+                'attributename' => 'tw_test_color',
                 'urlkey'       => 'color',
                 'selectiontype' => SettingsType::SELECTION_TYPE_CHECKBOX,
                 'isnrofresultsvisible' => 'true',

@@ -67,7 +67,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/form_filters', '1');
         $this->tester->clearCache();
 
-        $this->tester->amOnPage('/' . $this->category->getUrlKey() . '.html');
+        $this->tester->amOnPage('/catalog/category/view/id/' . $this->category->getId());
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
         $this->tester->seeElement('#layered-filter-block');
@@ -87,7 +87,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/form_filters', '0');
         $this->tester->clearCache();
 
-        $this->tester->amOnPage('/' . $this->category->getUrlKey() . '.html');
+        $this->tester->amOnPage('/catalog/category/view/id/' . $this->category->getId());
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
         $this->tester->seeElement('#layered-filter-block');

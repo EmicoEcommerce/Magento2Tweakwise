@@ -44,13 +44,29 @@ magento-module/test/functional:
         echo "after_script: codecept binary not found in ./vendor/bin or /var/www/html/vendor/bin"
         ls -la ./vendor/bin || true
         ls -la /var/www/html/vendor/bin || true
+        echo "after_script: listing /var/www/html/tests/_output"
+        ls -la /var/www/html/tests/_output || true
+        echo "after_script: dumping first 200 lines of output files"
+        for f in /var/www/html/tests/_output/*; do
+          if [ -f "$f" ]; then
+            echo "===== $f (first 200 lines) ====="
+            sed -n '1,200p' "$f" || true
+          fi
+        done
         exit 0
       fi
       if [ "$CODECEPT_PATH" = "/var/www/html/vendor/bin/codecept" ]; then
         cd /var/www/html
       fi
-      echo "after_script: running verbose Codeception rerun"
-      php "$CODECEPT_PATH" run --xml --html --steps -vvv --debug --fail-fast=0 || true
+      echo "after_script: listing /var/www/html/tests/_output"
+      ls -la /var/www/html/tests/_output || true
+      echo "after_script: dumping first 200 lines of output files"
+      for f in /var/www/html/tests/_output/*; do
+        if [ -f "$f" ]; then
+          echo "===== $f (first 200 lines) ====="
+          sed -n '1,200p' "$f" || true
+        fi
+      done
 
 release:
   rules:

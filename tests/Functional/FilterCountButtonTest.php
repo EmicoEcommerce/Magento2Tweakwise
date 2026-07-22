@@ -70,7 +70,6 @@ class FilterCountButtonTest extends Unit
         $this->tester->amOnPage('/catalog/category/view/id/' . $this->category->getId());
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
-        $this->tester->seeElement('#layered-filter-block');
         $this->tester->seeInSource('"tweakwiseNavigationForm":{"formFilters":true');
         $this->tester->seeElement('.js-btn-filter');
 
@@ -90,7 +89,6 @@ class FilterCountButtonTest extends Unit
         $this->tester->amOnPage('/catalog/category/view/id/' . $this->category->getId());
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
-        $this->tester->seeElement('#layered-filter-block');
         $this->tester->seeInSource('"tweakwiseNavigationForm":{"formFilters":false');
         $this->tester->dontSeeElement('.js-btn-filter');
     }

@@ -242,7 +242,7 @@ class FilterCountButtonTest extends Unit
             [
                 'data' => [
                     ItemType::ID    => $this->product->getId(),
-                    ItemType::TYPE  => 'visual',
+                    ItemType::TYPE  => 'product',
                     ItemType::TITLE => $this->product->getName(),
                 ],
             ]

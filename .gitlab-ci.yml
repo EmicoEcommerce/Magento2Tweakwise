@@ -34,13 +34,23 @@ magento-module/test/functional:
         echo "after_script: skip verbose rerun (job not failed)"
         exit 0
       fi
-      if [ ! -f ./vendor/bin/codecept ]; then
-        echo "after_script: ./vendor/bin/codecept not found"
+      CODECEPT_PATH=""
+      if [ -f ./vendor/bin/codecept ]; then
+        CODECEPT_PATH="./vendor/bin/codecept"
+      elif [ -f /var/www/html/vendor/bin/codecept ]; then
+        CODECEPT_PATH="/var/www/html/vendor/bin/codecept"
+      fi
+      if [ -z "$CODECEPT_PATH" ]; then
+        echo "after_script: codecept binary not found in ./vendor/bin or /var/www/html/vendor/bin"
         ls -la ./vendor/bin || true
+        ls -la /var/www/html/vendor/bin || true
         exit 0
       fi
+      if [ "$CODECEPT_PATH" = "/var/www/html/vendor/bin/codecept" ]; then
+        cd /var/www/html
+      fi
       echo "after_script: running verbose Codeception rerun"
-      php ./vendor/bin/codecept run --xml --html --steps -vvv --debug --fail-fast=0 || true
+      php "$CODECEPT_PATH" run --xml --html --steps -vvv --debug --fail-fast=0 || true
 
 release:
   rules:

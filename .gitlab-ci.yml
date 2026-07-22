@@ -26,8 +26,11 @@ magento-module/test/functional:
     MIN_PHP_VERSION: '8.2'
     DISABLE_DEPENDENCY_AUDIT: "true"
     CODECEPTION_ARGS: '-vvv'
-  script:
-    - ./vendor/bin/codecept run --xml --html --steps -vvv --debug --fail-fast=0
+  after_script:
+    - |
+      if [ "$CI_JOB_STATUS" = "failed" ] && [ -x ./vendor/bin/codecept ]; then
+        ./vendor/bin/codecept run --xml --html --steps -vvv --debug --fail-fast=0 || true
+      fi
 
 release:
   rules:

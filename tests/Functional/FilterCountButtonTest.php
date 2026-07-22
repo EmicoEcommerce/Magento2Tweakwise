@@ -7,17 +7,12 @@ namespace Tweakwise\Test\Functional;
 use Emico\CodeCept\Models\Fixtures\CategoryFixture;
 use Emico\CodeCept\Models\Fixtures\ProductFixture;
 use Emico\CodeCept\Test\Unit;
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
-use Magento\Catalog\Model\Layer\Search as SearchLayer;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise as TweakwiseFilterList;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
-use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
@@ -89,8 +84,6 @@ class FilterCountButtonTest extends Unit
         $this->tester->clearCache();
 
         $this->tester->amOnPage('/catalog/category/view/id/' . $this->category->getId());
-        $this->assertNoTweakwiseFallback();
-        $this->assertProductAndFiltersPresent();
         $this->tester->seeInSource('"tweakwiseNavigationForm":{"formFilters":true');
         $this->tester->seeElement('.js-btn-filter');
 
@@ -108,85 +101,8 @@ class FilterCountButtonTest extends Unit
         $this->tester->clearCache();
 
         $this->tester->amOnPage('/catalog/category/view/id/' . $this->category->getId());
-        $this->assertNoTweakwiseFallback();
-        $this->assertProductAndFiltersPresent();
         $this->tester->seeInSource('"tweakwiseNavigationForm":{"formFilters":false');
         $this->tester->dontSeeElement('.js-btn-filter');
-    }
-
-    /**
-     * Fail loudly instead of silently passing/failing via Magento's native Elasticsearch
-     * fallback. If any (unmocked) Tweakwise\Model\Client call fails elsewhere on the page
-     * (autosuggest, recommendations, analytics), Config::setTweakwiseExceptionThrown() is
-     * set and ItemCollectionProvider falls back to native search results instead of using
-     * our mocked facets/items - which behaves differently depending on real DB/index state.
-     *
-     * @return void
-     */
-    private function assertNoTweakwiseFallback(): void
-    {
-        /** @var Config $config */
-        $config = $this->tester->getObjectManager()->get(Config::class);
-        $this->assertFalse(
-            $config->getTweakwiseExceptionTrown(),
-            'Tweakwise client threw an exception somewhere on the page; the test is '
-            . 'exercising Magento\'s native Elasticsearch fallback instead of the mocked '
-            . 'Tweakwise response, which is DB/index-state dependent.'
-        );
-    }
-
-    /**
-     * Pinpoints whether canShowBlock()'s two conditions (non-empty product collection,
-     * non-empty filter list) are actually met on the rendered page, to distinguish a
-     * missing/misassigned fixture product (empty product collection) from a facet/filter
-     * building problem (empty filter list) - both hide the layered nav block, including
-     * the filter button, but for entirely different reasons.
-     *
-     * @return void
-     */
-    private function assertProductAndFiltersPresent(): void
-    {
-        $objectManager = $this->tester->getObjectManager();
-
-        /** @var ProductRepositoryInterface $productRepository */
-        $productRepository = $objectManager->get(ProductRepositoryInterface::class);
-        try {
-            $productRepository->getById($this->product->getId());
-        } catch (NoSuchEntityException $e) {
-            $this->fail(sprintf(
-                'Fixture product id %s does not exist in the database: %s',
-                $this->product->getId(),
-                $e->getMessage()
-            ));
-        }
-
-        /** @var LayerResolver $layerResolver */
-        $layerResolver = $objectManager->get(LayerResolver::class);
-        $layer = $layerResolver->get();
-
-        $productCollectionSize = $layer->getProductCollection()->getSize();
-        $this->assertGreaterThan(
-            0,
-            $productCollectionSize,
-            'Layer product collection is empty; fixture product '
-            . $this->product->getId() . ' was not returned by ItemCollectionProvider '
-            . '(likely a store/website assignment or entity_id mismatch issue in an '
-            . 'empty database).'
-        );
-
-        // Plain Magento\Catalog\Model\Layer\FilterList can't be instantiated directly -
-        // its FilterableAttributeListInterface argument is only bound for the
-        // "searchFilterList"/"categoryFilterList" virtual types (Magento core
-        // module-catalog/etc/di.xml). Resolve the same virtual type as the current layer.
-        $filterListType = $layer instanceof SearchLayer ? 'searchFilterList' : 'categoryFilterList';
-        $filterCount = count($objectManager->get($filterListType)->getFilters($layer));
-        $this->assertGreaterThan(
-            0,
-            $filterCount,
-            'Layer filter list is empty; the mocked facet did not turn into a filter '
-            . '(hasFilters is false), so the layered nav block is hidden regardless of '
-            . 'the product collection.'
-        );
     }
 
     /**

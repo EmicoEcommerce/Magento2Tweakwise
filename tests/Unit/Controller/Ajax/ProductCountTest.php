@@ -15,6 +15,7 @@ use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Controller\Ajax\ProductCount;
 use Tweakwise\Magento2Tweakwise\Model\AjaxProductCountResult;
 use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CountInitializerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
 use Tweakwise\Test\Support\UnitTester;
 
@@ -27,6 +28,8 @@ class ProductCountTest extends Unit
     private RequestInterface&MockInterface $request;
 
     private HashInputProvider&MockInterface $hashInputProvider;
+
+    private Config&MockInterface $config;
 
     private JsonFactory&MockInterface $resultJsonFactory;
 
@@ -41,6 +44,7 @@ class ProductCountTest extends Unit
         $this->context = Mockery::mock(Context::class)->shouldIgnoreMissing();
         $this->request = Mockery::mock(RequestInterface::class);
         $this->hashInputProvider = Mockery::mock(HashInputProvider::class);
+        $this->config = Mockery::mock(Config::class);
         $this->resultJsonFactory = Mockery::mock(JsonFactory::class);
         $this->jsonResult = Mockery::mock(Json::class);
         $this->result = Mockery::mock(AjaxProductCountResult::class);
@@ -57,6 +61,9 @@ class ProductCountTest extends Unit
 
     public function testExecuteReturnsJsonResult(): void
     {
+        $this->config->shouldReceive('isFormFilters')
+            ->once()
+            ->andReturn(true);
         $this->request->shouldReceive('getParam')
             ->once()
             ->with('__tw_ajax_type')
@@ -78,6 +85,7 @@ class ProductCountTest extends Unit
             $this->resultJsonFactory,
             $this->result,
             $this->hashInputProvider,
+            $this->config,
             ['category' => $this->initializer],
         );
 
@@ -86,6 +94,9 @@ class ProductCountTest extends Unit
 
     public function testExecuteReturnsBadRequestJsonForInvalidHash(): void
     {
+        $this->config->shouldReceive('isFormFilters')
+            ->once()
+            ->andReturn(true);
         $this->hashInputProvider->shouldReceive('validateHash')
             ->once()
             ->with($this->request)
@@ -108,6 +119,7 @@ class ProductCountTest extends Unit
             $this->resultJsonFactory,
             $this->result,
             $this->hashInputProvider,
+            $this->config,
             ['category' => $this->initializer],
         );
 
@@ -116,6 +128,9 @@ class ProductCountTest extends Unit
 
     public function testExecuteReturnsBadRequestJsonForUnknownType(): void
     {
+        $this->config->shouldReceive('isFormFilters')
+            ->once()
+            ->andReturn(true);
         $this->request->shouldReceive('getParam')
             ->once()
             ->with('__tw_ajax_type')
@@ -141,9 +156,29 @@ class ProductCountTest extends Unit
             $this->resultJsonFactory,
             $this->result,
             $this->hashInputProvider,
+            $this->config,
             ['category' => $this->initializer],
         );
 
         $this->assertSame($this->jsonResult, $subject->execute());
+    }
+
+    public function testExecuteThrowsNotFoundWhenFormFiltersDisabled(): void
+    {
+        $this->config->shouldReceive('isFormFilters')
+            ->once()
+            ->andReturn(false);
+
+        $subject = new ProductCount(
+            $this->context,
+            $this->resultJsonFactory,
+            $this->result,
+            $this->hashInputProvider,
+            $this->config,
+            ['category' => $this->initializer],
+        );
+
+        $this->expectException(\Magento\Framework\Exception\NotFoundException::class);
+        $subject->execute();
     }
 }

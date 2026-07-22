@@ -11,8 +11,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
 /**
  * Initializes a CountNavigationContext for search pages and returns the total
  * product count from the Tweakwise API response.
- * Applies filter query params directly to the NavigationContext so that the
- * count reflects the current checkbox selection, regardless of the URL strategy.
  */
 class SearchCountInitializer extends AbstractCountInitializer
 {
@@ -31,8 +29,6 @@ class SearchCountInitializer extends AbstractCountInitializer
     public function initializeForCount(
         RequestInterface $request
     ): int {
-        $this->applyFilterParams($request, $this->navigationContext);
-
         /** @var PropertiesType $properties */
         $properties = $this->navigationContext->getResponse()->getValue('properties');
 

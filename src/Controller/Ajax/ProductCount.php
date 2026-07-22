@@ -11,9 +11,11 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Tweakwise\Magento2Tweakwise\Model\AjaxProductCountResult;
 use Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer\CountInitializerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\HashInputProvider;
 
 /**
@@ -28,6 +30,7 @@ class ProductCount extends Action
      * @param JsonFactory $resultJsonFactory
      * @param AjaxProductCountResult $ajaxProductCountResult
      * @param HashInputProvider $hashInputProvider
+     * @param Config $config
      * @param CountInitializerInterface[] $initializerMap
      */
     public function __construct(
@@ -35,6 +38,7 @@ class ProductCount extends Action
         private readonly JsonFactory $resultJsonFactory,
         private readonly AjaxProductCountResult $ajaxProductCountResult,
         private readonly HashInputProvider $hashInputProvider,
+        private readonly Config $config,
         private readonly array $initializerMap,
     ) {
         parent::__construct($context);
@@ -45,6 +49,10 @@ class ProductCount extends Action
      */
     public function execute(): ResultInterface|ResponseInterface
     {
+        if (!$this->config->isFormFilters()) {
+            throw new NotFoundException(__('Page not found.'));
+        }
+
         $request = $this->getRequest();
 
         $hashIsValid = $this->hashInputProvider->validateHash($request);

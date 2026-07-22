@@ -16,8 +16,6 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Type\PropertiesType;
 /**
  * Initializes a CountNavigationContext for category pages and returns the total
  * product count from the Tweakwise API response.
- * Applies filter query params directly to the NavigationContext so that the
- * count reflects the current checkbox selection, regardless of the URL strategy.
  */
 class CategoryCountInitializer extends AbstractCountInitializer
 {
@@ -45,7 +43,6 @@ class CategoryCountInitializer extends AbstractCountInitializer
         $this->navigationContext->getRequest()->addCategoryFilter(
             $category instanceof Category ? $category : (int) $category->getId()
         );
-        $this->applyFilterParams($request, $this->navigationContext);
 
         /** @var PropertiesType $properties */
         $properties = $this->navigationContext->getResponse()->getValue('properties');
@@ -60,11 +57,6 @@ class CategoryCountInitializer extends AbstractCountInitializer
      */
     private function initializeRegistry(RequestInterface $request): CategoryInterface
     {
-        $existing = $this->registry->registry('current_category');
-        if ($existing) {
-            return $existing;
-        }
-
         $categoryId = (int) $request->getParam('__tw_object_id');
         if ($categoryId === 0) {
             throw new NoSuchEntityException(__('No category provided for product count request.'));

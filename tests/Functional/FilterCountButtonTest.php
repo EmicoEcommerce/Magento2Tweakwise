@@ -57,9 +57,15 @@ class FilterCountButtonTest extends Unit
         $this->tester->createFixture($this->product);
 
         $this->tester->mockConfig('tweakwise/general/enabled', '1');
+        $this->tester->mockConfig('tweakwise/general/analytics_enabled', '0');
         $this->tester->mockConfig('tweakwise/layered/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/default_link_renderer', '0');
         $this->tester->mockConfig('tweakwise/search/enabled', '1');
+        $this->tester->mockConfig('tweakwise/autocomplete/enabled', '0');
+        $this->tester->mockConfig('tweakwise/recommendations/featured_enabled', '0');
+        $this->tester->mockConfig('tweakwise/recommendations/upsell_enabled', '0');
+        $this->tester->mockConfig('tweakwise/recommendations/crosssell_enabled', '0');
+        $this->tester->mockConfig('tweakwise/recommendations/shoppingcart_crosssell_enabled', '0');
 
         $productAttributes = Mockery::mock(ProductAttributes::class);
         $productAttributes->shouldReceive('getAttributesToExport')->andReturn([]);

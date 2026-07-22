@@ -26,6 +26,8 @@ magento-module/test/functional:
     MIN_PHP_VERSION: '8.2'
     DISABLE_DEPENDENCY_AUDIT: "true"
     CODECEPTION_ARGS: '-vvv'
+  script:
+    - ./vendor/bin/codecept run --xml --html --steps -vvv --debug --fail-fast=0
 
 release:
   rules:

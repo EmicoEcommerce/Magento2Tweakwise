@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Model\Catalog\Layer\Url;
 
 use Emico\CodeCept\Test\Unit;
-use ArrayIterator;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -38,12 +38,12 @@ class StrategyHelperTest extends Unit
      */
     public function testWarmUpLoadsCategoriesAndPreloadsRewritesForNestedItems(): void
     {
-        $categoryOne = Mockery::mock(CategoryInterface::class);
+        $categoryOne = Mockery::mock(Category::class);
         $categoryOne->shouldReceive('getId')->andReturn(10);
         $categoryOne->shouldReceive('getData')->with('url')->andReturn(null);
         $categoryOne->shouldReceive('setData')->with('request_path', 'women/tops.html')->once();
 
-        $categoryTwo = Mockery::mock(CategoryInterface::class);
+        $categoryTwo = Mockery::mock(Category::class);
         $categoryTwo->shouldReceive('getId')->andReturn(20);
         $categoryTwo->shouldReceive('getData')->with('url')->andReturn(null);
         $categoryTwo->shouldReceive('setData')->with('request_path', 'women/jackets.html')->once();
@@ -53,7 +53,7 @@ class StrategyHelperTest extends Unit
         $collection->shouldReceive('addAttributeToSelect')->with(['name', 'url_key', 'url_path', 'is_active'])->once()->andReturnSelf();
         $collection->shouldReceive('addFieldToFilter')->with('entity_id', ['in' => [10, 20]])->once()->andReturnSelf();
         $collection->shouldReceive('load')->once()->andReturnSelf();
-        $collection->shouldReceive('getIterator')->andReturn(new ArrayIterator([$categoryOne, $categoryTwo]));
+        $collection->shouldReceive('getItems')->once()->andReturn([$categoryOne, $categoryTwo]);
 
         $categoryCollectionFactory = Mockery::mock(CategoryCollectionFactory::class);
         $categoryCollectionFactory->shouldReceive('create')->once()->andReturn($collection);
@@ -111,7 +111,7 @@ class StrategyHelperTest extends Unit
      */
     public function testGetCategoryFromItemReturnsCategoryFromCacheAfterWarmUp(): void
     {
-        $cachedCategory = Mockery::mock(CategoryInterface::class);
+        $cachedCategory = Mockery::mock(Category::class);
         $cachedCategory->shouldReceive('getId')->andReturn(10);
         $cachedCategory->shouldReceive('getData')->with('url')->andReturn(null);
         $cachedCategory->shouldReceive('setData')->with('request_path', 'women/tops.html')->once();
@@ -121,7 +121,7 @@ class StrategyHelperTest extends Unit
         $collection->shouldReceive('addAttributeToSelect')->with(['name', 'url_key', 'url_path', 'is_active'])->once()->andReturnSelf();
         $collection->shouldReceive('addFieldToFilter')->with('entity_id', ['in' => [10]])->once()->andReturnSelf();
         $collection->shouldReceive('load')->once()->andReturnSelf();
-        $collection->shouldReceive('getIterator')->andReturn(new ArrayIterator([$cachedCategory]));
+        $collection->shouldReceive('getItems')->once()->andReturn([$cachedCategory]);
 
         $categoryCollectionFactory = Mockery::mock(CategoryCollectionFactory::class);
         $categoryCollectionFactory->shouldReceive('create')->once()->andReturn($collection);

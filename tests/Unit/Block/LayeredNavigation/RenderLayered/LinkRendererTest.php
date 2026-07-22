@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Block\LayeredNavigation\RenderLayered;
 
 use Emico\CodeCept\Test\Unit;
-use Magento\Framework\Escaper;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\View\Element\Template\Context;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
@@ -16,9 +13,6 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\StrategyHelper;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
-use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Test\Support\UnitTester;
 
 class LinkRendererTest extends Unit
@@ -59,20 +53,14 @@ class LinkRendererTest extends Unit
 
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isCategoryViewDefault')->andReturn(false);
+        $this->tester->mockService(Config::class, $config);
 
         $strategyHelper = Mockery::mock(StrategyHelper::class);
         $strategyHelper->shouldReceive('warmUp')->once()->with($items, 5);
+        $this->tester->mockService(StrategyHelper::class, $strategyHelper);
 
-        $renderer = new LinkRenderer(
-            Mockery::mock(Context::class),
-            $config,
-            Mockery::mock(NavigationConfig::class),
-            Mockery::mock(FilterHelper::class),
-            Mockery::mock(Json::class),
-            Mockery::mock(Helper::class),
-            Mockery::mock(Escaper::class),
-            $strategyHelper
-        );
+        /** @var LinkRenderer $renderer */
+        $renderer = $this->tester->getObjectManager()->create(LinkRenderer::class);
         $renderer->setFilter($filter);
 
         $result = $renderer->getItems();

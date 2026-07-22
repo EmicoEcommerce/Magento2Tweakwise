@@ -93,7 +93,7 @@ class StrategyHelper
         $loadedIds = [];
 
         /** @var CategoryInterface $category */
-        foreach ($collection as $category) {
+        foreach ($collection->getItems() as $category) {
             $id = (int) $category->getId();
             $this->categoryCache[$id][$storeId] = $category;
             $loadedIds[] = $id;

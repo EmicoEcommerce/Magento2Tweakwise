@@ -41,6 +41,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/general/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/default_link_renderer', '0');
+        $this->tester->mockConfig('catalog/search/min_query_length', '1');
         // Search results page uses Magento\Catalog\Model\Layer\Search; both the filter
         // list plugin and the item collection provider fall back to native Magento
         // behaviour on search pages unless this is enabled, ignoring the mocked client.
@@ -56,7 +57,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/form_filters', '1');
         $this->tester->clearCache();
 
-        $this->tester->amOnPage('/catalogsearch/result/?q=a');
+        $this->tester->amOnPage('/catalogsearch/result/?q=abc');
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
         $this->tester->seeElement('#layered-filter-block');
@@ -76,7 +77,7 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/form_filters', '0');
         $this->tester->clearCache();
 
-        $this->tester->amOnPage('/catalogsearch/result/?q=a');
+        $this->tester->amOnPage('/catalogsearch/result/?q=abc');
         $this->assertNoTweakwiseFallback();
         $this->assertProductAndFiltersPresent();
         $this->tester->seeElement('#layered-filter-block');

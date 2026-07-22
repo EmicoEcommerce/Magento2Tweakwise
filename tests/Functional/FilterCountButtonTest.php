@@ -56,12 +56,6 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/default_link_renderer', '0');
         $this->tester->mockConfig('tweakwise/search/enabled', '1');
-
-        // Ensure CurrentContext is initialized as category context before blocks render.
-        // Without this, template switching can depend on render order and prior test state.
-        $this->tester->getObjectManager()->get(
-            'Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\Category'
-        );
         $this->mockClientWithCheckboxFacet();
     }
 
@@ -205,7 +199,7 @@ class FilterCountButtonTest extends Unit
                     'url'          => 'https://tweakwise.test/default/color/red/',
                     'link'         => '',
                     'nrofresults'  => 5,
-                    'isselected'   => 'false',
+                    'isselected'   => 'true',
                     'attributeid'  => '100001',
                 ],
                 [

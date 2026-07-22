@@ -10,6 +10,7 @@ use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
+use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
@@ -180,6 +181,10 @@ class StrategyHelper
             }
 
             $category = $this->categoryCache[$categoryId][$storeId];
+            if (!$category instanceof DataObject) {
+                continue;
+            }
+
             if ($category->getData('url') !== null) {
                 continue;
             }

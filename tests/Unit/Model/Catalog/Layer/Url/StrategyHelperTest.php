@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Model\Catalog\Layer\Url;
 
 use Emico\CodeCept\Test\Unit;
+use ArrayIterator;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
@@ -52,7 +53,7 @@ class StrategyHelperTest extends Unit
         $collection->shouldReceive('addAttributeToSelect')->with(['name', 'url_key', 'url_path', 'is_active'])->once()->andReturnSelf();
         $collection->shouldReceive('addFieldToFilter')->with('entity_id', ['in' => [10, 20]])->once()->andReturnSelf();
         $collection->shouldReceive('load')->once()->andReturnSelf();
-        $collection->shouldReceive('getIterator')->andReturn(new \ArrayIterator([$categoryOne, $categoryTwo]));
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayIterator([$categoryOne, $categoryTwo]));
 
         $categoryCollectionFactory = Mockery::mock(CategoryCollectionFactory::class);
         $categoryCollectionFactory->shouldReceive('create')->once()->andReturn($collection);
@@ -120,7 +121,7 @@ class StrategyHelperTest extends Unit
         $collection->shouldReceive('addAttributeToSelect')->with(['name', 'url_key', 'url_path', 'is_active'])->once()->andReturnSelf();
         $collection->shouldReceive('addFieldToFilter')->with('entity_id', ['in' => [10]])->once()->andReturnSelf();
         $collection->shouldReceive('load')->once()->andReturnSelf();
-        $collection->shouldReceive('getIterator')->andReturn(new \ArrayIterator([$cachedCategory]));
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayIterator([$cachedCategory]));
 
         $categoryCollectionFactory = Mockery::mock(CategoryCollectionFactory::class);
         $categoryCollectionFactory->shouldReceive('create')->once()->andReturn($collection);

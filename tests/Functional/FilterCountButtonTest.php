@@ -18,6 +18,7 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
+use Tweakwise\Magento2TweakwiseExport\Model\ProductAttributes;
 use Tweakwise\Test\Support\FunctionalTester;
 
 class FilterCountButtonTest extends Unit
@@ -56,6 +57,11 @@ class FilterCountButtonTest extends Unit
         $this->tester->mockConfig('tweakwise/layered/enabled', '1');
         $this->tester->mockConfig('tweakwise/layered/default_link_renderer', '0');
         $this->tester->mockConfig('tweakwise/search/enabled', '1');
+
+        $productAttributes = Mockery::mock(ProductAttributes::class);
+        $productAttributes->shouldReceive('getAttributesToExport')->andReturn([]);
+        $this->tester->mockService(ProductAttributes::class, $productAttributes);
+
         $this->mockClientWithCheckboxFacet();
     }
 

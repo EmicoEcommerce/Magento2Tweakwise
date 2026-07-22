@@ -23,12 +23,13 @@ class SearchCountInitializer extends AbstractCountInitializer
     }
 
     /**
-     * @param RequestInterface $request
-     * @return int
+     * Initialize count context for search page and return total items.
      */
     public function initializeForCount(
         RequestInterface $request
     ): int {
+        $this->applyFilterParams($request, $this->navigationContext);
+
         /** @var PropertiesType $properties */
         $properties = $this->navigationContext->getResponse()->getValue('properties');
 

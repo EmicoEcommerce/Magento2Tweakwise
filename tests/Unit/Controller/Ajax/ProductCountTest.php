@@ -10,6 +10,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Exception\NotFoundException;
 use Mockery;
 use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Controller\Ajax\ProductCount;
@@ -39,6 +40,7 @@ class ProductCountTest extends Unit
 
     private CountInitializerInterface&MockInterface $initializer;
 
+    // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
     public function _before(): void
     {
         $this->context = Mockery::mock(Context::class)->shouldIgnoreMissing();
@@ -54,6 +56,7 @@ class ProductCountTest extends Unit
         $this->context->shouldReceive('getResponse')->andReturn(Mockery::mock(ResponseInterface::class));
     }
 
+    // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
     public function _after(): void
     {
         Mockery::close();
@@ -178,7 +181,7 @@ class ProductCountTest extends Unit
             ['category' => $this->initializer],
         );
 
-        $this->expectException(\Magento\Framework\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $subject->execute();
     }
 }

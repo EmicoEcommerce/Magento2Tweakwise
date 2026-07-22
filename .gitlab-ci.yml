@@ -28,9 +28,19 @@ magento-module/test/functional:
     CODECEPTION_ARGS: '-vvv'
   after_script:
     - |
-      if [ "$CI_JOB_STATUS" = "failed" ] && [ -x ./vendor/bin/codecept ]; then
-        ./vendor/bin/codecept run --xml --html --steps -vvv --debug --fail-fast=0 || true
+      echo "after_script: CI_JOB_STATUS=$CI_JOB_STATUS"
+      pwd
+      if [ "$CI_JOB_STATUS" != "failed" ]; then
+        echo "after_script: skip verbose rerun (job not failed)"
+        exit 0
       fi
+      if [ ! -f ./vendor/bin/codecept ]; then
+        echo "after_script: ./vendor/bin/codecept not found"
+        ls -la ./vendor/bin || true
+        exit 0
+      fi
+      echo "after_script: running verbose Codeception rerun"
+      php ./vendor/bin/codecept run --xml --html --steps -vvv --debug --fail-fast=0 || true
 
 release:
   rules:

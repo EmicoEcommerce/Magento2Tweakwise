@@ -13,7 +13,7 @@ class DiXmlTest extends Unit
 
     public function testUpsellAndRelatedRecommendationContextsAreNotShared(): void
     {
-        $diXmlPath = dirname(__DIR__, 3) . '/src/etc/di.xml';
+        $diXmlPath = dirname(__DIR__, 4) . '/src/etc/di.xml';
         $document = simplexml_load_file($diXmlPath);
 
         $this->assertNotFalse($document);

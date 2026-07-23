@@ -9,6 +9,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Registry;
 use Mockery;
 use Mockery\MockInterface;
+use Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\AbstractRecommendationPlugin;
 use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
@@ -25,7 +26,7 @@ class AbstractRecommendationPluginTest extends Unit
     private Registry&MockInterface $registry;
     private Context&MockInterface $context;
     private TemplateFinder&MockInterface $templateFinder;
-    private TestRecommendationPlugin $subject;
+    private object $subject;
 
     public function _before(): void
     {
@@ -33,12 +34,22 @@ class AbstractRecommendationPluginTest extends Unit
         $this->context = Mockery::mock(Context::class);
         $this->templateFinder = Mockery::mock(TemplateFinder::class);
 
-        $this->subject = new TestRecommendationPlugin(
+        $this->subject = new class (
             Mockery::mock(Config::class),
             $this->registry,
             $this->context,
             $this->templateFinder,
-        );
+        ) extends AbstractRecommendationPlugin {
+            protected function getType()
+            {
+                return Config::RECOMMENDATION_TYPE_UPSELL;
+            }
+
+            public function fetchCollection(): Collection
+            {
+                return $this->getCollection();
+            }
+        };
     }
 
     public function _after(): void

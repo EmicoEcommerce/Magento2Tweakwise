@@ -5,17 +5,10 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Escaper;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\View\Element\Template\Context;
-use Magento\Framework\Serialize\Serializer\Json;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer\ItemRenderer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\StrategyHelper;
-use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
-use Tweakwise\Magento2Tweakwise\Model\Seo\FilterHelper;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class LinkRenderer extends DefaultRenderer
 {

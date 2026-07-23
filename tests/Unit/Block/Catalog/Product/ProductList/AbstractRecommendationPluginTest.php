@@ -96,16 +96,3 @@ class AbstractRecommendationPluginTest extends Unit
         $this->assertSame($collection, $this->subject->fetchCollection());
     }
 }
-
-class TestRecommendationPlugin extends AbstractRecommendationPlugin
-{
-    protected function getType()
-    {
-        return Config::RECOMMENDATION_TYPE_UPSELL;
-    }
-
-    public function fetchCollection(): Collection
-    {
-        return $this->getCollection();
-    }
-}

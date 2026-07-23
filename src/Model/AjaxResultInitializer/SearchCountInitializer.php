@@ -28,6 +28,8 @@ class SearchCountInitializer extends AbstractCountInitializer
     public function initializeForCount(
         RequestInterface $request
     ): int {
+        unset($request);
+
         /** @var PropertiesType $properties */
         $properties = $this->navigationContext->getResponse()->getValue('properties');
 

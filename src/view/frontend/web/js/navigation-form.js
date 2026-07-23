@@ -119,6 +119,11 @@ define([
                     if (typeof response.product_count !== 'undefined') {
                         this._updateFilterButtonCount(response.product_count);
                     }
+                }.bind(this),
+                error: function (jqXHR, errorStatus) {
+                    if (errorStatus !== 'abort') {
+                        // Keep last known count when endpoint is unavailable.
+                    }
                 }.bind(this)
             });
         },
@@ -133,7 +138,7 @@ define([
             this.element.find('.js-btn-filter').each(function (index, button) {
                 var $button = $(button);
                 var label = $button.data('count-label') || '';
-                var text = label.replace('%count%', count);
+                var text = label.replace('%1', count);
                 $button.text(text).attr('aria-label', text);
             });
         },

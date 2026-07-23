@@ -62,6 +62,15 @@ class CategoryCountInitializer extends AbstractCountInitializer
             throw new NoSuchEntityException(__('No category provided for product count request.'));
         }
 
+        $currentCategory = $this->registry->registry('current_category');
+        if ($currentCategory instanceof CategoryInterface && (int) $currentCategory->getId() === $categoryId) {
+            return $currentCategory;
+        }
+
+        if ($currentCategory instanceof CategoryInterface) {
+            $this->registry->unregister('current_category');
+        }
+
         $category = $this->categoryRepository->get($categoryId);
         $this->registry->register('current_category', $category);
 

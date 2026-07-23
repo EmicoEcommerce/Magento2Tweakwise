@@ -14,11 +14,6 @@ use Magento\Framework\Registry;
 abstract class AbstractRecommendationPlugin
 {
     /**
-     * @var Collection
-     */
-    protected $collection;
-
-    /**
      * @var Config
      */
     protected $config;
@@ -79,17 +74,12 @@ abstract class AbstractRecommendationPlugin
      */
     protected function getCollection()
     {
-        // @phpstan-ignore-next-line
-        if (!$this->collection) {
-            $request = $this->context->getRequest();
-            if (!$request instanceof ProductRequest) {
-                throw new InvalidArgumentException('Set context should contain ProductRequest');
-            }
-
-            $this->configureRequest($request);
-            $this->collection = $this->context->getCollection();
+        $request = $this->context->getRequest();
+        if (!$request instanceof ProductRequest) {
+            throw new InvalidArgumentException('Set context should contain ProductRequest');
         }
 
-        return $this->collection;
+        $this->configureRequest($request);
+        return $this->context->getCollection();
     }
 }

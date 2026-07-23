@@ -9,7 +9,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Registry;
 use Mockery;
 use Mockery\MockInterface;
-use Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\AbstractRecommendationPlugin;
 use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;

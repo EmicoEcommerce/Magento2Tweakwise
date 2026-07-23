@@ -199,4 +199,41 @@ class StrategyHelperTest extends Unit
 
         $this->assertSame($category, $result);
     }
+
+    /**
+     * @return void
+     */
+    public function testGetCategoryFromItemKeepsAdminStoreIdZero(): void
+    {
+        $category = Mockery::mock(CategoryInterface::class);
+
+        $categoryRepository = Mockery::mock(CategoryRepositoryInterface::class);
+        $categoryRepository->shouldReceive('get')->once()->with(42, 0)->andReturn($category);
+
+        $store = Mockery::mock();
+        $store->shouldReceive('getId')->once()->andReturn(0);
+
+        $storeManager = Mockery::mock(StoreManagerInterface::class);
+        $storeManager->shouldReceive('getStore')->once()->andReturn($store);
+
+        $exportHelper = Mockery::mock(ExportHelper::class);
+        $exportHelper->shouldReceive('getStoreId')->with(100)->andReturn(42);
+
+        $helper = new StrategyHelper(
+            $exportHelper,
+            $categoryRepository,
+            $storeManager,
+            Mockery::mock(CategoryCollectionFactory::class),
+            Mockery::mock(UrlFinderInterface::class)
+        );
+
+        $attribute = Mockery::mock();
+        $attribute->shouldReceive('getAttributeId')->once()->andReturn(100);
+        $item = Mockery::mock(Item::class);
+        $item->shouldReceive('getAttribute')->once()->andReturn($attribute);
+
+        $result = $helper->getCategoryFromItem($item);
+
+        $this->assertSame($category, $result);
+    }
 }

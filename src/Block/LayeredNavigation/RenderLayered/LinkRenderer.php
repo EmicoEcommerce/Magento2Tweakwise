@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Escaper;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\Serialize\Serializer\Json;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\LinkRenderer\ItemRenderer;
@@ -22,6 +24,8 @@ class LinkRenderer extends DefaultRenderer
      */
     protected $_template = 'Tweakwise_Magento2Tweakwise::product/layered/link.phtml';
 
+    private ?StrategyHelper $strategyHelper = null;
+
     /**
      * @param Context $context
      * @param Config $config
@@ -30,7 +34,6 @@ class LinkRenderer extends DefaultRenderer
      * @param Json $jsonSerializer
      * @param Helper $helper
      * @param Escaper $escaper
-     * @param StrategyHelper $strategyHelper
      * @param array $data
      */
     public function __construct(
@@ -41,7 +44,6 @@ class LinkRenderer extends DefaultRenderer
         Json $jsonSerializer,
         Helper $helper,
         Escaper $escaper,
-        private readonly StrategyHelper $strategyHelper,
         array $data = []
     ) {
         parent::__construct($context, $config, $navigationConfig, $filterHelper, $jsonSerializer, $helper, $escaper, $data);
@@ -58,7 +60,11 @@ class LinkRenderer extends DefaultRenderer
     {
         $items = parent::getItems();
 
-        $this->strategyHelper->warmUp($items, (int) $this->filter->getStoreId());
+        try {
+            $this->getStrategyHelper()->warmUp($items, (int) $this->filter->getStoreId());
+        } catch (NoSuchEntityException) {
+            // Ignore and let per-item fallback resolve categories without store context.
+        }
 
         return $items;
     }
@@ -74,5 +80,16 @@ class LinkRenderer extends DefaultRenderer
         $block->setFilter($this->filter);
         $block->setItem($item);
         return $block->toHtml();
+    }
+
+    private function getStrategyHelper(): StrategyHelper
+    {
+        if ($this->strategyHelper !== null) {
+            return $this->strategyHelper;
+        }
+
+        $this->strategyHelper = ObjectManager::getInstance()->get(StrategyHelper::class);
+
+        return $this->strategyHelper;
     }
 }

@@ -18,6 +18,8 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 class StrategyHelper
 {
+    private const NO_STORE_CACHE_KEY = -1;
+
     /**
      * @var ExportHelper
      */
@@ -115,14 +117,28 @@ class StrategyHelper
         try {
             $storeId = (int) $this->storeManager->getStore()->getId();
         } catch (NoSuchEntityException $exception) {
-            $storeId = 0;
+            $storeId = null;
         }
 
-        if (isset($this->categoryCache[$categoryId][$storeId])) {
-            return $this->categoryCache[$categoryId][$storeId];
+        $storeCacheKey = $this->getStoreCacheKey($storeId);
+
+        if (isset($this->categoryCache[$categoryId][$storeCacheKey])) {
+            return $this->categoryCache[$categoryId][$storeCacheKey];
         }
 
-        return $this->categoryRepository->get($categoryId, $storeId !== 0 ? $storeId : null);
+        $category = $this->categoryRepository->get($categoryId, $storeId);
+        $this->categoryCache[$categoryId][$storeCacheKey] = $category;
+
+        return $category;
+    }
+
+    /**
+     * @param int|null $storeId
+     * @return int
+     */
+    private function getStoreCacheKey(?int $storeId): int
+    {
+        return $storeId ?? self::NO_STORE_CACHE_KEY;
     }
 
     /**

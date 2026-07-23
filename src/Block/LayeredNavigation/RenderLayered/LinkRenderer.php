@@ -27,29 +27,6 @@ class LinkRenderer extends DefaultRenderer
     private ?StrategyHelper $strategyHelper = null;
 
     /**
-     * @param Context $context
-     * @param Config $config
-     * @param NavigationConfig $navigationConfig
-     * @param FilterHelper $filterHelper
-     * @param Json $jsonSerializer
-     * @param Helper $helper
-     * @param Escaper $escaper
-     * @param array $data
-     */
-    public function __construct(
-        Context $context,
-        Config $config,
-        NavigationConfig $navigationConfig,
-        FilterHelper $filterHelper,
-        Json $jsonSerializer,
-        Helper $helper,
-        Escaper $escaper,
-        array $data = []
-    ) {
-        parent::__construct($context, $config, $navigationConfig, $filterHelper, $jsonSerializer, $helper, $escaper, $data);
-    }
-
-    /**
      * Returns filter items and pre-warms the category + URL-rewrite caches so that
      * all subsequent per-item calls to getCategoryFromItem() and Category::getUrl()
      * are served from memory instead of issuing individual DB queries.

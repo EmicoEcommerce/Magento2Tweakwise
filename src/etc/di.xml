@@ -236,12 +236,12 @@
             <argument name="filterableAttributes" xsi:type="object">Magento\Catalog\Model\Layer\Search\FilterableAttributeList</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Upsell" shared="false" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context">
         <arguments>
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context">
+    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context\Product\Related" shared="false" type="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context">
         <arguments>
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest</argument>
         </arguments>

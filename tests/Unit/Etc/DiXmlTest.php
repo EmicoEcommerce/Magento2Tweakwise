@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Etc;
 
 use Emico\CodeCept\Test\Unit;
+use ReflectionClass;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Test\Support\UnitTester;
 
 class DiXmlTest extends Unit
@@ -13,7 +15,11 @@ class DiXmlTest extends Unit
 
     public function testUpsellAndRelatedRecommendationContextsAreNotShared(): void
     {
-        $diXmlPath = dirname(__DIR__, 4) . '/src/etc/di.xml';
+        $configReflection = new ReflectionClass(Config::class);
+        $diXmlPath = dirname((string) $configReflection->getFileName(), 2) . '/etc/di.xml';
+
+        $this->assertFileExists($diXmlPath);
+
         $document = simplexml_load_file($diXmlPath);
 
         $this->assertNotFalse($document);

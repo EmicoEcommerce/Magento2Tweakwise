@@ -53,7 +53,8 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "phpstan/extension-installer": true,
             "phpro/grumphp": true,
-            "emico/code-quality": true
+            "emico/code-quality": true,
+            "magento/inventory-composer-installer": true
         }
     }
 }

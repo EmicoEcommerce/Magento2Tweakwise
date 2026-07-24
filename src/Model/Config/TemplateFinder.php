@@ -1,12 +1,16 @@
-<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+<?php
+
+declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Model\Config;
 
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Category\Collection;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Framework\Registry;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Config\Source\RecommendationOption;
-use Magento\Catalog\Model\Category;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\CategoryRepository;
 
 class TemplateFinder
@@ -27,11 +31,14 @@ class TemplateFinder
     protected $categoryRepository;
 
     /**
-     * TemplateFinder constructor.
      * @param Config $config
      */
-    public function __construct(Config $config, Registry $registry, CategoryRepository $categoryRepository)
-    {
+    public function __construct(
+        Config $config,
+        Registry $registry,
+        CategoryRepository $categoryRepository,
+        private readonly CategoryCollectionFactory $categoryCollectionFactory,
+    ) {
         $this->config = $config;
         $this->registry = $registry;
         $this->categoryRepository = $categoryRepository;
@@ -104,17 +111,68 @@ class TemplateFinder
     }
 
     /**
+     * Find the recommendation template for a category by walking up the category path.
+     * Uses a single batch collection load for all path categories to avoid N+1 DB queries.
+     *
      * @param Category $category
      * @param string $type
-     * @return int|string
+     * @return int|string|null
      */
     public function forCategory(Category $category, $type)
     {
         $attribute = $this->getAttribute($type);
+        $groupAttribute = $this->getGroupCodeAttribute($type);
+        $pathIds = array_reverse($category->getPathIds());
+
+        $collection = $this->categoryCollectionFactory->create()
+            ->addAttributeToFilter('entity_id', ['in' => $pathIds])
+            ->addAttributeToSelect([$attribute, $groupAttribute]);
+
+        /** @var array<int, Category> $categoriesById */
+        $categoriesById = $this->createCategoriesByIdLookup($collection);
+
+        foreach ($pathIds as $pathId) {
+            $pathCategory = $categoriesById[(int) $pathId] ?? null;
+
+            if (!$pathCategory) {
+                continue;
+            }
+
+            $value = $this->resolveRecommendationValue(
+                $pathCategory,
+                $attribute,
+                $groupAttribute,
+            );
+
+            if ($value !== null) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array<int, Category>
+     */
+    private function createCategoriesByIdLookup(Collection $collection): array
+    {
+        $categoriesById = [];
+        foreach ($collection as $item) {
+            $categoriesById[(int) $item->getId()] = $item;
+        }
+
+        return $categoriesById;
+    }
+
+    /**
+     * @return int|string|null
+     */
+    private function resolveRecommendationValue(Category $category, string $attribute, string $groupAttribute)
+    {
         $templateId = (int) $category->getData($attribute);
 
         if ($templateId === RecommendationOption::OPTION_CODE) {
-            $groupAttribute = $this->getGroupCodeAttribute($type);
             return (string) $category->getData($groupAttribute);
         }
 
@@ -122,12 +180,6 @@ class TemplateFinder
             return $templateId;
         }
 
-        if ($category->getParentId()) {
-            $parent = $category->getParentCategory();
-            return $this->forCategory($parent, $type);
-        }
-
-        // @phpstan-ignore-next-line
         return null;
     }
 

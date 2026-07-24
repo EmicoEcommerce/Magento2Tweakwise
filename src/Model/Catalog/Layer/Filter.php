@@ -278,7 +278,7 @@ class Filter extends AbstractFilter implements FilterInterface
      */
     public function getName()
     {
-        return (string) $this->facet->getFacetSettings()->getTitle();
+        return $this->facet->getFacetSettings()->getTitle();
     }
 
     /**
@@ -356,7 +356,6 @@ class Filter extends AbstractFilter implements FilterInterface
         $item = $this->itemFactory->create(['filter' => $this, 'attributeType' => $attributeType]);
 
         $children = [];
-        // @phpstan-ignore-next-line
         foreach ($attributeType->getChildren() as $childAttributeType) {
             $children[] = $this->createItem($childAttributeType);
         }

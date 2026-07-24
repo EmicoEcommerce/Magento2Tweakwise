@@ -26,6 +26,7 @@ use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
 use GuzzleHttp\Client as HttpClient;
 use Magento\Framework\UrlInterface;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use GuzzleHttp\Psr7\Uri;
 
 class Client
@@ -79,7 +80,11 @@ class Client
         ResponseFactory $responseFactory,
         EndpointManager $endpointManager,
         Timer $timer,
-        private UrlInterface $urlBuilder
+        private UrlInterface $urlBuilder,
+        /**
+         * @var RemoteAddress
+         */
+        private readonly RemoteAddress $remoteAddress
     ) {
         $this->config = $config;
         $this->log = $log;
@@ -109,6 +114,24 @@ class Client
     }
 
     /**
+     * @return array
+     */
+    protected function buildInternalTrafficHeader(): array
+    {
+        $internalIps = $this->config->getInternalIpAddresses();
+        if (empty($internalIps)) {
+            return [];
+        }
+
+        $visitorIp = $this->remoteAddress->getRemoteAddress();
+        if (!in_array($visitorIp, $internalIps, true)) {
+            return [];
+        }
+
+        return ['TWN-Source' => 'Internal-Traffic'];
+    }
+
+    /**
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
@@ -125,10 +148,10 @@ class Client
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
-    protected function createPostRequest(Request $tweakwiseRequest): HttpRequest
+    public function createPostRequest(Request $tweakwiseRequest): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();
-        $headers = [];
+        $headers = $this->buildInternalTrafficHeader();
 
         $headers['Content-Type'] = 'application/json';
         $headers['Instance-Key'] = $this->config->getGeneralAuthenticationKey();
@@ -144,12 +167,12 @@ class Client
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
-    protected function createGetRequest(Request $tweakwiseRequest): HttpRequest
+    public function createGetRequest(Request $tweakwiseRequest): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();
         $pathSuffix = $tweakwiseRequest->getPathSuffix();
 
-        $headers = [];
+        $headers = $this->buildInternalTrafficHeader();
 
         if ($path === 'recommendations/featured') {
             if ($this->config->getRecommendationsFeaturedCategory()) {

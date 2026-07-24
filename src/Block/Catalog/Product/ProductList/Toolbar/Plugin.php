@@ -87,11 +87,15 @@ class Plugin
         }
 
         /** @var SortFieldType[] $sortFields */
-        $sortFields = $this->context->getResponse()->getProperties()->getSortFields(); // @phpstan-ignore-line
+        $sortFields = $this->context->getResponse()->getProperties()->getSortFields() ?? []; // @phpstan-ignore-line
 
         $result = [];
         foreach ($sortFields as $field) {
             $result[$field->getUrlValue()] = $field->getDisplayTitle();
+        }
+
+        if (empty($result)) {
+            return $proceed();
         }
 
         return $result;

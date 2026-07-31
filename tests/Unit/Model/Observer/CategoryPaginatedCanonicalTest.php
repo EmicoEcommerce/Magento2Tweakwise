@@ -9,6 +9,7 @@ use Magento\Catalog\Block\Category\View as CategoryView;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\View\Asset\GroupedCollection;
+use Magento\Framework\View\Asset\PropertyGroup;
 use Magento\Framework\View\Page\Config as PageConfig;
 use Mockery;
 use Mockery\MockInterface;
@@ -74,7 +75,7 @@ class CategoryPaginatedCanonicalTest extends Unit
 
         $existingCanonical = 'https://example.com/category?color=blue';
 
-        $canonicalGroup = Mockery::mock();
+        $canonicalGroup = Mockery::mock(PropertyGroup::class);
         $canonicalGroup->shouldReceive('getAll')->once()->andReturn([$existingCanonical => Mockery::mock()]);
 
         $assetCollection = Mockery::mock(GroupedCollection::class);

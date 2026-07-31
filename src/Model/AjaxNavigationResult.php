@@ -144,6 +144,11 @@ class AjaxNavigationResult extends Layout
         }
 
         $urlParts = parse_url($responseUrl);
+        if ($urlParts === false) {
+            $separator = str_contains($responseUrl, '?') ? '&' : '?';
+            return $responseUrl . $separator . http_build_query(['p' => $page]);
+        }
+
         $query = [];
         if (isset($urlParts['query'])) {
             parse_str($urlParts['query'], $query);

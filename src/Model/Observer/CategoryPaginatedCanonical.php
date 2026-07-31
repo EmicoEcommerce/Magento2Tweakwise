@@ -9,6 +9,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\View\Asset\GroupedCollection;
+use Magento\Framework\View\Asset\PropertyGroup;
 use Magento\Framework\View\Page\Config as PageConfig;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
@@ -42,13 +43,13 @@ class CategoryPaginatedCanonical implements ObserverInterface
 
         $assetCollection = $this->pageConfig->getAssetCollection();
         $canonicalGroup = $assetCollection->getGroupByContentType('canonical');
-        if (!$canonicalGroup) {
+        if (!$canonicalGroup instanceof PropertyGroup) {
             return;
         }
 
         $canonicals = $canonicalGroup->getAll();
         $existingCanonical = array_key_first($canonicals);
-        if ($existingCanonical === null) {
+        if (!is_string($existingCanonical) || $existingCanonical === '') {
             return;
         }
 

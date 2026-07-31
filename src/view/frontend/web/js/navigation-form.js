@@ -28,9 +28,7 @@ define([
             ajaxCache: true,
             urlStrategy: '',
             twRequestId: '',
-            analyticsEvents: false,
             productSelector: 'product-item-info',
-            analyticsEndpoint: '/tweakwise/ajax/analytics',
         },
 
         currentXhr: null,

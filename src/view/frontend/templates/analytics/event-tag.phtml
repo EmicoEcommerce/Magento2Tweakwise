@@ -1,0 +1,26 @@
+<?php
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics;
+
+/** @var $block Template */
+/** @var Escaper $escaper */
+
+/** @var PersonalMerchandisingAnalytics $viewModel */
+$viewModel = $block->getData('viewModel');
+$instanceKey = $viewModel->getInstanceKey();
+?>
+<script>
+(function(w, d, l, i, u) {
+  w['_twa'] = l;
+  w[l] = w[l] || [];
+  w[l].push({ 'twa.start': new Date().getTime(), event: 'twa.js' });
+  w[l].push({ 'twa.instance': i, event: 'twa.init' });
+  var f = d.getElementsByTagName('script')[0],
+      j = d.createElement('script');
+  j.async = true;
+  j.src = u;
+  f.parentNode.insertBefore(j, f);
+})(window, document, 'tweakwiseLayer', '<?= $escaper->escapeJs($instanceKey); ?>', "//navigator-analytics.tweakwise.com/bundles/scout.js");
+</script>

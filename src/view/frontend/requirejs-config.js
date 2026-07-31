@@ -10,5 +10,12 @@ var config = {
             productListToolbarForm: 'Tweakwise_Magento2Tweakwise/js/toolbar',
             jQueryTouchPunch: 'Tweakwise_Magento2Tweakwise/js/lib/jquery.ui.touch-punch.min'
         }
+    },
+    config: {
+        mixins: {
+            'Magento_Catalog/js/catalog-add-to-cart': {
+                'Tweakwise_Magento2Tweakwise/js/mixins/catalog-add-to-cart-mixin': true
+            }
+        }
     }
 };

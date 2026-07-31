@@ -55,6 +55,38 @@ class ConfigTest extends Unit
     }
 
     /**
+     * @return void
+     */
+    public function testIsPaginatedCanonicalEnabledReturnsTrueWhenConfigValueIsOne(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with('tweakwise/seo/paginated_canonical_enabled', 'store', null)
+            ->willReturn('1');
+
+        $config = $this->createConfig($scopeConfig);
+
+        $this->assertTrue($config->isPaginatedCanonicalEnabled());
+    }
+
+    /**
+     * @return void
+     */
+    public function testIsPaginatedCanonicalEnabledReturnsFalseWhenConfigValueIsZero(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with('tweakwise/seo/paginated_canonical_enabled', 'store', null)
+            ->willReturn('0');
+
+        $config = $this->createConfig($scopeConfig);
+
+        $this->assertFalse($config->isPaginatedCanonicalEnabled());
+    }
+
+    /**
      * @param ScopeConfigInterface $scopeConfig
      * @return Config
      */

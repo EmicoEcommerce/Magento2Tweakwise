@@ -26,18 +26,18 @@ class CheckoutSessionDataProviderTest extends Unit
 
     public function testGetReturnsEmptyArrayWhenNothingIsStoredYet(): void
     {
-        $this->session->shouldReceive('getTweakwiseGtmData')->once()->andReturn(null);
+        $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn(null);
 
         $this->assertSame([], $this->subject->get());
     }
 
     public function testAddAppendsToAnExistingListForTheSameKeyInsteadOfOverwriting(): void
     {
-        $this->session->shouldReceive('getTweakwiseGtmData')->once()->andReturn([
+        $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn([
             'addtocart_event' => [['productKey' => 'first']],
         ]);
 
-        $this->session->shouldReceive('setTweakwiseGtmData')->once()->with([
+        $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([
             'addtocart_event' => [
                 ['productKey' => 'first'],
                 ['productKey' => 'second'],
@@ -49,8 +49,8 @@ class CheckoutSessionDataProviderTest extends Unit
 
     public function testAddCreatesTheKeyWhenNothingWasStoredYet(): void
     {
-        $this->session->shouldReceive('getTweakwiseGtmData')->once()->andReturn(null);
-        $this->session->shouldReceive('setTweakwiseGtmData')->once()->with([
+        $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn(null);
+        $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([
             'addtocart_event' => [['productKey' => '100016']],
         ]);
 
@@ -59,7 +59,7 @@ class CheckoutSessionDataProviderTest extends Unit
 
     public function testClearResetsStorageToAnEmptyArray(): void
     {
-        $this->session->shouldReceive('setTweakwiseGtmData')->once()->with([]);
+        $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([]);
 
         $this->subject->clear();
     }

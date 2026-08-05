@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\Model\Analytics\Tag;
 
 use Magento\Bundle\Model\Product\Type as Bundle;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\TagInterface;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\CurrentProductResolver;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
@@ -23,15 +21,14 @@ class ProductView implements TagInterface
     public function __construct(
         private readonly Config $tweakwiseConfig,
         private readonly StoreManagerInterface $storeManager,
-        private readonly RequestInterface $request,
-        private readonly ProductRepositoryInterface $productRepository,
+        private readonly CurrentProductResolver $currentProductResolver,
         private readonly ProductKeyResolver $productKeyResolver,
     ) {
     }
 
     public function get(): string
     {
-        $productId = $this->request->getParam('id');
+        $productId = $this->currentProductResolver->getProductId();
 
         if (!$productId) {
             return '0';
@@ -44,7 +41,7 @@ class ProductView implements TagInterface
             return $this->productKeyResolver->resolve((string)$productId, $storeId, false);
         }
 
-        $rawId = (string)$this->getGroupedProductId((int)$productId);
+        $rawId = (string)$this->getGroupedProductId($productId);
 
         return $this->productKeyResolver->resolve($rawId, $storeId, true);
     }
@@ -56,14 +53,8 @@ class ProductView implements TagInterface
      */
     public function getPrice(): float
     {
-        $productId = $this->request->getParam('id');
-        if (!$productId) {
-            return 0.0;
-        }
-
-        try {
-            $product = $this->productRepository->getById((int)$productId);
-        } catch (NoSuchEntityException $e) {
+        $product = $this->currentProductResolver->getProduct();
+        if ($product === null) {
             return 0.0;
         }
 
@@ -72,17 +63,12 @@ class ProductView implements TagInterface
 
     private function getGroupedProductId(int $productId): int|string
     {
-        try {
-            /** @var Product $product */
-            $product = $this->productRepository->getById($productId);
-        } catch (NoSuchEntityException $e) {
+        $product = $this->currentProductResolver->getProduct();
+        if ($product === null || $product->getTypeId() === Type::TYPE_SIMPLE) {
             return $productId;
         }
 
-        if ($product->getTypeId() === Type::TYPE_SIMPLE) {
-            return $productId;
-        }
-
+        /** @var Product $product */
         $associatedProducts = $this->getAssociatedProducts($product);
         if (empty($associatedProducts)) {
             return $productId;

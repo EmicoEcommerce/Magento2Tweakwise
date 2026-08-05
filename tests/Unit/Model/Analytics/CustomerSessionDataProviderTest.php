@@ -26,18 +26,18 @@ class CustomerSessionDataProviderTest extends Unit
 
     public function testGetReturnsEmptyArrayWhenNothingIsStoredYet(): void
     {
-        $this->session->shouldReceive('getTweakwiseGtmData')->once()->andReturn(null);
+        $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn(null);
 
         $this->assertSame([], $this->subject->get());
     }
 
     public function testAddAppendsToAnExistingListForTheSameKeyInsteadOfOverwriting(): void
     {
-        $this->session->shouldReceive('getTweakwiseGtmData')->once()->andReturn([
+        $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn([
             'addtowishlist_event' => [['productKey' => 'first']],
         ]);
 
-        $this->session->shouldReceive('setTweakwiseGtmData')->once()->with([
+        $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([
             'addtowishlist_event' => [
                 ['productKey' => 'first'],
                 ['productKey' => 'second'],
@@ -49,7 +49,7 @@ class CustomerSessionDataProviderTest extends Unit
 
     public function testClearResetsStorageToAnEmptyArray(): void
     {
-        $this->session->shouldReceive('setTweakwiseGtmData')->once()->with([]);
+        $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([]);
 
         $this->subject->clear();
     }

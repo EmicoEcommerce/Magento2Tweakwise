@@ -17,18 +17,18 @@ class CheckoutSessionDataProvider
     {
         $events = $this->get();
         $events[$key][] = $data;
-        $this->checkoutSession->setTweakwiseGtmData($events);
+        $this->checkoutSession->setTweakwisePendingEvents($events);
     }
 
     public function get(): array
     {
-        $events = $this->checkoutSession->getTweakwiseGtmData();
+        $events = $this->checkoutSession->getTweakwisePendingEvents();
 
         return is_array($events) ? $events : [];
     }
 
     public function clear(): void
     {
-        $this->checkoutSession->setTweakwiseGtmData([]);
+        $this->checkoutSession->setTweakwisePendingEvents([]);
     }
 }

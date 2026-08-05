@@ -17,18 +17,18 @@ class CustomerSessionDataProvider
     {
         $events = $this->get();
         $events[$key][] = $data;
-        $this->customerSession->setTweakwiseGtmData($events);
+        $this->customerSession->setTweakwisePendingEvents($events);
     }
 
     public function get(): array
     {
-        $events = $this->customerSession->getTweakwiseGtmData();
+        $events = $this->customerSession->getTweakwisePendingEvents();
 
         return is_array($events) ? $events : [];
     }
 
     public function clear(): void
     {
-        $this->customerSession->setTweakwiseGtmData([]);
+        $this->customerSession->setTweakwisePendingEvents([]);
     }
 }

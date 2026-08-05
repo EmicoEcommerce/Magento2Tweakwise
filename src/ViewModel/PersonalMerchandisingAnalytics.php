@@ -77,7 +77,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
      * and "data_layer_events" arguments, which each layout XML handle populates with whatever's
      * relevant to that page (see catalog_product_view.xml, catalogsearch_result_index.xml,
      * checkout_onepage_success.xml, ...). Adding a new page's analytics tag/event is therefore a layout
-     * change, never a change to this class. Mirrors Yireo_GoogleTagManager2's ViewModel\DataLayer.
+     * change, never a change to this class.
      */
     public function getEventsData(string $requestId): string
     {

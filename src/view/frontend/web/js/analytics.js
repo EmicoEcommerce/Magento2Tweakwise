@@ -107,7 +107,6 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', [
 
                     // Remove the consumed events from customer-data's own (localStorage-backed) cache,
                     // so a later page load reading this same cached section can't push them again.
-                    // Mirrors Yireo_GoogleTagManager2's generic.js.
                     delete sectionData.tweakwise_events;
                     customerData.set(sectionName, sectionData);
                 });

@@ -8,8 +8,8 @@ define([
      * Reads productKey/price from the submitted product's own listing tile (its wrapper carries
      * "product-item-info_<productKey>" as its id, and a data-tw-price attribute - see
      * product/list/item.phtml), falling back to the current product view page's data when there's no
-     * such tile (see analytics.phtml/analytics.js). Mirrors Yireo_GoogleTagManager2's
-     * catalog-add-to-cart-mixin.js, which reads pre-rendered page data instead of asking the backend.
+     * such tile (see analytics.phtml/analytics.js), reading pre-rendered page data instead of asking
+     * the backend.
      */
     function getProductData(form) {
         const wrapper = $(form).closest('.product-item-info');

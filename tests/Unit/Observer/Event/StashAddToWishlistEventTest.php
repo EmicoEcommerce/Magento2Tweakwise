@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Observer\Event;
 
 use Emico\CodeCept\Test\Unit;
-use Magento\Catalog\Api\Data\ProductExtension;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Event;
@@ -18,9 +17,10 @@ use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\CustomerSessionDataProvider;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\GroupedProductIdResolver;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2Tweakwise\Observer\Event\StashAddToWishlistEvent;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class StashAddToWishlistEventTest extends Unit
 {
@@ -28,7 +28,8 @@ class StashAddToWishlistEventTest extends Unit
 
     private PersonalMerchandisingConfig&MockInterface $config;
     private LoggerInterface&MockInterface $logger;
-    private Helper&MockInterface $helper;
+    private ProductKeyResolver&MockInterface $productKeyResolver;
+    private GroupedProductIdResolver&MockInterface $groupedProductIdResolver;
     private CustomerSessionDataProvider&MockInterface $customerSessionDataProvider;
     private StashAddToWishlistEvent $subject;
 
@@ -36,7 +37,8 @@ class StashAddToWishlistEventTest extends Unit
     {
         $this->config = Mockery::mock(PersonalMerchandisingConfig::class);
         $this->logger = Mockery::mock(LoggerInterface::class);
-        $this->helper = Mockery::mock(Helper::class);
+        $this->productKeyResolver = Mockery::mock(ProductKeyResolver::class);
+        $this->groupedProductIdResolver = Mockery::mock(GroupedProductIdResolver::class);
         $this->customerSessionDataProvider = Mockery::mock(CustomerSessionDataProvider::class);
 
         $store = Mockery::mock(StoreInterface::class);
@@ -47,7 +49,8 @@ class StashAddToWishlistEventTest extends Unit
         $this->subject = new StashAddToWishlistEvent(
             $this->config,
             $this->logger,
-            $this->helper,
+            $this->productKeyResolver,
+            $this->groupedProductIdResolver,
             $storeManager,
             $this->customerSessionDataProvider
         );
@@ -90,11 +93,12 @@ class StashAddToWishlistEventTest extends Unit
     {
         $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
         $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(false);
+        $this->groupedProductIdResolver->shouldNotReceive('resolve');
 
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getId')->andReturn(42);
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 42, null)->andReturn('10001042');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('42', 1, false)->andReturn('10001042');
 
         $this->customerSessionDataProvider->shouldReceive('add')->once()->with('addtowishlist_event', [
             'productKey' => '10001042',
@@ -109,15 +113,11 @@ class StashAddToWishlistEventTest extends Unit
         $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
         $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
 
-        $extensionAttributes = Mockery::mock(ProductExtension::class);
-        $extensionAttributes->shouldReceive('getConfigurableProductLinks')->andReturn([11, 12]);
-
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getId')->andReturn(10);
-        $product->shouldReceive('getExtensionAttributes')->andReturn($extensionAttributes);
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 10)->andReturn('55');
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 11, 55)->andReturn('K11-55');
+        $this->groupedProductIdResolver->shouldReceive('resolve')->once()->with($product)->andReturn('11-10');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('11-10', 1, true)->andReturn('K11-55');
 
         $this->customerSessionDataProvider->shouldReceive('add')->once()->with('addtowishlist_event', [
             'productKey' => 'K11-55',

@@ -37,7 +37,7 @@ class CurrentProductResolver
             $this->product = $this->resolveProduct();
         }
 
-        return $this->product ?: null;
+        return $this->product === false ? null : $this->product;
     }
 
     private function resolveProductId(): int

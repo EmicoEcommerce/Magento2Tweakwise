@@ -12,21 +12,21 @@ use Magento\Store\Model\StoreManagerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\PurchaseEventDataResolver;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class PurchaseEventDataResolverTest extends Unit
 {
     use MockeryPHPUnitIntegration;
 
-    private Helper&MockInterface $helper;
+    private ProductKeyResolver&MockInterface $productKeyResolver;
     private PersonalMerchandisingConfig&MockInterface $config;
     private PurchaseEventDataResolver $subject;
 
     protected function _before(): void
     {
-        $this->helper = Mockery::mock(Helper::class);
+        $this->productKeyResolver = Mockery::mock(ProductKeyResolver::class);
         $this->config = Mockery::mock(PersonalMerchandisingConfig::class);
 
         $store = Mockery::mock(StoreInterface::class);
@@ -35,7 +35,7 @@ class PurchaseEventDataResolverTest extends Unit
         $storeManager = Mockery::mock(StoreManagerInterface::class);
         $storeManager->shouldReceive('getStore')->andReturn($store);
 
-        $this->subject = new PurchaseEventDataResolver($this->helper, $storeManager, $this->config);
+        $this->subject = new PurchaseEventDataResolver($this->productKeyResolver, $storeManager, $this->config);
     }
 
     private function mockItem(?Item $parent, int $id, int $productId): Item&MockInterface
@@ -63,7 +63,7 @@ class PurchaseEventDataResolverTest extends Unit
         $item = $this->mockItem(null, 1, 10);
         $order = $this->mockOrder([$item], '123.45');
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 10)->andReturn('10001010');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('10', 1, false)->andReturn('10001010');
 
         $result = $this->subject->resolve($order);
 
@@ -78,7 +78,7 @@ class PurchaseEventDataResolverTest extends Unit
         $child = $this->mockItem($parent, 101, 20);
         $order = $this->mockOrder([$parent, $child], '50.00');
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 10)->andReturn('10001010');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('10', 1, false)->andReturn('10001010');
 
         $result = $this->subject->resolve($order);
 
@@ -93,8 +93,7 @@ class PurchaseEventDataResolverTest extends Unit
         $child = $this->mockItem($parent, 101, 5);
         $order = $this->mockOrder([$parent, $child], '59.00');
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 1)->andReturn('55');
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 5, 55)->andReturn('K5-55');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('5-1', 1, true)->andReturn('K5-55');
 
         $result = $this->subject->resolve($order);
 
@@ -108,7 +107,7 @@ class PurchaseEventDataResolverTest extends Unit
         $plainItem = $this->mockItem(null, 200, 7);
         $order = $this->mockOrder([$plainItem], '19.99');
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 7)->andReturn('K7');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('7', 1, false)->andReturn('K7');
 
         $result = $this->subject->resolve($order);
 
@@ -124,7 +123,7 @@ class PurchaseEventDataResolverTest extends Unit
         $childTwo = $this->mockItem($parent, 302, 12);
         $order = $this->mockOrder([$parent, $childOne, $childTwo], '99.00');
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 3)->andReturn('K3');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('3', 1, false)->andReturn('K3');
 
         $result = $this->subject->resolve($order);
 

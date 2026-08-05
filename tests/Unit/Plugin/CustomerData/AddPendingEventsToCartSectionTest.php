@@ -27,16 +27,6 @@ class AddPendingEventsToCartSectionTest extends Unit
         $this->subject = new AddPendingEventsToCartSection($this->checkoutSessionDataProvider);
     }
 
-    public function testAfterGetSectionDataReturnsNonArrayResultUnchangedWithoutTouchingTheStash(): void
-    {
-        $this->checkoutSessionDataProvider->shouldNotReceive('get');
-        $this->checkoutSessionDataProvider->shouldNotReceive('clear');
-
-        $result = $this->subject->afterGetSectionData($this->cartSection, false);
-
-        $this->assertFalse($result);
-    }
-
     public function testAfterGetSectionDataClearsTheStashButLeavesResultUntouchedWhenNothingIsPending(): void
     {
         $this->checkoutSessionDataProvider->shouldReceive('get')->once()->andReturn([]);

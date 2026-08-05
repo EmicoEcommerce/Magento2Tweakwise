@@ -13,7 +13,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 class PurchaseEventDataResolver
 {
     public function __construct(
-        private readonly Helper $helper,
+        private readonly ProductKeyResolver $productKeyResolver,
         private readonly StoreManagerInterface $storeManager,
         private readonly PersonalMerchandisingConfig $config,
     ) {
@@ -49,7 +49,7 @@ class PurchaseEventDataResolver
         ));
 
         return array_map(
-            fn (Item $item) => $this->helper->getTweakwiseId($storeId, (int)$item->getProductId()),
+            fn (Item $item) => $this->productKeyResolver->resolve((string)$item->getProductId(), $storeId, false),
             $items
         );
     }
@@ -78,22 +78,24 @@ class PurchaseEventDataResolver
             $parentId = (int)$parentItem->getId();
             $parentItemsById[$parentId] = $parentItem;
 
-            if ($parent !== null) {
-                $childProductIdsByParentId[$parentId][] = (int)$originalItem->getProductId();
+            if ($parent === null) {
+                continue;
             }
+
+            $childProductIdsByParentId[$parentId][] = (int)$originalItem->getProductId();
         }
 
         $productTwId = [];
 
         foreach ($parentItemsById as $parentId => $parentItem) {
             $childProductIds = $childProductIdsByParentId[$parentId] ?? [];
+            $isSingleChild = count($childProductIds) === 1;
 
-            if (count($childProductIds) === 1) {
-                $groupCode = (int)$this->helper->getTweakwiseId($storeId, (int)$parentItem->getProductId());
-                $productTwId[] = $this->helper->getTweakwiseId($storeId, $childProductIds[0], $groupCode);
-            } else {
-                $productTwId[] = $this->helper->getTweakwiseId($storeId, (int)$parentItem->getProductId());
-            }
+            $rawId = $isSingleChild
+                ? $childProductIds[0] . Helper::GROUP_CODE_DELIMITER . $parentItem->getProductId()
+                : (string)$parentItem->getProductId();
+
+            $productTwId[] = $this->productKeyResolver->resolve($rawId, $storeId, $isSingleChild);
         }
 
         return $productTwId;

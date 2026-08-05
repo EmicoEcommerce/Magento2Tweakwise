@@ -27,16 +27,6 @@ class AddPendingEventsToCustomerSectionTest extends Unit
         $this->subject = new AddPendingEventsToCustomerSection($this->customerSessionDataProvider);
     }
 
-    public function testAfterGetSectionDataReturnsNonArrayResultUnchangedWithoutTouchingTheStash(): void
-    {
-        $this->customerSessionDataProvider->shouldNotReceive('get');
-        $this->customerSessionDataProvider->shouldNotReceive('clear');
-
-        $result = $this->subject->afterGetSectionData($this->customerSection, null);
-
-        $this->assertNull($result);
-    }
-
     public function testAfterGetSectionDataClearsTheStashButLeavesResultUntouchedWhenNothingIsPending(): void
     {
         $this->customerSessionDataProvider->shouldReceive('get')->once()->andReturn([]);

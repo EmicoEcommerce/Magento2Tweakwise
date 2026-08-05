@@ -19,9 +19,9 @@ use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\CheckoutSessionDataProvider;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2Tweakwise\Observer\Event\StashAddToCartEvent;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class StashAddToCartEventTest extends Unit
 {
@@ -29,7 +29,7 @@ class StashAddToCartEventTest extends Unit
 
     private PersonalMerchandisingConfig&MockInterface $config;
     private LoggerInterface&MockInterface $logger;
-    private Helper&MockInterface $helper;
+    private ProductKeyResolver&MockInterface $productKeyResolver;
     private CheckoutSessionDataProvider&MockInterface $checkoutSessionDataProvider;
     private StashAddToCartEvent $subject;
 
@@ -37,7 +37,7 @@ class StashAddToCartEventTest extends Unit
     {
         $this->config = Mockery::mock(PersonalMerchandisingConfig::class);
         $this->logger = Mockery::mock(LoggerInterface::class);
-        $this->helper = Mockery::mock(Helper::class);
+        $this->productKeyResolver = Mockery::mock(ProductKeyResolver::class);
         $this->checkoutSessionDataProvider = Mockery::mock(CheckoutSessionDataProvider::class);
 
         $store = Mockery::mock(StoreInterface::class);
@@ -48,7 +48,7 @@ class StashAddToCartEventTest extends Unit
         $this->subject = new StashAddToCartEvent(
             $this->config,
             $this->logger,
-            $this->helper,
+            $this->productKeyResolver,
             $storeManager,
             $this->checkoutSessionDataProvider
         );
@@ -104,7 +104,7 @@ class StashAddToCartEventTest extends Unit
         $quoteItem->shouldReceive('getQtyToAdd')->andReturn(2.0);
         $quoteItem->shouldReceive('getProductId')->andReturn(42);
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 42, null)->andReturn('10001042');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('42', 1, false)->andReturn('10001042');
 
         $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
             'productKey' => '10001042',
@@ -133,13 +133,41 @@ class StashAddToCartEventTest extends Unit
         $quoteItem->shouldReceive('getProductId')->andReturn(10);
         $quoteItem->shouldReceive('getQtyOptions')->andReturn([11 => Mockery::mock()]);
 
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 10)->andReturn('55');
-        $this->helper->shouldReceive('getTweakwiseId')->once()->with(1, 11, 55)->andReturn('K11-55');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('11-10', 1, true)->andReturn('K11-55');
 
         $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
             'productKey' => 'K11-55',
             'quantity' => 1.0,
             'totalAmount' => 15.0,
+        ]);
+
+        $observer = $this->observerWith($product, $quoteItem);
+        $this->subject->execute($observer);
+    }
+
+    public function testExecuteTreatsProductAsItsOwnGroupWhenGroupedProductsAreEnabledButThereAreNoQtyOptions(): void
+    {
+        $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
+        $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $priceModel = Mockery::mock();
+        $priceModel->shouldReceive('getFinalPrice')->andReturn(5.0);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getPriceModel')->andReturn($priceModel);
+        $product->shouldReceive('getId')->andReturn(42);
+
+        $quoteItem = Mockery::mock(Item::class);
+        $quoteItem->shouldReceive('getQtyToAdd')->andReturn(1.0);
+        $quoteItem->shouldReceive('getProductId')->andReturn(42);
+        $quoteItem->shouldReceive('getQtyOptions')->andReturn([]);
+
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('42-42', 1, true)->andReturn('10001042-10001042');
+
+        $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
+            'productKey' => '10001042-10001042',
+            'quantity' => 1.0,
+            'totalAmount' => 5.0,
         ]);
 
         $observer = $this->observerWith($product, $quoteItem);

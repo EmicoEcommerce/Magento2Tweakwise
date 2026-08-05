@@ -14,12 +14,8 @@ class AddPendingEventsToCartSection
     ) {
     }
 
-    public function afterGetSectionData(CartSection $subject, $result)
+    public function afterGetSectionData(CartSection $subject, array $result): array
     {
-        if (!is_array($result)) {
-            return $result;
-        }
-
         $pendingEvents = $this->checkoutSessionDataProvider->get();
         $this->checkoutSessionDataProvider->clear();
 

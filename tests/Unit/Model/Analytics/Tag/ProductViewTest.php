@@ -6,14 +6,13 @@ namespace Tweakwise\Test\Unit\Model\Analytics\Tag;
 
 use Emico\CodeCept\Test\Unit;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\Product\Type;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\CurrentProductResolver;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\GroupedProductIdResolver;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\Tag\ProductView;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -25,6 +24,7 @@ class ProductViewTest extends Unit
     private Config&MockInterface $tweakwiseConfig;
     private CurrentProductResolver&MockInterface $currentProductResolver;
     private ProductKeyResolver&MockInterface $productKeyResolver;
+    private GroupedProductIdResolver&MockInterface $groupedProductIdResolver;
     private ProductView $subject;
 
     protected function _before(): void
@@ -32,6 +32,7 @@ class ProductViewTest extends Unit
         $this->tweakwiseConfig = Mockery::mock(Config::class);
         $this->currentProductResolver = Mockery::mock(CurrentProductResolver::class);
         $this->productKeyResolver = Mockery::mock(ProductKeyResolver::class);
+        $this->groupedProductIdResolver = Mockery::mock(GroupedProductIdResolver::class);
 
         $store = Mockery::mock(StoreInterface::class);
         $store->shouldReceive('getId')->andReturn(1);
@@ -42,7 +43,8 @@ class ProductViewTest extends Unit
             $this->tweakwiseConfig,
             $storeManager,
             $this->currentProductResolver,
-            $this->productKeyResolver
+            $this->productKeyResolver,
+            $this->groupedProductIdResolver
         );
     }
 
@@ -63,35 +65,14 @@ class ProductViewTest extends Unit
         $this->assertSame('10001042', $this->subject->get());
     }
 
-    public function testGetPassesRawProductIdWhenGroupedProductIsSimple(): void
-    {
-        $this->currentProductResolver->shouldReceive('getProductId')->once()->andReturn(42);
-        $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
-
-        $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getTypeId')->once()->andReturn(Type::TYPE_SIMPLE);
-        $this->currentProductResolver->shouldReceive('getProduct')->once()->andReturn($product);
-
-        $this->productKeyResolver->shouldReceive('resolve')->once()->with('42', 1, true)->andReturn('10001042-10001042');
-
-        $this->assertSame('10001042-10001042', $this->subject->get());
-    }
-
-    public function testGetCombinesFirstAssociatedProductWithParentForConfigurableProducts(): void
+    public function testGetDelegatesToGroupedProductIdResolverWhenGroupedProductsAreEnabled(): void
     {
         $this->currentProductResolver->shouldReceive('getProductId')->once()->andReturn(10);
         $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
 
-        $childProduct = Mockery::mock(Product::class);
-        $childProduct->shouldReceive('getId')->andReturn(11);
-
-        $typeInstance = Mockery::mock(Configurable::class);
-        $typeInstance->shouldReceive('getUsedProducts')->once()->andReturn([$childProduct]);
-
         $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getTypeId')->once()->andReturn('configurable');
-        $product->shouldReceive('getTypeInstance')->once()->andReturn($typeInstance);
         $this->currentProductResolver->shouldReceive('getProduct')->once()->andReturn($product);
+        $this->groupedProductIdResolver->shouldReceive('resolve')->once()->with($product)->andReturn('11-10');
 
         $this->productKeyResolver->shouldReceive('resolve')->once()->with('11-10', 1, true)->andReturn('K11-K10');
 
@@ -103,6 +84,7 @@ class ProductViewTest extends Unit
         $this->currentProductResolver->shouldReceive('getProductId')->once()->andReturn(99);
         $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
         $this->currentProductResolver->shouldReceive('getProduct')->once()->andReturn(null);
+        $this->groupedProductIdResolver->shouldNotReceive('resolve');
 
         $this->productKeyResolver->shouldReceive('resolve')->once()->with('99', 1, true)->andReturn('10000199');
 

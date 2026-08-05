@@ -14,12 +14,8 @@ class AddPendingEventsToCustomerSection
     ) {
     }
 
-    public function afterGetSectionData(CustomerSection $subject, $result)
+    public function afterGetSectionData(CustomerSection $subject, array $result): array
     {
-        if (!is_array($result)) {
-            return $result;
-        }
-
         $pendingEvents = $this->customerSessionDataProvider->get();
         $this->customerSessionDataProvider->clear();
 

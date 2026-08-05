@@ -15,6 +15,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\CheckoutSessionDataProvider;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
@@ -23,7 +24,7 @@ class StashAddToCartEvent implements ObserverInterface
     public function __construct(
         private readonly PersonalMerchandisingConfig $config,
         private readonly LoggerInterface $logger,
-        private readonly Helper $helper,
+        private readonly ProductKeyResolver $productKeyResolver,
         private readonly StoreManagerInterface $storeManager,
         private readonly CheckoutSessionDataProvider $checkoutSessionDataProvider,
     ) {
@@ -53,28 +54,23 @@ class StashAddToCartEvent implements ObserverInterface
         }
 
         $totalAmount = $quoteItem->getQtyToAdd() * $product->getPriceModel()->getFinalPrice($quoteItem->getQtyToAdd(), $product);
+        $storeId = (int)$this->storeManager->getStore()->getId();
+        $groupedProductsEnabled = $this->config->isGroupedProductsEnabled();
 
-        $productId = $quoteItem->getProductId();
-        $groupCode = null;
-
-        if ($this->config->isGroupedProductsEnabled()) {
-            // Use $product (not $quoteItem->getProductId()) for the group code: for configurable products,
-            // Magento's Configurable::_prepareProduct() already points the quote item at the *child* simple
-            // product, while $product here is still the original parent passed by checkout_cart_product_add_after.
-            $groupCode = (int)$this->helper->getTweakwiseId((int)$this->storeManager->getStore()->getId(), (int)$product->getId());
-            if (!empty($quoteItem->getQtyOptions())) {
-                $productId = array_key_first($quoteItem->getQtyOptions());
-            }
+        // For configurable products, Magento's Configurable::_prepareProduct() already points the quote
+        // item at the *child* simple product, while $product here is still the original parent passed
+        // by checkout_cart_product_add_after.
+        $childProductId = $quoteItem->getProductId();
+        if ($groupedProductsEnabled && !empty($quoteItem->getQtyOptions())) {
+            $childProductId = array_key_first($quoteItem->getQtyOptions());
         }
 
-        $productId = $this->helper->getTweakwiseId(
-            (int)$this->storeManager->getStore()->getId(),
-            (int)$productId,
-            $groupCode,
-        );
+        $rawId = $groupedProductsEnabled
+            ? $childProductId . Helper::GROUP_CODE_DELIMITER . $product->getId()
+            : (string)$childProductId;
 
         $this->checkoutSessionDataProvider->add('addtocart_event', [
-            'productKey' => $productId,
+            'productKey' => $this->productKeyResolver->resolve($rawId, $storeId, $groupedProductsEnabled),
             'quantity' => (float)$quoteItem->getQtyToAdd(),
             'totalAmount' => (float)$totalAmount,
         ]);

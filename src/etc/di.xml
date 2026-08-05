@@ -41,6 +41,9 @@
     <type name="Magento\Checkout\CustomerData\Cart">
         <plugin name="tweakwise-magento2tweakwise-pending-events" type="Tweakwise\Magento2Tweakwise\Plugin\CustomerData\AddPendingEventsToCartSection" />
     </type>
+    <type name="Magento\Catalog\Block\Product\AbstractProduct">
+        <plugin name="tweakwise-magento2tweakwise-analytics-product-details" type="Tweakwise\Magento2Tweakwise\Plugin\ProductList\AddProductAnalyticsData" />
+    </type>
     <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin">
         <arguments>
             <argument name="tweakwiseFilterList" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise\Proxy</argument>

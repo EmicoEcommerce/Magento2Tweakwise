@@ -26,7 +26,7 @@ class ProductKeyResolver
         }
 
         $itemTweakwiseId = $this->helper->getTweakwiseId($storeId, (int)$itemId);
-        $groupTweakwiseId = ($groupCode === null || $groupCode === '')
+        $groupTweakwiseId = $groupCode === null || $groupCode === ''
             ? $itemTweakwiseId
             : $this->helper->getTweakwiseId($storeId, (int)$groupCode);
 

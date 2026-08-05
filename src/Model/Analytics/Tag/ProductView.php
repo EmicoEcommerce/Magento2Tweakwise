@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Model\Analytics\Tag;
 
-use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\Product\Type;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\TagInterface;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\CurrentProductResolver;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\GroupedProductIdResolver;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class ProductView implements TagInterface
 {
@@ -23,6 +19,7 @@ class ProductView implements TagInterface
         private readonly StoreManagerInterface $storeManager,
         private readonly CurrentProductResolver $currentProductResolver,
         private readonly ProductKeyResolver $productKeyResolver,
+        private readonly GroupedProductIdResolver $groupedProductIdResolver,
     ) {
     }
 
@@ -41,7 +38,13 @@ class ProductView implements TagInterface
             return $this->productKeyResolver->resolve((string)$productId, $storeId, false);
         }
 
-        $rawId = (string)$this->getGroupedProductId($productId);
+        $product = $this->currentProductResolver->getProduct();
+        if ($product === null) {
+            $rawId = (string)$productId;
+        } else {
+            /** @var Product $product */
+            $rawId = (string)$this->groupedProductIdResolver->resolve($product);
+        }
 
         return $this->productKeyResolver->resolve($rawId, $storeId, true);
     }
@@ -58,42 +61,7 @@ class ProductView implements TagInterface
             return 0.0;
         }
 
-        return (float)$product->getFinalPrice();
-    }
-
-    private function getGroupedProductId(int $productId): int|string
-    {
-        $product = $this->currentProductResolver->getProduct();
-        if ($product === null || $product->getTypeId() === Type::TYPE_SIMPLE) {
-            return $productId;
-        }
-
         /** @var Product $product */
-        $associatedProducts = $this->getAssociatedProducts($product);
-        if (empty($associatedProducts)) {
-            return $productId;
-        }
-
-        $firstAssociatedProduct = reset($associatedProducts);
-        $simpleId = $firstAssociatedProduct->getId();
-        if ($simpleId === 0 || $simpleId === $productId) {
-            return $productId;
-        }
-
-        return $simpleId . Helper::GROUP_CODE_DELIMITER . $productId;
-    }
-
-    private function getAssociatedProducts(Product $product): array
-    {
-        $typeInstance = $product->getTypeInstance();
-        return match (true) {
-            $typeInstance instanceof Configurable => $typeInstance->getUsedProducts($product),
-            $typeInstance instanceof Grouped => $typeInstance->getAssociatedProducts($product),
-            $typeInstance instanceof Bundle => $typeInstance->getSelectionsCollection(
-                $typeInstance->getOptionsIds($product),
-                $product
-            )->getItems(),
-            default => [],
-        };
+        return (float)$product->getFinalPrice();
     }
 }

@@ -10,10 +10,6 @@ use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
-/**
- * Resolves an order into the productKeys/revenue shape used by the Tweakwise "purchase" event.
- * Used by Model\Analytics\PurchaseEventsResolver on the checkout success page.
- */
 class PurchaseEventDataResolver
 {
     public function __construct(

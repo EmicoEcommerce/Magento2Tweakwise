@@ -6,10 +6,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Analytics;
 
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
-/**
- * Resolves a raw entity id (optionally "childId{delimiter}groupCode") into the final Tweakwise product key,
- * i.e. the same store-prefixed id format used in the Tweakwise product feed and API responses.
- */
 class ProductKeyResolver
 {
     public function __construct(

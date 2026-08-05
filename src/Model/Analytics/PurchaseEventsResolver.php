@@ -9,13 +9,6 @@ use Psr\Log\LoggerInterface;
 use Throwable;
 use Tweakwise\Magento2Tweakwise\Api\Data\EventInterface;
 
-/**
- * Resolves the purchase event for the checkout success page. Wired only into checkout_onepage_success.xml's
- * "data_layer_events" argument, never into every page's "tweakwise.analytics" block like the Tag\*
- * classes, so the checkout session it depends on is never touched on pages that don't need it. Always
- * resolves the order directly, mirroring Yireo_GoogleTagManager2's DataLayer\Event\Purchase::get(),
- * which never reads a session stash for this event either.
- */
 class PurchaseEventsResolver implements EventInterface
 {
     public function __construct(

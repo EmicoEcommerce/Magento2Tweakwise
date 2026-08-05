@@ -18,11 +18,6 @@ use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
-/**
- * Resolves the productKey of the currently viewed product (request param "id"). Wired only into
- * catalog_product_view.xml's "data_layer" argument, mirroring Yireo_GoogleTagManager2's
- * DataLayer\Tag\Product\CurrentProduct.
- */
 class ProductView implements TagInterface
 {
     public function __construct(

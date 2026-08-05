@@ -18,14 +18,6 @@ use Tweakwise\Magento2Tweakwise\Model\Analytics\CheckoutSessionDataProvider;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
-/**
- * Stashes an addtocart event on every add-to-cart, regardless of theme or flow (AJAX widget, plain form
- * POST, minicart, ...), so it can reach the Tweakwise Event Tag via the "cart" customer-data section.
- * On Luma, js/mixins/catalog-add-to-cart-mixin.js additionally pushes the same event synchronously
- * client-side for instant same-page feedback; the push.js de-dup guard collapses the two into one event
- * when both deliver it. Mirrors Yireo_GoogleTagManager2's Observer\TriggerAddToCartDataLayerEvent, which
- * runs unconditionally alongside its own Luma-only client-side mixin the same way.
- */
 class StashAddToCartEvent implements ObserverInterface
 {
     public function __construct(

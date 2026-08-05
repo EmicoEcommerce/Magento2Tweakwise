@@ -6,13 +6,6 @@ namespace Tweakwise\Magento2Tweakwise\Model\Analytics;
 
 use Magento\Customer\Model\Session as CustomerSession;
 
-/**
- * Stashes computed Tweakwise event data (addtowishlist) directly on the customer session, so it can be
- * pushed to the Tweakwise Event Tag on a later request instead of calling the Tweakwise API directly
- * from the backend. Mirrors Yireo_GoogleTagManager2's SessionDataProvider\CustomerSessionDataProvider,
- * which stores its data directly on Magento\Customer\Model\Session via magic getXxx/setXxx methods,
- * rather than a dedicated session namespace.
- */
 class CustomerSessionDataProvider
 {
     public function __construct(

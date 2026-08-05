@@ -40,9 +40,7 @@ class AddPendingEventsToCustomerSectionTest extends Unit
     public function testAfterGetSectionDataAddsPendingWishlistEventsAsTweakwiseEvents(): void
     {
         $this->customerSessionDataProvider->shouldReceive('get')->once()->andReturn([
-            'addtowishlist_event' => [
-                ['productKey' => '100016'],
-            ],
+            'addtowishlist_event' => ['productKey' => '100016'],
         ]);
         $this->customerSessionDataProvider->shouldReceive('clear')->once();
 

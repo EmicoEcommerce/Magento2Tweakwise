@@ -16,7 +16,7 @@ class CheckoutSessionDataProvider
     public function add(string $key, array $data): void
     {
         $events = $this->get();
-        $events[$key][] = $data;
+        $events[$key] = $data;
         $this->checkoutSession->setTweakwisePendingEvents($events);
     }
 

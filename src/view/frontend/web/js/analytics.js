@@ -32,6 +32,20 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', [
         });
     }
 
+    function processSection(sectionName) {
+        const sectionData = customerData.get(sectionName)();
+        if (!sectionData || !sectionData.tweakwise_events) {
+            return;
+        }
+
+        pushEventsData(sectionData.tweakwise_events);
+
+        // Remove the consumed events from customer-data's own (localStorage-backed) cache, so a
+        // later page load reading this same cached section can't push them again.
+        delete sectionData.tweakwise_events;
+        customerData.set(sectionName, sectionData);
+    }
+
     function handleItemClick(event, config) {
         try {
             if (!config.twRequestId) {
@@ -96,19 +110,11 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', [
             // invalidation already reloads a section on the next page load whenever the action that
             // stashed an event marked it stale (see etc/frontend/sections.xml for wishlist; cart is
             // invalidated by core by default), so no manual forced reload is needed here - just
-            // subscribe for delivery.
+            // process the current value (subscribe() alone won't replay it) and subscribe for changes.
             ['cart', 'customer'].forEach(function(sectionName) {
-                customerData.get(sectionName).subscribe(function(sectionData) {
-                    if (!sectionData || !sectionData.tweakwise_events) {
-                        return;
-                    }
-
-                    pushEventsData(sectionData.tweakwise_events);
-
-                    // Remove the consumed events from customer-data's own (localStorage-backed) cache,
-                    // so a later page load reading this same cached section can't push them again.
-                    delete sectionData.tweakwise_events;
-                    customerData.set(sectionName, sectionData);
+                processSection(sectionName);
+                customerData.get(sectionName).subscribe(function() {
+                    processSection(sectionName);
                 });
             });
 

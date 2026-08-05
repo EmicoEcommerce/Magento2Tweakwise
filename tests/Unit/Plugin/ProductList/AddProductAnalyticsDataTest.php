@@ -70,6 +70,7 @@ class AddProductAnalyticsDataTest extends Unit
 
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getId')->andReturn(42);
+        $product->shouldReceive('getData')->once()->with('tw_id')->andReturn(null);
         $product->shouldReceive('getFinalPrice')->once()->andReturn('59.99');
 
         $this->productKeyResolver->shouldReceive('resolve')->once()->with('42', 1, false)->andReturn('10001042');
@@ -87,13 +88,14 @@ class AddProductAnalyticsDataTest extends Unit
         );
     }
 
-    public function testAfterGetProductDetailsHtmlResolvesGroupedProductIdWhenGroupedProductsAreEnabled(): void
+    public function testAfterGetProductDetailsHtmlFallsBackToGroupedProductIdResolverWhenTweakwiseHasNotMatchedAChild(): void
     {
         $this->tweakwiseConfig->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
         $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
 
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getId')->andReturn(10);
+        $product->shouldReceive('getData')->once()->with('tw_id')->andReturn(null);
         $product->shouldReceive('getFinalPrice')->once()->andReturn('10.00');
 
         $this->groupedProductIdResolver->shouldReceive('resolve')->once()->with($product)->andReturn('11-10');
@@ -107,6 +109,31 @@ class AddProductAnalyticsDataTest extends Unit
         $this->assertSame(
             '<script>(window.tweakwiseListingProductData = window.tweakwiseListingProductData || {})'
             . '[10] = {"productKey":"K11-K10","price":10};</script>',
+            $result
+        );
+    }
+
+    public function testAfterGetProductDetailsHtmlPrefersTheChildTweakwiseMatchedAgainstTheActiveFilterContext(): void
+    {
+        $this->tweakwiseConfig->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
+        $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getId')->andReturn(10);
+        $product->shouldReceive('getData')->once()->with('tw_id')->andReturn(21);
+        $product->shouldReceive('getFinalPrice')->once()->andReturn('10.00');
+
+        $this->groupedProductIdResolver->shouldNotReceive('resolve');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('21-10', 1, true)->andReturn('K21-K10');
+        $this->jsonSerializer->shouldReceive('serialize')->once()
+            ->with(['productKey' => 'K21-K10', 'price' => 10.0])
+            ->andReturn('{"productKey":"K21-K10","price":10}');
+
+        $result = $this->subject->afterGetProductDetailsHtml($this->subjectBlock, '', $product);
+
+        $this->assertSame(
+            '<script>(window.tweakwiseListingProductData = window.tweakwiseListingProductData || {})'
+            . '[10] = {"productKey":"K21-K10","price":10};</script>',
             $result
         );
     }

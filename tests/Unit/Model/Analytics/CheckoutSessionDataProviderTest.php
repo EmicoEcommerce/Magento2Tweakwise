@@ -31,17 +31,14 @@ class CheckoutSessionDataProviderTest extends Unit
         $this->assertSame([], $this->subject->get());
     }
 
-    public function testAddAppendsToAnExistingListForTheSameKeyInsteadOfOverwriting(): void
+    public function testAddOverwritesAnyExistingValueForTheSameKey(): void
     {
         $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn([
-            'addtocart_event' => [['productKey' => 'first']],
+            'addtocart_event' => ['productKey' => 'first'],
         ]);
 
         $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([
-            'addtocart_event' => [
-                ['productKey' => 'first'],
-                ['productKey' => 'second'],
-            ],
+            'addtocart_event' => ['productKey' => 'second'],
         ]);
 
         $this->subject->add('addtocart_event', ['productKey' => 'second']);
@@ -51,7 +48,7 @@ class CheckoutSessionDataProviderTest extends Unit
     {
         $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn(null);
         $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([
-            'addtocart_event' => [['productKey' => '100016']],
+            'addtocart_event' => ['productKey' => '100016'],
         ]);
 
         $this->subject->add('addtocart_event', ['productKey' => '100016']);

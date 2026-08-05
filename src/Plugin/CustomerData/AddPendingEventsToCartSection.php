@@ -23,10 +23,9 @@ class AddPendingEventsToCartSection
             return $result;
         }
 
-        $result['tweakwise_events'] = array_map(
-            fn (array $event) => ['type' => 'addtocart_event', 'value' => $event, 'requestId' => ''],
-            $pendingEvents['addtocart_event']
-        );
+        $result['tweakwise_events'] = [
+            ['type' => 'addtocart_event', 'value' => $pendingEvents['addtocart_event'], 'requestId' => ''],
+        ];
 
         return $result;
     }

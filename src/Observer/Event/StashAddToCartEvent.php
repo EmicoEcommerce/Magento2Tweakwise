@@ -53,13 +53,12 @@ class StashAddToCartEvent implements ObserverInterface
             return;
         }
 
-        $totalAmount = $quoteItem->getQtyToAdd() * $product->getPriceModel()->getFinalPrice($quoteItem->getQtyToAdd(), $product);
+        // Qty-independent to match the instant client-side push (see ProductView::getPrice()).
+        $totalAmount = $quoteItem->getQtyToAdd() * (float)$product->getFinalPrice();
         $storeId = (int)$this->storeManager->getStore()->getId();
         $groupedProductsEnabled = $this->config->isGroupedProductsEnabled();
 
-        // For configurable products, Magento's Configurable::_prepareProduct() already points the quote
-        // item at the *child* simple product, while $product here is still the original parent passed
-        // by checkout_cart_product_add_after.
+        // $product is still the parent; Configurable::_prepareProduct() already pointed $quoteItem at the child.
         $childProductId = $quoteItem->getProductId();
         if ($groupedProductsEnabled && !empty($quoteItem->getQtyOptions())) {
             $childProductId = array_key_first($quoteItem->getQtyOptions());

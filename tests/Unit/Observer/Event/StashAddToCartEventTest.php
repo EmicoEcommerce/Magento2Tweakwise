@@ -94,11 +94,8 @@ class StashAddToCartEventTest extends Unit
         $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
         $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(false);
 
-        $priceModel = Mockery::mock();
-        $priceModel->shouldReceive('getFinalPrice')->with(2.0, Mockery::type(Product::class))->andReturn(10.0);
-
         $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getPriceModel')->andReturn($priceModel);
+        $product->shouldReceive('getFinalPrice')->andReturn(10.0);
 
         $quoteItem = Mockery::mock(Item::class);
         $quoteItem->shouldReceive('getQtyToAdd')->andReturn(2.0);
@@ -121,11 +118,8 @@ class StashAddToCartEventTest extends Unit
         $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
         $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
 
-        $priceModel = Mockery::mock();
-        $priceModel->shouldReceive('getFinalPrice')->andReturn(15.0);
-
         $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getPriceModel')->andReturn($priceModel);
+        $product->shouldReceive('getFinalPrice')->andReturn(15.0);
         $product->shouldReceive('getId')->andReturn(10);
 
         $quoteItem = Mockery::mock(Item::class);
@@ -150,11 +144,8 @@ class StashAddToCartEventTest extends Unit
         $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
         $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
 
-        $priceModel = Mockery::mock();
-        $priceModel->shouldReceive('getFinalPrice')->andReturn(5.0);
-
         $product = Mockery::mock(Product::class);
-        $product->shouldReceive('getPriceModel')->andReturn($priceModel);
+        $product->shouldReceive('getFinalPrice')->andReturn(5.0);
         $product->shouldReceive('getId')->andReturn(42);
 
         $quoteItem = Mockery::mock(Item::class);

@@ -31,17 +31,14 @@ class CustomerSessionDataProviderTest extends Unit
         $this->assertSame([], $this->subject->get());
     }
 
-    public function testAddAppendsToAnExistingListForTheSameKeyInsteadOfOverwriting(): void
+    public function testAddOverwritesAnyExistingValueForTheSameKey(): void
     {
         $this->session->shouldReceive('getTweakwisePendingEvents')->once()->andReturn([
-            'addtowishlist_event' => [['productKey' => 'first']],
+            'addtowishlist_event' => ['productKey' => 'first'],
         ]);
 
         $this->session->shouldReceive('setTweakwisePendingEvents')->once()->with([
-            'addtowishlist_event' => [
-                ['productKey' => 'first'],
-                ['productKey' => 'second'],
-            ],
+            'addtowishlist_event' => ['productKey' => 'second'],
         ]);
 
         $this->subject->add('addtowishlist_event', ['productKey' => 'second']);

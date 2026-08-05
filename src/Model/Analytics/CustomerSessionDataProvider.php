@@ -16,7 +16,7 @@ class CustomerSessionDataProvider
     public function add(string $key, array $data): void
     {
         $events = $this->get();
-        $events[$key][] = $data;
+        $events[$key] = $data;
         $this->customerSession->setTweakwisePendingEvents($events);
     }
 

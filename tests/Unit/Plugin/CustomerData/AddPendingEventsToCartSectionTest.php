@@ -40,9 +40,7 @@ class AddPendingEventsToCartSectionTest extends Unit
     public function testAfterGetSectionDataAddsPendingAddToCartEventsAsTweakwiseEvents(): void
     {
         $this->checkoutSessionDataProvider->shouldReceive('get')->once()->andReturn([
-            'addtocart_event' => [
-                ['productKey' => '100016', 'quantity' => 1.0, 'totalAmount' => 59.0],
-            ],
+            'addtocart_event' => ['productKey' => '100016', 'quantity' => 1.0, 'totalAmount' => 59.0],
         ]);
         $this->checkoutSessionDataProvider->shouldReceive('clear')->once();
 

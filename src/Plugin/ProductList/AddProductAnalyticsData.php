@@ -11,6 +11,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\GroupedProductIdResolver;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
 use Tweakwise\Magento2Tweakwise\Model\PersonalMerchandisingConfig;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class AddProductAnalyticsData
 {
@@ -24,8 +25,7 @@ class AddProductAnalyticsData
     }
 
     /**
-     * Keyed by the product's Magento id, always present on the add-to-cart form regardless of how a
-     * shop customises the tile markup - unlike a Tweakwise-specific data attribute would be.
+     * Keyed by the product's Magento id, always present on the add-to-cart form.
      */
     public function afterGetProductDetailsHtml(AbstractProduct $subject, string $html, Product $product): string
     {
@@ -35,9 +35,17 @@ class AddProductAnalyticsData
 
         $storeId = (int)$this->storeManager->getStore()->getId();
         $groupedProductsEnabled = $this->tweakwiseConfig->isGroupedProductsEnabled();
-        $rawId = $groupedProductsEnabled
-            ? (string)$this->groupedProductIdResolver->resolve($product)
-            : (string)$product->getId();
+
+        // Prefer the child Tweakwise already matched (same field ProductListItem uses); guess via
+        // GroupedProductIdResolver only for tiles Tweakwise didn't source (e.g. related/upsell).
+        $tweakwiseMatchedChildId = $product->getData('tw_id');
+        if ($tweakwiseMatchedChildId) {
+            $rawId = $tweakwiseMatchedChildId . Helper::GROUP_CODE_DELIMITER . $product->getId();
+        } elseif ($groupedProductsEnabled) {
+            $rawId = (string)$this->groupedProductIdResolver->resolve($product);
+        } else {
+            $rawId = (string)$product->getId();
+        }
 
         $data = $this->jsonSerializer->serialize([
             'productKey' => $this->productKeyResolver->resolve($rawId, $storeId, $groupedProductsEnabled),

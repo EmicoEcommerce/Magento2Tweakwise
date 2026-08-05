@@ -23,10 +23,9 @@ class AddPendingEventsToCustomerSection
             return $result;
         }
 
-        $result['tweakwise_events'] = array_map(
-            fn (array $event) => ['type' => 'addtowishlist_event', 'value' => $event, 'requestId' => ''],
-            $pendingEvents['addtowishlist_event']
-        );
+        $result['tweakwise_events'] = [
+            ['type' => 'addtowishlist_event', 'value' => $pendingEvents['addtowishlist_event'], 'requestId' => ''],
+        ];
 
         return $result;
     }

@@ -123,6 +123,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 'ajaxFilters' => $this->isAjaxFilters(),
                 'seoEnabled' => $this->config->isSeoEnabled(),
                 'ajaxEndpoint' => $this->getAjaxEndPoint(),
+                'countEndpoint' => $this->getCountEndPoint(),
                 'filterSelector' => '#layered-filter-block',
                 'productListSelector' => '.products.wrapper',
                 'toolbarSelector' => '.toolbar.toolbar-products',
@@ -232,6 +233,14 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
     protected function getAjaxEndPoint()
     {
         return $this->url->getUrl('tweakwise/ajax/navigation');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCountEndPoint(): string
+    {
+        return $this->url->getUrl('tweakwise/ajax/productcount');
     }
 
     /**

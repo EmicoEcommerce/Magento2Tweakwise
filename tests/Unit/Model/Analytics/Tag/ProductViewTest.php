@@ -6,6 +6,7 @@ namespace Tweakwise\Test\Unit\Model\Analytics\Tag;
 
 use Emico\CodeCept\Test\Unit;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Type;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Mockery;
@@ -105,5 +106,43 @@ class ProductViewTest extends Unit
         $this->currentProductResolver->shouldReceive('getProduct')->once()->andReturn($product);
 
         $this->assertSame(59.99, $this->subject->getPrice());
+    }
+
+    public function testIsAmbiguousIsFalseWhenGroupedProductsAreDisabled(): void
+    {
+        $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(false);
+        $this->currentProductResolver->shouldNotReceive('getProduct');
+
+        $this->assertFalse($this->subject->isAmbiguous());
+    }
+
+    public function testIsAmbiguousIsFalseWhenProductCannotBeFound(): void
+    {
+        $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+        $this->currentProductResolver->shouldReceive('getProduct')->once()->andReturn(null);
+
+        $this->assertFalse($this->subject->isAmbiguous());
+    }
+
+    public function testIsAmbiguousIsFalseForASimpleProduct(): void
+    {
+        $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getTypeId')->andReturn(Type::TYPE_SIMPLE);
+        $this->currentProductResolver->shouldReceive('getProduct')->once()->andReturn($product);
+
+        $this->assertFalse($this->subject->isAmbiguous());
+    }
+
+    public function testIsAmbiguousIsTrueForAConfigurableProductWithNoVariantSelectedYet(): void
+    {
+        $this->tweakwiseConfig->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getTypeId')->andReturn('configurable');
+        $this->currentProductResolver->shouldReceive('getProduct')->once()->andReturn($product);
+
+        $this->assertTrue($this->subject->isAmbiguous());
     }
 }

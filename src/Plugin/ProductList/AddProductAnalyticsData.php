@@ -47,9 +47,13 @@ class AddProductAnalyticsData
             $rawId = (string)$product->getId();
         }
 
+        // Bypass the indexed final_price attribute (can be stale, e.g. under schedule-based indexing)
+        // so this always matches the live calculation StashAddToCartEvent uses on a fresh product.
+        $price = (float)$product->getPriceModel()->getFinalPrice(null, $product);
+
         $data = $this->jsonSerializer->serialize([
             'productKey' => $this->productKeyResolver->resolve($rawId, $storeId, $groupedProductsEnabled),
-            'price' => (float)$product->getFinalPrice(),
+            'price' => $price,
         ]);
 
         return $html . '<script>(window.tweakwiseListingProductData = window.tweakwiseListingProductData || {})['

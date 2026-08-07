@@ -12,6 +12,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\EventInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\TagInterface;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
 /**
@@ -29,6 +30,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
         private readonly RequestInterface $request,
         private readonly Json $jsonSerializer,
         private readonly LayoutInterface $layout,
+        private readonly RecommendationImpressionCollector $impressionCollector,
     ) {
     }
 
@@ -107,6 +109,13 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
                     $eventsData[] = ['type' => $type, 'value' => $value, 'requestId' => ''];
                 }
             }
+        }
+
+        // One additional page_impression per recommendation widget (upsell/related/featured/
+        // crosssell) that rendered with items during this request, each carrying that widget's
+        // own Tweakwise request-id (see RecommendationImpressionCollector).
+        foreach ($this->impressionCollector->getRequestIds() as $widgetRequestId) {
+            $eventsData[] = ['type' => 'page_impression', 'value' => 'page_impression', 'requestId' => $widgetRequestId];
         }
 
         return $this->jsonSerializer->serialize($eventsData);

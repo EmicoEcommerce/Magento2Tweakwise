@@ -42,7 +42,9 @@ class Plugin extends AbstractRecommendationPlugin
         }
 
         try {
-            return $this->getCollection();
+            $collection = $this->getCollection();
+            $this->recordImpressionIfNonEmpty($collection);
+            return $collection;
         } catch (ApiException $e) {
             return $proceed();
         }

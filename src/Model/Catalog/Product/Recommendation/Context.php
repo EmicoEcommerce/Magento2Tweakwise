@@ -135,6 +135,14 @@ class Context
     }
 
     /**
+     * @return string
+     */
+    public function getTweakwiseRequestId(): string
+    {
+        return $this->getResponse()->getRequestId();
+    }
+
+    /**
      * @return Collection
      */
     public function getCollection()

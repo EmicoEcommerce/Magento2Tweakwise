@@ -28,7 +28,7 @@ class SchemaPatchesTest extends Unit
         $this->connection = Mockery::mock(AdapterInterface::class);
     }
 
-    public function testCleanupLegacyIndexesDropsOnlyExistingLegacyIndexes(): void
+    public function testCleanupLegacyIndexesDropsOnlyExistingStoreSlugLegacyIndex(): void
     {
         $tableName = 'prefix_tweakwise_attribute_slug';
 
@@ -44,8 +44,9 @@ class SchemaPatchesTest extends Unit
             ->andReturn([
                 ['Key_name' => 'PRIMARY'],
                 ['Key_name' => 'ATTRIBUTE'],
+                ['Key_name' => 'STORE_SLUG'],
             ]);
-        $this->connection->shouldReceive('dropIndex')->once()->with($tableName, 'ATTRIBUTE');
+        $this->connection->shouldReceive('dropIndex')->once()->with($tableName, 'STORE_SLUG');
 
         $patch = new CleanupLegacyIndexesTweakwiseAttributeSlugTable($this->schemaSetup);
 
@@ -135,7 +136,6 @@ class SchemaPatchesTest extends Unit
             [SetSlugColumnCollationTweakwiseAttributeSlugTable::class],
             SetAttributeColumnCollationTweakwiseAttributeSlugTable::getDependencies(),
         );
-
         $this->assertSame([], (new CleanupLegacyIndexesTweakwiseAttributeSlugTable($this->schemaSetup))->getAliases());
         $this->assertSame([], (new SetSlugColumnCollationTweakwiseAttributeSlugTable($this->schemaSetup))->getAliases());
         $this->assertSame([], (new SetAttributeColumnCollationTweakwiseAttributeSlugTable($this->schemaSetup))->getAliases());

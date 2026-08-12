@@ -36,7 +36,7 @@ class CleanupLegacyIndexesTweakwiseAttributeSlugTable implements SchemaPatchInte
             'Key_name'
         );
 
-        foreach (['ATTRIBUTE', 'STORE_SLUG'] as $indexName) {
+        foreach (['STORE_SLUG'] as $indexName) {
             if (!in_array($indexName, $existingIndexes, true)) {
                 continue;
             }

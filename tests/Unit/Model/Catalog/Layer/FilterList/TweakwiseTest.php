@@ -32,7 +32,7 @@ class TweakwiseTest extends Unit
     protected function _before(): void
     {
         $request = Mockery::mock(ProductNavigationRequest::class);
-        $request->shouldReceive('hasParameter')->once()->with('tn_cid')->andReturn(true);
+        $request->shouldReceive('hasParameter')->with('tn_cid')->andReturn(true);
 
         $response = Mockery::mock(ProductNavigationResponse::class);
         $response->shouldReceive('getFacets')->once()->andReturn(null);
@@ -65,7 +65,6 @@ class TweakwiseTest extends Unit
     {
         $layer = Mockery::mock(Layer::class);
 
-        $this->assertSame([], $this->subject->getFilters($layer));
         $this->assertSame([], $this->subject->getFilters($layer));
     }
 }

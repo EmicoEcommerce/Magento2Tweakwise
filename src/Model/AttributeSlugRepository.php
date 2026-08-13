@@ -80,11 +80,13 @@ class AttributeSlugRepository implements AttributeSlugRepositoryInterface
         try {
             $baseSlug = $attributeSlug->getSlug();
             $storeId = $attributeSlug->getStoreId();
+            $attribute = mb_strtolower((string)$attributeSlug->getAttribute());
+            $attributeSlug->setAttribute($attribute);
 
             // If a row for this (attribute, store_id) already exists, reuse its
             // primary key so resource->save() issues an UPDATE instead of an INSERT.
             try {
-                $existing = $this->findByAttributeAndStore((string)$attributeSlug->getAttribute(), $storeId);
+                $existing = $this->findByAttributeAndStore($attribute, $storeId);
                 $attributeSlug->setData('id', (int)$existing->getData('id')); // @phpstan-ignore-line
 
                 // The slug is already persisted correctly; nothing more to do.

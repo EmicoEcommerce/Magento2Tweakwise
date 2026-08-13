@@ -1,0 +1,162 @@
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+
+namespace Tweakwise\Magento2Tweakwise\Model;
+
+use Magento\Framework\Translate\InlineInterface;
+use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\View\Layout\BuilderFactory;
+use Magento\Framework\View\Layout\GeneratorPool;
+use Magento\Framework\View\Layout\ReaderPool;
+use Magento\Framework\View\LayoutFactory;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Magento\Catalog\Model\Layer\Resolver;
+use Magento\Framework;
+use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\View\Result\Layout;
+
+/**
+ * Class AjaxNavigationResponse
+ */
+class AjaxNavigationResult extends Layout
+{
+    /**
+     * @var Catalog\Layer\Url
+     */
+    protected $urlModel;
+
+    /**
+     * @var Resolver
+     */
+    protected $layerResolver;
+
+    /**
+     * @var Json
+     */
+    protected $serializer;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
+     * @var CookieManagerInterface
+     */
+    protected $cookieManager;
+
+    /**
+     * AjaxNavigationResult constructor.
+     * @param Context $context
+     * @param LayoutFactory $layoutFactory
+     * @param ReaderPool $layoutReaderPool
+     * @param InlineInterface $translateInline
+     * @param BuilderFactory $layoutBuilderFactory
+     * @param GeneratorPool $generatorPool
+     * @param Url $urlModel
+     * @param Resolver $layerResolver
+     * @param Json $serializer
+     * @param Config $config
+     * @param CookieManagerInterface $cookieManager
+     * @param bool $isIsolated
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
+     */
+    public function __construct(
+        Context $context,
+        LayoutFactory $layoutFactory,
+        ReaderPool $layoutReaderPool,
+        InlineInterface $translateInline,
+        BuilderFactory $layoutBuilderFactory,
+        GeneratorPool $generatorPool,
+        Url $urlModel,
+        Resolver $layerResolver,
+        Json $serializer,
+        Config $config,
+        CookieManagerInterface $cookieManager,
+        $isIsolated = false
+    ) {
+        parent::__construct(
+            $context,
+            $layoutFactory,
+            $layoutReaderPool,
+            $translateInline,
+            $layoutBuilderFactory,
+            $generatorPool,
+            $isIsolated
+        );
+
+        $this->urlModel = $urlModel;
+        $this->layerResolver = $layerResolver;
+        $this->serializer = $serializer;
+        $this->config = $config;
+        $this->cookieManager = $cookieManager;
+    }
+
+    /**
+     * @param HttpResponseInterface $response
+     * @return Framework\Controller\AbstractResult|Layout
+     */
+    public function render(HttpResponseInterface $response)
+    {
+        $html = $this->getLayout()->getOutput();
+        //dont use \s. This causes javascript to break on comments because newlines are removed
+        $html = preg_replace('/\t+/', ' ', $html);
+        $url  = $this->getResponseUrl();
+        $productCount = $this->getProductCount();
+
+        $responsePayload = ['url' => $url, 'html' => $html];
+        if ($productCount !== null) {
+            $responsePayload['product_count'] = $productCount;
+        }
+
+        $responseData = $this->serializer->serialize($responsePayload);
+        $this->translateInline->processResponseBody($responseData, true);
+
+        if (!$this->isResponseCacheable()) {
+            $response->setHeader('Cache-Control', 'private', true);
+        }
+
+        $response->setHeader('Content-Type', 'application/json', true);
+        // @phpstan-ignore-next-line
+        $response->appendBody($responseData);
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getProductCount(): ?int
+    {
+        if (!$this->config->isFormFilters()) {
+            return null;
+        }
+
+        $layer = $this->layerResolver->get();
+        return (int) $layer->getProductCollection()->getSize();
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponseUrl()
+    {
+        $layer = $this->layerResolver->get();
+        $activeFilters = $layer->getState()->getFilters();
+        return $this->urlModel->getFilterUrl($activeFilters);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isResponseCacheable(): bool
+    {
+        $merchandiserCookieName = $this->config->getPersonalMerchandisingCookieName();
+        return !(
+            $this->config->isPersonalMerchandisingActive()
+            && $merchandiserCookieName
+            && $this->cookieManager->getCookie($merchandiserCookieName, null)
+        );
+    }
+}

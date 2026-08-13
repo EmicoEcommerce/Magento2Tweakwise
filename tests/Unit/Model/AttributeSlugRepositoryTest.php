@@ -54,7 +54,8 @@ class AttributeSlugRepositoryTest extends Unit
         $attributeSlug = Mockery::mock(AttributeSlug::class);
         $attributeSlug->shouldReceive('getSlug')->once()->andReturn('color');
         $attributeSlug->shouldReceive('getStoreId')->once()->andReturn(1);
-        $attributeSlug->shouldReceive('getAttribute')->once()->andReturn('color');
+        $attributeSlug->shouldReceive('getAttribute')->once()->andReturn('Color');
+        $attributeSlug->shouldReceive('setAttribute')->once()->with('color');
         $attributeSlug->shouldReceive('setData')->once()->with('id', 25);
 
         $existingByAttributeAndStore = Mockery::mock(AttributeSlug::class);
@@ -80,7 +81,8 @@ class AttributeSlugRepositoryTest extends Unit
         $attributeSlug = Mockery::mock(AttributeSlug::class);
         $attributeSlug->shouldReceive('getSlug')->once()->andReturn('color');
         $attributeSlug->shouldReceive('getStoreId')->once()->andReturn(1);
-        $attributeSlug->shouldReceive('getAttribute')->once()->andReturn('color');
+        $attributeSlug->shouldReceive('getAttribute')->once()->andReturn('Color');
+        $attributeSlug->shouldReceive('setAttribute')->once()->with('color');
         $attributeSlug->shouldReceive('setData')->once()->with('id', 25);
         $attributeSlug->shouldReceive('setSlug')->once()->with('color');
 

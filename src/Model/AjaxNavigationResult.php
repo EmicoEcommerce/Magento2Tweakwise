@@ -112,8 +112,14 @@ class AjaxNavigationResult extends Layout
         //dont use \s. This causes javascript to break on comments because newlines are removed
         $html = preg_replace('/\t+/', ' ', $html);
         $url  = $this->getResponseUrl();
+        $productCount = $this->getProductCount();
 
-        $responseData = $this->serializer->serialize(['url' => $url, 'html' => $html, 'canonical' => $this->getCanonicalUrl($url)]);
+        $responsePayload = ['url' => $url, 'html' => $html, 'canonical' => $this->getCanonicalUrl($url)];
+        if ($productCount !== null) {
+            $responsePayload['product_count'] = $productCount;
+        }
+
+        $responseData = $this->serializer->serialize($responsePayload);
         $this->translateInline->processResponseBody($responseData, true);
 
         if (!$this->isResponseCacheable()) {
@@ -125,6 +131,19 @@ class AjaxNavigationResult extends Layout
         $response->appendBody($responseData);
 
         return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getProductCount(): ?int
+    {
+        if (!$this->config->isFormFilters()) {
+            return null;
+        }
+
+        $layer = $this->layerResolver->get();
+        return (int) $layer->getProductCollection()->getSize();
     }
 
     /**

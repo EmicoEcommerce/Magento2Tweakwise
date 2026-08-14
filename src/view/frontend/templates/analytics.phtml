@@ -2,6 +2,7 @@
 
 use Magento\Framework\Escaper;
 use Magento\Framework\View\Element\Template;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\Tag\ProductView;
 use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 use Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics;
 
@@ -16,8 +17,15 @@ $tweakwiseNavigationConfig = $block->getData('tweakwise_navigation_config');
 $jsFormConfig = $tweakwiseNavigationConfig ? json_decode($tweakwiseNavigationConfig->getJsFormConfig()) : [];
 $twRequestId = $jsFormConfig->tweakwiseNavigationForm->twRequestId ?? '';
 
-$analyticsTypes = $block->getData('analyticsTypes');
-$eventsData = $viewModel->getEventsData($analyticsTypes, $twRequestId);
+$eventsData = $viewModel->getEventsData($twRequestId);
+
+// Fallback product data for the add-to-cart mixin on product view pages, where there's no
+// window.tweakwiseListingProductData entry to read a productKey/price from like on category/search
+// listings (see js/mixins/catalog-add-to-cart-mixin.js). Omitted when isAmbiguous().
+$productTag = ((array)$block->getData('data_layer'))['product'] ?? null;
+$currentProduct = $productTag instanceof ProductView && !$productTag->isAmbiguous()
+    ? ['productKey' => $productTag->get(), 'price' => $productTag->getPrice()]
+    : null;
 ?>
 
 <script type="text/x-magento-init">
@@ -25,10 +33,10 @@ $eventsData = $viewModel->getEventsData($analyticsTypes, $twRequestId);
         "*": {
             "Tweakwise_Magento2Tweakwise/js/analytics": {
                 "eventsData": <?= $eventsData ?>,
+                "currentProduct": <?= /* @noEscape */ json_encode($currentProduct) ?>,
                 "bindItemClickEventsConfig": {
                     "productListSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->productListSelector ?? ''); ?>",
                     "productSelector": "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->productSelector ?? ''); ?>",
-                    "analyticsEndpoint": "<?= /* @noEscape */ $jsFormConfig->tweakwiseNavigationForm->analyticsEndpoint ?? ''; ?>",
                     "twRequestId": "<?= $escaper->escapeHtmlAttr($twRequestId); ?>"
                 }
             }

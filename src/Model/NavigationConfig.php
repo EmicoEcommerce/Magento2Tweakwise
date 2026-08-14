@@ -123,6 +123,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                 'ajaxFilters' => $this->isAjaxFilters(),
                 'seoEnabled' => $this->config->isSeoEnabled(),
                 'ajaxEndpoint' => $this->getAjaxEndPoint(),
+                'countEndpoint' => $this->getCountEndPoint(),
                 'filterSelector' => '#layered-filter-block',
                 'productListSelector' => '.products.wrapper',
                 'toolbarSelector' => '.toolbar.toolbar-products',
@@ -132,9 +133,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                     ? 'queryparameter'
                     : 'path',
                 'twRequestId' => $this->currentNavigationContext->getTweakwiseRequestId(),
-                'analyticsEvents' => $this->config->isAnalyticsEnabled(),
                 'productSelector' => 'product-item-info',
-                'analyticsEndpoint' => $this->getAnalyticsEndPoint(),
             ],
         ];
         if ($this->config->isPersonalMerchandisingActive()) {
@@ -237,9 +236,9 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
     /**
      * @return string
      */
-    protected function getAnalyticsEndPoint(): string
+    protected function getCountEndPoint(): string
     {
-        return $this->url->getUrl('tweakwise/ajax/analytics');
+        return $this->url->getUrl('tweakwise/ajax/productcount');
     }
 
     /**

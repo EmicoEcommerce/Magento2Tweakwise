@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
-use Magento\Bundle\Model\Product\Type as Bundle;
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\Product;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\RequestInterface;
-use Magento\Catalog\Model\Product\Type;
-use Magento\GroupedProduct\Model\Product\Type\Grouped;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\View\Element\AbstractBlock;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Framework\View\LayoutInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Tweakwise\Magento2Tweakwise\Api\Data\EventInterface;
+use Tweakwise\Magento2Tweakwise\Api\Data\TagInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 
 /**
  * Class PersonalMerchandisingAnalytics
@@ -25,19 +21,14 @@ use Magento\Framework\Exception\NoSuchEntityException;
  */
 class PersonalMerchandisingAnalytics implements ArgumentInterface
 {
-    /**
-     * @param Config $tweakwiseConfig
-     * @param StoreManagerInterface $storeManager
-     * @param RequestInterface $request
-     * @param Json $jsonSerializer
-     * @param ProductRepositoryInterface $productRepository
-     */
+    private const BLOCK_NAME = 'tweakwise.analytics';
+
     public function __construct(
         private readonly Config $tweakwiseConfig,
         private readonly StoreManagerInterface $storeManager,
         private readonly RequestInterface $request,
         private readonly Json $jsonSerializer,
-        private readonly ProductRepositoryInterface $productRepository,
+        private readonly LayoutInterface $layout,
     ) {
     }
 
@@ -49,67 +40,6 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     public function getStoreManager(): StoreManagerInterface
     {
         return $this->storeManager;
-    }
-
-    /**
-     * Get the product key.
-     *
-     * @return string
-     */
-    public function getProductKey(): string
-    {
-        $productId = $this->request->getParam('id');
-
-        if (!$productId) {
-            return '0';
-        }
-
-        if (!$this->tweakwiseConfig->isGroupedProductsEnabled()) {
-            return $productId;
-        }
-
-        return (string)$this->getGroupedProductId((int)$productId);
-    }
-
-    /**
-     * @param int $productId
-     * @return int|string
-     */
-    public function getGroupedProductId(int $productId): int|string
-    {
-        try {
-            /** @var Product $product */
-            $product = $this->productRepository->getById($productId);
-        } catch (NoSuchEntityException $e) {
-            return $productId;
-        }
-
-        if ($product->getTypeId() === Type::TYPE_SIMPLE) {
-            return $productId;
-        }
-
-        $associatedProducts = $this->getAssociatedProducts($product);
-        if (empty($associatedProducts)) {
-            return $productId;
-        }
-
-        $firstAssociatedProduct = reset($associatedProducts);
-        $simpleId = $firstAssociatedProduct->getId();
-        if ($simpleId === 0 || $simpleId === $productId) {
-            return $productId;
-        }
-
-        return $simpleId . Helper::GROUP_CODE_DELIMITER . $productId;
-    }
-
-    /**
-     * Get the API URL.
-     *
-     * @return string
-     */
-    public function getApiUrl(): string
-    {
-        return 'https://navigator-analytics.tweakwise.com/api/';
     }
 
     /**
@@ -133,16 +63,6 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     }
 
     /**
-     * Get the search query.
-     *
-     * @return string
-     */
-    public function getSearchQuery(): string
-    {
-        return $this->request->getParam('q') ?? '';
-    }
-
-    /**
      * Get the Tweakwise request ID.
      *
      * @return string
@@ -153,46 +73,42 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
     }
 
     /**
-     * @param array $analyticsTypes
-     * @param string $requestId
-     * @return string
+     * The Tag and Event objects composed here come from the "tweakwise.analytics" block's "data_layer"
+     * and "data_layer_events" arguments, which each layout XML handle populates with whatever's
+     * relevant to that page (see catalog_product_view.xml, catalogsearch_result_index.xml,
+     * checkout_onepage_success.xml, ...). Adding a new page's analytics tag/event is therefore a layout
+     * change, never a change to this class.
      */
-    public function getEventsData(array $analyticsTypes, string $requestId): string
+    public function getEventsData(string $requestId): string
     {
-        $map = [
-            'product'       => fn() => $this->getProductKey(),
-            'search'        => fn() => $this->getSearchQuery(),
-            'session_start' => fn() => 'session_start',
-            'page_impression' => fn() => 'page_impression',
-        ];
+        $block = $this->layout->getBlock(self::BLOCK_NAME);
+        $eventsData = [];
 
-        $eventsData = array_map(
-            fn($type) => [
-                'type'  => $type,
-                'value' => ($map[$type] ?? fn() => '')(),
-                'requestId'  => $requestId,
-            ],
-            $analyticsTypes
-        );
+        if ($block instanceof AbstractBlock) {
+            /** @var array<string, TagInterface> $tags */
+            $tags = (array)$block->getData('data_layer');
+            foreach ($tags as $type => $tag) {
+                $eventsData[] = ['type' => $type, 'value' => $tag->get(), 'requestId' => $requestId];
+            }
+
+            // addtocart/addtowishlist/purchase are never wired here: this block renders on every page,
+            // including pages Magento's full-page cache serves identically to every visitor. Flushing
+            // session-specific pending events into that shared HTML would leak one customer's cart/
+            // wishlist/order data to every other visitor of the same cached URL. addtocart/addtowishlist
+            // are delivered exclusively via the customer-data section AJAX endpoint
+            // (Plugin\CustomerData\AddPendingEventsToCartSection/AddPendingEventsToCustomerSection),
+            // which is never cached; purchase is only
+            // ever wired into checkout_onepage_success.xml, which Magento core already marks
+            // cacheable="false".
+            /** @var array<string, EventInterface> $events */
+            $events = (array)$block->getData('data_layer_events');
+            foreach ($events as $type => $event) {
+                foreach ($event->get() as $value) {
+                    $eventsData[] = ['type' => $type, 'value' => $value, 'requestId' => ''];
+                }
+            }
+        }
 
         return $this->jsonSerializer->serialize($eventsData);
-    }
-
-    /**
-     * @param Product $product
-     * @return array
-     */
-    protected function getAssociatedProducts(Product $product): array
-    {
-        $typeInstance = $product->getTypeInstance();
-        return match (true) {
-            $typeInstance instanceof Configurable => $typeInstance->getUsedProducts($product),
-            $typeInstance instanceof Grouped => $typeInstance->getAssociatedProducts($product),
-            $typeInstance instanceof Bundle => $typeInstance->getSelectionsCollection(
-                $typeInstance->getOptionsIds($product),
-                $product
-            )->getItems(),
-            default => [],
-        };
     }
 }

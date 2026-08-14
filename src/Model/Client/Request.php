@@ -372,14 +372,6 @@ class Request
     }
 
     /**
-     * @return bool
-     */
-    public function isPostRequest(): bool
-    {
-        return false;
-    }
-
-    /**
      * @return void
      */
     public function setLanguage(): void

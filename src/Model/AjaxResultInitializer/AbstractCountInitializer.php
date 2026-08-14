@@ -6,6 +6,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\AjaxResultInitializer;
 
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\App\RequestInterface;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 
 abstract class AbstractCountInitializer implements CountInitializerInterface
@@ -15,14 +16,14 @@ abstract class AbstractCountInitializer implements CountInitializerInterface
         '__tw_object_id',
         '__tw_original_url',
         '__tw_hash',
-        'p',
-        'product_list_order',
-        'product_list_limit',
-        'product_list_mode',
-        'product_list_dir',
-        'q',
-        '_',
-        'categorie',
+        QueryParameterStrategy::PARAM_PAGE,
+        QueryParameterStrategy::PARAM_ORDER,
+        QueryParameterStrategy::PARAM_LIMIT,
+        QueryParameterStrategy::PARAM_MODE,
+        QueryParameterStrategy::PARAM_DIRECTION,
+        QueryParameterStrategy::PARAM_SEARCH,
+        QueryParameterStrategy::PARAM_CACHE,
+        QueryParameterStrategy::PARAM_CATEGORY,
     ];
 
     protected function applyFilterParams(RequestInterface $request, NavigationContext $navigationContext): void

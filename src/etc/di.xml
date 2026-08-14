@@ -35,6 +35,15 @@
     <type name="Magento\Catalog\Block\Product\ProductList\Upsell">
         <plugin name="tweakwise-magento2tweakwise" type="Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\Upsell\Plugin" sortOrder="0" />
     </type>
+    <type name="Magento\Customer\CustomerData\Customer">
+        <plugin name="tweakwise-magento2tweakwise-pending-events" type="Tweakwise\Magento2Tweakwise\Plugin\CustomerData\AddPendingEventsToCustomerSection" />
+    </type>
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="tweakwise-magento2tweakwise-pending-events" type="Tweakwise\Magento2Tweakwise\Plugin\CustomerData\AddPendingEventsToCartSection" />
+    </type>
+    <type name="Magento\Catalog\Block\Product\AbstractProduct">
+        <plugin name="tweakwise-magento2tweakwise-analytics-product-details" type="Tweakwise\Magento2Tweakwise\Plugin\ProductList\AddProductAnalyticsData" />
+    </type>
     <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Plugin">
         <arguments>
             <argument name="tweakwiseFilterList" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterList\Tweakwise\Proxy</argument>
@@ -267,26 +276,6 @@
             <argument name="request" xsi:type="object">Magento\Framework\App\Request\Http</argument>
         </arguments>
     </type>
-    <type name="Tweakwise\Magento2Tweakwise\Observer\TweakwiseCheckout">
-        <arguments>
-            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest</argument>
-        </arguments>
-    </type>
-    <type name="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToCartEvent">
-        <arguments>
-            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
-        </arguments>
-    </type>
-    <type name="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToWishlistEvent">
-        <arguments>
-            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
-        </arguments>
-    </type>
-    <type name="Tweakwise\Magento2Tweakwise\Controller\Ajax\Analytics">
-        <arguments>
-            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest</argument>
-        </arguments>
-    </type>
 
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\Config\Source\FilterTemplate" type="Tweakwise\Magento2Tweakwise\Model\Config\Source\Template">
         <arguments>
@@ -459,14 +448,5 @@
             <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\PurchaseRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
-        <arguments>
-            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\PurchaseRequest</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\AnalyticsRequest" type="Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory">
-        <arguments>
-            <argument name="type" xsi:type="string">Tweakwise\Magento2Tweakwise\Model\Client\Request\AnalyticsRequest</argument>
-        </arguments>
-    </virtualType>
+
 </config>

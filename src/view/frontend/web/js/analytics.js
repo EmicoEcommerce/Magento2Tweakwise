@@ -1,5 +1,50 @@
-define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
+define('Tweakwise_Magento2Tweakwise/js/analytics', [
+    'jquery',
+    'Magento_Customer/js/customer-data',
+    'Tweakwise_Magento2Tweakwise/js/analytics/push'
+], function($, customerData, pushEvent) {
     'use strict';
+
+    function pushEventsData(eventsData) {
+        (eventsData || []).forEach(function(eventData) {
+            switch (eventData.type) {
+                case 'product':
+                    pushEvent('productView', { productKey: eventData.value });
+                    break;
+                case 'search':
+                    pushEvent('search', { searchTerm: eventData.value });
+                    break;
+                case 'page_impression':
+                    pushEvent('pageImpression', { requestId: eventData.requestId });
+                    break;
+                case 'addtocart_event':
+                    pushEvent('addtocart', eventData.value);
+                    break;
+                case 'addtowishlist_event':
+                    pushEvent('addtowishlist', eventData.value);
+                    break;
+                case 'purchase_event':
+                    pushEvent('purchase', eventData.value);
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    function processSection(sectionName) {
+        const sectionData = customerData.get(sectionName)();
+        if (!sectionData || !sectionData.tweakwise_events) {
+            return;
+        }
+
+        pushEventsData(sectionData.tweakwise_events);
+
+        // Remove the consumed events from customer-data's own (localStorage-backed) cache, so a
+        // later page load reading this same cached section can't push them again.
+        delete sectionData.tweakwise_events;
+        customerData.set(sectionName, sectionData);
+    }
 
     function handleItemClick(event, config) {
         try {
@@ -41,49 +86,37 @@ define('Tweakwise_Magento2Tweakwise/js/analytics', ['jquery'], function($) {
                 return;
             }
 
-            // Send async AJAX request to the analytics endpoint
-            $.ajax({
-                url: config.analyticsEndpoint,
-                type: 'POST',
-                data: {
-                    eventsData: [
-                        {
-                            type: 'itemclick',
-                            value: productId,
-                            requestId: config.twRequestId
-                        }
-                    ]
-                },
-                cache: false,
-                success: function(response) {
-                    // Do nothing
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error sending analytics event', textStatus, errorThrown);
-                }
-            });
+            pushEvent('itemClick', { itemId: productId, requestId: config.twRequestId });
         } catch (error) {
             console.error('Error handling product click event', error);
         }
     }
 
     return function(config) {
+        // Read by js/mixins/catalog-add-to-cart-mixin.js as a fallback on product view pages, where
+        // there's no per-tile DOM wrapper to read a productKey/price from.
+        window.tweakwiseCurrentProduct = config.currentProduct || null;
+
         $(document).ready(function() {
 
             if (config.eventsData) {
-                var requestData = {
-                    eventsData: config.eventsData
-                };
-
-                $.ajax({
-                    url: '/tweakwise/ajax/analytics',
-                    method: 'POST',
-                    data: requestData,
-                    error: function(error) {
-                        console.error('Tweakwise API call failed:', error);
-                    }
-                });
+                pushEventsData(config.eventsData);
             }
+
+            // Pending addtocart/addtowishlist events get attached to the "cart"/generic "customer"
+            // customer-data sections respectively (see Plugin\CustomerData\AddPendingEventsToCartSection
+            // /AddPendingEventsToCustomerSection), never rendered into page HTML directly, since that
+            // HTML can be full-page-cached and shared across visitors. Magento's own private-content
+            // invalidation already reloads a section on the next page load whenever the action that
+            // stashed an event marked it stale (see etc/frontend/sections.xml for wishlist; cart is
+            // invalidated by core by default), so no manual forced reload is needed here - just
+            // process the current value (subscribe() alone won't replay it) and subscribe for changes.
+            ['cart', 'customer'].forEach(function(sectionName) {
+                processSection(sectionName);
+                customerData.get(sectionName).subscribe(function() {
+                    processSection(sectionName);
+                });
+            });
 
             // bindItemClickEvents
             if (config.bindItemClickEventsConfig) {

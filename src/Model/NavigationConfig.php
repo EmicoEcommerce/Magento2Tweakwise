@@ -133,9 +133,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
                     ? 'queryparameter'
                     : 'path',
                 'twRequestId' => $this->currentNavigationContext->getTweakwiseRequestId(),
-                'analyticsEvents' => $this->config->isAnalyticsEnabled(),
                 'productSelector' => 'product-item-info',
-                'analyticsEndpoint' => $this->getAnalyticsEndPoint(),
             ],
         ];
         if ($this->config->isPersonalMerchandisingActive()) {
@@ -241,14 +239,6 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
     protected function getCountEndPoint(): string
     {
         return $this->url->getUrl('tweakwise/ajax/productcount');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getAnalyticsEndPoint(): string
-    {
-        return $this->url->getUrl('tweakwise/ajax/analytics');
     }
 
     /**

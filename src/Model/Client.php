@@ -25,7 +25,6 @@ use Magento\Framework\Profiler;
 use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
 use GuzzleHttp\Client as HttpClient;
-use Magento\Framework\UrlInterface;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use GuzzleHttp\Psr7\Uri;
 
@@ -80,7 +79,6 @@ class Client
         ResponseFactory $responseFactory,
         EndpointManager $endpointManager,
         Timer $timer,
-        private UrlInterface $urlBuilder,
         /**
          * @var RemoteAddress
          */
@@ -135,38 +133,6 @@ class Client
      * @param Request $tweakwiseRequest
      * @return HttpRequest
      */
-    protected function createHttpRequest(Request $tweakwiseRequest): HttpRequest
-    {
-        if ($tweakwiseRequest->isPostRequest()) {
-            return $this->createPostRequest($tweakwiseRequest);
-        }
-
-        return $this->createGetRequest($tweakwiseRequest);
-    }
-
-    /**
-     * @param Request $tweakwiseRequest
-     * @return HttpRequest
-     */
-    public function createPostRequest(Request $tweakwiseRequest): HttpRequest
-    {
-        $path = $tweakwiseRequest->getPath();
-        $headers = $this->buildInternalTrafficHeader();
-
-        $headers['Content-Type'] = 'application/json';
-        $headers['Instance-Key'] = $this->config->getGeneralAuthenticationKey();
-        $body = json_encode($tweakwiseRequest->getParameters());
-        //post request are used for the analytics api
-        // @phpstan-ignore-next-line
-        $uri = $this->urlBuilder->getUrl($tweakwiseRequest->getApiUrl() . '/' . $path);
-        // @phpstan-ignore-next-line
-        return new HttpRequest('POST', $uri, $headers, $body);
-    }
-
-    /**
-     * @param Request $tweakwiseRequest
-     * @return HttpRequest
-     */
     public function createGetRequest(Request $tweakwiseRequest): HttpRequest
     {
         $path = $tweakwiseRequest->getPath();
@@ -208,7 +174,7 @@ class Client
     protected function doRequest(Request $tweakwiseRequest, bool $async = false)
     {
         $client = $this->getClient();
-        $httpRequest = $this->createHttpRequest($tweakwiseRequest);
+        $httpRequest = $this->createGetRequest($tweakwiseRequest);
         $this->timer->startTimer($tweakwiseRequest->getPath());
 
         $responsePromise = $client

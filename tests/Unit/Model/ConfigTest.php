@@ -62,11 +62,10 @@ class ConfigTest extends Unit
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                ['tweakwise/seo/enabled', 'store', null],
-                ['tweakwise/seo/paginated_canonical_enabled', 'store', null]
-            )
-            ->willReturnOnConsecutiveCalls('1', '1');
+            ->willReturnMap([
+                ['tweakwise/seo/enabled', 'store', null, '1'],
+                ['tweakwise/seo/paginated_canonical_enabled', 'store', null, '1'],
+            ]);
 
         $config = $this->createConfig($scopeConfig);
 
@@ -97,11 +96,10 @@ class ConfigTest extends Unit
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                ['tweakwise/seo/enabled', 'store', null],
-                ['tweakwise/seo/paginated_canonical_enabled', 'store', null]
-            )
-            ->willReturnOnConsecutiveCalls('1', '0');
+            ->willReturnMap([
+                ['tweakwise/seo/enabled', 'store', null, '1'],
+                ['tweakwise/seo/paginated_canonical_enabled', 'store', null, '0'],
+            ]);
 
         $config = $this->createConfig($scopeConfig);
 

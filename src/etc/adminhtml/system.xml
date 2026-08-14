@@ -171,6 +171,9 @@
                     <label>Enable Paginated Canonical URLs</label>
                     <comment>When enabled, the canonical tag is updated after each AJAX navigation to reflect the current URL including active filters and page parameter. Only updates the canonical if one is already present in the page; does not add a canonical tag if the page has none.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
             </group>
             <group id="autocomplete" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">

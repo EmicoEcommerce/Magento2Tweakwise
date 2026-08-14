@@ -12,13 +12,15 @@ use Magento\Framework\View\Asset\GroupedCollection;
 use Magento\Framework\View\Asset\PropertyGroup;
 use Magento\Framework\View\Page\Config as PageConfig;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\UrlPaginationHelper;
 
 class CategoryPaginatedCanonical implements ObserverInterface
 {
     public function __construct(
         private readonly Config $config,
         private readonly PageConfig $pageConfig,
-        private readonly RequestInterface $request
+        private readonly RequestInterface $request,
+        private readonly UrlPaginationHelper $urlPaginationHelper
     ) {
     }
 
@@ -53,34 +55,13 @@ class CategoryPaginatedCanonical implements ObserverInterface
             return;
         }
 
-        $canonicalUrl = $this->appendPageParam($existingCanonical, $page);
+        $canonicalUrl = $this->urlPaginationHelper->appendPageParam($existingCanonical, $page);
         $this->removeCanonicals($assetCollection, $canonicals);
         $this->pageConfig->addRemotePageAsset(
             $canonicalUrl,
             'canonical',
             ['attributes' => ['rel' => 'canonical']]
         );
-    }
-
-    /**
-     * @param string $url
-     * @param int $page
-     * @return string
-     */
-    private function appendPageParam(string $url, int $page): string
-    {
-        $urlParts = parse_url($url);
-        $query = [];
-        if (isset($urlParts['query'])) {
-            parse_str($urlParts['query'], $query);
-        }
-
-        $query['p'] = $page;
-
-        return (isset($urlParts['scheme']) ? $urlParts['scheme'] . '://' : '')
-            . ($urlParts['host'] ?? '')
-            . ($urlParts['path'] ?? '')
-            . '?' . http_build_query($query);
     }
 
     /**

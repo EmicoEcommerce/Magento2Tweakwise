@@ -57,13 +57,16 @@ class ConfigTest extends Unit
     /**
      * @return void
      */
-    public function testIsPaginatedCanonicalEnabledReturnsTrueWhenConfigValueIsOne(): void
+    public function testIsPaginatedCanonicalEnabledReturnsTrueWhenSeoEnabledAndFlagEnabled(): void
     {
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
-        $scopeConfig->expects($this->once())
+        $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->with('tweakwise/seo/paginated_canonical_enabled', 'store', null)
-            ->willReturn('1');
+            ->withConsecutive(
+                ['tweakwise/seo/enabled', 'store', null],
+                ['tweakwise/seo/paginated_canonical_enabled', 'store', null]
+            )
+            ->willReturnOnConsecutiveCalls('1', '1');
 
         $config = $this->createConfig($scopeConfig);
 
@@ -73,13 +76,32 @@ class ConfigTest extends Unit
     /**
      * @return void
      */
-    public function testIsPaginatedCanonicalEnabledReturnsFalseWhenConfigValueIsZero(): void
+    public function testIsPaginatedCanonicalEnabledReturnsFalseWhenSeoDisabledAndFlagEnabled(): void
     {
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $scopeConfig->expects($this->once())
             ->method('getValue')
-            ->with('tweakwise/seo/paginated_canonical_enabled', 'store', null)
+            ->with('tweakwise/seo/enabled', 'store', null)
             ->willReturn('0');
+
+        $config = $this->createConfig($scopeConfig);
+
+        $this->assertFalse($config->isPaginatedCanonicalEnabled());
+    }
+
+    /**
+     * @return void
+     */
+    public function testIsPaginatedCanonicalEnabledReturnsFalseWhenConfigValueIsZero(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->expects($this->exactly(2))
+            ->method('getValue')
+            ->withConsecutive(
+                ['tweakwise/seo/enabled', 'store', null],
+                ['tweakwise/seo/paginated_canonical_enabled', 'store', null]
+            )
+            ->willReturnOnConsecutiveCalls('1', '0');
 
         $config = $this->createConfig($scopeConfig);
 

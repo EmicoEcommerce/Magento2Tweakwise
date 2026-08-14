@@ -15,6 +15,7 @@ use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\View\Result\Layout;
+use Tweakwise\Magento2Tweakwise\Model\UrlPaginationHelper;
 
 /**
  * Class AjaxNavigationResponse
@@ -47,6 +48,11 @@ class AjaxNavigationResult extends Layout
     protected $cookieManager;
 
     /**
+     * @var UrlPaginationHelper
+     */
+    protected $urlPaginationHelper;
+
+    /**
      * AjaxNavigationResult constructor.
      * @param Context $context
      * @param LayoutFactory $layoutFactory
@@ -59,6 +65,7 @@ class AjaxNavigationResult extends Layout
      * @param Json $serializer
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
+     * @param UrlPaginationHelper $urlPaginationHelper
      * @param bool $isIsolated
      * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
@@ -74,6 +81,7 @@ class AjaxNavigationResult extends Layout
         Json $serializer,
         Config $config,
         CookieManagerInterface $cookieManager,
+        UrlPaginationHelper $urlPaginationHelper,
         $isIsolated = false
     ) {
         parent::__construct(
@@ -91,6 +99,7 @@ class AjaxNavigationResult extends Layout
         $this->serializer = $serializer;
         $this->config = $config;
         $this->cookieManager = $cookieManager;
+        $this->urlPaginationHelper = $urlPaginationHelper;
     }
 
     /**
@@ -140,27 +149,10 @@ class AjaxNavigationResult extends Layout
 
         $page = (int) $this->request->getParam('p');
         if ($page < 2) {
-            return $responseUrl;
+            return '';
         }
 
-        $urlParts = parse_url($responseUrl);
-        if ($urlParts === false) {
-            $separator = str_contains($responseUrl, '?') ? '&' : '?';
-            return $responseUrl . $separator . http_build_query(['p' => $page]);
-        }
-
-        $query = [];
-        if (isset($urlParts['query'])) {
-            parse_str($urlParts['query'], $query);
-        }
-
-        $query['p'] = $page;
-        $urlParts['query'] = http_build_query($query);
-
-        return (isset($urlParts['scheme']) ? $urlParts['scheme'] . '://' : '')
-            . ($urlParts['host'] ?? '')
-            . ($urlParts['path'] ?? '')
-            . '?' . $urlParts['query'];
+        return $this->urlPaginationHelper->appendPageParam($responseUrl, $page);
     }
 
     /**

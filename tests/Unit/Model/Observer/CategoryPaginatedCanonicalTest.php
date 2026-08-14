@@ -15,6 +15,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Observer\CategoryPaginatedCanonical;
+use Tweakwise\Magento2Tweakwise\Model\UrlPaginationHelper;
 use Tweakwise\Test\Support\UnitTester;
 
 class CategoryPaginatedCanonicalTest extends Unit
@@ -24,6 +25,7 @@ class CategoryPaginatedCanonicalTest extends Unit
     private Config&MockInterface $config;
     private PageConfig&MockInterface $pageConfig;
     private RequestInterface&MockInterface $request;
+    private UrlPaginationHelper&MockInterface $urlPaginationHelper;
     private CategoryPaginatedCanonical $subject;
 
     public function _before(): void
@@ -31,11 +33,13 @@ class CategoryPaginatedCanonicalTest extends Unit
         $this->config = Mockery::mock(Config::class);
         $this->pageConfig = Mockery::mock(PageConfig::class);
         $this->request = Mockery::mock(RequestInterface::class);
+        $this->urlPaginationHelper = Mockery::mock(UrlPaginationHelper::class);
 
         $this->subject = new CategoryPaginatedCanonical(
             $this->config,
             $this->pageConfig,
-            $this->request
+            $this->request,
+            $this->urlPaginationHelper
         );
     }
 
@@ -61,6 +65,7 @@ class CategoryPaginatedCanonicalTest extends Unit
         $this->config->shouldReceive('isPaginatedCanonicalEnabled')->once()->andReturn(true);
         $this->request->shouldReceive('getParam')->with('p')->once()->andReturn('1');
         $this->pageConfig->shouldNotReceive('getAssetCollection');
+        $this->urlPaginationHelper->shouldNotReceive('appendPageParam');
 
         $observer = new Observer(['block' => Mockery::mock(CategoryView::class)]);
         $this->subject->execute($observer);
@@ -81,6 +86,12 @@ class CategoryPaginatedCanonicalTest extends Unit
         $assetCollection = Mockery::mock(GroupedCollection::class);
         $assetCollection->shouldReceive('getGroupByContentType')->once()->with('canonical')->andReturn($canonicalGroup);
         $assetCollection->shouldReceive('remove')->once()->with($existingCanonical);
+
+        $this->urlPaginationHelper
+            ->shouldReceive('appendPageParam')
+            ->once()
+            ->with($existingCanonical, 4)
+            ->andReturn('https://example.com/category?color=blue&p=4');
 
         $this->pageConfig->shouldReceive('getAssetCollection')->once()->andReturn($assetCollection);
         $this->pageConfig->shouldReceive('addRemotePageAsset')->once()->with(

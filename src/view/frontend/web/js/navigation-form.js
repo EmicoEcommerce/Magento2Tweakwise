@@ -111,6 +111,7 @@ define([
             window.onpopstate = function (event) {
                 if (event.state && event.state.html) {
                     this._updateBlocks(event.state.html);
+                    this._updateCanonical(event.state.canonical);
                 }
             }.bind(this);
         },
@@ -381,7 +382,7 @@ define([
          */
         _updateState: function (response) {
             const newUrl = this._buildUrlWithQueryString(response, true);
-            window.history.pushState({html: response.html}, '', newUrl);
+            window.history.pushState({html: response.html, canonical: response.canonical}, '', newUrl);
         },
 
         /**
@@ -407,7 +408,7 @@ define([
          */
         _replaceState: function (response) {
             const newUrl = this._buildUrlWithQueryString(response);
-            window.history.replaceState({html: response.html}, '', newUrl);
+            window.history.replaceState({html: response.html, canonical: response.canonical}, '', newUrl);
         },
 
         /**

@@ -560,6 +560,10 @@ class Config
      */
     public function isPaginatedCanonicalEnabled(?Store $store = null): bool
     {
+        if (!$this->isSeoEnabled($store)) {
+            return false;
+        }
+
         return (bool) $this->getStoreConfig('tweakwise/seo/paginated_canonical_enabled', $store);
     }
 

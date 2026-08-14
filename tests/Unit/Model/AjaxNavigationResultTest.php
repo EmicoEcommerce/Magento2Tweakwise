@@ -11,6 +11,7 @@ use Mockery\MockInterface;
 use ReflectionClass;
 use Tweakwise\Magento2Tweakwise\Model\AjaxNavigationResult;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\UrlPaginationHelper;
 use Tweakwise\Test\Support\UnitTester;
 
 class AjaxNavigationResultTest extends Unit
@@ -19,16 +20,19 @@ class AjaxNavigationResultTest extends Unit
 
     private Config&MockInterface $config;
     private RequestInterface&MockInterface $request;
+    private UrlPaginationHelper&MockInterface $urlPaginationHelper;
     private AjaxNavigationResult $subject;
 
     public function _before(): void
     {
         $this->config = Mockery::mock(Config::class);
         $this->request = Mockery::mock(RequestInterface::class);
+        $this->urlPaginationHelper = Mockery::mock(UrlPaginationHelper::class);
 
         $this->subject = (new ReflectionClass(AjaxNavigationResult::class))->newInstanceWithoutConstructor();
         $this->setProtectedProperty($this->subject, 'config', $this->config);
         $this->setProtectedProperty($this->subject, 'request', $this->request);
+        $this->setProtectedProperty($this->subject, 'urlPaginationHelper', $this->urlPaginationHelper);
     }
 
     public function _after(): void
@@ -45,7 +49,7 @@ class AjaxNavigationResultTest extends Unit
         $this->assertSame('', $result);
     }
 
-    public function testGetCanonicalUrlReturnsResponseUrlWhenPageLowerThanTwo(): void
+    public function testGetCanonicalUrlReturnsEmptyWhenPageLowerThanTwo(): void
     {
         $this->config->shouldReceive('isPaginatedCanonicalEnabled')->once()->andReturn(true);
         $this->request->shouldReceive('getParam')->with('p')->once()->andReturn('1');
@@ -53,13 +57,18 @@ class AjaxNavigationResultTest extends Unit
         $responseUrl = 'https://example.com/category?color=blue';
         $result = $this->subject->getCanonicalUrl($responseUrl);
 
-        $this->assertSame($responseUrl, $result);
+        $this->assertSame('', $result);
     }
 
     public function testGetCanonicalUrlAppendsPageToExistingQueryString(): void
     {
         $this->config->shouldReceive('isPaginatedCanonicalEnabled')->once()->andReturn(true);
         $this->request->shouldReceive('getParam')->with('p')->once()->andReturn('3');
+        $this->urlPaginationHelper
+            ->shouldReceive('appendPageParam')
+            ->once()
+            ->with('https://example.com/category?color=blue', 3)
+            ->andReturn('https://example.com/category?color=blue&p=3');
 
         $result = $this->subject->getCanonicalUrl('https://example.com/category?color=blue');
 

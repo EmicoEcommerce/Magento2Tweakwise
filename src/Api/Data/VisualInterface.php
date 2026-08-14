@@ -8,6 +8,7 @@ interface VisualInterface
     public const URL = 'url';
     public const COLSPAN = 'colspan';
     public const ROWSPAN = 'rowspan';
+    public const VISUAL_ATTRIBUTES = 'visual_attributes';
 
     /**
      * @return string

@@ -80,7 +80,7 @@ class Visual extends Product implements VisualInterface
      */
     public function getVisualAttributes(): array
     {
-        return $this->getData('visual_attributes') ?? [];
+        return $this->getData(self::VISUAL_ATTRIBUTES) ?? [];
     }
 
     /**
@@ -89,6 +89,6 @@ class Visual extends Product implements VisualInterface
      */
     public function setVisualAttributes(array $attributes): VisualInterface
     {
-        return $this->setData('visual_attributes', $attributes);
+        return $this->setData(self::VISUAL_ATTRIBUTES, $attributes);
     }
 }

@@ -5,15 +5,12 @@
             instance="Tweakwise\Magento2Tweakwise\Observer\CreateTweakwiseSlugsAfterSaveAttribute"
         />
     </event>
-    <event name="sales_order_place_after">
-        <observer name="product_purchase_observer" instance="Tweakwise\Magento2Tweakwise\Observer\TweakwiseCheckout" />
+    <event name="wishlist_add_product">
+        <observer name="Tweakwise_Magento2Tweakwise_Observer_Event_StashAddToWishlistEvent"
+                  instance="Tweakwise\Magento2Tweakwise\Observer\Event\StashAddToWishlistEvent"/>
     </event>
     <event name="checkout_cart_product_add_after">
-        <observer name="Tweakwise_Magento2Tweakwise_Observer_Event_SendAddToCartEvent"
-                  instance="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToCartEvent"/>
-    </event>
-    <event name="wishlist_add_product">
-        <observer name="Tweakwise_Magento2Tweakwise_Observer_Event_SendAddToWishlistEvent"
-                  instance="Tweakwise\Magento2Tweakwise\Observer\Event\SendAddToWishlistEvent"/>
+        <observer name="Tweakwise_Magento2Tweakwise_Observer_Event_StashAddToCartEvent"
+                  instance="Tweakwise\Magento2Tweakwise\Observer\Event\StashAddToCartEvent"/>
     </event>
 </config>

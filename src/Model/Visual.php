@@ -74,4 +74,21 @@ class Visual extends Product implements VisualInterface
     {
         return $this->setData(self::ROWSPAN, $rowspan);
     }
+
+    /**
+     * @return array<string, string|string[]>
+     */
+    public function getVisualAttributes(): array
+    {
+        return $this->getData(self::VISUAL_ATTRIBUTES) ?? [];
+    }
+
+    /**
+     * @param array<string, string|string[]> $attributes
+     * @return VisualInterface
+     */
+    public function setVisualAttributes(array $attributes): VisualInterface
+    {
+        return $this->setData(self::VISUAL_ATTRIBUTES, $attributes);
+    }
 }

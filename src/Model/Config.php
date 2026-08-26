@@ -546,6 +546,17 @@ class Config
     }
 
     /**
+     * Whether all recommendation requests of a product page are sent to Tweakwise concurrently.
+     *
+     * @param Store|null $store
+     * @return bool
+     */
+    public function isRecommendationsBatchingEnabled(?Store $store = null): bool
+    {
+        return (bool) $this->getStoreConfig('tweakwise/recommendations/batch_requests', $store);
+    }
+
+    /**
      * @param Store|null $store
      * @return int
      */

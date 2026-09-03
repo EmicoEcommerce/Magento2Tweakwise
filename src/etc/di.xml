@@ -260,6 +260,11 @@
             <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\FeaturedRequest</argument>
         </arguments>
     </virtualType>
+    <type name="Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\RequestPrefetcher">
+        <arguments>
+            <argument name="requestFactory" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory\Recommendations\ProductRequest</argument>
+        </arguments>
+    </type>
     <virtualType name="Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category" type="Tweakwise\Magento2Tweakwise\Model\NavigationConfig">
         <arguments>
             <argument name="filterFormInputProvider" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\CategoryInputProvider</argument>

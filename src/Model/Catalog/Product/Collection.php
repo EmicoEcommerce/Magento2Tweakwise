@@ -289,8 +289,10 @@ class Collection extends AbstractCollection
 
             /** @var VisualInterface $visual */
             $visual = $this->visualFactory->create();
+            $visualId = (string)$item->getValue(ClientItemType::ID);
             // @phpstan-ignore-next-line
-            $visual->setId($item->getId());
+            $visual->setId($visualId);
+            $visual->setData(ClientItemType::TWEAKWISE_ID, $visualId);
             $visual->setImageUrl($item->getImage());
             $visual->setUrl($item->getUrl());
 

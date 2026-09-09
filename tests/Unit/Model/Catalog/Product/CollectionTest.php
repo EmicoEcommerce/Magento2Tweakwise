@@ -38,7 +38,7 @@ class CollectionTest extends Unit
 
         $response = Mockery::mock(ProductNavigationResponse::class);
         $response->shouldReceive('getProductIds')->never();
-        $response->shouldReceive('getItems')->atLeast()->once()->andReturn([$visualItem]);
+        $response->shouldReceive('getItems')->twice()->andReturn([$visualItem]);
 
         $navigationContext = Mockery::mock(NavigationContext::class);
         $navigationContext->shouldReceive('getResponse')->once()->andReturn($response);

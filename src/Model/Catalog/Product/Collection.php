@@ -43,6 +43,7 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Visual;
 
 class Collection extends AbstractCollection
 {
@@ -287,9 +288,9 @@ class Collection extends AbstractCollection
                 continue;
             }
 
-            /** @var VisualInterface $visual */
+            /** @var VisualInterface&Visual $visual */
             $visual = $this->visualFactory->create();
-            $visualId = (string)$item->getValue(ClientItemType::ID);
+            $visualId = (string)($item->getValue(ClientItemType::ID) ?: $item->getId());
             // @phpstan-ignore-next-line
             $visual->setId($visualId);
             $visual->setData(ClientItemType::TWEAKWISE_ID, $visualId);

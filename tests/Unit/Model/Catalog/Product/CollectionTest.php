@@ -7,7 +7,6 @@ namespace Tweakwise\Test\Unit\Model\Catalog\Product;
 use Emico\CodeCept\Test\Unit;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\MockInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;

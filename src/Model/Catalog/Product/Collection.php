@@ -364,7 +364,7 @@ class Collection extends AbstractCollection
             array_keys($this->_items),
             function (array $carry, $key): array {
                 $item = $this->_items[$key];
-                if ($item instanceof ProductInterface) {
+                if ($item instanceof ProductInterface && !$item instanceof Visual) {
                     $carry[(int) $item->getId()] = $key;
                 }
                 return $carry;
@@ -373,7 +373,7 @@ class Collection extends AbstractCollection
         );
 
         foreach ($this->_items as $item) {
-            if (!$item instanceof ProductInterface) {
+            if (!$item instanceof ProductInterface || $item instanceof Visual) {
                 continue;
             }
 

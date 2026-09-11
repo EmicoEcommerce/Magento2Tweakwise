@@ -7,6 +7,7 @@ namespace Tweakwise\Test\Unit\Model\Catalog\Product;
 use Emico\CodeCept\Test\Unit;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Magento\Catalog\Api\Data\ProductInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -16,6 +17,8 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType as ClientItemType;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Visual;
 use Tweakwise\Magento2Tweakwise\Model\VisualFactory;
 
 class CollectionTest extends Unit
@@ -65,6 +68,43 @@ class CollectionTest extends Unit
         $items = $this->getProperty($subject, '_items');
         $this->assertCount(1, $items);
         $this->assertSame($visual, $items[0]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testRemoveDuplicatedProductsSkipsVisualsDuringDedupe(): void
+    {
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $simpleProduct = Mockery::mock(ProductInterface::class);
+        $simpleProduct->shouldReceive('getId')->twice()->andReturn('123');
+        $simpleProduct->shouldReceive('getData')->once()->with('tw_id')->andReturn('123');
+
+        $groupedProduct = Mockery::mock(ProductInterface::class);
+        $groupedProduct->shouldReceive('getId')->twice()->andReturn('999');
+        $groupedProduct->shouldReceive('getData')->once()->with('tw_id')->andReturn('123');
+
+        $visual = Mockery::mock(Visual::class);
+        $visual->shouldNotReceive('getData');
+
+        $subject = $this->createSubject();
+        $this->setProperty($subject, 'config', $config);
+        $this->setProperty($subject, '_items', [
+            0 => $simpleProduct,
+            1 => $groupedProduct,
+            2 => $visual,
+        ]);
+
+        $removeDuplicatedProducts = new ReflectionMethod(Collection::class, 'removeDuplicatedProducts');
+        $removeDuplicatedProducts->setAccessible(true);
+        $removeDuplicatedProducts->invoke($subject);
+
+        $items = $this->getProperty($subject, '_items');
+        $this->assertArrayNotHasKey(0, $items);
+        $this->assertSame($groupedProduct, $items[1]);
+        $this->assertSame($visual, $items[2]);
     }
 
     /**

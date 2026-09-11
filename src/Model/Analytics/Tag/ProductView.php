@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\Model\Analytics\Tag;
 
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Type;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\TagInterface;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\CurrentProductResolver;
@@ -63,5 +64,20 @@ class ProductView implements TagInterface
 
         /** @var Product $product */
         return (float)$product->getFinalPrice();
+    }
+
+    /**
+     * True when get()/getPrice() describe an unselected configurable's arbitrary first child,
+     * not what the shopper actually adds to cart (see js/mixins/catalog-add-to-cart-mixin.js).
+     */
+    public function isAmbiguous(): bool
+    {
+        if (!$this->tweakwiseConfig->isGroupedProductsEnabled()) {
+            return false;
+        }
+
+        $product = $this->currentProductResolver->getProduct();
+
+        return $product !== null && $product->getTypeId() !== Type::TYPE_SIMPLE;
     }
 }

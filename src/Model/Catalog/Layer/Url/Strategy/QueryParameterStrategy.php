@@ -50,6 +50,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
      */
     public const PARAM_LIMIT = 'product_list_limit';
     public const PARAM_ORDER = 'product_list_order';
+    public const PARAM_DIRECTION = 'product_list_dir';
     public const PARAM_PAGE = 'p';
     public const PARAM_SEARCH = 'q';
 
@@ -61,6 +62,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     protected $ignoredQueryParameters = [
         self::PARAM_CATEGORY,
         self::PARAM_ORDER,
+        self::PARAM_DIRECTION,
         self::PARAM_LIMIT,
         self::PARAM_MODE,
         self::PARAM_SEARCH,

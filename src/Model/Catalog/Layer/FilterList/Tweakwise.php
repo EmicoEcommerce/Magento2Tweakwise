@@ -105,7 +105,7 @@ class Tweakwise
         }
 
         // @phpstan-ignore-next-line
-        $facets = $this->context->getResponse()->getFacets();
+        $facets = $this->context->getResponse()->getFacets() ?? [];
 
         $facetAttributeNames = array_map(
             static function (FacetType $facet) {

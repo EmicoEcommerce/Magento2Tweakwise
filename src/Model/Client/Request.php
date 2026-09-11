@@ -282,6 +282,9 @@ class Request
             return $this->helper->getTweakwiseId($storeId, $categoryId);
         };
         $tweakwiseIds = array_map($tweakwiseIdMapper, $categoryIds);
+        // Root category 1 maps to an empty string; drop those so the path never
+        // starts or ends with a dash (e.g. "-100012"), which the gateway rejects.
+        $tweakwiseIds = array_filter($tweakwiseIds, static fn(string $id): bool => $id !== '');
         $this->setParameter('tn_cid', implode('-', $tweakwiseIds));
         return $this;
     }

@@ -21,9 +21,9 @@ $eventsData = $viewModel->getEventsData($twRequestId);
 
 // Fallback product data for the add-to-cart mixin on product view pages, where there's no
 // window.tweakwiseListingProductData entry to read a productKey/price from like on category/search
-// listings (see js/mixins/catalog-add-to-cart-mixin.js).
+// listings (see js/mixins/catalog-add-to-cart-mixin.js). Omitted when isAmbiguous().
 $productTag = ((array)$block->getData('data_layer'))['product'] ?? null;
-$currentProduct = $productTag instanceof ProductView
+$currentProduct = $productTag instanceof ProductView && !$productTag->isAmbiguous()
     ? ['productKey' => $productTag->get(), 'price' => $productTag->getPrice()]
     : null;
 ?>

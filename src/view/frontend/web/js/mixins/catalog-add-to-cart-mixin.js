@@ -21,15 +21,23 @@ define([
         submitForm: function (form) {
             try {
                 const formData = Object.fromEntries(new FormData(form[0]).entries());
-                const qty = parseFloat(formData.qty) || 1;
-                const productData = getProductData(formData.product);
 
-                if (productData && productData.productKey && !isNaN(productData.price)) {
-                    pushEvent('addtocart', {
-                        productKey: productData.productKey,
-                        quantity: qty,
-                        totalAmount: qty * productData.price
-                    });
+                // Selected swatch: don't guess the variant, let the server-stashed event handle it.
+                const isConfigurableSelection = Object.keys(formData).some(function (key) {
+                    return key.indexOf('super_attribute[') === 0;
+                });
+
+                if (!isConfigurableSelection) {
+                    const qty = parseFloat(formData.qty) || 1;
+                    const productData = getProductData(formData.product);
+
+                    if (productData && productData.productKey && !isNaN(productData.price)) {
+                        pushEvent('addtocart', {
+                            productKey: productData.productKey,
+                            quantity: qty,
+                            totalAmount: qty * productData.price
+                        });
+                    }
                 }
             } catch (error) {
                 console.error('[Tweakwise] Could not track add to cart', error);

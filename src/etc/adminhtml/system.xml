@@ -381,6 +381,11 @@
                     <label>Limit max number of products for group codes</label>
                     <validate>validate-number</validate>
                 </field>
+                <field id="batch_requests" translate="label comment" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Batch recommendation requests</label>
+                    <comment>Sends all recommendation requests of a product page (related and upsell) to Tweakwise at the same time instead of one after another, which lowers the server response time of product pages.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

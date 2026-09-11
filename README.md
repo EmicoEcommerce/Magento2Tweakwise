@@ -107,6 +107,9 @@ When the product list is loaded in such a manner the result will not be cacheabl
 10) Default crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Crosssell'. Only relevant when shoppingcart crosssell is enabled
 11) Default crosssell template (featured). Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Featured'. Only relevant when shoppingcart crosssell is enabled
 12) Default crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
+
+##### Batched recommendation requests
+By default all recommendation requests of a product page (related and upsell) are sent to Tweakwise concurrently: the first block that needs a recommendation queues the requests for the other enabled recommendation types of the product in `Model\Client\RequestPool`, which sends every queued request in one Guzzle batch and waits for the slowest one instead of executing them one after another. Identical requests (e.g. two blocks rendering the same related-products template) share a single HTTP call. Disable the prefetching of the other recommendation types with "Batch recommendation requests" (`tweakwise/recommendations/batch_requests`); deduplication is always active.
 13) Crossell type: show crossell or featured products in shoppingcart
 14) Only show products from current category for featured products: Show product from current category in featured products.
 15) Limit group code recommendations: If group code is used for one/more recommendations, limit the total number of products returned. If empty or 0, all products are returned.  

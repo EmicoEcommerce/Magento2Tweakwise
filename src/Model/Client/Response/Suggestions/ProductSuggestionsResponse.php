@@ -29,7 +29,7 @@ class ProductSuggestionsResponse extends Response implements AutocompleteProduct
     {
         $result = [];
         // @phpstan-ignore-next-line
-        foreach ($this->getItems() as $item) {
+        foreach ($this->getItems() ?? [] as $item) {
             $result[] = [
                 'id' => $this->helper->getStoreId($item->getId()),
                 'tweakwise_price' => (float) $item->getPrice(),

@@ -14,6 +14,7 @@ use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\RequestPrefetcher;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\ProductRequest;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -28,6 +29,7 @@ class AbstractRecommendationPluginTest extends Unit
     private Context&MockInterface $context;
     private TemplateFinder&MockInterface $templateFinder;
     private RecommendationImpressionCollector&MockInterface $impressionCollector;
+    private RequestPrefetcher&MockInterface $requestPrefetcher;
     private object $subject;
 
     public function _before(): void
@@ -36,6 +38,7 @@ class AbstractRecommendationPluginTest extends Unit
         $this->context = Mockery::mock(Context::class);
         $this->templateFinder = Mockery::mock(TemplateFinder::class);
         $this->impressionCollector = Mockery::mock(RecommendationImpressionCollector::class);
+        $this->requestPrefetcher = Mockery::mock(RequestPrefetcher::class);
 
         $this->subject = new class (
             Mockery::mock(Config::class),
@@ -43,6 +46,7 @@ class AbstractRecommendationPluginTest extends Unit
             $this->context,
             $this->templateFinder,
             $this->impressionCollector,
+            $this->requestPrefetcher,
         ) extends AbstractRecommendationPlugin {
             protected function getType()
             {
@@ -81,6 +85,9 @@ class AbstractRecommendationPluginTest extends Unit
             ->andReturn(12);
         $request->shouldReceive('setProduct')->with($product)->twice()->andReturnSelf();
         $request->shouldReceive('setTemplate')->with(12)->twice()->andReturnSelf();
+        $this->requestPrefetcher->shouldReceive('prefetchForProduct')
+            ->with($product, Config::RECOMMENDATION_TYPE_UPSELL)
+            ->twice();
         $this->context->shouldReceive('getCollection')->twice()->andReturn($firstCollection, $secondCollection);
 
         $this->assertSame($firstCollection, $this->subject->fetchCollection());
@@ -110,6 +117,7 @@ class AbstractRecommendationPluginTest extends Unit
         $request->shouldNotReceive('setProduct');
         $request->shouldNotReceive('setTemplate');
         $this->templateFinder->shouldNotReceive('forProduct');
+        $this->requestPrefetcher->shouldNotReceive('prefetchForProduct');
         $this->context->shouldReceive('getCollection')->once()->andReturn($collection);
 
         $this->assertSame($collection, $this->subject->fetchCollection());

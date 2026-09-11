@@ -364,7 +364,7 @@ class Collection extends AbstractCollection
             array_keys($this->_items),
             function (array $carry, $key): array {
                 $item = $this->_items[$key];
-                if ($item instanceof ProductInterface && !$item instanceof Visual) {
+                if ($this->isDedupeCandidate($item)) {
                     $carry[(int) $item->getId()] = $key;
                 }
                 return $carry;
@@ -373,16 +373,40 @@ class Collection extends AbstractCollection
         );
 
         foreach ($this->_items as $item) {
-            if (!$item instanceof ProductInterface || $item instanceof Visual) {
+            if (!$this->isDedupeCandidate($item)) {
                 continue;
             }
 
-            $twId = (int) $item->getData('tw_id');
-            if ($twId === 0 || $twId === (int) $item->getId() || !isset($entityIdToKey[$twId])) {
+            $duplicateProductId = $this->getDuplicateProductId($item, $entityIdToKey);
+            if ($duplicateProductId === null) {
                 continue;
             }
 
-            unset($this->_items[$entityIdToKey[$twId]], $entityIdToKey[$twId]);
+            unset($this->_items[$entityIdToKey[$duplicateProductId]], $entityIdToKey[$duplicateProductId]);
         }
+    }
+
+    /**
+     * @param mixed $item
+     * @return bool
+     */
+    private function isDedupeCandidate(mixed $item): bool
+    {
+        return $item instanceof ProductInterface && !$item instanceof Visual;
+    }
+
+    /**
+     * @param ProductInterface $item
+     * @param array<int, int|string> $entityIdToKey
+     * @return int|null
+     */
+    private function getDuplicateProductId(ProductInterface $item, array $entityIdToKey): ?int
+    {
+        $twId = (int) $item->getData('tw_id');
+        if ($twId === 0 || $twId === (int) $item->getId() || !isset($entityIdToKey[$twId])) {
+            return null;
+        }
+
+        return $twId;
     }
 }

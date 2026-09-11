@@ -7,7 +7,7 @@ namespace Tweakwise\Test\Unit\Model\Catalog\Product;
 use Emico\CodeCept\Test\Unit;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\Product;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -78,11 +78,11 @@ class CollectionTest extends Unit
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
 
-        $simpleProduct = Mockery::mock(ProductInterface::class);
+        $simpleProduct = Mockery::mock(Product::class)->makePartial();
         $simpleProduct->shouldReceive('getId')->twice()->andReturn('123');
         $simpleProduct->shouldReceive('getData')->once()->with('tw_id')->andReturn('123');
 
-        $groupedProduct = Mockery::mock(ProductInterface::class);
+        $groupedProduct = Mockery::mock(Product::class)->makePartial();
         $groupedProduct->shouldReceive('getId')->twice()->andReturn('999');
         $groupedProduct->shouldReceive('getData')->once()->with('tw_id')->andReturn('123');
 

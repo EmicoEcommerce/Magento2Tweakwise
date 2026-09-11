@@ -388,20 +388,25 @@ class Collection extends AbstractCollection
 
     /**
      * @param mixed $item
+     * @phpstan-assert-if-true Product $item
      * @return bool
      */
     private function isDedupeCandidate(mixed $item): bool
     {
-        return $item instanceof ProductInterface && !$item instanceof Visual;
+        return $item instanceof Product && !$item instanceof Visual;
     }
 
     /**
-     * @param ProductInterface $item
+     * @param mixed $item
      * @param array<int, int|string> $entityIdToKey
      * @return int|null
      */
-    private function getDuplicateProductId(ProductInterface $item, array $entityIdToKey): ?int
+    private function getDuplicateProductId(mixed $item, array $entityIdToKey): ?int
     {
+        if (!$item instanceof Product) {
+            return null;
+        }
+
         $twId = (int) $item->getData('tw_id');
         if ($twId === 0 || $twId === (int) $item->getId() || !isset($entityIdToKey[$twId])) {
             return null;

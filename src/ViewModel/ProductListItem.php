@@ -12,6 +12,8 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\ProductKeyResolver;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Visual;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
@@ -26,7 +28,9 @@ class ProductListItem implements ArgumentInterface
         private readonly LayoutInterface $layout,
         private readonly Cache $cacheHelper,
         private readonly StoreManagerInterface $storeManager,
-        private readonly Session $customerSession
+        private readonly Session $customerSession,
+        private readonly Config $config,
+        private readonly ProductKeyResolver $productKeyResolver
     ) {
     }
 
@@ -138,6 +142,10 @@ class ProductListItem implements ArgumentInterface
             $itemRendererBlock->setChild('details.renderers', $detailsRenderers);
         }
 
+        $rawId = $product->getData('tw_id')
+            ? $product->getData('tw_id') . Helper::GROUP_CODE_DELIMITER . $product->getId()
+            : (string)$product->getId();
+
         $itemRendererBlock
             ->setData('product', $product)
             ->setData('parent_block', $parentBlock)
@@ -147,7 +155,11 @@ class ProductListItem implements ArgumentInterface
             ->setData('pos', $parentBlock->getPositioned())
             ->setData('output_helper', $parentBlock->getData('outputHelper'))
             ->setData('template_type', $templateType)
-            ->setData('tw_id', $product->getData('tw_id') ? $product->getData('tw_id')  . Helper::GROUP_CODE_DELIMITER . $product->getId() : $product->getId());
+            ->setData('tw_id', $this->productKeyResolver->resolve(
+                $rawId,
+                (int)$this->storeManager->getStore()->getId(),
+                $this->config->isGroupedProductsEnabled()
+            ));
 
         return $itemRendererBlock->toHtml();
     }

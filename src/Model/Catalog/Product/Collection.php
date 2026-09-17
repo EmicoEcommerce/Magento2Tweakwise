@@ -43,6 +43,7 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Model\Visual;
 
 class Collection extends AbstractCollection
 {
@@ -287,10 +288,15 @@ class Collection extends AbstractCollection
                 continue;
             }
 
-            /** @var VisualInterface $visual */
+            /** @var VisualInterface&Visual $visual */
             $visual = $this->visualFactory->create();
+            $visualId = (string)$item->getValue(ClientItemType::ID);
+            if ($visualId === '') {
+                $visualId = (string)$item->getId();
+            }
             // @phpstan-ignore-next-line
-            $visual->setId($item->getId());
+            $visual->setId($visualId);
+            $visual->setData(ClientItemType::TWEAKWISE_ID, $visualId);
             $visual->setImageUrl($item->getImage());
             $visual->setUrl($item->getUrl());
 
@@ -302,6 +308,8 @@ class Collection extends AbstractCollection
             if ($rowspan) {
                 $visual->setRowspan($rowspan);
             }
+
+            $visual->setVisualAttributes($item->getAttributeValues());
 
             // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
             // @phpstan-ignore-next-line
@@ -356,7 +364,7 @@ class Collection extends AbstractCollection
             array_keys($this->_items),
             function (array $carry, $key): array {
                 $item = $this->_items[$key];
-                if ($item instanceof ProductInterface) {
+                if ($this->isDedupeCandidate($item)) {
                     $carry[(int) $item->getId()] = $key;
                 }
                 return $carry;
@@ -365,16 +373,45 @@ class Collection extends AbstractCollection
         );
 
         foreach ($this->_items as $item) {
-            if (!$item instanceof ProductInterface) {
+            if (!$this->isDedupeCandidate($item)) {
                 continue;
             }
 
-            $twId = (int) $item->getData('tw_id');
-            if ($twId === 0 || $twId === (int) $item->getId() || !isset($entityIdToKey[$twId])) {
+            $duplicateProductId = $this->getDuplicateProductId($item, $entityIdToKey);
+            if ($duplicateProductId === null) {
                 continue;
             }
 
-            unset($this->_items[$entityIdToKey[$twId]], $entityIdToKey[$twId]);
+            unset($this->_items[$entityIdToKey[$duplicateProductId]], $entityIdToKey[$duplicateProductId]);
         }
+    }
+
+    /**
+     * @param mixed $item
+     * @phpstan-assert-if-true Product $item
+     * @return bool
+     */
+    private function isDedupeCandidate(mixed $item): bool
+    {
+        return $item instanceof Product && !$item instanceof Visual;
+    }
+
+    /**
+     * @param mixed $item
+     * @param array<int, int|string> $entityIdToKey
+     * @return int|null
+     */
+    private function getDuplicateProductId(mixed $item, array $entityIdToKey): ?int
+    {
+        if (!$item instanceof Product) {
+            return null;
+        }
+
+        $twId = (int) $item->getData('tw_id');
+        if ($twId === 0 || $twId === (int) $item->getId() || !isset($entityIdToKey[$twId])) {
+            return null;
+        }
+
+        return $twId;
     }
 }

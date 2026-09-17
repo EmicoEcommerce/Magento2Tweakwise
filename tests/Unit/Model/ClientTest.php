@@ -11,8 +11,6 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
-use Tweakwise\Magento2Tweakwise\Model\Client\Request\AnalyticsRequest;
-use Magento\Framework\UrlInterface;
 use Tweakwise\Test\Support\UnitTester;
 
 class ClientTest extends Unit
@@ -83,43 +81,5 @@ class ClientTest extends Unit
         $httpRequest = $client->createGetRequest($request);
 
         $this->assertSame('', $httpRequest->getHeaderLine('TWN-Source'));
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreatePostRequestAddsInternalTrafficHeaderForAnalyticsRequests(): void
-    {
-        $config = Mockery::mock(Config::class);
-        $config->shouldReceive('getInternalIpAddresses')->andReturn(['84.35.11.109']);
-        $config->shouldReceive('getGeneralAuthenticationKey')->andReturn('12345abc');
-
-        $remoteAddress = Mockery::mock(RemoteAddress::class);
-        $remoteAddress->shouldReceive('getRemoteAddress')->andReturn('84.35.11.109');
-
-        $urlBuilder = Mockery::mock(UrlInterface::class);
-        $urlBuilder->shouldReceive('getUrl')->andReturnUsing(static fn (string $url) => $url);
-
-        $this->tester->mockService(Config::class, $config);
-        $this->tester->mockService(RemoteAddress::class, $remoteAddress);
-        $this->tester->mockService(UrlInterface::class, $urlBuilder);
-
-        /** @var Client $client */
-        $client = $this->tester->getObjectManager()->get(Client::class);
-
-        $request = $this->createMock(AnalyticsRequest::class);
-        $request->method('getPath')->willReturn('pageview');
-        $request->method('getApiUrl')->willReturn('https://navigator-analytics.tweakwise.com');
-        $request->method('getParameters')->willReturn(
-            [
-                'ProfileKey' => 'asdfasf325235sdafsf',
-                'SessionKey' => 'LADy42zTNxj0Ub9dm9rKGhmXOZUz6ypD',
-                'ProductKey' => '100019',
-            ]
-        );
-        $httpRequest = $client->createPostRequest($request);
-
-        $this->assertSame('Internal-Traffic', $httpRequest->getHeaderLine('TWN-Source'));
-        $this->assertSame('12345abc', $httpRequest->getHeaderLine('Instance-Key'));
     }
 }

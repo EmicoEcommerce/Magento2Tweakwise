@@ -9,8 +9,10 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Client;
+use Tweakwise\Magento2Tweakwise\Model\Client\RequestPool;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\RecommendationsResponse;
@@ -66,6 +68,16 @@ class Context
     protected $config;
 
     /**
+     * @var RequestPool
+     */
+    private readonly RequestPool $requestPool;
+
+    /**
+     * @var ProfileKeyApplier
+     */
+    private readonly ProfileKeyApplier $profileKeyApplier;
+
+    /**
      * Context constructor.
      * @param Client $client
      * @param RequestFactory $requestFactory
@@ -74,6 +86,8 @@ class Context
      * @param Visibility $visibility
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
+     * @param RequestPool|null $requestPool
+     * @param ProfileKeyApplier|null $profileKeyApplier
      */
     public function __construct(
         Client $client,
@@ -82,7 +96,9 @@ class Context
         CatalogConfig $catalogConfig,
         Visibility $visibility,
         Config $config,
-        private readonly CookieManagerInterface $cookieManager
+        CookieManagerInterface $cookieManager,
+        ?RequestPool $requestPool = null,
+        ?ProfileKeyApplier $profileKeyApplier = null
     ) {
         $this->client = $client;
         $this->requestFactory = $requestFactory;
@@ -90,6 +106,8 @@ class Context
         $this->catalogConfig = $catalogConfig;
         $this->visibility = $visibility;
         $this->config = $config;
+        $this->requestPool = $requestPool ?? ObjectManager::getInstance()->get(RequestPool::class);
+        $this->profileKeyApplier = $profileKeyApplier ?? new ProfileKeyApplier($config, $cookieManager);
     }
 
     /**
@@ -103,14 +121,15 @@ class Context
             $this->request = $this->requestFactory->create();
         }
 
-        if ($this->config->isPersonalMerchandisingActive()) {
-            $this->setProfileKeyInRequest();
-        }
+        $this->profileKeyApplier->apply($this->request);
 
         return $this->request;
     }
 
     /**
+     * Resolves the response through the request pool: every request queued before this point (e.g. the other
+     * recommendation types prefetched for the same product) is sent to Tweakwise concurrently with this one.
+     *
      * @return RecommendationsResponse
      */
     public function getResponse()
@@ -118,7 +137,7 @@ class Context
         // @phpstan-ignore-next-line
         if (!$this->response) {
             // @phpstan-ignore-next-line
-            $this->response = $this->client->request($this->getRequest());
+            $this->response = $this->requestPool->resolve($this->getRequest());
         }
 
         if (!is_numeric($this->request->getTemplate())) {
@@ -175,22 +194,5 @@ class Context
         // @phpstan-ignore-next-line
         $this->response = null;
         $this->request = $request;
-    }
-
-    /**
-     * @return void
-     */
-    private function setProfileKeyInRequest(): void
-    {
-        $profileKey = $this->cookieManager->getCookie(
-            $this->config->getPersonalMerchandisingCookieName(),
-            null
-        );
-
-        if (!$profileKey) {
-            return;
-        }
-
-        $this->request->setProfileKey($profileKey);
     }
 }

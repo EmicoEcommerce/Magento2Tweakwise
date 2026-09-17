@@ -20,8 +20,8 @@ Below is a rundown of all configuration options
 
 #### General:
 1) Authentication key: This is used to communicate with tweakwise and determines your navigator instance, it should be the same as the key found in the navigator under `Connectivity > End points`.
-2) Send analytics events to Tweakwise: Enable server-side analytics event sending (product views, searches, purchases). Only enable this if you are not using a JavaScript tracking script to send these events to Tweakwise; enabling both will result in duplicate events.
-3) Cookie name: Name of the cookie that holds the Tweakwise profile id. This is usually set by the Tweakwise measure script. When analytics is enabled the cookie is managed automatically and this field can be left empty.
+2) Send analytics events to Tweakwise: Enables sending pageview/search/itemclick/addtocart/addtowishlist/purchase events to Tweakwise via the client-side Event Tag (a scout.js snippet loaded in the browser). No requests to Tweakwise's analytics API are made from this server.
+3) Cookie name: Name of the cookie that holds the Tweakwise profile id. When analytics is enabled the cookie is managed automatically and this field can be left empty.
 4) Internal traffic IP addresses: Comma-separated list of IP addresses that should be tagged as internal traffic. When a visitor's IP matches one of the configured addresses, all Tweakwise API requests triggered by that visit will include a `TWN-Source: Internal-Traffic` header. This allows you to filter out internal traffic (e.g. employees, testers) from Tweakwise Analytics reports. See [Tweakwise docs](https://docs.tweakwise.com/reference/identify-requests-as-internal-traffic) for details.
 5) Grouped products: Enable this after the grouped export has been enabled and imported in tweakwise. This wil enable filtering based on variant data and enabled the product image to be controlled by tweakwise so that the correct color is shown based on selected filters. This requires the image url in tweakwise to be configured correctly. If this is not enabled and you've exported grouped products the catalog may be empty.
 6) Language: The language used by the store, passed to Tweakwise to determine word conjugations and spelling corrections in search results.
@@ -108,6 +108,9 @@ When the product list is loaded in such a manner the result will not be cacheabl
 10) Default crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Crosssell'. Only relevant when shoppingcart crosssell is enabled
 11) Default crosssell template (featured). Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Featured'. Only relevant when shoppingcart crosssell is enabled
 12) Default crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
+
+##### Batched recommendation requests
+By default all recommendation requests of a product page (related and upsell) are sent to Tweakwise concurrently: the first block that needs a recommendation queues the requests for the other enabled recommendation types of the product in `Model\Client\RequestPool`, which sends every queued request in one Guzzle batch and waits for the slowest one instead of executing them one after another. Identical requests (e.g. two blocks rendering the same related-products template) share a single HTTP call. Disable the prefetching of the other recommendation types with "Batch recommendation requests" (`tweakwise/recommendations/batch_requests`); deduplication is always active.
 13) Crossell type: show crossell or featured products in shoppingcart
 14) Only show products from current category for featured products: Show product from current category in featured products.
 15) Limit group code recommendations: If group code is used for one/more recommendations, limit the total number of products returned. If empty or 0, all products are returned.  

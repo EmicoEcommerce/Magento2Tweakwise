@@ -37,8 +37,11 @@ define([
         currentXhr: null,
         currentCountXhr: null,
         deletedFilters: [],
+        originalCanonical: null,
 
         _create: function () {
+            var canonical = $('link[rel="canonical"]').attr('href') || null;
+            this.originalCanonical = this._removePageParameter(canonical);
             this._hookEvents();
             this._fixAjaxHistory();
             return this._superApply(arguments);
@@ -457,13 +460,35 @@ define([
          * @private
          */
         _updateCanonical: function (canonical) {
-            if (!canonical) {
+            var $canonicalTag = $('link[rel="canonical"]');
+            if (!$canonicalTag.length) {
                 return;
             }
 
-            var $canonicalTag = $('link[rel="canonical"]');
-            if ($canonicalTag.length) {
-                $canonicalTag.attr('href', canonical);
+            var canonicalUrl = canonical || this.originalCanonical;
+            if (!canonicalUrl) {
+                return;
+            }
+
+            $canonicalTag.attr('href', canonicalUrl);
+        },
+
+        /**
+         * @param {string|null} url
+         * @returns {string|null}
+         * @private
+         */
+        _removePageParameter: function (url) {
+            if (!url) {
+                return null;
+            }
+
+            try {
+                var parsedUrl = new URL(url, window.location.origin);
+                parsedUrl.searchParams.delete('p');
+                return this._normalizeQueryString(parsedUrl.toString());
+            } catch (e) {
+                return url;
             }
         },
 

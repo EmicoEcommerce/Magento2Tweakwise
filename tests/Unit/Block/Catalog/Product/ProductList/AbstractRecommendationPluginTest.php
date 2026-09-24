@@ -11,6 +11,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\AbstractRecommendationPlugin;
 use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\RequestPrefetcher;
@@ -27,6 +28,7 @@ class AbstractRecommendationPluginTest extends Unit
     private Registry&MockInterface $registry;
     private Context&MockInterface $context;
     private TemplateFinder&MockInterface $templateFinder;
+    private RecommendationImpressionCollector&MockInterface $impressionCollector;
     private RequestPrefetcher&MockInterface $requestPrefetcher;
     private object $subject;
 
@@ -35,6 +37,7 @@ class AbstractRecommendationPluginTest extends Unit
         $this->registry = Mockery::mock(Registry::class);
         $this->context = Mockery::mock(Context::class);
         $this->templateFinder = Mockery::mock(TemplateFinder::class);
+        $this->impressionCollector = Mockery::mock(RecommendationImpressionCollector::class);
         $this->requestPrefetcher = Mockery::mock(RequestPrefetcher::class);
 
         $this->subject = new class (
@@ -42,6 +45,7 @@ class AbstractRecommendationPluginTest extends Unit
             $this->registry,
             $this->context,
             $this->templateFinder,
+            $this->impressionCollector,
             $this->requestPrefetcher,
         ) extends AbstractRecommendationPlugin {
             protected function getType()
@@ -52,6 +56,11 @@ class AbstractRecommendationPluginTest extends Unit
             public function fetchCollection(): Collection
             {
                 return $this->getCollection();
+            }
+
+            public function recordImpression(Collection $collection): void
+            {
+                $this->recordImpressionIfNonEmpty($collection);
             }
         };
     }
@@ -112,5 +121,27 @@ class AbstractRecommendationPluginTest extends Unit
         $this->context->shouldReceive('getCollection')->once()->andReturn($collection);
 
         $this->assertSame($collection, $this->subject->fetchCollection());
+    }
+
+    public function testRecordImpressionIfNonEmptyAddsTheContextRequestIdWhenCollectionHasItems(): void
+    {
+        $collection = Mockery::mock(Collection::class);
+        $collection->shouldReceive('getSize')->once()->andReturn(3);
+
+        $this->context->shouldReceive('getTweakwiseRequestId')->once()->andReturn('req-123');
+        $this->impressionCollector->shouldReceive('add')->once()->with('req-123');
+
+        $this->subject->recordImpression($collection);
+    }
+
+    public function testRecordImpressionIfNonEmptySkipsAnEmptyCollection(): void
+    {
+        $collection = Mockery::mock(Collection::class);
+        $collection->shouldReceive('getSize')->once()->andReturn(0);
+
+        $this->context->shouldNotReceive('getTweakwiseRequestId');
+        $this->impressionCollector->shouldNotReceive('add');
+
+        $this->subject->recordImpression($collection);
     }
 }

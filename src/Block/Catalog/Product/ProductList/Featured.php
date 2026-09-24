@@ -12,6 +12,7 @@ namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 use Tweakwise\Magento2Tweakwise\MagentoCompat\PreparePostDataFactory;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context as RecommendationsContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
@@ -62,6 +63,7 @@ class Featured extends ListProduct
      * @param PreparePostDataFactory $preparePostDataFactory
      * @param Cache $cacheHelper
      * @param LinkedProductListItem $linkedProductListItemViewModel
+     * @param RecommendationImpressionCollector $impressionCollector
      * @param array $data
      * @internal param CategoryRepositoryInterface $categoryRepository
      * @internal param Data $urlHelper
@@ -82,6 +84,7 @@ class Featured extends ListProduct
         PreparePostDataFactory $preparePostDataFactory,
         private readonly Cache $cacheHelper,
         private readonly LinkedProductListItem $linkedProductListItemViewModel,
+        private readonly RecommendationImpressionCollector $impressionCollector,
         array $data = []
     ) {
         parent::__construct(
@@ -177,6 +180,10 @@ class Featured extends ListProduct
                 $this->configureRequest($this->recommendationsContext->getRequest());
                 $this->_productCollection = $this->recommendationsContext
                     ->getCollection();
+
+                if ($this->_productCollection->getSize() > 0) {
+                    $this->impressionCollector->add($this->recommendationsContext->getTweakwiseRequestId());
+                }
             }
         }
 

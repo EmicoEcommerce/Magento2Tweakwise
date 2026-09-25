@@ -567,6 +567,19 @@ class Config
 
     /**
      * @param Store|null $store
+     * @return bool
+     */
+    public function isPaginatedCanonicalEnabled(?Store $store = null): bool
+    {
+        if (!$this->isSeoEnabled($store)) {
+            return false;
+        }
+
+        return (bool) $this->getStoreConfig('tweakwise/seo/paginated_canonical_enabled', $store);
+    }
+
+    /**
+     * @param Store|null $store
      * @return mixed|string|null
      */
     public function getLanguage(?Store $store = null)

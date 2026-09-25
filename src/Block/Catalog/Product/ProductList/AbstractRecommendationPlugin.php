@@ -3,6 +3,7 @@
 namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList;
 
 use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\RequestPrefetcher;
@@ -42,6 +43,7 @@ abstract class AbstractRecommendationPlugin
      * @param Registry $registry
      * @param Context $context
      * @param TemplateFinder $templateFinder
+     * @param RecommendationImpressionCollector $impressionCollector
      * @param RequestPrefetcher|null $requestPrefetcher
      */
     public function __construct(
@@ -49,6 +51,7 @@ abstract class AbstractRecommendationPlugin
         Registry $registry,
         Context $context,
         TemplateFinder $templateFinder,
+        protected readonly RecommendationImpressionCollector $impressionCollector,
         private ?RequestPrefetcher $requestPrefetcher = null
     ) {
         $this->config = $config;
@@ -104,5 +107,21 @@ abstract class AbstractRecommendationPlugin
 
         $this->configureRequest($request);
         return $this->context->getCollection();
+    }
+
+    /**
+     * Records a page_impression for this widget's Tweakwise request-id, but only if it actually
+     * rendered with items.
+     *
+     * @param Collection $collection
+     * @return void
+     */
+    protected function recordImpressionIfNonEmpty(Collection $collection): void
+    {
+        if ($collection->getSize() === 0) {
+            return;
+        }
+
+        $this->impressionCollector->add($this->context->getTweakwiseRequestId());
     }
 }

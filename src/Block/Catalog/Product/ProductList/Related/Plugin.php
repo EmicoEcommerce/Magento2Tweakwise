@@ -41,8 +41,10 @@ class Plugin extends AbstractRecommendationPlugin
         }
 
         try {
+            $collection = $this->getCollection();
+            $this->recordImpressionIfNonEmpty($collection);
             // @phpstan-ignore-next-line
-            return $this->getCollection();
+            return $collection;
         } catch (ApiException $e) {
             return $proceed();
         }

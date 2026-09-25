@@ -17,6 +17,7 @@ use Magento\Checkout\Block\Cart\Crosssell;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context as RecommendationsContext;
 use Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList\AbstractRecommendationPlugin;
@@ -58,6 +59,7 @@ class Plugin extends AbstractRecommendationPlugin
      * @param TemplateFinder $templateFinder
      * @param Session $checkoutSession
      * @param RecommendationsContext $recommendationsContext
+     * @param RecommendationImpressionCollector $impressionCollector
      * @param ProductRepositoryInterface|null $productRepository
      */
     public function __construct(
@@ -67,6 +69,7 @@ class Plugin extends AbstractRecommendationPlugin
         TemplateFinder $templateFinder,
         Session $checkoutSession,
         RecommendationsContext $recommendationsContext,
+        RecommendationImpressionCollector $impressionCollector,
         ?ProductRepositoryInterface $productRepository = null
     ) {
         $this->productRepository = $productRepository;
@@ -75,7 +78,7 @@ class Plugin extends AbstractRecommendationPlugin
         $this->productRepository = $productRepository
             ?? ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
 
-        parent::__construct($config, $registry, $context, $templateFinder);
+        parent::__construct($config, $registry, $context, $templateFinder, $impressionCollector);
     }
 
     /**
@@ -238,12 +241,21 @@ class Plugin extends AbstractRecommendationPlugin
             return $result;
         }
 
+        // Captured immediately after this call, since $this->context is shared with
+        // getFeaturedItems()'s $this->recommendationsContext and a later setRequest() there
+        // would overwrite this response.
+        $requestId = $this->context->getTweakwiseRequestId();
+
         if (!empty($cartItems)) {
             $collection = $this->removeCartItems($collection, $cartItems);
         }
 
         foreach ($collection as $item) {
             $items[] = $item;
+        }
+
+        if (!empty($items)) {
+            $this->impressionCollector->add($requestId);
         }
 
         return $items;
@@ -288,6 +300,8 @@ class Plugin extends AbstractRecommendationPlugin
             return [];
         }
 
+        $requestId = $this->recommendationsContext->getTweakwiseRequestId();
+
         // @phpstan-ignore-next-line
         if (!empty($cartItems)) {
             // @phpstan-ignore-next-line
@@ -296,6 +310,10 @@ class Plugin extends AbstractRecommendationPlugin
 
         foreach ($collection as $item) {
             $items[] = $item;
+        }
+
+        if (!empty($items)) {
+            $this->impressionCollector->add($requestId);
         }
 
         // @phpstan-ignore-next-line

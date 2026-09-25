@@ -55,6 +55,58 @@ class ConfigTest extends Unit
     }
 
     /**
+     * @return void
+     */
+    public function testIsPaginatedCanonicalEnabledReturnsTrueWhenSeoEnabledAndFlagEnabled(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->expects($this->exactly(2))
+            ->method('getValue')
+            ->willReturnMap([
+                ['tweakwise/seo/enabled', 'store', null, '1'],
+                ['tweakwise/seo/paginated_canonical_enabled', 'store', null, '1'],
+            ]);
+
+        $config = $this->createConfig($scopeConfig);
+
+        $this->assertTrue($config->isPaginatedCanonicalEnabled());
+    }
+
+    /**
+     * @return void
+     */
+    public function testIsPaginatedCanonicalEnabledReturnsFalseWhenSeoDisabledAndFlagEnabled(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with('tweakwise/seo/enabled', 'store', null)
+            ->willReturn('0');
+
+        $config = $this->createConfig($scopeConfig);
+
+        $this->assertFalse($config->isPaginatedCanonicalEnabled());
+    }
+
+    /**
+     * @return void
+     */
+    public function testIsPaginatedCanonicalEnabledReturnsFalseWhenConfigValueIsZero(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->expects($this->exactly(2))
+            ->method('getValue')
+            ->willReturnMap([
+                ['tweakwise/seo/enabled', 'store', null, '1'],
+                ['tweakwise/seo/paginated_canonical_enabled', 'store', null, '0'],
+            ]);
+
+        $config = $this->createConfig($scopeConfig);
+
+        $this->assertFalse($config->isPaginatedCanonicalEnabled());
+    }
+
+    /**
      * @param ScopeConfigInterface $scopeConfig
      * @return Config
      */

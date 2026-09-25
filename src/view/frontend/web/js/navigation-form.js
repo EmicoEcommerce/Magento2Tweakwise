@@ -35,8 +35,11 @@ define([
         currentXhr: null,
         currentCountXhr: null,
         deletedFilters: [],
+        originalCanonical: null,
 
         _create: function () {
+            var canonical = $('link[rel="canonical"]').attr('href') || null;
+            this.originalCanonical = this._removePageParameter(canonical);
             this._hookEvents();
             this._fixAjaxHistory();
             return this._superApply(arguments);
@@ -174,6 +177,7 @@ define([
             window.onpopstate = function (event) {
                 if (event.state && event.state.html) {
                     this._updateBlocks(event.state.html);
+                    this._updateCanonical(event.state.canonical);
                 }
             }.bind(this);
         },
@@ -312,6 +316,7 @@ define([
                 success: function (response) {
                     this._updateBlocks(response.html);
                     this._updateState(response);
+                    this._updateCanonical(response.canonical);
                 }.bind(this),
                 error: function (jqXHR, errorStatus) {
                     if (errorStatus !== 'abort') {
@@ -443,7 +448,46 @@ define([
          */
         _updateState: function (response) {
             const newUrl = this._buildUrlWithQueryString(response, true);
-            window.history.pushState({html: response.html}, '', newUrl);
+            window.history.pushState({html: response.html, canonical: response.canonical}, '', newUrl);
+        },
+
+        /**
+         * Updates the canonical link tag in the document head to reflect the current navigation state.
+         *
+         * @param {string} canonical
+         * @private
+         */
+        _updateCanonical: function (canonical) {
+            var $canonicalTag = $('link[rel="canonical"]');
+            if (!$canonicalTag.length) {
+                return;
+            }
+
+            var canonicalUrl = canonical || this.originalCanonical;
+            if (!canonicalUrl) {
+                return;
+            }
+
+            $canonicalTag.attr('href', canonicalUrl);
+        },
+
+        /**
+         * @param {string|null} url
+         * @returns {string|null}
+         * @private
+         */
+        _removePageParameter: function (url) {
+            if (!url) {
+                return null;
+            }
+
+            try {
+                var parsedUrl = new URL(url, window.location.origin);
+                parsedUrl.searchParams.delete('p');
+                return this._normalizeQueryString(parsedUrl.toString());
+            } catch (e) {
+                return url;
+            }
         },
 
         /**
@@ -452,7 +496,7 @@ define([
          */
         _replaceState: function (response) {
             const newUrl = this._buildUrlWithQueryString(response);
-            window.history.replaceState({html: response.html}, '', newUrl);
+            window.history.replaceState({html: response.html, canonical: response.canonical}, '', newUrl);
         },
 
         /**

@@ -40,6 +40,21 @@ class Response extends Type
     }
 
     /**
+     * The Tweakwise request-id (Twn-Request-Id response header) of the call that produced this
+     * response, used to attribute analytics events (page impressions, item clicks) back to the
+     * exact API call that returned the items shown.
+     *
+     * @return string
+     */
+    public function getRequestId(): string
+    {
+        $headers = $this->getValue('headers') ?? [];
+        $normalized = array_change_key_case($headers, CASE_LOWER);
+
+        return $normalized['twn-request-id'][0] ?? '';
+    }
+
+    /**
      * Function to get items from groups and set the items
      * @param array $groups
      * @param bool $addSimple

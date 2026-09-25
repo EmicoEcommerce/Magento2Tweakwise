@@ -15,6 +15,7 @@ use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\View\Result\Layout;
+use Tweakwise\Magento2Tweakwise\Model\UrlPaginationHelper;
 
 /**
  * Class AjaxNavigationResponse
@@ -47,6 +48,11 @@ class AjaxNavigationResult extends Layout
     protected $cookieManager;
 
     /**
+     * @var UrlPaginationHelper
+     */
+    protected $urlPaginationHelper;
+
+    /**
      * AjaxNavigationResult constructor.
      * @param Context $context
      * @param LayoutFactory $layoutFactory
@@ -59,6 +65,7 @@ class AjaxNavigationResult extends Layout
      * @param Json $serializer
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
+     * @param UrlPaginationHelper $urlPaginationHelper
      * @param bool $isIsolated
      * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
@@ -74,6 +81,7 @@ class AjaxNavigationResult extends Layout
         Json $serializer,
         Config $config,
         CookieManagerInterface $cookieManager,
+        UrlPaginationHelper $urlPaginationHelper,
         $isIsolated = false
     ) {
         parent::__construct(
@@ -91,6 +99,7 @@ class AjaxNavigationResult extends Layout
         $this->serializer = $serializer;
         $this->config = $config;
         $this->cookieManager = $cookieManager;
+        $this->urlPaginationHelper = $urlPaginationHelper;
     }
 
     /**
@@ -105,7 +114,7 @@ class AjaxNavigationResult extends Layout
         $url  = $this->getResponseUrl();
         $productCount = $this->getProductCount();
 
-        $responsePayload = ['url' => $url, 'html' => $html];
+        $responsePayload = ['url' => $url, 'html' => $html, 'canonical' => $this->getCanonicalUrl($url)];
         if ($productCount !== null) {
             $responsePayload['product_count'] = $productCount;
         }
@@ -145,6 +154,24 @@ class AjaxNavigationResult extends Layout
         $layer = $this->layerResolver->get();
         $activeFilters = $layer->getState()->getFilters();
         return $this->urlModel->getFilterUrl($activeFilters);
+    }
+
+    /**
+     * @param string $responseUrl
+     * @return string
+     */
+    public function getCanonicalUrl(string $responseUrl): string
+    {
+        if (!$this->config->isPaginatedCanonicalEnabled()) {
+            return '';
+        }
+
+        $page = (int) $this->request->getParam('p');
+        if ($page < 2) {
+            return '';
+        }
+
+        return $this->urlPaginationHelper->appendPageParam($responseUrl, $page);
     }
 
     /**

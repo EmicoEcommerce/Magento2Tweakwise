@@ -3,12 +3,15 @@
 namespace Tweakwise\Magento2Tweakwise\Block\Catalog\Product\ProductList;
 
 use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\Context;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation\RequestPrefetcher;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\ProductRequest;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Registry;
 
 abstract class AbstractRecommendationPlugin
@@ -40,9 +43,17 @@ abstract class AbstractRecommendationPlugin
      * @param Registry $registry
      * @param Context $context
      * @param TemplateFinder $templateFinder
+     * @param RecommendationImpressionCollector $impressionCollector
+     * @param RequestPrefetcher|null $requestPrefetcher
      */
-    public function __construct(Config $config, Registry $registry, Context $context, TemplateFinder $templateFinder)
-    {
+    public function __construct(
+        Config $config,
+        Registry $registry,
+        Context $context,
+        TemplateFinder $templateFinder,
+        protected readonly RecommendationImpressionCollector $impressionCollector,
+        private ?RequestPrefetcher $requestPrefetcher = null
+    ) {
         $this->config = $config;
         $this->registry = $registry;
         $this->context = $context;
@@ -67,6 +78,21 @@ abstract class AbstractRecommendationPlugin
 
         $request->setProduct($product);
         $request->setTemplate($this->templateFinder->forProduct($product, $this->getType()));
+
+        // Queue the other recommendation types of this product so all calls for the page are sent in one batch.
+        $this->getRequestPrefetcher()->prefetchForProduct($product, $this->getType());
+    }
+
+    /**
+     * @return RequestPrefetcher
+     */
+    private function getRequestPrefetcher(): RequestPrefetcher
+    {
+        if ($this->requestPrefetcher === null) {
+            $this->requestPrefetcher = ObjectManager::getInstance()->get(RequestPrefetcher::class);
+        }
+
+        return $this->requestPrefetcher;
     }
 
     /**
@@ -81,5 +107,21 @@ abstract class AbstractRecommendationPlugin
 
         $this->configureRequest($request);
         return $this->context->getCollection();
+    }
+
+    /**
+     * Records a page_impression for this widget's Tweakwise request-id, but only if it actually
+     * rendered with items.
+     *
+     * @param Collection $collection
+     * @return void
+     */
+    protected function recordImpressionIfNonEmpty(Collection $collection): void
+    {
+        if ($collection->getSize() === 0) {
+            return;
+        }
+
+        $this->impressionCollector->add($this->context->getTweakwiseRequestId());
     }
 }

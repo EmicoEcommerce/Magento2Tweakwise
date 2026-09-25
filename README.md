@@ -54,7 +54,8 @@ Below is a rundown of all configuration options
     The reason this is an AND check is because otherwise indexation will still happen on the non whitelisted filters and it is unclear which url is present (an arbitrary amount of filters could be selected).
     Suppose max allowed facet is 1 and only "size" is in the whitelist. Then filter "color" with value "red" is not indexable (since "color" is not in the whitelist).
     If we now allow the size filter to still be indexable then url example.com/category/color/red/size/M would be indexable whereas example.com/category/color/red is not which is incorrect.
-    This would lead to infinite crawling on filter urls which is undesirable 
+    This would lead to infinite crawling on filter urls which is undesirable
+4) Enable Paginated Canonical URLs: When enabled, the canonical tag in the page `<head>` is updated on AJAX pagination to include the current page parameter (e.g. `?p=2`) for page 2 and up. On filter-only navigation (page 1) the canonical is reset to the original, unfiltered category canonical, so filter combinations do not self-reference — this preserves the same protection against duplicate content and infinite crawling that `filter_whitelist` and `max_allowed_facets` provide for non-AJAX navigation. Only updates an existing canonical tag — if the page has no canonical tag (i.e. `catalog/seo/category_canonical_tag` is disabled), nothing is added.
     
 #### Autocomplete (All settings depend on Enabled having value yes)
 1) Enabled: Use tweakwise autocomplete results or not.
@@ -107,6 +108,9 @@ When the product list is loaded in such a manner the result will not be cacheabl
 10) Default crosssell template. Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Crosssell'. Only relevant when shoppingcart crosssell is enabled
 11) Default crosssell template (featured). Which tweakwise recommendation template to use for shoppingcart crossell items when crosssell type is set to 'Featured'. Only relevant when shoppingcart crosssell is enabled
 12) Default crosssell group code: Only visible when Default shoppincart crosssell template has value '- Group Code -'. Use this to specify the group of recommendations
+
+##### Batched recommendation requests
+By default all recommendation requests of a product page (related and upsell) are sent to Tweakwise concurrently: the first block that needs a recommendation queues the requests for the other enabled recommendation types of the product in `Model\Client\RequestPool`, which sends every queued request in one Guzzle batch and waits for the slowest one instead of executing them one after another. Identical requests (e.g. two blocks rendering the same related-products template) share a single HTTP call. Disable the prefetching of the other recommendation types with "Batch recommendation requests" (`tweakwise/recommendations/batch_requests`); deduplication is always active.
 13) Crossell type: show crossell or featured products in shoppingcart
 14) Only show products from current category for featured products: Show product from current category in featured products.
 15) Limit group code recommendations: If group code is used for one/more recommendations, limit the total number of products returned. If empty or 0, all products are returned.  

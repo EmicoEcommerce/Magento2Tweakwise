@@ -15,6 +15,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\EventInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\TagInterface;
+use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics;
 
@@ -24,19 +25,23 @@ class PersonalMerchandisingAnalyticsTest extends Unit
 
     private LayoutInterface&MockInterface $layout;
     private Json&MockInterface $jsonSerializer;
+    private RecommendationImpressionCollector&MockInterface $impressionCollector;
     private PersonalMerchandisingAnalytics $subject;
 
     protected function _before(): void
     {
         $this->layout = Mockery::mock(LayoutInterface::class);
         $this->jsonSerializer = Mockery::mock(Json::class);
+        $this->impressionCollector = Mockery::mock(RecommendationImpressionCollector::class);
+        $this->impressionCollector->shouldReceive('getRequestIds')->andReturn([]);
 
         $this->subject = new PersonalMerchandisingAnalytics(
             Mockery::mock(Config::class),
             Mockery::mock(StoreManagerInterface::class),
             Mockery::mock(RequestInterface::class),
             $this->jsonSerializer,
-            $this->layout
+            $this->layout,
+            $this->impressionCollector
         );
     }
 
@@ -83,6 +88,34 @@ class PersonalMerchandisingAnalyticsTest extends Unit
         $this->jsonSerializer->shouldReceive('serialize')->once()->with([
             ['type' => 'purchase_event', 'value' => ['productKeys' => ['1'], 'revenue' => 10.0], 'requestId' => ''],
             ['type' => 'purchase_event', 'value' => ['productKeys' => ['2'], 'revenue' => 20.0], 'requestId' => ''],
+        ])->andReturn('[...]');
+
+        $this->assertSame('[...]', $this->subject->getEventsData('req-1'));
+    }
+
+    public function testGetEventsDataAppendsAPageImpressionPerCollectedWidgetRequestId(): void
+    {
+        $this->impressionCollector = Mockery::mock(RecommendationImpressionCollector::class);
+        $this->impressionCollector->shouldReceive('getRequestIds')->once()->andReturn(['upsell-req', 'related-req']);
+
+        $this->subject = new PersonalMerchandisingAnalytics(
+            Mockery::mock(Config::class),
+            Mockery::mock(StoreManagerInterface::class),
+            Mockery::mock(RequestInterface::class),
+            $this->jsonSerializer,
+            $this->layout,
+            $this->impressionCollector
+        );
+
+        $block = Mockery::mock(AbstractBlock::class);
+        $block->shouldReceive('getData')->once()->with('data_layer')->andReturn([]);
+        $block->shouldReceive('getData')->once()->with('data_layer_events')->andReturn([]);
+
+        $this->layout->shouldReceive('getBlock')->once()->with('tweakwise.analytics')->andReturn($block);
+
+        $this->jsonSerializer->shouldReceive('serialize')->once()->with([
+            ['type' => 'page_impression', 'value' => 'page_impression', 'requestId' => 'upsell-req'],
+            ['type' => 'page_impression', 'value' => 'page_impression', 'requestId' => 'related-req'],
         ])->andReturn('[...]');
 
         $this->assertSame('[...]', $this->subject->getEventsData('req-1'));

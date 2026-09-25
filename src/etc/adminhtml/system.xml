@@ -167,6 +167,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="paginated_canonical_enabled" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Paginated Canonical URLs</label>
+                    <comment>When enabled, the canonical tag is updated on AJAX pagination to include the current page parameter (?p=N for page 2 and up). On filter-only navigation (page 1) the canonical is reset to the original, unfiltered category canonical to avoid self-referencing canonicals on filter combinations (see filter_whitelist / max_allowed_facets above). Only updates the canonical if one is already present in the page; does not add a canonical tag if the page has none.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
             <group id="autocomplete" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Autocomplete</label>
@@ -380,6 +388,11 @@
                 <field id="limit_group_code_items" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Limit max number of products for group codes</label>
                     <validate>validate-number</validate>
+                </field>
+                <field id="batch_requests" translate="label comment" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Batch recommendation requests</label>
+                    <comment>Sends all recommendation requests of a product page (related and upsell) to Tweakwise at the same time instead of one after another, which lowers the server response time of product pages.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>

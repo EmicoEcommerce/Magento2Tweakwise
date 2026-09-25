@@ -34,6 +34,8 @@ Tests use Codeception with a PHPUnit backend. The test namespace is `Tweakwise\T
 
 The `Client` class makes HTTP requests to the Tweakwise API using Guzzle. The API returns XML; `Client` parses it into arrays and passes it to `ResponseFactory` which hydrates typed `Response` objects. All request types (navigation, search, autocomplete, recommendations, analytics) extend `Request` and are created via `RequestFactory` virtual types defined in `di.xml`.
 
+`Client::request($request, async: true)` returns a Guzzle promise instead of blocking. `Client\RequestPool` builds on that: it queues requests (deduplicated on their URL), sends every queued request concurrently with `Promise\Utils::settle()` the moment the first response is resolved, and applies the same error policy as a direct request (`Client::handleApiException()`). Recommendations resolve through the pool (`Recommendation\Context::getResponse()`); `Recommendation\RequestPrefetcher` queues the other enabled recommendation types of a product when a block configures its request (`AbstractRecommendationPlugin::configureRequest()`), so all recommendation calls of a product page go out in one batch (config `tweakwise/recommendations/batch_requests`).
+
 `EndpointManager` handles primary/fallback endpoint failover: if the primary gateway (`gateway.tweakwisenavigator.net`) times out it stores a down-until timestamp in a Magento custom variable and redirects all subsequent requests to the fallback (`gateway.tweakwisenavigator.com`) for 5 minutes.
 
 When any request fails, `Config::setTweakwiseExceptionThrown(true)` is called and subsequent requests in the same page load are skipped, falling back to native Magento behaviour.

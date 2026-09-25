@@ -325,15 +325,29 @@ class Client
         try {
             return $this->doRequest($request, $async);
         } catch (ApiException $e) {
-            //don't log 404 messages.
-            if ($e->getCode() === 404) {
-                throw $e;
-            }
-
-            $this->config->setTweakwiseExceptionThrown(true);
-            $this->log->throwException($e);
+            $this->handleApiException($e);
         } finally {
             Profiler::stop('tweakwise::request::' . $request->getPath());
         }
+    }
+
+    /**
+     * Error policy for a failed TW request: 404 responses are passed through untouched, any other failure disables
+     * TW for the remainder of the page request and is logged. Shared with RequestPool for asynchronously sent
+     * requests, whose failures only surface when the response is resolved.
+     *
+     * @param ApiException $e
+     * @return void
+     * @throws ApiException
+     */
+    public function handleApiException(ApiException $e): void
+    {
+        //don't log 404 messages.
+        if ($e->getCode() === 404) {
+            throw $e;
+        }
+
+        $this->config->setTweakwiseExceptionThrown(true);
+        $this->log->throwException($e);
     }
 }

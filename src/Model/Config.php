@@ -546,12 +546,36 @@ class Config
     }
 
     /**
+     * Whether all recommendation requests of a product page are sent to Tweakwise concurrently.
+     *
+     * @param Store|null $store
+     * @return bool
+     */
+    public function isRecommendationsBatchingEnabled(?Store $store = null): bool
+    {
+        return (bool) $this->getStoreConfig('tweakwise/recommendations/batch_requests', $store);
+    }
+
+    /**
      * @param Store|null $store
      * @return int
      */
     public function getMaxAllowedFacets(?Store $store = null)
     {
         return $this->getStoreConfig('tweakwise/seo/max_allowed_facets', $store);
+    }
+
+    /**
+     * @param Store|null $store
+     * @return bool
+     */
+    public function isPaginatedCanonicalEnabled(?Store $store = null): bool
+    {
+        if (!$this->isSeoEnabled($store)) {
+            return false;
+        }
+
+        return (bool) $this->getStoreConfig('tweakwise/seo/paginated_canonical_enabled', $store);
     }
 
     /**

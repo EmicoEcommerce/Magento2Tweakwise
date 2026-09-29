@@ -47,4 +47,43 @@ class ResponseTest extends Unit
 
         $this->assertSame('', $response->getRequestId());
     }
+
+    public function testSetGroupsDefaultsUrlToEmptyStringWhenVisualSimpleItemHasNoUrl(): void
+    {
+        $response = $this->createResponse([]);
+
+        $response->setGroups([[
+            'code' => 'CONF-1',
+            'items' => [
+                'item' => [
+                    'type' => 'visual',
+                    'image' => 'https://example.com/banner.png',
+                    'itemno' => 'item-1',
+                ],
+            ],
+        ]]);
+
+        $items = $response->getItems();
+        $this->assertSame('', $items[0]->getUrl());
+    }
+
+    public function testSetGroupsCopiesUrlFromVisualSimpleItemToConfigurable(): void
+    {
+        $response = $this->createResponse([]);
+
+        $response->setGroups([[
+            'code' => 'CONF-1',
+            'items' => [
+                'item' => [
+                    'type' => 'visual',
+                    'image' => 'https://example.com/banner.png',
+                    'itemno' => 'item-1',
+                    'url' => 'https://example.com/target',
+                ],
+            ],
+        ]]);
+
+        $items = $response->getItems();
+        $this->assertSame('https://example.com/target', $items[0]->getUrl());
+    }
 }

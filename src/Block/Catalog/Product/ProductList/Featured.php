@@ -178,8 +178,14 @@ class Featured extends ListProduct
                     ->addFieldToFilter('entity_id', ['null' => true]);
             } else {
                 $this->configureRequest($this->recommendationsContext->getRequest());
-                $this->_productCollection = $this->recommendationsContext
-                    ->getCollection();
+
+                try {
+                    $this->_productCollection = $this->recommendationsContext->getCollection();
+                } catch (ApiException $e) {
+                    $this->_productCollection = parent::_getProductCollection()
+                        ->addFieldToFilter('entity_id', ['null' => true]);
+                    return $this->_productCollection;
+                }
 
                 if ($this->_productCollection->getSize() > 0) {
                     $this->impressionCollector->add($this->recommendationsContext->getTweakwiseRequestId());

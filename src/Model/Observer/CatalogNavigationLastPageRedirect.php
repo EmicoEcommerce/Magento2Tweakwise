@@ -2,7 +2,7 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
-use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
@@ -37,7 +37,7 @@ class CatalogNavigationLastPageRedirect extends CatalogLastPageRedirect
 
         $request = $this->context->getRequest();
         $category = $this->registry->registry('current_category');
-        if ($category instanceof CategoryInterface && !$request->hasParameter('tn_cid')) {
+        if ($category instanceof Category && !$request->hasParameter('tn_cid')) {
             $request->addCategoryFilter($category);
         }
 

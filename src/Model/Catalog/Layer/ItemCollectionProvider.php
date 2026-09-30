@@ -93,6 +93,11 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
             return $this->originalProvider->getCollection($category);
         }
 
+        $request = $this->navigationContext->getRequest();
+        if (!$request->hasParameter('tn_cid')) {
+            $request->addCategoryFilter($category);
+        }
+
         try {
             return $this->collectionFactory->create(['navigationContext' => $this->navigationContext]);
         } catch (TweakwiseExceptionInterface $e) {

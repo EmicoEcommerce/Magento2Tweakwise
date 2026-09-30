@@ -70,7 +70,7 @@ class RecommendationOption extends AbstractSource
         if ($this->addEmpty) {
             $result[] = [
                 'value' => self::OPTION_EMPTY,
-                'label' => ' '
+                'label' => __('Default Magento')
             ];
         }
 

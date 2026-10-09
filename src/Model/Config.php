@@ -439,7 +439,7 @@ class Config
         $cookie = $this->getStoreConfig('tweakwise/general/cookie_name', $store);
 
         if (empty($cookie)) {
-            $cookie = 'tw_analytics';
+            $cookie = 'tw-analytics';
         }
 
         return $cookie;

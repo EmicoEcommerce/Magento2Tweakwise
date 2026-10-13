@@ -93,10 +93,7 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
             return $this->originalProvider->getCollection($category);
         }
 
-        $request = $this->navigationContext->getRequest();
-        if (!$request instanceof ProductSearchRequest && !$request->hasParameter('tn_cid')) {
-            $request->addCategoryFilter($category);
-        }
+        $this->addCategoryFilterToRequest($category);
 
         try {
             return $this->collectionFactory->create(['navigationContext' => $this->navigationContext]);
@@ -106,5 +103,19 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
 
             return $this->originalProvider->getCollection($category);
         }
+    }
+
+    /**
+     * @param Category $category
+     * @return void
+     */
+    private function addCategoryFilterToRequest(Category $category): void
+    {
+        $request = $this->navigationContext->getRequest();
+        if ($request instanceof ProductSearchRequest || $request->hasParameter('tn_cid')) {
+            return;
+        }
+
+        $request->addCategoryFilter($category);
     }
 }

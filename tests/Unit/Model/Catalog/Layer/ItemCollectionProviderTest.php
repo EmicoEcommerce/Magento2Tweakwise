@@ -13,6 +13,7 @@ use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Collection;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\CollectionFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use Tweakwise\Test\Support\UnitTester;
@@ -48,6 +49,66 @@ class ItemCollectionProviderTest extends Unit
             ->once()
             ->with(['navigationContext' => $navigationContext])
             ->andReturn($collection);
+
+        $subject = new ItemCollectionProvider(
+            $config,
+            Mockery::mock(Logger::class),
+            Mockery::mock(ItemCollectionProviderInterface::class),
+            $collectionFactory,
+            $navigationContext
+        );
+
+        $this->assertSame($collection, $subject->getCollection($category));
+    }
+
+    public function testCategoryFilterIsNotAddedWhenTweakwiseCategoryIsAlreadyPresent(): void
+    {
+        $category = Mockery::mock(Category::class);
+        $request = Mockery::mock(ProductNavigationRequest::class);
+        $request->shouldReceive('hasParameter')->once()->with('tn_cid')->andReturn(true);
+        $request->shouldNotReceive('addCategoryFilter');
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldReceive('getRequest')->andReturn($request);
+
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
+        $config->shouldReceive('isSearchEnabled')->once()->andReturn(true);
+        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+
+        $collection = Mockery::mock(Collection::class);
+        $collectionFactory = Mockery::mock(CollectionFactory::class);
+        $collectionFactory->shouldReceive('create')->once()->andReturn($collection);
+
+        $subject = new ItemCollectionProvider(
+            $config,
+            Mockery::mock(Logger::class),
+            Mockery::mock(ItemCollectionProviderInterface::class),
+            $collectionFactory,
+            $navigationContext
+        );
+
+        $this->assertSame($collection, $subject->getCollection($category));
+    }
+
+    public function testCategoryFilterIsNotAddedForSearchRequests(): void
+    {
+        $category = Mockery::mock(Category::class);
+        $request = Mockery::mock(ProductSearchRequest::class);
+        $request->shouldNotReceive('hasParameter');
+        $request->shouldNotReceive('addCategoryFilter');
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldReceive('getRequest')->andReturn($request);
+
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
+        $config->shouldReceive('isSearchEnabled')->once()->andReturn(true);
+        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+
+        $collection = Mockery::mock(Collection::class);
+        $collectionFactory = Mockery::mock(CollectionFactory::class);
+        $collectionFactory->shouldReceive('create')->once()->andReturn($collection);
 
         $subject = new ItemCollectionProvider(
             $config,

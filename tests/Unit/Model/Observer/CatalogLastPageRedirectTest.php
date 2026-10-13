@@ -25,6 +25,8 @@ class CatalogLastPageRedirectTest extends Unit
 
     public function testExecuteDoesNotCreateNavigationResponseOnFirstPage(): void
     {
+        $this->expectNotToPerformAssertions();
+
         $request = Mockery::mock(RequestInterface::class);
         $request->shouldReceive('getParam')->once()->with('p', 1)->andReturn(1);
 
@@ -42,7 +44,5 @@ class CatalogLastPageRedirectTest extends Unit
         );
 
         $subject->execute(new Observer());
-
-        $this->assertTrue(true);
     }
 }

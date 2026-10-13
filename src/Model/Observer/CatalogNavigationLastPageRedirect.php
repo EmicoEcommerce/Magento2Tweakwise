@@ -35,6 +35,10 @@ class CatalogNavigationLastPageRedirect extends CatalogLastPageRedirect
             return;
         }
 
+        if ((int) $this->actionContext->getRequest()->getParam('p', 1) <= 1) {
+            return;
+        }
+
         $request = $this->context->getRequest();
         $category = $this->registry->registry('current_category');
         if ($category instanceof Category && !$request->hasParameter('tn_cid')) {

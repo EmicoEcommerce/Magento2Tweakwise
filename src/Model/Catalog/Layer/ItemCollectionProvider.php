@@ -94,7 +94,7 @@ class ItemCollectionProvider implements ItemCollectionProviderInterface
         }
 
         $request = $this->navigationContext->getRequest();
-        if (!$request->hasParameter('tn_cid')) {
+        if (!$request instanceof ProductSearchRequest && !$request->hasParameter('tn_cid')) {
             $request->addCategoryFilter($category);
         }
 

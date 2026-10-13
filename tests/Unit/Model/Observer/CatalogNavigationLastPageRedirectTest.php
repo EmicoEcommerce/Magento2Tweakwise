@@ -50,13 +50,13 @@ class CatalogNavigationLastPageRedirectTest extends Unit
         $navigationContext->shouldReceive('getResponse')->once()->ordered()->andReturn($navigationResponse);
 
         $httpRequest = Mockery::mock(RequestInterface::class);
-        $httpRequest->shouldReceive('getParam')->once()->with('p', 1)->andReturn(2);
+        $httpRequest->shouldReceive('getParam')->with('p', 1)->andReturn(2);
 
         $httpResponse = Mockery::mock(Response::class);
         $httpResponse->shouldReceive('isRedirect')->once()->andReturn(false);
 
         $actionContext = Mockery::mock(Context::class);
-        $actionContext->shouldReceive('getRequest')->once()->andReturn($httpRequest);
+        $actionContext->shouldReceive('getRequest')->andReturn($httpRequest);
         $actionContext->shouldReceive('getResponse')->once()->andReturn($httpResponse);
 
         $config = Mockery::mock(Config::class);
@@ -74,7 +74,81 @@ class CatalogNavigationLastPageRedirectTest extends Unit
         );
 
         $subject->execute(new Observer());
+    }
 
-        $this->assertTrue(true);
+    public function testCategoryIsNotAddedOnFirstPage(): void
+    {
+        $httpRequest = Mockery::mock(RequestInterface::class);
+        $httpRequest->shouldReceive('getParam')->with('p', 1)->andReturn(1);
+
+        $actionContext = Mockery::mock(Context::class);
+        $actionContext->shouldReceive('getRequest')->andReturn($httpRequest);
+        $actionContext->shouldNotReceive('getResponse');
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldNotReceive('getRequest');
+        $navigationContext->shouldNotReceive('getResponse');
+
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
+
+        $registry = Mockery::mock(Registry::class);
+        $registry->shouldNotReceive('registry');
+
+        $subject = new CatalogNavigationLastPageRedirect(
+            $config,
+            $navigationContext,
+            $actionContext,
+            $registry
+        );
+
+        $subject->execute(new Observer());
+    }
+
+    public function testExistingCategoryFilterIsNotAddedAgain(): void
+    {
+        $category = Mockery::mock(Category::class);
+
+        $request = Mockery::mock(ProductNavigationRequest::class);
+        $request->shouldReceive('hasParameter')->once()->with('tn_cid')->andReturn(true);
+        $request->shouldNotReceive('addCategoryFilter');
+
+        $properties = Mockery::mock(PropertiesType::class);
+        $properties->shouldReceive('getNumberOfItems')->once()->andReturn(12);
+        $properties->shouldReceive('getNumberOfPages')->once()->andReturn(3);
+        $properties->shouldReceive('getCurrentPage')->once()->andReturn(2);
+
+        $navigationResponse = Mockery::mock(ProductNavigationResponse::class);
+        $navigationResponse->shouldReceive('getProperties')->once()->andReturn($properties);
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldReceive('getRequest')->once()->andReturn($request);
+        $navigationContext->shouldReceive('getResponse')->once()->andReturn($navigationResponse);
+
+        $httpRequest = Mockery::mock(RequestInterface::class);
+        $httpRequest->shouldReceive('getParam')->with('p', 1)->andReturn(2);
+
+        $httpResponse = Mockery::mock(Response::class);
+        $httpResponse->shouldReceive('isRedirect')->once()->andReturn(false);
+
+        $actionContext = Mockery::mock(Context::class);
+        $actionContext->shouldReceive('getRequest')->andReturn($httpRequest);
+        $actionContext->shouldReceive('getResponse')->once()->andReturn($httpResponse);
+
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
+        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+
+        $registry = Mockery::mock(Registry::class);
+        $registry->shouldReceive('registry')->once()->with('current_category')->andReturn($category);
+
+        $subject = new CatalogNavigationLastPageRedirect(
+            $config,
+            $navigationContext,
+            $actionContext,
+            $registry
+        );
+
+        $subject->execute(new Observer());
     }
 }

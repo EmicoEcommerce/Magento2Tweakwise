@@ -17,4 +17,12 @@ class CatalogNavigationLastPageRedirect extends CatalogLastPageRedirect
 
         parent::execute($observer);
     }
+
+    /**
+     * @return int|null
+     */
+    protected function getLastPageForEmptyResults(): ?int
+    {
+        return 1;
+    }
 }

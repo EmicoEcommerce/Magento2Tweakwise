@@ -93,17 +93,17 @@ class FilterHelperTest extends TestCase
     {
         foreach ([false, true] as $categoryOverride) {
             $scope = $categoryOverride ? 'category' : 'store';
-            yield "$scope mixed-case configured code" =>
+            yield $scope . ' mixed-case configured code' =>
                 ['gepeld_ongepeld', 'Gepeld', 'Gepeld_ongepeld', '', $categoryOverride, true];
-            yield "$scope mixed-case facet code" =>
+            yield $scope . ' mixed-case facet code' =>
                 ['Gepeld_ongepeld', 'Gepeld', 'gepeld_ongepeld', '', $categoryOverride, true];
-            yield "$scope mixed-case code and value" =>
+            yield $scope . ' mixed-case code and value' =>
                 ['GEPELD_ONGEPELD', 'gEpElD', 'Gepeld_ongepeld', 'Gepeld_ongepeld=GEPELD', $categoryOverride, true];
-            yield "$scope non-whitelisted attribute" =>
+            yield $scope . ' non-whitelisted attribute' =>
                 ['other', 'Gepeld', 'Gepeld_ongepeld', '', $categoryOverride, false];
-            yield "$scope non-whitelisted value" =>
+            yield $scope . ' non-whitelisted value' =>
                 ['gepeld_ongepeld', 'Ongepeld', 'Gepeld_ongepeld', 'GEPELD_ONGEPELD=Gepeld', $categoryOverride, false];
-            yield "$scope merged value restrictions" =>
+            yield $scope . ' merged value restrictions' =>
                 [
                     'gepeld_ongepeld',
                     'Gepeld',
@@ -112,15 +112,15 @@ class FilterHelperTest extends TestCase
                     $categoryOverride,
                     true,
                 ];
-            yield "$scope missing value" =>
+            yield $scope . ' missing value' =>
                 ['gepeld_ongepeld', null, 'Gepeld_ongepeld', 'Gepeld_ongepeld=Gepeld', $categoryOverride, false];
-            yield "$scope no value restriction for attribute" =>
+            yield $scope . ' no value restriction for attribute' =>
                 ['gepeld_ongepeld', 'Gepeld', 'Gepeld_ongepeld', 'other=value', $categoryOverride, true];
-            yield "$scope empty whitelist" =>
+            yield $scope . ' empty whitelist' =>
                 ['gepeld_ongepeld', 'Gepeld', '', '', $categoryOverride, false];
-            yield "$scope facet limit exceeded" =>
+            yield $scope . ' facet limit exceeded' =>
                 ['gepeld_ongepeld', 'Gepeld', 'Gepeld_ongepeld', '', $categoryOverride, false, 0];
-            yield "$scope SEO disabled" =>
+            yield $scope . ' SEO disabled' =>
                 ['gepeld_ongepeld', 'Gepeld', '', '', $categoryOverride, true, 0, false];
         }
     }

@@ -36,7 +36,7 @@ class ConfigAttributeProcessService
                 continue;
             }
 
-            $return[$item[0]][] = $item[1];
+            $return[strtolower($item[0])][] = $item[1];
         }
 
         return $return;
@@ -63,6 +63,6 @@ class ConfigAttributeProcessService
             return [];
         }
 
-        return $filterListExploded;
+        return array_map('strtolower', $filterListExploded);
     }
 }

@@ -27,6 +27,9 @@
                name="tweakwise.catalog.linked.product.list.item"
                template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
                ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
+        <block class="Magento\Catalog\Block\Product\AbstractProduct"
+               name="tweakwise.catalog.product.list.visual"
+               template="Tweakwise_Magento2Tweakwise::product/list/visual.phtml"/>
     </referenceBlock>
     <referenceBlock name="catalog.product.related">
         <arguments>
@@ -34,10 +37,6 @@
                 Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem
             </argument>
         </arguments>
-        <block class="Magento\Catalog\Block\Product\AbstractProduct"
-               name="tweakwise.catalog.linked.product.list.item"
-               template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-               ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
     </referenceBlock>
     </body>
 </page>

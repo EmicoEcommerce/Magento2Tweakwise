@@ -12,6 +12,7 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
+use Tweakwise\Magento2Tweakwise\Model\Visual;
 use Magento\Store\Model\StoreManagerInterface;
 
 class LinkedProductListItem implements ArgumentInterface
@@ -41,6 +42,10 @@ class LinkedProductListItem implements ArgumentInterface
         AbstractBlock $parentBlock,
         array $params
     ): string {
+        if ($product instanceof Visual) {
+            return $this->getVisualHtml($product);
+        }
+
         if (
             !$this->cacheHelper->personalMerchandisingCanBeApplied() ||
             $this->cacheHelper->isTweakwiseAjaxRequest()
@@ -83,6 +88,22 @@ class LinkedProductListItem implements ArgumentInterface
             $productId,
             $hashedCacheKeyInfo
         );
+    }
+
+    /**
+     * @param Visual $visual
+     * @return string
+     */
+    private function getVisualHtml(Visual $visual): string
+    {
+        $visualRendererBlock = $this->layout->getBlock('tweakwise.catalog.product.list.visual');
+        if (!$visualRendererBlock instanceof AbstractBlock) {
+            return '';
+        }
+
+        $visualRendererBlock->setData('visual', $visual);
+
+        return $visualRendererBlock->toHtml();
     }
 
     /**

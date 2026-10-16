@@ -10,7 +10,10 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation;
 
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\AbstractCollection;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\VisualBuilder;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\RecommendationsResponse;
+use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType;
 use Magento\Catalog\Model\Indexer\Product\Flat\State;
 use Magento\Catalog\Model\Product\OptionFactory;
 use Magento\Catalog\Model\ResourceModel\Helper as CatalogResourceHelper;
@@ -60,6 +63,8 @@ class Collection extends AbstractCollection
      * @param DateTime $dateTime
      * @param GroupManagementInterface $groupManagement
      * @param RecommendationsResponse $response
+     * @param VisualBuilder $visualBuilder
+     * @param Config $config
      * @param AdapterInterface|null $connection
      * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
@@ -84,6 +89,8 @@ class Collection extends AbstractCollection
         DateTime $dateTime,
         GroupManagementInterface $groupManagement,
         RecommendationsResponse $response,
+        private readonly VisualBuilder $visualBuilder,
+        private readonly Config $config,
         ?AdapterInterface $connection = null
     ) {
         parent::__construct(
@@ -117,5 +124,41 @@ class Collection extends AbstractCollection
     protected function getProductIds()
     {
         return $this->response->getProductIds();
+    }
+
+    /**
+     * @return $this|AbstractCollection|Collection
+     */
+    protected function _afterLoad()
+    {
+        parent::_afterLoad();
+
+        $this->addVisuals();
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     */
+    protected function addVisuals(): void
+    {
+        if (!$this->config->isVisualsEnabled()) {
+            return;
+        }
+
+        $position = 0;
+        foreach ($this->response->getItems() as $item) {
+            if ($item->getType() === ItemType::VISUAL->value) {
+                $visual = $this->visualBuilder->build($item);
+
+                // Not array_splice, because that renumbers the product id keys of the collection.
+                $this->_items = array_slice($this->_items, 0, $position, true)
+                    + ['visual_' . $visual->getId() => $visual]
+                    + array_slice($this->_items, $position, null, true);
+            }
+
+            $position++;
+        }
     }
 }

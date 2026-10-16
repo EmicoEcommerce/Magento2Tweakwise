@@ -18,13 +18,11 @@ use Magento\Framework\Exception\LocalizedException;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType as ClientItemType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType;
-use Tweakwise\Magento2Tweakwise\Api\Data\VisualInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Indexer\Product\Flat\State;
 use Magento\Catalog\Model\Product\OptionFactory;
-use Tweakwise\Magento2Tweakwise\Model\VisualFactory;
 use Magento\Catalog\Model\ResourceModel\Helper as CatalogResourceHelper;
 use Magento\Catalog\Model\ResourceModel\Url;
 use Magento\Customer\Api\GroupManagementInterface;
@@ -73,7 +71,7 @@ class Collection extends AbstractCollection
      * @param DateTime $dateTime
      * @param GroupManagementInterface $groupManagement
      * @param NavigationContext $navigationContext
-     * @param VisualFactory $visualFactory
+     * @param VisualBuilder $visualBuilder
      * @param Config $config
      * @param AdapterInterface|null $connection
      * @SuppressWarnings("PHPMD.ExcessiveParameterList")
@@ -99,7 +97,7 @@ class Collection extends AbstractCollection
         DateTime $dateTime,
         GroupManagementInterface $groupManagement,
         NavigationContext $navigationContext,
-        private readonly VisualFactory $visualFactory,
+        private readonly VisualBuilder $visualBuilder,
         private readonly Config $config,
         ?AdapterInterface $connection = null
     ) {
@@ -288,28 +286,7 @@ class Collection extends AbstractCollection
                 continue;
             }
 
-            /** @var VisualInterface&Visual $visual */
-            $visual = $this->visualFactory->create();
-            $visualId = (string)$item->getValue(ClientItemType::ID);
-            if ($visualId === '') {
-                $visualId = (string)$item->getId();
-            }
-            // @phpstan-ignore-next-line
-            $visual->setId($visualId);
-            $visual->setData(ClientItemType::TWEAKWISE_ID, $visualId);
-            $visual->setImageUrl($item->getImage());
-            $visual->setUrl($item->getUrl());
-
-            $colspan = $item->getColspan();
-            if ($colspan) {
-                $visual->setColspan($colspan);
-            }
-            $rowspan = $item->getRowspan();
-            if ($rowspan) {
-                $visual->setRowspan($rowspan);
-            }
-
-            $visual->setVisualAttributes($item->getAttributeValues());
+            $visual = $this->visualBuilder->build($item);
 
             // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
             // @phpstan-ignore-next-line

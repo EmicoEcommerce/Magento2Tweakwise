@@ -104,6 +104,28 @@ Running this command may change the filter urls and thus may have SEO implicatio
 php bin/magento tweakwise:regenerate-filter-urls
 ```
 
+## Connection failure handling
+
+GET requests switch from the primary gateway to the fallback gateway after a connection
+failure. An expired primary downtime timer is renewed for five minutes; an active timer
+is not extended. A failed fallback is not retried.
+
+Analytics and purchase POST requests use their own analytics endpoint, which has no
+gateway fallback. Connection failures are therefore not retried and do not mark the
+primary gateway as unavailable. This also avoids replaying a POST whose outcome is unknown.
+
+The isolated retry regression tests use PHPUnit and an existing Magento installation's
+dependencies, without a database or network requests:
+
+```sh
+TWEAKWISE_TEST_AUTOLOAD=/path/to/magento/vendor/autoload.php \
+  php /path/to/magento/vendor/bin/phpunit -c Test/Unit/phpunit.xml
+```
+
+The test bootstrap prioritizes this checkout's legacy module classes over the installed
+module. The mocked transport stops after a maximum of three calls so a regression cannot
+cause an unbounded retry loop.
+
 ## Support
 For in depth support regarding configuration and all options tweakwise has to offer use the following links.
 1) Tweakwise support: https://www.tweakwise.com/support/

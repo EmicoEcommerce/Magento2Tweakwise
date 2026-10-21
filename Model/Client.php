@@ -201,7 +201,12 @@ class Client
                 function (GuzzleException $e) use ($tweakwiseRequest, $async) {
                     // Timeout uses Guzzle ConnectException, ConnectException is more general but it also makes sense
                     // to use this if the default server is unreachable for some reason
-                    if ($e instanceof ConnectException && !$this->endpointManager->isFallback()) {
+                    // Analytics POST requests use a separate endpoint without a fallback.
+                    if (
+                        $e instanceof ConnectException
+                        && !$tweakwiseRequest->isPostRequest()
+                        && !$this->endpointManager->isFallback()
+                    ) {
                         $this->endpointManager->handleConnectException();
                         return $this->doRequest($tweakwiseRequest, $async);
                     }

@@ -95,10 +95,12 @@ class EndpointManager
      */
     public function handleConnectException(): void
     {
+        $this->isFallback = true;
+
         $twPrimaryLastDown = $this->getVariable();
         $downUntil = (int) $twPrimaryLastDown->getValue(Variable::TYPE_TEXT);
         $now = $this->dateTime->gmtTimestamp();
-        if ($downUntil && abs($now - $downUntil) < self::DOWN_PERIOD) {
+        if ($downUntil > $now) {
             return;
         }
 

@@ -16,6 +16,8 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use GuzzleHttp\Promise\Utils;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Search\Model\Autocomplete\ItemInterface;
+use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionBlockItemFactory;
 
 class SuggestionDataProvider implements DataProviderInterface
@@ -61,6 +63,11 @@ class SuggestionDataProvider implements DataProviderInterface
     protected $client;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * AutocompleteDataProvider constructor.
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
@@ -70,6 +77,7 @@ class SuggestionDataProvider implements DataProviderInterface
      * @param RequestFactory $suggestionRequestFactory
      * @param Client $client
      * @param Request $request
+     * @param LoggerInterface $logger
      * @param SuggestionBlockItemFactory $suggestionBlockItemFactory
      */
     public function __construct(
@@ -81,6 +89,7 @@ class SuggestionDataProvider implements DataProviderInterface
         RequestFactory $suggestionRequestFactory,
         Client $client,
         Request $request,
+        LoggerInterface $logger,
         protected readonly SuggestionBlockItemFactory $suggestionBlockItemFactory
     ) {
         $this->config = $config;
@@ -91,6 +100,7 @@ class SuggestionDataProvider implements DataProviderInterface
         $this->suggestionRequestFactory = $suggestionRequestFactory;
         $this->client = $client;
         $this->request = $request;
+        $this->logger = $logger;
     }
 
     /**
@@ -118,7 +128,15 @@ class SuggestionDataProvider implements DataProviderInterface
             return [];
         }
 
-        $responses = Utils::unwrap($promises);
+        try {
+            $responses = Utils::unwrap($promises);
+        } catch (TweakwiseExceptionInterface $e) {
+            $this->logger->critical($e->getMessage());
+            $this->config->setTweakwiseExceptionThrown();
+
+            return [];
+        }
+
         $results = [];
 
         foreach ($responses as $response) {
@@ -239,7 +257,6 @@ class SuggestionDataProvider implements DataProviderInterface
         }
 
         $profileKey = $this->request->setProfileKey($profileKeyCookie);
-        // @phpstan-ignore-next-line
         $request->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
     }
 

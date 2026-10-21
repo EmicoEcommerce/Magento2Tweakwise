@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace Tweakwise\Test\Unit\Model\Observer;
 
 use Emico\CodeCept\Test\Unit;
+use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\HTTP\PhpEnvironment\Response;
+use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Observer\CatalogLastPageRedirect;
 use Tweakwise\Magento2Tweakwise\Model\Observer\CatalogNavigationLastPageRedirect;
 use Tweakwise\Magento2Tweakwise\Model\Observer\CatalogSearchLastPageRedirect;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
@@ -23,9 +27,32 @@ class CatalogLastPageRedirectTest extends Unit
 {
     protected UnitTester $tester;
 
-    public function _after(): void
+    protected function _after(): void
     {
         Mockery::close();
+    }
+
+    public function testExecuteDoesNotCreateNavigationResponseOnFirstPage(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getParam')->once()->with('p', 1)->andReturn(1);
+
+        $actionContext = Mockery::mock(Context::class);
+        $actionContext->shouldReceive('getRequest')->once()->andReturn($request);
+        $actionContext->shouldNotReceive('getResponse');
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldNotReceive('getResponse');
+
+        $subject = new CatalogLastPageRedirect(
+            Mockery::mock(Config::class),
+            $navigationContext,
+            $actionContext
+        );
+
+        $subject->execute(new Observer());
     }
 
     public function testEmptyCategoryBeyondFirstPageRedirectsToPageOne(): void
@@ -34,36 +61,56 @@ class CatalogLastPageRedirectTest extends Unit
         $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
         $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
 
+        $request = Mockery::mock(Request::class);
+        $request->shouldReceive('hasParameter')->once()->with('tn_cid')->andReturn(true);
+
+        $navigationContext = $this->createNavigationContext(0, 0, 8);
+        $navigationContext->shouldReceive('getRequest')->once()->andReturn($request);
+
+        $httpRequest = Mockery::mock(RequestInterface::class);
+        $httpRequest->shouldReceive('getParam')->once()->with('p', 1)->andReturn(8);
+
         $actionContext = Mockery::mock(Context::class);
+        $actionContext->shouldReceive('getRequest')->twice()->andReturn($httpRequest);
         $this->expectRedirect($actionContext, 'https://example.com/category?p=1');
+
+        $registry = Mockery::mock(Registry::class);
+        $registry->shouldReceive('registry')->once()->with('current_category')->andReturn(Mockery::mock(Category::class));
 
         $subject = new CatalogNavigationLastPageRedirect(
             $config,
-            $this->createNavigationContext(0, 0, 8),
-            $actionContext
+            $navigationContext,
+            $actionContext,
+            $registry
         );
 
         $subject->execute(new Observer());
     }
 
-    public function testEmptyCategoryOnFirstPageDoesNotRedirect(): void
+    public function testEmptyCategoryOnFirstPageDoesNotCreateNavigationResponse(): void
     {
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
 
-        $httpResponse = Mockery::mock(Response::class);
-        $httpResponse->shouldReceive('isRedirect')->once()->andReturn(false);
-        $httpResponse->shouldNotReceive('setRedirect');
+        $httpRequest = Mockery::mock(RequestInterface::class);
+        $httpRequest->shouldReceive('getParam')->once()->with('p', 1)->andReturn(1);
 
         $actionContext = Mockery::mock(Context::class);
-        $actionContext->shouldReceive('getResponse')->once()->andReturn($httpResponse);
-        $actionContext->shouldReceive('getUrl')->never();
+        $actionContext->shouldReceive('getRequest')->once()->andReturn($httpRequest);
+        $actionContext->shouldNotReceive('getResponse');
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldNotReceive('getRequest');
+        $navigationContext->shouldNotReceive('getResponse');
+
+        $registry = Mockery::mock(Registry::class);
+        $registry->shouldNotReceive('registry');
 
         $subject = new CatalogNavigationLastPageRedirect(
             $config,
-            $this->createNavigationContext(0, 0, 1),
-            $actionContext
+            $navigationContext,
+            $actionContext,
+            $registry
         );
 
         $subject->execute(new Observer());
@@ -75,17 +122,23 @@ class CatalogLastPageRedirectTest extends Unit
         $config->shouldReceive('isSearchEnabled')->once()->andReturn(true);
         $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
 
-        $navigationContext = $this->createNavigationContext(0, 0, 8);
+        $httpRequest = Mockery::mock(RequestInterface::class);
+        $httpRequest->shouldReceive('getParam')->once()->with('p', 1)->andReturn(8);
 
         $httpResponse = Mockery::mock(Response::class);
         $httpResponse->shouldReceive('isRedirect')->once()->andReturn(false);
         $httpResponse->shouldNotReceive('setRedirect');
 
         $actionContext = Mockery::mock(Context::class);
+        $actionContext->shouldReceive('getRequest')->once()->andReturn($httpRequest);
         $actionContext->shouldReceive('getResponse')->once()->andReturn($httpResponse);
         $actionContext->shouldNotReceive('getUrl');
 
-        $subject = new CatalogSearchLastPageRedirect($config, $navigationContext, $actionContext);
+        $subject = new CatalogSearchLastPageRedirect(
+            $config,
+            $this->createNavigationContext(0, 0, 8),
+            $actionContext
+        );
         $subject->execute(new Observer());
     }
 

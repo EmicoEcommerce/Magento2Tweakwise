@@ -12,6 +12,7 @@ use Mockery;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionProperty;
+use stdClass;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionDataProvider;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
@@ -29,6 +30,7 @@ class SuggestionDataProviderTest extends Unit
         $helper->shouldReceive('addVisibilityFilter')->twice();
 
         $config = Mockery::mock(Config::class);
+        $config->shouldReceive('getTweakwiseExceptionTrown')->andReturn(false);
         $config->shouldReceive('getPersonalMerchandisingCookieName')->once()->andReturn('cookie');
         $config->shouldReceive('setTweakwiseExceptionThrown')->once();
 
@@ -61,7 +63,7 @@ class SuggestionDataProviderTest extends Unit
         $client = Mockery::mock(Client::class);
         $client->shouldReceive('request')->twice()->andReturn(
             new RejectedPromise(new ApiException('Tweakwise API is unavailable')),
-            new FulfilledPromise(new \stdClass())
+            new FulfilledPromise(new stdClass())
         );
 
         $logger = Mockery::mock(LoggerInterface::class);

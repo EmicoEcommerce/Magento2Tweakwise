@@ -201,7 +201,24 @@ class Config
      */
     public function getTimeout()
     {
-        return Client::REQUEST_TIMEOUT;
+        return $this->getPositiveTimeout('tweakwise/general/timeout');
+    }
+
+    public function getConnectTimeout(): int
+    {
+        return $this->getPositiveTimeout('tweakwise/general/connect_timeout');
+    }
+
+    private function getPositiveTimeout(string $path): int
+    {
+        $value = $this->getStoreConfig($path);
+        if (filter_var($value, FILTER_VALIDATE_INT) === false || (int)$value < 1) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid API timeout configuration: %s must be a positive integer.', $path)
+            );
+        }
+
+        return (int)$value;
     }
 
     /**

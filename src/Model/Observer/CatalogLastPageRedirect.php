@@ -11,6 +11,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
 use Exception;
 use Magento\Framework\Event\Observer;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Action\Context;
@@ -69,8 +70,13 @@ class CatalogLastPageRedirect implements ObserverInterface
             return;
         }
 
-        // @phpstan-ignore-next-line
-        $properties = $this->context->getResponse()->getProperties();
+        try {
+            // @phpstan-ignore-next-line
+            $properties = $this->context->getResponse()->getProperties();
+        } catch (ApiException $e) {
+            return;
+        }
+
         $numberOfItems = $properties->getNumberOfItems();
         if ($numberOfItems === 0) {
             $lastPage = $this->getLastPageForEmptyResults();

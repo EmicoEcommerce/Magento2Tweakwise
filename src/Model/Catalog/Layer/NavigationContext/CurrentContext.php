@@ -17,9 +17,9 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 class CurrentContext
 {
     /**
-     * @var NavigationContext
+     * @var NavigationContext|null
      */
-    protected $context;
+    protected $context = null;
 
     /**
      * @param NavigationContext $context
@@ -35,7 +35,6 @@ class CurrentContext
      */
     public function getContext()
     {
-        // @phpstan-ignore-next-line
         if (!$this->context) {
             throw new RuntimeException(
                 sprintf(
@@ -71,6 +70,10 @@ class CurrentContext
      */
     public function getTweakwiseRequestId(): string
     {
+        if (!$this->context || !$this->context->hasResponse()) {
+            return '';
+        }
+
         return $this->getContext()->getResponse()->getRequestId();
     }
 }

@@ -13,6 +13,7 @@ use Magento\Framework\HTTP\PhpEnvironment\Response;
 use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Mockery;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
@@ -31,6 +32,32 @@ class CatalogLastPageRedirectTest extends Unit
     protected function _after(): void
     {
         Mockery::close();
+    }
+
+    public function testInitialApiFailureDoesNotAbortPaginatedPage(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getParam')->once()->with('p', 1)->andReturn(8);
+        $response = Mockery::mock(Response::class);
+        $response->shouldReceive('isRedirect')->once()->andReturn(false);
+        $response->shouldNotReceive('setRedirect');
+
+        $actionContext = Mockery::mock(Context::class);
+        $actionContext->shouldReceive('getRequest')->once()->andReturn($request);
+        $actionContext->shouldReceive('getResponse')->once()->andReturn($response);
+        $actionContext->shouldNotReceive('getUrl');
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldReceive('getResponse')->once()
+            ->andThrow(new ApiException('Both gateways are unreachable'));
+
+        $subject = new CatalogLastPageRedirect($config, $navigationContext, $actionContext);
+        $subject->execute(new Observer());
     }
 
     public function testExecuteDoesNotCreateNavigationResponseOnFirstPage(): void

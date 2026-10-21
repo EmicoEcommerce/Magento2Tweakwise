@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner;
 
 use Magento\Framework\View\Element\Template;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 
 class SearchBannerRenderer extends Template
 {
@@ -65,7 +66,12 @@ class SearchBannerRenderer extends Template
         $banners = [];
 
         if ($navigationContext->showSearchBanners()) {
-            $response = $navigationContext->getResponse();
+            try {
+                $response = $navigationContext->getResponse();
+            } catch (ApiException $e) {
+                return [];
+            }
+
             if (!empty($response)) {
                 $banners = $response->getValue('searchbanners');
             }

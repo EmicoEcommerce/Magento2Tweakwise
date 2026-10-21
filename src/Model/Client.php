@@ -99,7 +99,8 @@ class Client
         // @phpstan-ignore-next-line
         if (!$this->client) {
             $options = [
-                RequestOptions::TIMEOUT => self::REQUEST_TIMEOUT,
+                RequestOptions::TIMEOUT => $this->config->getTimeout(),
+                RequestOptions::CONNECT_TIMEOUT => $this->config->getConnectTimeout(),
                 RequestOptions::HEADERS => [
                     'user-agent' => $this->config->getUserAgentString(),
                     'Accept-Encoding' => 'gzip, deflate'
@@ -187,12 +188,16 @@ class Client
                         $tweakwiseRequest,
                     );
                 },
-                function (GuzzleException $e) use ($tweakwiseRequest, $async) {
+                function (GuzzleException $e) use ($tweakwiseRequest, $httpRequest) {
                     // Timeout uses Guzzle ConnectException, ConnectException is more general but it also makes sense
                     // to use this if the default server is unreachable for some reason
-                    if ($e instanceof ConnectException && !$this->endpointManager->isFallback()) {
-                        $this->endpointManager->handleConnectException();
-                        return $this->doRequest($tweakwiseRequest, $async);
+                    if ($e instanceof ConnectException) {
+                        $isFallback = $httpRequest->getUri()->getHost() ===
+                            parse_url(EndpointManager::FALLBACK_SERVER_URL, PHP_URL_HOST);
+                        $this->endpointManager->handleConnectException($isFallback);
+                        if (!$isFallback) {
+                            return $this->doRequest($tweakwiseRequest, true);
+                        }
                     }
 
                     throw new ApiException($e->getMessage(), $e->getCode(), $e);
@@ -321,6 +326,10 @@ class Client
      */
     public function request(Request $request, bool $async = false)
     {
+        if ($this->config->getTweakwiseExceptionTrown()) {
+            throw new ApiException('Tweakwise API is not reachable');
+        }
+
         Profiler::start('tweakwise::request::' . $request->getPath());
         try {
             return $this->doRequest($request, $async);

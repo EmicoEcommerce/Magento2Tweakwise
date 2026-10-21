@@ -14,6 +14,7 @@ use Magento\Framework\App\State;
 use Magento\Framework\Serialize\Serializer\Json;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Test\Support\UnitTester;
+use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
 
 class ConfigTest extends Unit
 {
@@ -21,6 +22,39 @@ class ConfigTest extends Unit
      * @var UnitTester
      */
     protected UnitTester $tester;
+
+    public function testRequestTimeoutUsesStoreConfiguration(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->with('tweakwise/general/timeout', 'store', null)->willReturn('2');
+
+        $this->assertSame(2, $this->createConfig($scopeConfig)->getTimeout());
+    }
+
+    public function testConnectTimeoutUsesStoreConfiguration(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->with('tweakwise/general/connect_timeout', 'store', null)->willReturn('1');
+
+        $this->assertSame(1, $this->createConfig($scopeConfig)->getConnectTimeout());
+    }
+
+    /**
+     * @dataProvider invalidTimeouts
+     */
+    public function testInvalidTimeoutCannotDisableTheRequestDeadline(string $value): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturn($value);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->createConfig($scopeConfig)->getTimeout();
+    }
+
+    public static function invalidTimeouts(): array
+    {
+        return [['0'], ['-1'], ['invalid'], ['']];
+    }
 
     /**
      * @return void

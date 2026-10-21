@@ -11,6 +11,7 @@ namespace Tweakwise\Magento2Tweakwise\Model\Catalog\Product\Recommendation;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\RequestPool;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedRequest;
@@ -136,6 +137,10 @@ class Context
     {
         // @phpstan-ignore-next-line
         if (!$this->response) {
+            if ($this->config->getTweakwiseExceptionTrown()) {
+                throw new ApiException('Tweakwise API is not reachable');
+            }
+
             // @phpstan-ignore-next-line
             $this->response = $this->requestPool->resolve($this->getRequest());
         }

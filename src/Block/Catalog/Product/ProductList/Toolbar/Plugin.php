@@ -75,14 +75,7 @@ class Plugin
             return $proceed();
         }
 
-        if (!$this->config->isLayeredEnabled()) {
-            if (!$this->config->isSearchEnabled() || !($this->context->getRequest() instanceof ProductSearchRequest)) {
-                return $proceed();
-            }
-        }
-
-        //page is search and search is not enabled
-        if (!$this->config->isSearchEnabled() && ($this->context->getRequest() instanceof ProductSearchRequest)) {
+        if (!$this->isOrderingEnabled()) {
             return $proceed();
         }
 
@@ -113,6 +106,19 @@ class Plugin
         }
 
         return $result;
+    }
+
+    private function isOrderingEnabled(): bool
+    {
+        $layeredEnabled = $this->config->isLayeredEnabled();
+        $searchEnabled = $this->config->isSearchEnabled();
+        if (!$layeredEnabled && !$searchEnabled) {
+            return false;
+        }
+
+        return $this->context->getRequest() instanceof ProductSearchRequest
+            ? (bool)$searchEnabled
+            : (bool)$layeredEnabled;
     }
 
     /**

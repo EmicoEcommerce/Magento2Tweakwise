@@ -118,17 +118,21 @@ class SuggestionDataProvider implements DataProviderInterface
      */
     public function getItems()
     {
+        if ($this->config->getTweakwiseExceptionTrown()) {
+            return [];
+        }
+
         $query = $this->dataProviderHelper->getQuery();
         if (empty($query)) {
             return [];
         }
 
-        $promises = $this->buildRequests($query, $this->dataProviderHelper->getCategory());
-        if (empty($promises)) {
-            return [];
-        }
-
         try {
+            $promises = $this->buildRequests($query, $this->dataProviderHelper->getCategory());
+            if (empty($promises)) {
+                return [];
+            }
+
             $responses = Utils::unwrap($promises);
         } catch (TweakwiseExceptionInterface $e) {
             $this->logger->critical($e->getMessage());
@@ -256,8 +260,7 @@ class SuggestionDataProvider implements DataProviderInterface
             return;
         }
 
-        $profileKey = $this->request->setProfileKey($profileKeyCookie);
-        $request->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
+        $request->setProfileKey($profileKeyCookie);
     }
 
     /**

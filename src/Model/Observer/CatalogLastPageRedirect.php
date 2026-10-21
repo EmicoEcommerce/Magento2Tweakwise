@@ -55,6 +55,10 @@ class CatalogLastPageRedirect implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        if ((int) $this->actionContext->getRequest()->getParam('p', 1) <= 1) {
+            return;
+        }
+
         $response = $this->getHttpResponse();
         if (!$response || $response->isRedirect()) {
             return;

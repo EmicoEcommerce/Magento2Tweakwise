@@ -15,6 +15,7 @@ use Magento\Framework\UrlInterface;
 use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Observer\CatalogLastPageRedirect;
@@ -61,14 +62,14 @@ class CatalogLastPageRedirectTest extends Unit
         $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
         $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
 
-        $request = Mockery::mock(Request::class);
+        $request = Mockery::mock(ProductNavigationRequest::class);
         $request->shouldReceive('hasParameter')->once()->with('tn_cid')->andReturn(true);
 
         $navigationContext = $this->createNavigationContext(0, 0, 8);
         $navigationContext->shouldReceive('getRequest')->once()->andReturn($request);
 
         $httpRequest = Mockery::mock(RequestInterface::class);
-        $httpRequest->shouldReceive('getParam')->once()->with('p', 1)->andReturn(8);
+        $httpRequest->shouldReceive('getParam')->twice()->with('p', 1)->andReturn(8);
 
         $actionContext = Mockery::mock(Context::class);
         $actionContext->shouldReceive('getRequest')->twice()->andReturn($httpRequest);

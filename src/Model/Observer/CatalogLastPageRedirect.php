@@ -71,11 +71,16 @@ class CatalogLastPageRedirect implements ObserverInterface
 
         // @phpstan-ignore-next-line
         $properties = $this->context->getResponse()->getProperties();
-        if (!$properties->getNumberOfItems()) {
-            return;
+        $numberOfItems = $properties->getNumberOfItems();
+        if ($numberOfItems === 0) {
+            $lastPage = $this->getLastPageForEmptyResults();
+            if ($lastPage === null) {
+                return;
+            }
+        } else {
+            $lastPage = $properties->getNumberOfPages();
         }
 
-        $lastPage = $properties->getNumberOfPages();
         $page = $properties->getCurrentPage();
         if ($page <= $lastPage) {
             return;
@@ -91,6 +96,14 @@ class CatalogLastPageRedirect implements ObserverInterface
         );
 
         $response->setRedirect($url);
+    }
+
+    /**
+     * @return int|null
+     */
+    protected function getLastPageForEmptyResults(): ?int
+    {
+        return null;
     }
 
     /**

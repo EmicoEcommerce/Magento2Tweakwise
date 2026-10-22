@@ -19,6 +19,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedReq
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Block\Product\Context as ProductContext;
 use Magento\Catalog\Block\Product\ListProduct;
 use Magento\Catalog\Model\Category;
@@ -120,8 +121,12 @@ class Featured extends ListProduct
      */
     public function getTemplate()
     {
-        if (!$this->cacheHelper->personalMerchandisingCanBeApplied() || $this->cacheHelper->isHyvaTheme()) {
+        if (!$this->cacheHelper->shouldUseMerchandisingListing()) {
             return parent::getTemplate();
+        }
+
+        if ($this->cacheHelper->isHyvaTheme()) {
+            return $this->getHyvaTemplate() ?? parent::getTemplate();
         }
 
         return 'Tweakwise_Magento2Tweakwise::product/list/items.phtml';
@@ -154,8 +159,9 @@ class Featured extends ListProduct
             $this->setData('view_model', $this->preparePostDataFactory->getPreparePostData());
         }
 
-        if ($this->cacheHelper->personalMerchandisingCanBeApplied()) {
+        if ($this->cacheHelper->shouldUseMerchandisingListing()) {
             $this->setData('view_model_linked_product_list_item', $this->linkedProductListItemViewModel);
+            $this->addItemRendererBlocks();
         }
 
         try {
@@ -165,6 +171,40 @@ class Featured extends ListProduct
         }
 
         return parent::toHtml();
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getHyvaTemplate(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * The widget can be placed on any page, so the blocks that render the items might not be in the layout.
+     *
+     * @return void
+     */
+    private function addItemRendererBlocks(): void
+    {
+        $layout = $this->getLayout();
+        $blocks = [
+            'tweakwise.catalog.linked.product.list.item' => 'Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml',
+            'tweakwise.catalog.product.list.visual' => 'Tweakwise_Magento2Tweakwise::product/list/visual.phtml',
+        ];
+
+        if ($this->cacheHelper->isHyvaTheme()) {
+            $blocks = ['tweakwise.catalog.product.list.visual' => 'Tweakwise_TweakwiseHyva::product/list/visual.phtml'];
+        }
+
+        foreach ($blocks as $name => $template) {
+            if ($layout->getBlock($name)) {
+                continue;
+            }
+
+            $layout->createBlock(AbstractProduct::class, $name, ['data' => ['template' => $template]]);
+        }
     }
 
     /**

@@ -29,6 +29,8 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Checkout\Model\Session;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
+use Tweakwise\Magento2Tweakwise\Helper\Cache;
+use Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem;
 
 class Plugin extends AbstractRecommendationPlugin
 {
@@ -60,7 +62,10 @@ class Plugin extends AbstractRecommendationPlugin
      * @param Session $checkoutSession
      * @param RecommendationsContext $recommendationsContext
      * @param RecommendationImpressionCollector $impressionCollector
+     * @param Cache $cacheHelper
+     * @param LinkedProductListItem $linkedProductListItem
      * @param ProductRepositoryInterface|null $productRepository
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         Config $config,
@@ -70,6 +75,8 @@ class Plugin extends AbstractRecommendationPlugin
         Session $checkoutSession,
         RecommendationsContext $recommendationsContext,
         RecommendationImpressionCollector $impressionCollector,
+        private readonly Cache $cacheHelper,
+        private readonly LinkedProductListItem $linkedProductListItem,
         ?ProductRepositoryInterface $productRepository = null
     ) {
         $this->productRepository = $productRepository;
@@ -113,6 +120,26 @@ class Plugin extends AbstractRecommendationPlugin
         $this->lastAddedProduct = $this->getLastAddedProduct();
 
         return $proceed();
+    }
+
+    /**
+     * @param Crosssell $crosssell
+     * @param string|null $result
+     * @return string|null
+     */
+    public function afterGetTemplate(Crosssell $crosssell, $result)
+    {
+        if (
+            !$this->config->isRecommendationsEnabled(Config::RECCOMENDATION_TYPE_SHOPPINGCART) ||
+            !$this->cacheHelper->shouldUseMerchandisingListing() ||
+            $this->cacheHelper->isHyvaTheme()
+        ) {
+            return $result;
+        }
+
+        $crosssell->setData('view_model_linked_product_list_item', $this->linkedProductListItem);
+
+        return 'Tweakwise_Magento2Tweakwise::product/list/items.phtml';
     }
 
     /**

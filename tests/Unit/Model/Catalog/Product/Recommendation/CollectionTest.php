@@ -129,10 +129,70 @@ class CollectionTest extends Unit
     }
 
     /**
+     * In grouped products mode every product has two response items (group and simple variant), but only one
+     * collection item. The visual must be placed after the products that precede it, not after the response items.
+     *
+     * @throws ReflectionException
+     */
+    public function testAddVisualsCountsProductsInsteadOfResponseItemsInGroupedMode(): void
+    {
+        $products = $this->createProducts([101, 102, 103]);
+        $visual = $this->createVisual('visual-a');
+
+        $items = $this->addVisuals(
+            [
+                $this->createProductItem(101),
+                $this->createProductItem(101),
+                $this->createProductItem(102),
+                $this->createProductItem(102),
+                $this->createVisualItem('visual-a'),
+                $this->createProductItem(103),
+                $this->createProductItem(103),
+            ],
+            $products,
+            ['visual-a' => $visual]
+        );
+
+        $this->assertSame(
+            [$products[101], $products[102], $visual, $products[103]],
+            array_values($items)
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testAddVisualsKeepsVisualsWithoutId(): void
+    {
+        $products = $this->createProducts([101, 102]);
+        $first = $this->createVisual('');
+        $second = $this->createVisual('');
+
+        $items = $this->addVisuals(
+            [
+                $this->createVisualItem(''),
+                $this->createProductItem(101),
+                $this->createVisualItem(''),
+                $this->createProductItem(102),
+            ],
+            $products,
+            [],
+            true,
+            [$first, $second]
+        );
+
+        $this->assertSame(
+            [$first, $products[101], $second, $products[102]],
+            array_values($items)
+        );
+    }
+
+    /**
      * @param ClientItemType[] $responseItems
      * @param Product[] $products Loaded products, keyed by product id
      * @param Visual[] $visuals Visuals the builder returns, keyed by visual item id
      * @param bool $visualsEnabled
+     * @param Visual[] $visualQueue Visuals the builder returns in order, for visuals that share an id
      * @return array
      * @throws ReflectionException
      */
@@ -140,18 +200,27 @@ class CollectionTest extends Unit
         array $responseItems,
         array $products,
         array $visuals,
-        bool $visualsEnabled = true
+        bool $visualsEnabled = true,
+        array $visualQueue = []
     ): array {
         $response = Mockery::mock(RecommendationsResponse::class);
         $response->shouldReceive('getItems')->andReturn($responseItems);
+        $response->shouldReceive('getProductIds')->andReturn(array_map(
+            fn (ClientItemType $item) => $item->getType() === 'visual' ? 0 : (int) $item->getValue(ClientItemType::ID),
+            $responseItems
+        ));
 
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isVisualsEnabled')->andReturn($visualsEnabled);
 
         $visualBuilder = Mockery::mock(VisualBuilder::class);
-        $visualBuilder->shouldReceive('build')->andReturnUsing(
-            fn (ClientItemType $item) => $visuals[$item->getValue(ClientItemType::ID)]
-        );
+        if ($visualQueue) {
+            $visualBuilder->shouldReceive('build')->andReturnValues($visualQueue);
+        } else {
+            $visualBuilder->shouldReceive('build')->andReturnUsing(
+                fn (ClientItemType $item) => $visuals[$item->getValue(ClientItemType::ID)]
+            );
+        }
 
         $reflection = new ReflectionClass(Collection::class);
         /** @var Collection $subject */

@@ -147,18 +147,31 @@ class Collection extends AbstractCollection
             return;
         }
 
-        $position = 0;
-        foreach ($this->response->getItems() as $item) {
-            if ($item->getType() === ItemType::VISUAL->value) {
-                $visual = $this->visualBuilder->build($item);
+        $responseItems = array_values($this->response->getItems());
+        $productIds = $this->response->getProductIds();
 
-                // Not array_splice, because that renumbers the product id keys of the collection.
-                $this->_items = array_slice($this->_items, 0, $position, true)
-                    + ['visual_' . $visual->getId() => $visual]
-                    + array_slice($this->_items, $position, null, true);
+        $items = [];
+        $hasVisual = false;
+        foreach ($responseItems as $index => $item) {
+            if ($item->getType() === ItemType::VISUAL->value) {
+                $hasVisual = true;
+                $items['visual_' . $index] = $this->visualBuilder->build($item);
+                continue;
             }
 
-            $position++;
+            // In grouped products mode a product occupies several response items, but only one collection item.
+            $productId = $productIds[$index] ?? null;
+            if ($productId === null || !isset($this->_items[$productId])) {
+                continue;
+            }
+
+            $items[$productId] = $this->_items[$productId];
         }
+
+        if (!$hasVisual) {
+            return;
+        }
+
+        $this->_items = $items + $this->_items;
     }
 }

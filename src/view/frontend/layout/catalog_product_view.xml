@@ -23,13 +23,15 @@
                 Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem
             </argument>
         </arguments>
+    </referenceBlock>
+    <referenceContainer name="content">
         <block class="Magento\Catalog\Block\Product\AbstractProduct"
                name="tweakwise.catalog.linked.product.list.item"
                template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"/>
         <block class="Magento\Catalog\Block\Product\AbstractProduct"
                name="tweakwise.catalog.product.list.visual"
                template="Tweakwise_Magento2Tweakwise::product/list/visual.phtml"/>
-    </referenceBlock>
+    </referenceContainer>
     <referenceBlock name="catalog.product.related">
         <arguments>
             <argument name="view_model_linked_product_list_item" xsi:type="object">

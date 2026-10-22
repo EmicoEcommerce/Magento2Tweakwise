@@ -104,10 +104,10 @@ class FilterHelper
      */
     protected function getAttributeCodeFromFilterItem(Item $item)
     {
-        return $item->getFilter()
+        return strtolower($item->getFilter()
             ->getFacet()
             ->getFacetSettings()
-            ->getUrlKey();
+            ->getUrlKey());
     }
 
     /**

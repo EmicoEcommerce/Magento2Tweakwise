@@ -160,7 +160,11 @@ class Featured extends ListProduct
         }
 
         if ($this->cacheHelper->shouldUseMerchandisingListing()) {
-            $this->setData('view_model_linked_product_list_item', $this->linkedProductListItemViewModel);
+            // The widget has no layout, the featured block on the category page gets these from the layout
+            if (!$this->getData('view_model_linked_product_list_item')) {
+                $this->setData('view_model_linked_product_list_item', $this->linkedProductListItemViewModel);
+            }
+
             $this->addItemRendererBlocks();
         }
 

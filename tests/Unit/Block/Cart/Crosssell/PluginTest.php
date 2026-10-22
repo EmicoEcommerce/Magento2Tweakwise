@@ -11,7 +11,6 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tweakwise\Magento2Tweakwise\Block\Cart\Crosssell\Plugin;
 use Tweakwise\Magento2Tweakwise\Helper\Cache;
 use Tweakwise\Magento2Tweakwise\Model\Config;
-use Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem;
 use Tweakwise\Test\Support\UnitTester;
 
 class PluginTest extends Unit
@@ -23,12 +22,9 @@ class PluginTest extends Unit
     /**
      * @return void
      */
-    public function testAfterGetTemplateReturnsModuleTemplateAndSetsViewModel(): void
+    public function testAfterGetTemplateReturnsModuleTemplate(): void
     {
         $crosssell = Mockery::mock(Crosssell::class);
-        $crosssell->shouldReceive('setData')
-            ->once()
-            ->with('view_model_linked_product_list_item', Mockery::type(LinkedProductListItem::class));
 
         $this->assertSame(
             'Tweakwise_Magento2Tweakwise::product/list/items.phtml',

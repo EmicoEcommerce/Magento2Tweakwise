@@ -115,7 +115,7 @@ class Response extends Type
 
             // Add visual url to visual item
             if ($simple['type'] === 'visual') {
-                $configurable['url'] = $simple['url'];
+                $configurable['url'] = $simple['url'] ?? '';
             }
         }
 

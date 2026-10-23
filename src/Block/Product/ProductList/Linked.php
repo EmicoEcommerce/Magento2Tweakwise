@@ -47,7 +47,7 @@ class Linked
      */
     public function getTemplate(): ?string
     {
-        if (!$this->cacheHelper->personalMerchandisingCanBeApplied()) {
+        if (!$this->cacheHelper->shouldUseMerchandisingListing() || $this->cacheHelper->isHyvaTheme()) {
             return null;
         }
 

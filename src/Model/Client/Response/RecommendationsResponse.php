@@ -13,6 +13,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Enum\ItemType as ItemTypeEnum;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class RecommendationsResponse extends Response
@@ -58,11 +59,12 @@ class RecommendationsResponse extends Response
                 $currentItems = $this->data['items'] ?? [];
 
                 foreach ($currentItems as $currentItem) {
-                    if (isset($items[$currentItem->getId()])) {
+                    $key = $this->getItemKey($currentItem);
+                    if (isset($items[$key])) {
                         continue;
                     }
 
-                    $items[$currentItem->getId()] = $currentItem;
+                    $items[$key] = $currentItem;
                 }
             }
 
@@ -74,6 +76,23 @@ class RecommendationsResponse extends Response
         }
 
         $this->setData($recommendation);
+    }
+
+    /**
+     * A visual id is not numeric, so it can not be keyed on getId() which casts to int.
+     *
+     * @param ItemType $item
+     * @return int|string
+     */
+    private function getItemKey(ItemType $item): int|string
+    {
+        if ($item->getType() !== ItemTypeEnum::VISUAL->value) {
+            return $item->getId();
+        }
+
+        $itemNumber = (string) $item->getValue(ItemType::ID);
+
+        return 'visual_' . ($itemNumber !== '' ? $itemNumber : spl_object_id($item));
     }
 
     /**

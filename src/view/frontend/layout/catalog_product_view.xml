@@ -23,21 +23,21 @@
                 Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem
             </argument>
         </arguments>
+    </referenceBlock>
+    <referenceContainer name="content">
         <block class="Magento\Catalog\Block\Product\AbstractProduct"
                name="tweakwise.catalog.linked.product.list.item"
-               template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-               ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
-    </referenceBlock>
+               template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"/>
+        <block class="Magento\Catalog\Block\Product\AbstractProduct"
+               name="tweakwise.catalog.product.list.visual"
+               template="Tweakwise_Magento2Tweakwise::product/list/visual.phtml"/>
+    </referenceContainer>
     <referenceBlock name="catalog.product.related">
         <arguments>
             <argument name="view_model_linked_product_list_item" xsi:type="object">
                 Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem
             </argument>
         </arguments>
-        <block class="Magento\Catalog\Block\Product\AbstractProduct"
-               name="tweakwise.catalog.linked.product.list.item"
-               template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-               ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
     </referenceBlock>
     </body>
 </page>

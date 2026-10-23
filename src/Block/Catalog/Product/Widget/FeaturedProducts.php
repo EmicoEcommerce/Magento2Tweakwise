@@ -27,6 +27,14 @@ class FeaturedProducts extends Featured implements BlockInterface
     }
 
     /**
+     * @return string|null
+     */
+    protected function getHyvaTemplate(): ?string
+    {
+        return 'Tweakwise_TweakwiseHyva::product/slider/product-slider.phtml';
+    }
+
+    /**
      * @return bool
      */
     protected function checkRecommendationEnabled(): bool

@@ -1,0 +1,64 @@
+<recommendations xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <recommendation>
+    <id>29</id>
+    <name>Seasonal campaign</name>
+    <items>
+      <item>
+        <type>visual</type>
+        <itemno>979a0492-5beb-42be-925a-dca7c24de993</itemno>
+        <title>Winter</title>
+        <brand />
+        <price>0</price>
+        <url>https://example.com/winter</url>
+        <image>https://example.com/media/wysiwyg/winter.jpg</image>
+        <attributes />
+        <visualproperties>
+          <colspan>1</colspan>
+          <rowspan>1</rowspan>
+        </visualproperties>
+        <origin>
+          <type>content-merchandising</type>
+          <name>visual</name>
+        </origin>
+      </item>
+      <item>
+        <type>product</type>
+        <itemno>{{PRODUCT_1}}</itemno>
+        <title>Product one</title>
+        <brand />
+        <price>137.28</price>
+        <url>https://example.com/product-one</url>
+        <image>https://example.com/media/catalog/product/one.jpg</image>
+        <attributes />
+        <visualproperties>
+          <colspan>1</colspan>
+          <rowspan>1</rowspan>
+        </visualproperties>
+      </item>
+      <item>
+        <type>product</type>
+        <itemno>{{PRODUCT_2}}</itemno>
+        <title>Product two</title>
+        <brand />
+        <price>75</price>
+        <url>https://example.com/product-two</url>
+        <image>https://example.com/media/catalog/product/two.jpg</image>
+        <attributes />
+        <visualproperties>
+          <colspan>1</colspan>
+          <rowspan>1</rowspan>
+        </visualproperties>
+      </item>
+    </items>
+  </recommendation>
+  <recommendation>
+    <id>27</id>
+    <name>Empty recommendation one</name>
+    <items />
+  </recommendation>
+  <recommendation>
+    <id>28</id>
+    <name>Empty recommendation two</name>
+    <items />
+  </recommendation>
+</recommendations>

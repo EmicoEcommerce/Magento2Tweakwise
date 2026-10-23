@@ -29,6 +29,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Checkout\Model\Session;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
+use Tweakwise\Magento2Tweakwise\Helper\Cache;
 
 class Plugin extends AbstractRecommendationPlugin
 {
@@ -60,6 +61,7 @@ class Plugin extends AbstractRecommendationPlugin
      * @param Session $checkoutSession
      * @param RecommendationsContext $recommendationsContext
      * @param RecommendationImpressionCollector $impressionCollector
+     * @param Cache $cacheHelper
      * @param ProductRepositoryInterface|null $productRepository
      */
     public function __construct(
@@ -70,6 +72,7 @@ class Plugin extends AbstractRecommendationPlugin
         Session $checkoutSession,
         RecommendationsContext $recommendationsContext,
         RecommendationImpressionCollector $impressionCollector,
+        private readonly Cache $cacheHelper,
         ?ProductRepositoryInterface $productRepository = null
     ) {
         $this->productRepository = $productRepository;
@@ -113,6 +116,24 @@ class Plugin extends AbstractRecommendationPlugin
         $this->lastAddedProduct = $this->getLastAddedProduct();
 
         return $proceed();
+    }
+
+    /**
+     * @param Crosssell $crosssell
+     * @param string|null $result
+     * @return string|null
+     */
+    public function afterGetTemplate(Crosssell $crosssell, $result)
+    {
+        if (
+            !$this->config->isRecommendationsEnabled(Config::RECCOMENDATION_TYPE_SHOPPINGCART) ||
+            !$this->cacheHelper->shouldUseMerchandisingListing() ||
+            $this->cacheHelper->isHyvaTheme()
+        ) {
+            return $result;
+        }
+
+        return 'Tweakwise_Magento2Tweakwise::product/list/items.phtml';
     }
 
     /**

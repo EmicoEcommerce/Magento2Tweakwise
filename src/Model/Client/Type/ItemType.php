@@ -129,7 +129,7 @@ class ItemType extends Type
      */
     public function getImage()
     {
-        return (string) $this->getDataValue(self::IMAGE);
+        return $this->getStringValue(self::IMAGE);
     }
 
     /**
@@ -137,7 +137,7 @@ class ItemType extends Type
      */
     public function getUrl()
     {
-        return (string) $this->getDataValue(self::URL);
+        return $this->getStringValue(self::URL);
     }
 
     /**
@@ -231,5 +231,18 @@ class ItemType extends Type
     protected function getVisualProperties(): ?array
     {
         return $this->getDataValue(self::VISUAL_PROPERTIES);
+    }
+
+    /**
+     * An empty XML element is parsed to an empty array, which cannot be cast to a string.
+     *
+     * @param string $key
+     * @return string
+     */
+    private function getStringValue(string $key): string
+    {
+        $value = $this->getDataValue($key);
+
+        return is_scalar($value) ? (string) $value : '';
     }
 }

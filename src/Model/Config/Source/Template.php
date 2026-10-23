@@ -53,7 +53,7 @@ class Template implements OptionSourceInterface
         /** @var TemplateResponse $response */
         $response = $this->client->request($request);
         $result = [
-            ['value' => null, 'label' => __('* Default template')],
+            ['value' => null, 'label' => __('Default Magento')],
         ];
 
         // @phpstan-ignore-next-line

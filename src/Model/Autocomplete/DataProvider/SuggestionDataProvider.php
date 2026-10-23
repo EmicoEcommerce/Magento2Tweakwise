@@ -63,11 +63,6 @@ class SuggestionDataProvider implements DataProviderInterface
     protected $client;
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * AutocompleteDataProvider constructor.
      * @param Config $config
      * @param CookieManagerInterface $cookieManager
@@ -77,8 +72,8 @@ class SuggestionDataProvider implements DataProviderInterface
      * @param RequestFactory $suggestionRequestFactory
      * @param Client $client
      * @param Request $request
-     * @param LoggerInterface $logger
      * @param SuggestionBlockItemFactory $suggestionBlockItemFactory
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Config $config,
@@ -89,8 +84,8 @@ class SuggestionDataProvider implements DataProviderInterface
         RequestFactory $suggestionRequestFactory,
         Client $client,
         Request $request,
-        LoggerInterface $logger,
-        protected readonly SuggestionBlockItemFactory $suggestionBlockItemFactory
+        protected readonly SuggestionBlockItemFactory $suggestionBlockItemFactory,
+        protected readonly LoggerInterface $logger
     ) {
         $this->config = $config;
         $this->cookieManager = $cookieManager;
@@ -100,7 +95,6 @@ class SuggestionDataProvider implements DataProviderInterface
         $this->suggestionRequestFactory = $suggestionRequestFactory;
         $this->client = $client;
         $this->request = $request;
-        $this->logger = $logger;
     }
 
     /**
@@ -118,7 +112,7 @@ class SuggestionDataProvider implements DataProviderInterface
      */
     public function getItems()
     {
-        if ($this->config->getTweakwiseExceptionTrown()) {
+        if ($this->config->getTweakwiseExceptionThrown()) {
             return [];
         }
 

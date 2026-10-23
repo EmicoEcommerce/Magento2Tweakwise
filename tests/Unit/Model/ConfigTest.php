@@ -14,7 +14,6 @@ use Magento\Framework\App\State;
 use Magento\Framework\Serialize\Serializer\Json;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Test\Support\UnitTester;
-use Tweakwise\Magento2Tweakwise\Exception\InvalidArgumentException;
 
 class ConfigTest extends Unit
 {
@@ -42,18 +41,37 @@ class ConfigTest extends Unit
     /**
      * @dataProvider invalidTimeouts
      */
-    public function testInvalidTimeoutCannotDisableTheRequestDeadline(string $value): void
+    public function testInvalidRequestTimeoutFallsBackToDefault(string $value): void
     {
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $scopeConfig->method('getValue')->willReturn($value);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->createConfig($scopeConfig)->getTimeout();
+        $this->assertSame(Config::REQUEST_TIMEOUT, $this->createConfig($scopeConfig)->getTimeout());
+    }
+
+    /**
+     * @dataProvider invalidTimeouts
+     */
+    public function testInvalidConnectTimeoutFallsBackToDefault(string $value): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturn($value);
+
+        $this->assertSame(Config::CONNECT_TIMEOUT, $this->createConfig($scopeConfig)->getConnectTimeout());
     }
 
     public static function invalidTimeouts(): array
     {
         return [['0'], ['-1'], ['invalid'], ['']];
+    }
+
+    public function testCorrectlySpelledExceptionFlagGetterAndDeprecatedAlias(): void
+    {
+        $config = $this->createConfig($this->createMock(ScopeConfigInterface::class));
+        $config->setTweakwiseExceptionThrown();
+
+        $this->assertTrue($config->getTweakwiseExceptionThrown());
+        $this->assertTrue($config->getTweakwiseExceptionTrown());
     }
 
     /**

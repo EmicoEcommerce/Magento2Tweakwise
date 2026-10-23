@@ -9,11 +9,36 @@
 
 namespace Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\View\Element\Template;
-use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Magento\Framework\View\Element\Template\Context as TemplateContext;
+use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class SearchBannerRenderer extends Template
 {
+    private readonly Config $config;
+
+    private readonly LoggerInterface $logger;
+
+    /**
+     * @param TemplateContext $context
+     * @param array $data
+     * @param Config|null $config
+     * @param LoggerInterface|null $logger
+     */
+    public function __construct(
+        TemplateContext $context,
+        array $data = [],
+        ?Config $config = null,
+        ?LoggerInterface $logger = null
+    ) {
+        $this->config = $config ?? ObjectManager::getInstance()->get(Config::class);
+        $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
+        parent::__construct($context, $data);
+    }
+
     /**
      * @return array|mixed
      */
@@ -61,6 +86,10 @@ class SearchBannerRenderer extends Template
      */
     private function getSearchBanners()
     {
+        if ($this->config->getTweakwiseExceptionThrown()) {
+            return [];
+        }
+
         $navigationContext = $this->getData('tweakwise_navigation_context')->getNavigationContext()->getContext();
         $result = [];
         $banners = [];
@@ -68,7 +97,10 @@ class SearchBannerRenderer extends Template
         if ($navigationContext->showSearchBanners()) {
             try {
                 $response = $navigationContext->getResponse();
-            } catch (ApiException $e) {
+            } catch (TweakwiseExceptionInterface $e) {
+                $this->logger->critical($e->getMessage());
+                $this->config->setTweakwiseExceptionThrown();
+
                 return [];
             }
 

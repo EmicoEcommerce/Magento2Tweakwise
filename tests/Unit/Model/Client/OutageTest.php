@@ -159,7 +159,7 @@ class OutageTest extends Unit
     public function testFailureFlagPreventsAnyFurtherHttpRequests(): void
     {
         $config = Mockery::mock(Config::class);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->andReturn(true);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(true);
         $config->shouldReceive('getInternalIpAddresses')->andReturn([]);
         $config->shouldReceive('getGeneralAuthenticationKey')->andReturn('testkey');
         $client = $this->createClient($config);

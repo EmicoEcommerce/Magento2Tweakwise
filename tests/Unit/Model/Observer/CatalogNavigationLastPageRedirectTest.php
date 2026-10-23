@@ -12,6 +12,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\HTTP\PhpEnvironment\Response;
 use Magento\Framework\Registry;
 use Mockery;
+use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
@@ -61,7 +62,7 @@ class CatalogNavigationLastPageRedirectTest extends Unit
 
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->once()->andReturn(false);
 
         $registry = Mockery::mock(Registry::class);
         $registry->shouldReceive('registry')->once()->with('current_category')->andReturn($category);
@@ -70,7 +71,8 @@ class CatalogNavigationLastPageRedirectTest extends Unit
             $config,
             $navigationContext,
             $actionContext,
-            $registry
+            $registry,
+            Mockery::mock(LoggerInterface::class)
         );
 
         $subject->execute(new Observer());
@@ -99,7 +101,8 @@ class CatalogNavigationLastPageRedirectTest extends Unit
             $config,
             $navigationContext,
             $actionContext,
-            $registry
+            $registry,
+            Mockery::mock(LoggerInterface::class)
         );
 
         $subject->execute(new Observer());
@@ -137,7 +140,7 @@ class CatalogNavigationLastPageRedirectTest extends Unit
 
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->once()->andReturn(false);
 
         $registry = Mockery::mock(Registry::class);
         $registry->shouldReceive('registry')->once()->with('current_category')->andReturn($category);
@@ -146,7 +149,8 @@ class CatalogNavigationLastPageRedirectTest extends Unit
             $config,
             $navigationContext,
             $actionContext,
-            $registry
+            $registry,
+            Mockery::mock(LoggerInterface::class)
         );
 
         $subject->execute(new Observer());

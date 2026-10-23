@@ -31,9 +31,9 @@ use GuzzleHttp\Psr7\Uri;
 class Client
 {
     /**
-     * Defaults
+     * @deprecated use Config::REQUEST_TIMEOUT
      */
-    public const REQUEST_TIMEOUT = 5;
+    public const REQUEST_TIMEOUT = Config::REQUEST_TIMEOUT;
 
     /**
      * @var Config
@@ -326,7 +326,7 @@ class Client
      */
     public function request(Request $request, bool $async = false)
     {
-        if ($this->config->getTweakwiseExceptionTrown()) {
+        if ($this->config->getTweakwiseExceptionThrown()) {
             throw new ApiException('Tweakwise API is not reachable');
         }
 

@@ -21,7 +21,7 @@ class ContextTest extends Unit
     public function testDoesNotResolveRecommendationsAfterAnApiFailure(): void
     {
         $config = Mockery::mock(Config::class);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->andReturn(true);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(true);
         $pool = $this->createMock(RequestPool::class);
         $pool->expects($this->never())->method('resolve');
         $profileKeyApplier = Mockery::mock(ProfileKeyApplier::class);

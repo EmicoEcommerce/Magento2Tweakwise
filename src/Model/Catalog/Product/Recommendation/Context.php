@@ -137,7 +137,7 @@ class Context
     {
         // @phpstan-ignore-next-line
         if (!$this->response) {
-            if ($this->config->getTweakwiseExceptionTrown()) {
+            if ($this->config->getTweakwiseExceptionThrown()) {
                 throw new ApiException('Tweakwise API is not reachable');
             }
 

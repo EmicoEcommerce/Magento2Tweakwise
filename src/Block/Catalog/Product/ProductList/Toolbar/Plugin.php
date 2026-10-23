@@ -71,7 +71,7 @@ class Plugin
      */
     public function aroundGetAvailableOrders(Toolbar $subject, Closure $proceed)
     {
-        if ($this->config->getTweakwiseExceptionTrown()) {
+        if ($this->config->getTweakwiseExceptionThrown()) {
             return $proceed();
         }
 

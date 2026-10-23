@@ -10,14 +10,15 @@ use GuzzleHttp\Promise\RejectedPromise;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Mockery;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
-use ReflectionProperty;
 use stdClass;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionDataProvider;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionBlockItemFactory;
+use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionGroupItemFactory;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProviderHelper;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\RequestFactory;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class SuggestionDataProviderTest extends Unit
@@ -30,7 +31,7 @@ class SuggestionDataProviderTest extends Unit
         $helper->shouldReceive('addVisibilityFilter')->twice();
 
         $config = Mockery::mock(Config::class);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->andReturn(false);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(false);
         $config->shouldReceive('getPersonalMerchandisingCookieName')->once()->andReturn('cookie');
         $config->shouldReceive('setTweakwiseExceptionThrown')->once();
 
@@ -39,26 +40,10 @@ class SuggestionDataProviderTest extends Unit
 
         $suggestionRequest = $this->createRequest();
         $productRequest = $this->createRequest();
-        $suggestionFactory = new class ($suggestionRequest) {
-            public function __construct(private Request $request)
-            {
-            }
-
-            public function create(): Request
-            {
-                return $this->request;
-            }
-        };
-        $productFactory = new class ($productRequest) {
-            public function __construct(private Request $request)
-            {
-            }
-
-            public function create(): Request
-            {
-                return $this->request;
-            }
-        };
+        $suggestionFactory = Mockery::mock(RequestFactory::class);
+        $suggestionFactory->shouldReceive('create')->once()->andReturn($suggestionRequest);
+        $productFactory = Mockery::mock(RequestFactory::class);
+        $productFactory->shouldReceive('create')->once()->andReturn($productRequest);
 
         $client = Mockery::mock(Client::class);
         $client->shouldReceive('request')->twice()->andReturn(
@@ -69,14 +54,18 @@ class SuggestionDataProviderTest extends Unit
         $logger = Mockery::mock(LoggerInterface::class);
         $logger->shouldReceive('critical')->once()->with('Tweakwise API is unavailable');
 
-        $provider = (new ReflectionClass(SuggestionDataProvider::class))->newInstanceWithoutConstructor();
-        $this->setProperty($provider, 'config', $config);
-        $this->setProperty($provider, 'cookieManager', $cookieManager);
-        $this->setProperty($provider, 'dataProviderHelper', $helper);
-        $this->setProperty($provider, 'suggestionRequestFactory', $suggestionFactory);
-        $this->setProperty($provider, 'productSuggestionRequestFactory', $productFactory);
-        $this->setProperty($provider, 'client', $client);
-        $this->setProperty($provider, 'logger', $logger);
+        $provider = new SuggestionDataProvider(
+            $config,
+            $cookieManager,
+            $helper,
+            Mockery::mock(SuggestionGroupItemFactory::class),
+            $productFactory,
+            $suggestionFactory,
+            $client,
+            Mockery::mock(Request::class),
+            Mockery::mock(SuggestionBlockItemFactory::class),
+            $logger
+        );
 
         $this->assertSame([], $provider->getItems());
     }
@@ -88,11 +77,5 @@ class SuggestionDataProviderTest extends Unit
         $request->shouldReceive('addCategoryFilter')->once()->with(0)->andReturnSelf();
 
         return $request;
-    }
-
-    private function setProperty(SuggestionDataProvider $provider, string $property, object $value): void
-    {
-        $reflectionProperty = new ReflectionProperty($provider, $property);
-        $reflectionProperty->setValue($provider, $value);
     }
 }

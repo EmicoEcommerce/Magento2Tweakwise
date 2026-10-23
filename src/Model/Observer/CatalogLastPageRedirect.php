@@ -10,8 +10,10 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
 use Exception;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Observer;
-use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Action\Context;
@@ -36,16 +38,27 @@ class CatalogLastPageRedirect implements ObserverInterface
     protected $actionContext;
 
     /**
+     * @var LoggerInterface
+     */
+    private readonly LoggerInterface $logger;
+
+    /**
      * CatalogSearchRedirect constructor.
      * @param Config $config
      * @param NavigationContext $context
      * @param Context $actionContext
+     * @param LoggerInterface|null $logger
      */
-    public function __construct(Config $config, NavigationContext $context, Context $actionContext)
-    {
+    public function __construct(
+        Config $config,
+        NavigationContext $context,
+        Context $actionContext,
+        ?LoggerInterface $logger = null
+    ) {
         $this->config = $config;
         $this->context = $context;
         $this->actionContext = $actionContext;
+        $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
@@ -65,7 +78,7 @@ class CatalogLastPageRedirect implements ObserverInterface
             return;
         }
 
-        if ($this->config->getTweakwiseExceptionTrown()) {
+        if ($this->config->getTweakwiseExceptionThrown()) {
             //no api response
             return;
         }
@@ -73,7 +86,10 @@ class CatalogLastPageRedirect implements ObserverInterface
         try {
             // @phpstan-ignore-next-line
             $properties = $this->context->getResponse()->getProperties();
-        } catch (ApiException $e) {
+        } catch (TweakwiseExceptionInterface $e) {
+            $this->logger->critical($e->getMessage());
+            $this->config->setTweakwiseExceptionThrown();
+
             return;
         }
 

@@ -21,7 +21,7 @@ class PluginTest extends Unit
     public function testAvailableOrdersFallBackWhenExceptionFlagIsSet(): void
     {
         $config = Mockery::mock(Config::class);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(true);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->once()->andReturn(true);
 
         $context = Mockery::mock(CurrentContext::class);
         $context->shouldNotReceive('getRequest');
@@ -48,7 +48,7 @@ class PluginTest extends Unit
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isLayeredEnabled')->andReturn(false);
         $config->shouldReceive('isSearchEnabled')->andReturn(true);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->andReturn(false);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(false);
         $config->shouldReceive('setTweakwiseExceptionThrown')->once();
 
         $context = Mockery::mock(CurrentContext::class);

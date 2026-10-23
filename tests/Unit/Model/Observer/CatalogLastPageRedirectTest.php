@@ -13,6 +13,7 @@ use Magento\Framework\HTTP\PhpEnvironment\Response;
 use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Mockery;
+use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
@@ -39,7 +40,8 @@ class CatalogLastPageRedirectTest extends Unit
         $this->expectNotToPerformAssertions();
 
         $config = Mockery::mock(Config::class);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->once()->andReturn(false);
+        $config->shouldReceive('setTweakwiseExceptionThrown')->once();
 
         $request = Mockery::mock(RequestInterface::class);
         $request->shouldReceive('getParam')->once()->with('p', 1)->andReturn(8);
@@ -55,8 +57,10 @@ class CatalogLastPageRedirectTest extends Unit
         $navigationContext = Mockery::mock(NavigationContext::class);
         $navigationContext->shouldReceive('getResponse')->once()
             ->andThrow(new ApiException('Both gateways are unreachable'));
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('critical')->once()->with('Both gateways are unreachable');
 
-        $subject = new CatalogLastPageRedirect($config, $navigationContext, $actionContext);
+        $subject = new CatalogLastPageRedirect($config, $navigationContext, $actionContext, $logger);
         $subject->execute(new Observer());
     }
 
@@ -77,7 +81,8 @@ class CatalogLastPageRedirectTest extends Unit
         $subject = new CatalogLastPageRedirect(
             Mockery::mock(Config::class),
             $navigationContext,
-            $actionContext
+            $actionContext,
+            Mockery::mock(LoggerInterface::class)
         );
 
         $subject->execute(new Observer());
@@ -87,7 +92,7 @@ class CatalogLastPageRedirectTest extends Unit
     {
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isLayeredEnabled')->once()->andReturn(true);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->once()->andReturn(false);
 
         $request = Mockery::mock(ProductNavigationRequest::class);
         $request->shouldReceive('hasParameter')->once()->with('tn_cid')->andReturn(true);
@@ -109,7 +114,8 @@ class CatalogLastPageRedirectTest extends Unit
             $config,
             $navigationContext,
             $actionContext,
-            $registry
+            $registry,
+            Mockery::mock(LoggerInterface::class)
         );
 
         $subject->execute(new Observer());
@@ -138,7 +144,8 @@ class CatalogLastPageRedirectTest extends Unit
             $config,
             $navigationContext,
             $actionContext,
-            $registry
+            $registry,
+            Mockery::mock(LoggerInterface::class)
         );
 
         $subject->execute(new Observer());
@@ -148,7 +155,7 @@ class CatalogLastPageRedirectTest extends Unit
     {
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isSearchEnabled')->once()->andReturn(true);
-        $config->shouldReceive('getTweakwiseExceptionTrown')->once()->andReturn(false);
+        $config->shouldReceive('getTweakwiseExceptionThrown')->once()->andReturn(false);
 
         $httpRequest = Mockery::mock(RequestInterface::class);
         $httpRequest->shouldReceive('getParam')->once()->with('p', 1)->andReturn(8);
@@ -165,7 +172,8 @@ class CatalogLastPageRedirectTest extends Unit
         $subject = new CatalogSearchLastPageRedirect(
             $config,
             $this->createNavigationContext(0, 0, 8),
-            $actionContext
+            $actionContext,
+            Mockery::mock(LoggerInterface::class)
         );
         $subject->execute(new Observer());
     }

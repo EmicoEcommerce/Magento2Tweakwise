@@ -19,6 +19,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Request\Recommendations\FeaturedReq
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Config\TemplateFinder;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Block\Product\Context as ProductContext;
 use Magento\Catalog\Block\Product\ListProduct;
 use Magento\Catalog\Model\Category;
@@ -120,8 +121,12 @@ class Featured extends ListProduct
      */
     public function getTemplate()
     {
-        if (!$this->cacheHelper->personalMerchandisingCanBeApplied() || $this->cacheHelper->isHyvaTheme()) {
+        if (!$this->cacheHelper->shouldUseMerchandisingListing()) {
             return parent::getTemplate();
+        }
+
+        if ($this->cacheHelper->isHyvaTheme()) {
+            return $this->getHyvaTemplate() ?? parent::getTemplate();
         }
 
         return 'Tweakwise_Magento2Tweakwise::product/list/items.phtml';
@@ -154,8 +159,13 @@ class Featured extends ListProduct
             $this->setData('view_model', $this->preparePostDataFactory->getPreparePostData());
         }
 
-        if ($this->cacheHelper->personalMerchandisingCanBeApplied()) {
-            $this->setData('view_model_linked_product_list_item', $this->linkedProductListItemViewModel);
+        if ($this->cacheHelper->shouldUseMerchandisingListing()) {
+            // The widget has no layout, the featured block on the category page gets these from the layout
+            if (!$this->getData('view_model_linked_product_list_item')) {
+                $this->setData('view_model_linked_product_list_item', $this->linkedProductListItemViewModel);
+            }
+
+            $this->addItemRendererBlocks();
         }
 
         try {
@@ -165,6 +175,40 @@ class Featured extends ListProduct
         }
 
         return parent::toHtml();
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getHyvaTemplate(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * The widget can be placed on any page, so the blocks that render the items might not be in the layout.
+     *
+     * @return void
+     */
+    private function addItemRendererBlocks(): void
+    {
+        $layout = $this->getLayout();
+        $blocks = [
+            'tweakwise.catalog.linked.product.list.item' => 'Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml',
+            'tweakwise.catalog.product.list.visual' => 'Tweakwise_Magento2Tweakwise::product/list/visual.phtml',
+        ];
+
+        if ($this->cacheHelper->isHyvaTheme()) {
+            $blocks = ['tweakwise.catalog.product.list.visual' => 'Tweakwise_TweakwiseHyva::product/list/visual.phtml'];
+        }
+
+        foreach ($blocks as $name => $template) {
+            if ($layout->getBlock($name)) {
+                continue;
+            }
+
+            $layout->createBlock(AbstractProduct::class, $name, ['data' => ['template' => $template]]);
+        }
     }
 
     /**
@@ -178,8 +222,14 @@ class Featured extends ListProduct
                     ->addFieldToFilter('entity_id', ['null' => true]);
             } else {
                 $this->configureRequest($this->recommendationsContext->getRequest());
-                $this->_productCollection = $this->recommendationsContext
-                    ->getCollection();
+
+                try {
+                    $this->_productCollection = $this->recommendationsContext->getCollection();
+                } catch (ApiException $e) {
+                    $this->_productCollection = parent::_getProductCollection()
+                        ->addFieldToFilter('entity_id', ['null' => true]);
+                    return $this->_productCollection;
+                }
 
                 if ($this->_productCollection->getSize() > 0) {
                     $this->impressionCollector->add($this->recommendationsContext->getTweakwiseRequestId());

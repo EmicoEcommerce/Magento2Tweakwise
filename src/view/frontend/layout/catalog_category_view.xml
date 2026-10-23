@@ -16,11 +16,13 @@
                    template="Magento_Catalog::product/list/items.phtml">
                 <arguments>
                     <argument name="type" xsi:type="string">new</argument>
+                    <argument name="view_model_linked_product_list_item" xsi:type="object">
+                        Tweakwise\Magento2Tweakwise\ViewModel\LinkedProductListItem
+                    </argument>
                 </arguments>
                 <block class="Magento\Catalog\Block\Product\AbstractProduct"
                        name="tweakwise.catalog.linked.product.list.item"
-                       template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"
-                       ifconfig="tweakwise/merchandising_builder/personal_merchandising/enabled"/>
+                       template="Tweakwise_Magento2Tweakwise::product/list/linked-item.phtml"/>
             </block>
         </referenceContainer>
         <referenceBlock name="tweakwise.analytics">

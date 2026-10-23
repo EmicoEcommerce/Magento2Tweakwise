@@ -32,4 +32,31 @@ class DiXmlTest extends Unit
         $this->assertSame('false', (string) $upsellContexts[0]->attributes()->shared);
         $this->assertSame('false', (string) $relatedContexts[0]->attributes()->shared);
     }
+
+    public function testAllCategoryLayerContextsUseTweakwiseCollectionProvider(): void
+    {
+        $configReflection = new ReflectionClass(Config::class);
+        $diXmlPath = dirname((string) $configReflection->getFileName(), 2) . '/etc/di.xml';
+        $document = simplexml_load_file($diXmlPath);
+
+        $this->assertNotFalse($document);
+
+        $contextNames = [
+            'Magento\Catalog\Model\Layer\Category\Context',
+            'Magento\CatalogSearch\Model\Layer\Category\Context',
+            'Magento\Elasticsearch\Model\Layer\Category\Context',
+        ];
+
+        foreach ($contextNames as $contextName) {
+            $contexts = $document->xpath(
+                sprintf('/config/virtualType[@name="%s"]/arguments/argument[@name="collectionProvider"]', $contextName)
+            );
+
+            $this->assertCount(1, $contexts, sprintf('Missing category context override for %s', $contextName));
+            $this->assertSame(
+                'Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\ItemCollectionProvider\Category',
+                trim((string) $contexts[0])
+            );
+        }
+    }
 }

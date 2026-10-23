@@ -106,4 +106,34 @@ class ItemTypeTest extends Unit
 
         $this->assertSame(['material' => 'cotton'], $item->getAttributeValues());
     }
+
+    /**
+     * @return void
+     */
+    public function testGetUrlAndImageReturnEmptyStringForEmptyXmlElements(): void
+    {
+        /** @var ItemType $item */
+        $item = $this->tester->getObjectManager()->create(
+            ItemType::class,
+            ['data' => [ItemType::URL => [], ItemType::IMAGE => []]]
+        );
+
+        $this->assertSame('', $item->getUrl());
+        $this->assertSame('', $item->getImage());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetUrlAndImageReturnStringValues(): void
+    {
+        /** @var ItemType $item */
+        $item = $this->tester->getObjectManager()->create(
+            ItemType::class,
+            ['data' => [ItemType::URL => 'https://example.com', ItemType::IMAGE => 'a.jpg']]
+        );
+
+        $this->assertSame('https://example.com', $item->getUrl());
+        $this->assertSame('a.jpg', $item->getImage());
+    }
 }

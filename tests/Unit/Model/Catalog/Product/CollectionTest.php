@@ -19,6 +19,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\ItemType as ClientItemType;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Visual;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Product\VisualBuilder;
 use Tweakwise\Magento2Tweakwise\Model\VisualFactory;
 
 class CollectionTest extends Unit
@@ -58,7 +59,7 @@ class CollectionTest extends Unit
 
         $subject = $this->createSubject();
         $this->setProperty($subject, 'navigationContext', $navigationContext);
-        $this->setProperty($subject, 'visualFactory', $visualFactory);
+        $this->setProperty($subject, 'visualBuilder', new VisualBuilder($visualFactory));
         $this->setProperty($subject, '_items', []);
 
         $addVisuals = new ReflectionMethod(Collection::class, 'addVisuals');

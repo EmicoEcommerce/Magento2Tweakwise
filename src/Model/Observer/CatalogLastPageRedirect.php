@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
 use Exception;
+use Throwable;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Psr\Log\LoggerInterface;
@@ -119,7 +120,7 @@ class CatalogLastPageRedirect implements ObserverInterface
         $response->setRedirect($url);
     }
 
-    private function handleTweakwiseException(TweakwiseExceptionInterface $exception): void
+    private function handleTweakwiseException(TweakwiseExceptionInterface&Throwable $exception): void
     {
         if ($exception instanceof ApiException && $exception->getCode() === 404) {
             return;

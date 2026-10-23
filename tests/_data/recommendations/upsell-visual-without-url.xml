@@ -1,0 +1,54 @@
+<recommendations xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <recommendation>
+    <id>29</id>
+    <name>Seasonal campaign</name>
+    <items>
+      <item>
+        <type>visual</type>
+        <itemno>visual-a</itemno>
+        <title>Visual visual-a</title>
+        <brand />
+        <price>0</price>
+        <url />
+        <image>https://example.com/media/wysiwyg/a.jpg</image>
+        <attributes />
+        <visualproperties>
+          <colspan>1</colspan>
+          <rowspan>1</rowspan>
+        </visualproperties>
+        <origin>
+          <type>content-merchandising</type>
+          <name>visual</name>
+        </origin>
+      </item>
+      <item>
+        <type>product</type>
+        <itemno>{{PRODUCT_1}}</itemno>
+        <title>Product 1</title>
+        <brand />
+        <price>10</price>
+        <url>https://example.com/product-1</url>
+        <image>https://example.com/media/catalog/product/1.jpg</image>
+        <attributes />
+        <visualproperties>
+          <colspan>1</colspan>
+          <rowspan>1</rowspan>
+        </visualproperties>
+      </item>
+      <item>
+        <type>product</type>
+        <itemno>{{PRODUCT_2}}</itemno>
+        <title>Product 2</title>
+        <brand />
+        <price>10</price>
+        <url>https://example.com/product-2</url>
+        <image>https://example.com/media/catalog/product/2.jpg</image>
+        <attributes />
+        <visualproperties>
+          <colspan>1</colspan>
+          <rowspan>1</rowspan>
+        </visualproperties>
+      </item>
+    </items>
+  </recommendation>
+</recommendations>

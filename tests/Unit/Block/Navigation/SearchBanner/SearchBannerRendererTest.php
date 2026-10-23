@@ -17,21 +17,31 @@ use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 
 class SearchBannerRendererTest extends Unit
 {
-    public function testUnreachableApiOmitsSearchBanners(): void
+    /**
+     * @dataProvider failureCodes
+     */
+    public function testUnreachableApiOmitsSearchBanners(int $code): void
     {
         $context = Mockery::mock(NavigationContext::class);
         $context->shouldReceive('showSearchBanners')->andReturn(true);
-        $context->shouldReceive('getResponse')->once()->andThrow(new ApiException('Gateways unreachable'));
+        $context->shouldReceive('getResponse')->times($code === 404 ? 3 : 1)
+            ->andThrow(new ApiException('Gateways unreachable', $code));
         $currentContext = new CurrentContext();
         $currentContext->setContext($context);
         $navigationConfig = Mockery::mock(NavigationConfig::class);
         $navigationConfig->shouldReceive('getNavigationContext')->andReturn($currentContext);
 
         $config = Mockery::mock(Config::class);
-        $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(false, true, true);
-        $config->shouldReceive('setTweakwiseExceptionThrown')->once();
         $logger = Mockery::mock(LoggerInterface::class);
-        $logger->shouldReceive('critical')->once()->with('Gateways unreachable');
+        if ($code === 404) {
+            $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(false);
+            $config->shouldNotReceive('setTweakwiseExceptionThrown');
+            $logger->shouldNotReceive('critical');
+        } else {
+            $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(false, true, true);
+            $config->shouldReceive('setTweakwiseExceptionThrown')->once();
+            $logger->shouldReceive('critical')->once()->with('Gateways unreachable');
+        }
 
         $block = new SearchBannerRenderer(
             Mockery::mock(TemplateContext::class)->shouldIgnoreMissing(),
@@ -44,5 +54,10 @@ class SearchBannerRendererTest extends Unit
         $this->assertSame([], $block->getContainerTopBanner());
         $this->assertSame([], $block->getListTopBanner());
         $this->assertSame([], $block->getProductsTopBanner());
+    }
+
+    public static function failureCodes(): array
+    {
+        return [[0], [404]];
     }
 }

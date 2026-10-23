@@ -23,7 +23,10 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class SuggestionDataProviderTest extends Unit
 {
-    public function testRejectedSuggestionRequestsReturnNoItemsAndDisableFurtherRequests(): void
+    /**
+     * @dataProvider failureCodes
+     */
+    public function testRejectedSuggestionRequestsReturnNoItemsAndDisableFurtherRequests(int $code): void
     {
         $helper = Mockery::mock(DataProviderHelper::class);
         $helper->shouldReceive('getQuery')->once()->andReturn('query');
@@ -33,7 +36,11 @@ class SuggestionDataProviderTest extends Unit
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(false);
         $config->shouldReceive('getPersonalMerchandisingCookieName')->once()->andReturn('cookie');
-        $config->shouldReceive('setTweakwiseExceptionThrown')->once();
+        if ($code === 404) {
+            $config->shouldNotReceive('setTweakwiseExceptionThrown');
+        } else {
+            $config->shouldReceive('setTweakwiseExceptionThrown')->once();
+        }
 
         $cookieManager = Mockery::mock(CookieManagerInterface::class);
         $cookieManager->shouldReceive('getCookie')->once()->with('cookie', null)->andReturn(null);
@@ -47,12 +54,16 @@ class SuggestionDataProviderTest extends Unit
 
         $client = Mockery::mock(Client::class);
         $client->shouldReceive('request')->twice()->andReturn(
-            new RejectedPromise(new ApiException('Tweakwise API is unavailable')),
+            new RejectedPromise(new ApiException('Tweakwise API is unavailable', $code)),
             new FulfilledPromise(new stdClass())
         );
 
         $logger = Mockery::mock(LoggerInterface::class);
-        $logger->shouldReceive('critical')->once()->with('Tweakwise API is unavailable');
+        if ($code === 404) {
+            $logger->shouldNotReceive('critical');
+        } else {
+            $logger->shouldReceive('critical')->once()->with('Tweakwise API is unavailable');
+        }
 
         $provider = new SuggestionDataProvider(
             $config,
@@ -68,6 +79,11 @@ class SuggestionDataProviderTest extends Unit
         );
 
         $this->assertSame([], $provider->getItems());
+    }
+
+    public static function failureCodes(): array
+    {
+        return [[0], [404]];
     }
 
     private function createRequest(): Request

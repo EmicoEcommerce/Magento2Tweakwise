@@ -13,6 +13,7 @@ use Exception;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
@@ -87,6 +88,10 @@ class CatalogLastPageRedirect implements ObserverInterface
             // @phpstan-ignore-next-line
             $properties = $this->context->getResponse()->getProperties();
         } catch (TweakwiseExceptionInterface $e) {
+            if ($e instanceof ApiException && $e->getCode() === 404) {
+                return;
+            }
+
             $this->logger->critical($e->getMessage());
             $this->config->setTweakwiseExceptionThrown();
 

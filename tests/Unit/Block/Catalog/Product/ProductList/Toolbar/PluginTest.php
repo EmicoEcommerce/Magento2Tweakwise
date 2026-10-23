@@ -43,20 +43,31 @@ class PluginTest extends Unit
         $this->assertSame(['position' => 'Position'], $result);
     }
 
-    public function testAvailableOrdersFallBackWhenNavigationRequestFails(): void
+    /**
+     * @dataProvider failureCodes
+     */
+    public function testAvailableOrdersFallBackWhenNavigationRequestFails(int $code): void
     {
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('isLayeredEnabled')->andReturn(false);
         $config->shouldReceive('isSearchEnabled')->andReturn(true);
         $config->shouldReceive('getTweakwiseExceptionThrown')->andReturn(false);
-        $config->shouldReceive('setTweakwiseExceptionThrown')->once();
+        if ($code === 404) {
+            $config->shouldNotReceive('setTweakwiseExceptionThrown');
+        } else {
+            $config->shouldReceive('setTweakwiseExceptionThrown')->once();
+        }
 
         $context = Mockery::mock(CurrentContext::class);
         $context->shouldReceive('getRequest')->andReturn(Mockery::mock(ProductSearchRequest::class));
-        $context->shouldReceive('getResponse')->andThrow(new ApiException('Tweakwise API is unavailable'));
+        $context->shouldReceive('getResponse')->andThrow(new ApiException('Tweakwise API is unavailable', $code));
 
         $logger = Mockery::mock(LoggerInterface::class);
-        $logger->shouldReceive('critical')->once();
+        if ($code === 404) {
+            $logger->shouldNotReceive('critical');
+        } else {
+            $logger->shouldReceive('critical')->once();
+        }
 
         $plugin = new Plugin(
             $config,
@@ -72,5 +83,10 @@ class PluginTest extends Unit
         );
 
         $this->assertSame(['position' => 'Position'], $result);
+    }
+
+    public static function failureCodes(): array
+    {
+        return [[0], [404]];
     }
 }

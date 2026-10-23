@@ -13,6 +13,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
@@ -98,6 +99,10 @@ class SearchBannerRenderer extends Template
             try {
                 $response = $navigationContext->getResponse();
             } catch (TweakwiseExceptionInterface $e) {
+                if ($e instanceof ApiException && $e->getCode() === 404) {
+                    return [];
+                }
+
                 $this->logger->critical($e->getMessage());
                 $this->config->setTweakwiseExceptionThrown();
 

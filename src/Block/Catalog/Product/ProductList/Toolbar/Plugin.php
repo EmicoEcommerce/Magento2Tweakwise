@@ -14,6 +14,7 @@ use Exception;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
@@ -82,6 +83,10 @@ class Plugin
         try {
             $response = $this->context->getResponse();
         } catch (TweakwiseExceptionInterface $e) {
+            if ($e instanceof ApiException && $e->getCode() === 404) {
+                return $proceed();
+            }
+
             $this->logger->critical($e->getMessage());
             $this->config->setTweakwiseExceptionThrown();
 

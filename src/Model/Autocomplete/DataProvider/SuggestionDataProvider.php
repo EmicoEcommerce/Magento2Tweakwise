@@ -17,6 +17,7 @@ use GuzzleHttp\Promise\Utils;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Search\Model\Autocomplete\ItemInterface;
 use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionBlockItemFactory;
 
@@ -129,6 +130,10 @@ class SuggestionDataProvider implements DataProviderInterface
 
             $responses = Utils::unwrap($promises);
         } catch (TweakwiseExceptionInterface $e) {
+            if ($e instanceof ApiException && $e->getCode() === 404) {
+                return [];
+            }
+
             $this->logger->critical($e->getMessage());
             $this->config->setTweakwiseExceptionThrown();
 

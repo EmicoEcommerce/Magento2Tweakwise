@@ -35,13 +35,20 @@ class CatalogLastPageRedirectTest extends Unit
         Mockery::close();
     }
 
-    public function testInitialApiFailureDoesNotAbortPaginatedPage(): void
+    /**
+     * @dataProvider failureCodes
+     */
+    public function testInitialApiFailureDoesNotAbortPaginatedPage(int $code): void
     {
         $this->expectNotToPerformAssertions();
 
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('getTweakwiseExceptionThrown')->once()->andReturn(false);
-        $config->shouldReceive('setTweakwiseExceptionThrown')->once();
+        if ($code === 404) {
+            $config->shouldNotReceive('setTweakwiseExceptionThrown');
+        } else {
+            $config->shouldReceive('setTweakwiseExceptionThrown')->once();
+        }
 
         $request = Mockery::mock(RequestInterface::class);
         $request->shouldReceive('getParam')->once()->with('p', 1)->andReturn(8);
@@ -56,12 +63,21 @@ class CatalogLastPageRedirectTest extends Unit
 
         $navigationContext = Mockery::mock(NavigationContext::class);
         $navigationContext->shouldReceive('getResponse')->once()
-            ->andThrow(new ApiException('Both gateways are unreachable'));
+            ->andThrow(new ApiException('Both gateways are unreachable', $code));
         $logger = Mockery::mock(LoggerInterface::class);
-        $logger->shouldReceive('critical')->once()->with('Both gateways are unreachable');
+        if ($code === 404) {
+            $logger->shouldNotReceive('critical');
+        } else {
+            $logger->shouldReceive('critical')->once()->with('Both gateways are unreachable');
+        }
 
         $subject = new CatalogLastPageRedirect($config, $navigationContext, $actionContext, $logger);
         $subject->execute(new Observer());
+    }
+
+    public static function failureCodes(): array
+    {
+        return [[0], [404]];
     }
 
     public function testExecuteDoesNotCreateNavigationResponseOnFirstPage(): void

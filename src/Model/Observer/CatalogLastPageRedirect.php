@@ -88,13 +88,7 @@ class CatalogLastPageRedirect implements ObserverInterface
             // @phpstan-ignore-next-line
             $properties = $this->context->getResponse()->getProperties();
         } catch (TweakwiseExceptionInterface $e) {
-            if ($e instanceof ApiException && $e->getCode() === 404) {
-                return;
-            }
-
-            $this->logger->critical($e->getMessage());
-            $this->config->setTweakwiseExceptionThrown();
-
+            $this->handleTweakwiseException($e);
             return;
         }
 
@@ -123,6 +117,16 @@ class CatalogLastPageRedirect implements ObserverInterface
         );
 
         $response->setRedirect($url);
+    }
+
+    private function handleTweakwiseException(TweakwiseExceptionInterface $exception): void
+    {
+        if ($exception instanceof ApiException && $exception->getCode() === 404) {
+            return;
+        }
+
+        $this->logger->critical($exception->getMessage());
+        $this->config->setTweakwiseExceptionThrown();
     }
 
     /**

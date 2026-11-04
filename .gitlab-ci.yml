@@ -30,8 +30,15 @@ magento-module/test/js:
   image: node:24-alpine
   stage: test
   needs: []
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
   script:
-    - node --test tests/js/navigation-form.test.js
+    - npm ci --cache .npm --prefer-offline --no-audit --no-fund
+    - npm test
 
 release:
   rules:

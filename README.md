@@ -126,9 +126,10 @@ php bin/magento tweakwise:regenerate-filter-urls
 ```
 
 ## JavaScript regression tests
-The navigation form tests use the Node.js built-in test runner (Node.js 18 or newer), with no additional dependencies. Run from this module's directory:
+The navigation form tests use Jest with Node.js 24 or newer. Run from this module's directory:
 ```sh
-node --test tests/js/navigation-form.test.js
+npm ci
+npm test
 ```
 
 ## Support

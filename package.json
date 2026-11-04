@@ -1,0 +1,20 @@
+{
+    "name": "magento2-tweakwise-frontend-tests",
+    "private": true,
+    "description": "Jest regression tests for Tweakwise layered navigation",
+    "scripts": {
+        "test": "jest"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "roots": [
+            "<rootDir>/tests/js"
+        ]
+    },
+    "engines": {
+        "node": ">=24"
+    },
+    "devDependencies": {
+        "jest": "^30.5.2"
+    }
+}

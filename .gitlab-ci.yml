@@ -26,6 +26,13 @@ magento-module/test/functional:
     MIN_PHP_VERSION: '8.2'
     DISABLE_DEPENDENCY_AUDIT: "true"
 
+magento-module/test/js:
+  image: node:24-alpine
+  stage: test
+  needs: []
+  script:
+    - node --test tests/js/navigation-form.test.js
+
 release:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

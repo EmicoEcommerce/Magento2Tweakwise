@@ -34,7 +34,7 @@ define([
 
         currentXhr: null,
         currentCountXhr: null,
-        deletedFilters: [],
+        formParameterNames: [],
         originalCanonical: null,
 
         _create: function () {
@@ -209,7 +209,17 @@ define([
          * @private
          */
         _getFilterParameters: function () {
-            var serializedData = this.element.find(':not(.js-skip-submit)').serialize();
+            const inputs = this.element.find(':input:not(.js-skip-submit)');
+            const parameterNames = new Set();
+            inputs.each((index, input) => {
+                if (input.name) {
+                    parameterNames.add(input.name.replace(/\[.*$/, ''));
+                }
+            });
+            // Capture ownership before the response replaces the form, including unchecked and disabled inputs.
+            this.formParameterNames = [...parameterNames];
+
+            var serializedData = inputs.serialize();
             let params = new URLSearchParams(serializedData);
 
             let keysForDel = [];
@@ -218,8 +228,6 @@ define([
                     keysForDel.push(key);
                 }
             });
-
-            this.deletedFilters = keysForDel;
 
             //remove empty parameters
             keysForDel.forEach(key => {
@@ -512,6 +520,12 @@ define([
             const resultUrl = new URL(response.url, baseUrl);
             const queryParams = new URLSearchParams(window.location.search ?? '');
 
+            for (const key of [...queryParams.keys()]) {
+                if (this.formParameterNames.includes(key.replace(/\[.*$/, ''))) {
+                    queryParams.delete(key);
+                }
+            }
+
             if (!resultUrl.searchParams.has('p')) {
                 queryParams.delete('p');
             }
@@ -553,23 +567,11 @@ define([
          * @private
          */
         _combineQueryStrings: function (origQueryString, responseQueryString) {
-            const uniqueQueryParams = new URLSearchParams();
-
-            origQueryString.forEach((value, key) => {
-                if (false === uniqueQueryParams.has(key)) {
-                    uniqueQueryParams.append(key, value);
-                }
-            });
+            const uniqueQueryParams = new URLSearchParams(origQueryString);
 
             responseQueryString.forEach((value, key) => {
-                if (false === uniqueQueryParams.has(key)) {
+                if (false === origQueryString.has(key)) {
                     uniqueQueryParams.append(key, value);
-                }
-            });
-
-            uniqueQueryParams.forEach((value, key) => {
-                if (this.deletedFilters.includes(key)) {
-                    uniqueQueryParams.delete(key);
                 }
             });
 

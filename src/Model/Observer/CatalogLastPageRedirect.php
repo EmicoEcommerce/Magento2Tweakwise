@@ -10,7 +10,12 @@
 namespace Tweakwise\Magento2Tweakwise\Model\Observer;
 
 use Exception;
+use Throwable;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Observer;
+use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Magento\Framework\App\Action\Context;
@@ -35,16 +40,27 @@ class CatalogLastPageRedirect implements ObserverInterface
     protected $actionContext;
 
     /**
+     * @var LoggerInterface
+     */
+    private readonly LoggerInterface $logger;
+
+    /**
      * CatalogSearchRedirect constructor.
      * @param Config $config
      * @param NavigationContext $context
      * @param Context $actionContext
+     * @param LoggerInterface|null $logger
      */
-    public function __construct(Config $config, NavigationContext $context, Context $actionContext)
-    {
+    public function __construct(
+        Config $config,
+        NavigationContext $context,
+        Context $actionContext,
+        ?LoggerInterface $logger = null
+    ) {
         $this->config = $config;
         $this->context = $context;
         $this->actionContext = $actionContext;
+        $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
@@ -64,13 +80,19 @@ class CatalogLastPageRedirect implements ObserverInterface
             return;
         }
 
-        if ($this->config->getTweakwiseExceptionTrown()) {
+        if ($this->config->getTweakwiseExceptionThrown()) {
             //no api response
             return;
         }
 
-        // @phpstan-ignore-next-line
-        $properties = $this->context->getResponse()->getProperties();
+        try {
+            // @phpstan-ignore-next-line
+            $properties = $this->context->getResponse()->getProperties();
+        } catch (TweakwiseExceptionInterface $e) {
+            $this->handleTweakwiseException($e);
+            return;
+        }
+
         $numberOfItems = $properties->getNumberOfItems();
         if ($numberOfItems === 0) {
             $lastPage = $this->getLastPageForEmptyResults();
@@ -96,6 +118,16 @@ class CatalogLastPageRedirect implements ObserverInterface
         );
 
         $response->setRedirect($url);
+    }
+
+    private function handleTweakwiseException(TweakwiseExceptionInterface&Throwable $exception): void
+    {
+        if ($exception instanceof ApiException && $exception->getCode() === 404) {
+            return;
+        }
+
+        $this->logger->critical($exception->getMessage());
+        $this->config->setTweakwiseExceptionThrown();
     }
 
     /**

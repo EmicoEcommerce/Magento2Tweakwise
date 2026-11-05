@@ -25,6 +25,29 @@ Below is a rundown of all configuration options
 4) Internal traffic IP addresses: Comma-separated list of IP addresses that should be tagged as internal traffic. When a visitor's IP matches one of the configured addresses, all Tweakwise API requests triggered by that visit will include a `TWN-Source: Internal-Traffic` header. This allows you to filter out internal traffic (e.g. employees, testers) from Tweakwise Analytics reports. See [Tweakwise docs](https://docs.tweakwise.com/reference/identify-requests-as-internal-traffic) for details.
 5) Grouped products: Enable this after the grouped export has been enabled and imported in tweakwise. This wil enable filtering based on variant data and enabled the product image to be controlled by tweakwise so that the correct color is shown based on selected filters. This requires the image url in tweakwise to be configured correctly. If this is not enabled and you've exported grouped products the catalog may be empty.
 6) Language: The language used by the store, passed to Tweakwise to determine word conjugations and spelling corrections in search results.
+7) API request timeout: Maximum duration of one gateway request in seconds (`tweakwise/general/timeout`, default 5). Previously this configuration path was ignored; existing explicitly saved values now take effect.
+8) API connection timeout: Maximum time to establish a connection in seconds (`tweakwise/general/connect_timeout`, default 1), also bounded by the request timeout. Both timeout values must be positive integers.
+
+#### API outage fallback
+On a connection failure the primary gateway is skipped for five minutes, and the
+request is retried on the fallback gateway at most once. Each asynchronous request
+tracks the gateway it actually contacted, so concurrent requests cannot restart
+the primary retry loop.
+
+If the fallback connection also fails, a shared 30-second cooldown prevents new
+page requests from contacting that gateway until the cooldown expires. The next
+request then probes it again; the primary becomes eligible after its own
+five-minute cooldown. These timers use Magento custom variables and are shared
+across PHP workers. The first failing page still waits for the configured
+deadlines (up to two request timeouts); a connection deadline alone does not
+bound a server that connects but never responds.
+
+For the rest of a failed page request, new API requests are skipped. Navigation
+and search use Magento's original collection provider, optional search banners
+and suggestions are omitted, and recommendation blocks use their existing native
+fallback. Rendering an analytics request ID never initiates a navigation API
+request. Magento's native search engine and indexers must be configured and
+healthy for native search fallback to return products.
 
 #### Layered Navigation (All settings depend on Enabled having value yes):
 1) Enabled: Use tweakwise results in navigation, if disabled the standard magento navigation is used. Don't disable the anchor tag on main categories, this causes al products to be shown. The anchor tag can be disabled on sub-categories.

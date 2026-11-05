@@ -54,10 +54,10 @@ class Config
     public const ATTRIBUTE_FILTER_VALUES_WHITELIST = 'tweakwise_filter_values_whitelist';
 
     /**
-     * @deprecated
-     * @see Client::REQUEST_TIMEOUT
+     * Default API request timeout in seconds.
      */
     public const REQUEST_TIMEOUT = 5;
+    public const CONNECT_TIMEOUT = 1;
 
     /**
      * @deprecated
@@ -154,12 +154,27 @@ class Config
     }
 
     /**
+     * Returns whether a Tweakwise exception has occurred during this request.
+     *
+     * @return bool
+     * @SuppressWarnings("PHPMD.BooleanGetMethodName")
+     */
+    public function getTweakwiseExceptionThrown(): bool
+    {
+        return $this->tweakwiseExceptionThrown;
+    }
+
+    /**
+     * Returns whether a Tweakwise exception has occurred during this request.
+     *
+     * @deprecated This method is misspelled; use getTweakwiseExceptionThrown().
+     * @see self::getTweakwiseExceptionThrown()
      * @return bool
      * @SuppressWarnings("PHPMD.BooleanGetMethodName")
      */
     public function getTweakwiseExceptionTrown()
     {
-        return $this->tweakwiseExceptionThrown;
+        return $this->getTweakwiseExceptionThrown();
     }
 
     /**
@@ -195,13 +210,37 @@ class Config
     }
 
     /**
-     * @deprecated
-     * @see \Tweakwise\Magento2Tweakwise\Model\Client::REQUEST_TIMEOUT
+     * Returns the configured request timeout or its default.
+     *
+     * @see self::REQUEST_TIMEOUT
      * @return int
      */
     public function getTimeout()
     {
-        return Client::REQUEST_TIMEOUT;
+        return $this->getPositiveTimeout('tweakwise/general/timeout', self::REQUEST_TIMEOUT);
+    }
+
+    /**
+     * Returns the configured connection timeout or its default.
+     *
+     * @return int
+     */
+    public function getConnectTimeout(): int
+    {
+        return $this->getPositiveTimeout('tweakwise/general/connect_timeout', self::CONNECT_TIMEOUT);
+    }
+
+    /**
+     * Returns a positive configured timeout, or the supplied default.
+     */
+    private function getPositiveTimeout(string $path, int $default): int
+    {
+        $value = $this->getStoreConfig($path);
+        if (filter_var($value, FILTER_VALIDATE_INT) === false || (int)$value < 1) {
+            return $default;
+        }
+
+        return (int)$value;
     }
 
     /**

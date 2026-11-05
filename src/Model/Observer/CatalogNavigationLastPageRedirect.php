@@ -6,6 +6,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
+use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
@@ -16,14 +17,16 @@ class CatalogNavigationLastPageRedirect extends CatalogLastPageRedirect
      * @param NavigationContext $context
      * @param Context $actionContext
      * @param Registry $registry
+     * @param LoggerInterface|null $logger
      */
     public function __construct(
         Config $config,
         NavigationContext $context,
         Context $actionContext,
-        private readonly Registry $registry
+        private readonly Registry $registry,
+        ?LoggerInterface $logger = null
     ) {
-        parent::__construct($config, $context, $actionContext);
+        parent::__construct($config, $context, $actionContext, $logger);
     }
 
     /**

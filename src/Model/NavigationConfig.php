@@ -2,7 +2,6 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
-use InvalidArgumentException;
 use Tweakwise\Magento2Tweakwise\Block\LayeredNavigation\RenderLayered\SliderRenderer;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\FilterFormInputProvider\FilterFormInputProviderInterface;
@@ -96,14 +95,12 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
 
     /**
      * @return array|string[]
-     * @throws InvalidArgumentException
      */
     public function getFilterFormInput(): array
     {
-        //check request for modified values
+        //form is modified, don't render the tweakwise system parameters. Should only happen in an xss attack
         if (!$this->hashInputProvider->validateHash($this->request)) {
-            //form is modified, don't accept the request. Should only happen in an xss attack
-            throw new InvalidArgumentException('Incorrect/modified form parameters');
+            return [];
         }
 
         $filterFormInput = $this->filterFormInputProvider->getFilterFormInput();

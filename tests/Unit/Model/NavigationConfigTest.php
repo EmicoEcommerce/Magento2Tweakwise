@@ -97,4 +97,35 @@ class NavigationConfigTest extends Unit
         $this->assertSame('request-123', $decoded['tweakwiseNavigationForm']['twRequestId']);
         $this->assertSame('queryparameter', $decoded['tweakwiseNavigationForm']['urlStrategy']);
     }
+
+    public function testFilterFormInputIsEmptyWhenHashIsInvalid(): void
+    {
+        $this->hashInputProvider->shouldReceive('validateHash')->with($this->request)->andReturn(false);
+        $this->filterFormInputProvider->shouldNotReceive('getFilterFormInput');
+
+        $this->assertSame([], $this->createSubject()->getFilterFormInput());
+    }
+
+    public function testFilterFormInputOmitsPageParameterWhenHashIsValid(): void
+    {
+        $this->hashInputProvider->shouldReceive('validateHash')->with($this->request)->andReturn(true);
+        $this->filterFormInputProvider->shouldReceive('getFilterFormInput')
+            ->andReturn(['__tw_ajax_type' => 'category', 'p' => '2']);
+
+        $this->assertSame(['__tw_ajax_type' => 'category'], $this->createSubject()->getFilterFormInput());
+    }
+
+    private function createSubject(): NavigationConfig
+    {
+        return new NavigationConfig(
+            $this->config,
+            $this->url,
+            $this->currentContext,
+            $this->productMetadata,
+            $this->filterFormInputProvider,
+            $this->jsonSerializer,
+            $this->request,
+            $this->hashInputProvider,
+        );
+    }
 }

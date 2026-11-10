@@ -99,6 +99,11 @@ class Tweakwise
     protected function initFilters(Layer $layer)
     {
         $request = $this->context->getRequest();
+        if ($request instanceof ProductSearchRequest && !$request->hasParameter('tn_q')) {
+            $this->filters = [];
+            return;
+        }
+
         if (!$request->hasParameter('tn_cid')) {
             // @phpstan-ignore-next-line
             $request->addCategoryFilter($this->getCurrentCategory($layer));

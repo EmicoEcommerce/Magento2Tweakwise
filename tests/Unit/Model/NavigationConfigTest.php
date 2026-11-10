@@ -99,10 +99,11 @@ class NavigationConfigTest extends Unit
         $this->assertSame('queryparameter', $decoded['tweakwiseNavigationForm']['urlStrategy']);
     }
 
-    public function testInvalidHashKeepsNonSystemInputAndDisablesAjax(): void
+    public function testInvalidHashKeepsNonSystemInputAndDisablesAjaxAndFormFilters(): void
     {
         $this->hashInputProvider->shouldReceive('validateHash')->with($this->request)->andReturn(false);
         $this->config->shouldReceive('isAjaxFilters')->andReturn(true);
+        $this->config->shouldReceive('isFormFilters')->andReturn(true);
         $this->filterFormInputProvider->shouldReceive('getFilterFormInput')->andReturn([
             'q' => 'shoe',
             '__tw_ajax_type' => 'search',
@@ -114,6 +115,7 @@ class NavigationConfigTest extends Unit
 
         $this->assertSame(['q' => 'shoe'], $subject->getFilterFormInput());
         $this->assertFalse($subject->isAjaxFilters());
+        $this->assertFalse($subject->isFormFilters());
     }
 
     public function testFilterFormInputOmitsPageParameterWhenHashIsValid(): void

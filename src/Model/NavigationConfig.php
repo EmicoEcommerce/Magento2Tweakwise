@@ -215,7 +215,7 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
      */
     public function isFormFilters()
     {
-        return $this->config->isFormFilters();
+        return $this->config->isFormFilters() && $this->hashInputProvider->validateHash($this->request);
     }
 
     /**

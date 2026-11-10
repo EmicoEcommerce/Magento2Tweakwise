@@ -41,8 +41,8 @@ class CollectionTest extends Unit
         ]);
 
         $response = Mockery::mock(ProductNavigationResponse::class);
-        $response->shouldReceive('getProductIds')->never();
-        $response->shouldReceive('getItems')->twice()->andReturn([$visualItem]);
+        $response->shouldReceive('getProductIds')->once()->andReturn([0]);
+        $response->shouldReceive('getItems')->once()->andReturn([$visualItem]);
 
         $navigationContext = Mockery::mock(NavigationContext::class);
         $navigationContext->shouldReceive('getResponse')->once()->andReturn($response);
@@ -69,6 +69,86 @@ class CollectionTest extends Unit
         $items = $this->getProperty($subject, '_items');
         $this->assertCount(1, $items);
         $this->assertSame($visual, $items[0]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testAddVisualsUsesLoadedProductsToDeterminePositionInGroupedMode(): void
+    {
+        $responseItems = [
+            new ClientItemType([
+                ClientItemType::TYPE => 'product',
+                ClientItemType::ID => 100,
+                ClientItemType::TWEAKWISE_ID => 101,
+            ]),
+            new ClientItemType([
+                ClientItemType::TYPE => 'product',
+                ClientItemType::ID => 101,
+                ClientItemType::TWEAKWISE_ID => 101,
+            ]),
+            new ClientItemType([
+                ClientItemType::TYPE => 'product',
+                ClientItemType::ID => 200,
+                ClientItemType::TWEAKWISE_ID => 201,
+            ]),
+            new ClientItemType([
+                ClientItemType::TYPE => 'product',
+                ClientItemType::ID => 201,
+                ClientItemType::TWEAKWISE_ID => 201,
+            ]),
+            new ClientItemType([
+                ClientItemType::TYPE => 'visual',
+                ClientItemType::ID => 0,
+            ]),
+            new ClientItemType([
+                ClientItemType::TYPE => 'product',
+                ClientItemType::ID => 300,
+                ClientItemType::TWEAKWISE_ID => 301,
+            ]),
+            new ClientItemType([
+                ClientItemType::TYPE => 'product',
+                ClientItemType::ID => 301,
+                ClientItemType::TWEAKWISE_ID => 301,
+            ]),
+        ];
+
+        $response = Mockery::mock(ProductNavigationResponse::class);
+        $response->shouldReceive('getItems')->once()->andReturn($responseItems);
+        $response->shouldReceive('getProductIds')->once()->andReturn([100, 101, 200, 201, 0, 300, 301]);
+
+        $navigationContext = Mockery::mock(NavigationContext::class);
+        $navigationContext->shouldReceive('getResponse')->once()->andReturn($response);
+
+        $visual = Mockery::mock(VisualInterface::class);
+        $visual->shouldReceive('setId')->once()->with('0')->andReturnSelf();
+        $visual->shouldReceive('setData')->once()->with(ClientItemType::TWEAKWISE_ID, '0')->andReturnSelf();
+        $visual->shouldReceive('setImageUrl')->once()->with('')->andReturnSelf();
+        $visual->shouldReceive('setUrl')->once()->with('')->andReturnSelf();
+        $visual->shouldReceive('setVisualAttributes')->once()->with([])->andReturnSelf();
+
+        $visualFactory = Mockery::mock(VisualFactory::class);
+        $visualFactory->shouldReceive('create')->once()->andReturn($visual);
+
+        $firstProduct = Mockery::mock(Product::class);
+        $secondProduct = Mockery::mock(Product::class);
+        $thirdProduct = Mockery::mock(Product::class);
+
+        $subject = $this->createSubject();
+        $this->setProperty($subject, 'navigationContext', $navigationContext);
+        $this->setProperty($subject, 'visualBuilder', new VisualBuilder($visualFactory));
+        $this->setProperty($subject, '_items', [
+            100 => $firstProduct,
+            200 => $secondProduct,
+            300 => $thirdProduct,
+        ]);
+
+        $addVisuals = new ReflectionMethod(Collection::class, 'addVisuals');
+        $addVisuals->setAccessible(true);
+        $addVisuals->invoke($subject);
+
+        $items = array_values($this->getProperty($subject, '_items'));
+        $this->assertSame([$firstProduct, $secondProduct, $visual, $thirdProduct], $items);
     }
 
     /**

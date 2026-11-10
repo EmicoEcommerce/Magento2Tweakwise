@@ -60,6 +60,7 @@ class NavigationConfigTest extends Unit
     {
         $this->config->shouldReceive('isFormFilters')->andReturn(true);
         $this->config->shouldReceive('isAjaxFilters')->andReturn(true);
+        $this->hashInputProvider->shouldReceive('validateHash')->andReturn(true);
         $this->config->shouldReceive('isSeoEnabled')->andReturn(false);
         $this->config->shouldReceive('getUrlStrategy')->andReturn(QueryParameterStrategy::class);
         $this->config->shouldReceive('isAnalyticsEnabled')->andReturn(true);
@@ -98,12 +99,21 @@ class NavigationConfigTest extends Unit
         $this->assertSame('queryparameter', $decoded['tweakwiseNavigationForm']['urlStrategy']);
     }
 
-    public function testFilterFormInputIsEmptyWhenHashIsInvalid(): void
+    public function testInvalidHashKeepsNonSystemInputAndDisablesAjax(): void
     {
         $this->hashInputProvider->shouldReceive('validateHash')->with($this->request)->andReturn(false);
-        $this->filterFormInputProvider->shouldNotReceive('getFilterFormInput');
+        $this->config->shouldReceive('isAjaxFilters')->andReturn(true);
+        $this->filterFormInputProvider->shouldReceive('getFilterFormInput')->andReturn([
+            'q' => 'shoe',
+            '__tw_ajax_type' => 'search',
+            '__tw_hash' => 'abc',
+            'p' => '2',
+        ]);
 
-        $this->assertSame([], $this->createSubject()->getFilterFormInput());
+        $subject = $this->createSubject();
+
+        $this->assertSame(['q' => 'shoe'], $subject->getFilterFormInput());
+        $this->assertFalse($subject->isAjaxFilters());
     }
 
     public function testFilterFormInputOmitsPageParameterWhenHashIsValid(): void

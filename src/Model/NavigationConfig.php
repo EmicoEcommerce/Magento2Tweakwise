@@ -98,13 +98,17 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
      */
     public function getFilterFormInput(): array
     {
-        //form is modified, don't render the tweakwise system parameters. Should only happen in an xss attack
-        if (!$this->hashInputProvider->validateHash($this->request)) {
-            return [];
-        }
-
         $filterFormInput = $this->filterFormInputProvider->getFilterFormInput();
         unset($filterFormInput['p']);
+
+        if (!$this->hashInputProvider->validateHash($this->request)) {
+            //form is modified, don't render the tweakwise system parameters. Should only happen in an xss attack
+            return array_filter(
+                $filterFormInput,
+                static fn($name): bool => !str_starts_with((string)$name, '__tw_'),
+                ARRAY_FILTER_USE_KEY
+            );
+        }
 
         return $filterFormInput;
     }
@@ -219,7 +223,8 @@ class NavigationConfig implements ArgumentInterface, FilterFormInputProviderInte
      */
     public function isAjaxFilters()
     {
-        return $this->config->isAjaxFilters();
+        //without the system parameters ajax requests can not be handled
+        return $this->config->isAjaxFilters() && $this->hashInputProvider->validateHash($this->request);
     }
 
     /**

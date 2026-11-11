@@ -14,6 +14,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Search\Model\QueryFactory;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Filter\Item;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\FilterFactory;
@@ -100,8 +101,12 @@ class Tweakwise
     {
         $request = $this->context->getRequest();
         if ($request instanceof ProductSearchRequest && !$request->hasParameter('tn_q')) {
-            $this->filters = [];
-            return;
+            // NavigationContext applies the URL query only when getResponse() initializes the request.
+            $query = $this->request->getParam(QueryFactory::QUERY_VAR_NAME);
+            if (!is_string($query) || trim($query) === '') {
+                $this->filters = [];
+                return;
+            }
         }
 
         if (!$request->hasParameter('tn_cid')) {

@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="layout_load_before">
+        <observer name="tweakwise_remove_esi_navigation"
+                  instance="Tweakwise\Magento2Tweakwise\Observer\RemoveEsiNavigation"/>
+    </event>
     <event name="controller_action_postdispatch_catalog_category_view">
         <observer name="tweakwise-magento2tweakwise" instance="Tweakwise\Magento2Tweakwise\Model\Observer\CatalogNavigationLastPageRedirect" />
     </event>

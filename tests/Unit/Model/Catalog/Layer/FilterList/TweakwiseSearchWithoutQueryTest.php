@@ -36,6 +36,9 @@ class TweakwiseSearchWithoutQueryTest extends Unit
         $this->currentContext->shouldReceive('getRequest')->once()->andReturn($request);
         $this->currentContext->shouldNotReceive('getResponse');
 
+        $httpRequest = Mockery::mock(RequestInterface::class);
+        $httpRequest->shouldReceive('getParam')->once()->with('q')->andReturnNull();
+
         $this->subject = new Tweakwise(
             Mockery::mock(FilterFactory::class),
             $this->currentContext,
@@ -43,7 +46,7 @@ class TweakwiseSearchWithoutQueryTest extends Unit
             Mockery::mock(AttributeFactory::class),
             Mockery::mock(StoreManagerInterface::class),
             Mockery::mock(CategoryRepositoryInterface::class),
-            Mockery::mock(RequestInterface::class)
+            $httpRequest
         );
     }
 

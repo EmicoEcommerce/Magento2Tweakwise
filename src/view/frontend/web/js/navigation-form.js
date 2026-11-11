@@ -34,7 +34,6 @@ define([
 
         currentXhr: null,
         currentCountXhr: null,
-        formParameterNames: [],
         originalCanonical: null,
 
         _create: function () {
@@ -54,14 +53,15 @@ define([
             if(this.options.ajaxFilters && this.options.ajaxCache && (!window.history.state || !window.history.state.html))
             {
                 const page = new URL(window.location.href).searchParams.get('p');
-                let data = this._getFilterParameters() + (page ? `&p=${page}` : '');
+                const filterData = this._getFilterData();
+                let data = filterData.parameters + (page ? `&p=${page}` : '');
                 //if window history is empty, do an ajax request to fill it.
                 this.currentXhr = $.ajax({
                     url: this.options.ajaxEndpoint,
                     data: data,
                     cache: this.options.ajaxCache,
                     success: function (response) {
-                        this._replaceState(response);
+                        this._replaceState(response, filterData.formParameterNames);
                     }.bind(this)
                 });
             }
@@ -203,21 +203,19 @@ define([
         },
 
         /**
-         * Serialize the form element but skip unwanted inputs
+         * Serialize the form and capture its owned query parameter names.
          *
-         * @returns {*}
+         * @returns {{parameters: string, formParameterNames: Set<string>}}
          * @private
          */
-        _getFilterParameters: function () {
+        _getFilterData: function () {
             const inputs = this.element.find(':input:not(.js-skip-submit)');
             const parameterNames = new Set();
             inputs.each((index, input) => {
                 if (input.name) {
-                    parameterNames.add(input.name.replace(/\[.*$/, ''));
+                    parameterNames.add(this._getBaseParameterName(input.name));
                 }
             });
-            // Capture ownership before the response replaces the form, including unchecked and disabled inputs.
-            this.formParameterNames = [...parameterNames];
 
             var serializedData = inputs.serialize();
             let params = new URLSearchParams(serializedData);
@@ -234,7 +232,31 @@ define([
                 params.delete(key);
             });
 
-            return params.toString();
+            return {
+                parameters: params.toString(),
+                formParameterNames: parameterNames
+            };
+        },
+
+        /**
+         * Serialize the form element but skip unwanted inputs
+         *
+         * @returns {string}
+         * @private
+         */
+        _getFilterParameters: function () {
+            return this._getFilterData().parameters;
+        },
+
+        /**
+         * Normalize array parameter names such as `brand[]` and `brand[0]`
+         *
+         * @param {string} name
+         * @returns {string}
+         * @private
+         */
+        _getBaseParameterName: function (name) {
+            return name.replace(/\[.*$/, '');
         },
 
         // ------- Default filter handling (i.e. no ajax and no filter form)
@@ -317,13 +339,14 @@ define([
             }
 
             this._startLoader();
+            const filterData = this._getFilterData();
             this.currentXhr = $.ajax({
                 url: this.options.ajaxEndpoint,
-                data: this._getFilterParameters(),
+                data: filterData.parameters,
                 cache: this.options.ajaxCache,
                 success: function (response) {
                     this._updateBlocks(response.html);
-                    this._updateState(response);
+                    this._updateState(response, filterData.formParameterNames);
                     this._updateCanonical(response.canonical);
                 }.bind(this),
                 error: function (jqXHR, errorStatus) {
@@ -454,8 +477,8 @@ define([
          * @param response
          * @private
          */
-        _updateState: function (response) {
-            const newUrl = this._buildUrlWithQueryString(response, true);
+        _updateState: function (response, formParameterNames) {
+            const newUrl = this._buildUrlWithQueryString(response, formParameterNames, true);
             window.history.pushState({html: response.html, canonical: response.canonical}, '', newUrl);
         },
 
@@ -502,8 +525,8 @@ define([
          * @param response
          * @private
          */
-        _replaceState: function (response) {
-            const newUrl = this._buildUrlWithQueryString(response);
+        _replaceState: function (response, formParameterNames) {
+            const newUrl = this._buildUrlWithQueryString(response, formParameterNames);
             window.history.replaceState({html: response.html, canonical: response.canonical}, '', newUrl);
         },
 
@@ -511,17 +534,18 @@ define([
          * Merges existed query parameters with the ones get from AJAX response if needed
          *
          * @param response
+         * @param {Set<string>} formParameterNames
          * @param flip
          * @returns string
          * @private
          */
-        _buildUrlWithQueryString: function (response, flip = false) {
+        _buildUrlWithQueryString: function (response, formParameterNames, flip = false) {
             const baseUrl = window.location.origin;
             const resultUrl = new URL(response.url, baseUrl);
             const queryParams = new URLSearchParams(window.location.search ?? '');
 
             for (const key of [...queryParams.keys()]) {
-                if (this.formParameterNames.includes(key.replace(/\[.*$/, ''))) {
+                if (formParameterNames.has(this._getBaseParameterName(key))) {
                     queryParams.delete(key);
                 }
             }

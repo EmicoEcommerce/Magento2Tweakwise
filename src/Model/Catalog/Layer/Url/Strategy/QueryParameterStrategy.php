@@ -23,10 +23,12 @@ use Tweakwise\Magento2Tweakwise\Model\Config as TweakwiseConfig;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product\ProductList\ToolbarMemorizer;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
 use Magento\Search\Helper\Data;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
@@ -119,7 +121,8 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         Url $layerUrl,
         private Data $searchConfig,
         private SerializerInterface $serializer,
-        private readonly ToolbarMemorizer $toolbarMemorizer
+        private readonly ToolbarMemorizer $toolbarMemorizer,
+        private readonly ScopeConfigInterface $scopeConfig
     ) {
         $this->url = $url;
         $this->strategyHelper = $strategyHelper;
@@ -550,12 +553,23 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
     }
 
     /**
-     * @param MagentoHttpRequest $request
-     * @return int|null
+     * Resolve the current product list limit using toolbar state and storefront
+     * configuration, falling back to the configured default when the memorized
+     * limit is missing or not allowed for the active mode.
      */
-    protected function getLimit(MagentoHttpRequest $request)
+    protected function getLimit(MagentoHttpRequest $request): string
     {
-        return $request->getQuery(self::PARAM_LIMIT);
+        $mode = $this->getMode($request);
+        $availableLimits = $this->getAvailableLimits($mode);
+        $defaultLimit = $this->getDefaultLimit($mode);
+
+        $limit = $this->toolbarMemorizer->getLimit();
+
+        if (!$limit || !isset($availableLimits[$limit])) {
+            return $defaultLimit;
+        }
+
+        return (string) $limit;
     }
 
     /**
@@ -612,7 +626,7 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
             $query = [];
             // Add page and sort
             $sort = $request->getParam('product_list_order');
-            $limit = $request->getParam('product_list_limit');
+            $limit = $this->getLimit($request);
             $mode = $request->getParam('product_list_mode');
 
             if ($sort) {
@@ -649,5 +663,85 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         $url = ltrim($url, '/');
 
         return str_replace($this->url->getBaseUrl(), '', $url);
+    }
+
+    /**
+     * Determine the current display mode ("grid" or "list").
+     */
+    private function getMode(MagentoHttpRequest $request): string
+    {
+        $mode = $request->getQuery(self::PARAM_MODE);
+
+        if ($mode === 'grid' || $mode === 'list') {
+            return $mode;
+        }
+
+        $mode = $this->toolbarMemorizer->getMode();
+
+        if ($mode === 'grid' || $mode === 'list') {
+            return $mode;
+        }
+
+        $configuredMode = (string) $this->scopeConfig->getValue(
+            'catalog/frontend/list_mode',
+            ScopeInterface::SCOPE_STORE
+        );
+
+        // Match Magento storefront options: grid, list, grid-list, list-grid
+        return match ($configuredMode) {
+            'list', 'list-grid' => 'list',
+            default => 'grid',
+        };
+    }
+
+    /**
+     * Get allowed per-page limits for the given mode.
+     *
+     * @return array<int|string,string>
+     */
+    private function getAvailableLimits(string $mode): array
+    {
+        $configPath = $mode === 'list'
+            ? 'catalog/frontend/list_per_page_values'
+            : 'catalog/frontend/grid_per_page_values';
+
+        $configuredValues = (string) $this->scopeConfig->getValue(
+            $configPath,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        $availableLimits = array_map('trim', explode(',', $configuredValues));
+        $availableLimits = array_filter($availableLimits, static fn ($value) => $value !== '');
+
+        $result = [];
+        foreach ($availableLimits as $value) {
+            $result[(string) $value] = (string) $value;
+        }
+
+        $allowAll = $this->scopeConfig->isSetFlag(
+            'catalog/frontend/list_allow_all',
+            ScopeInterface::SCOPE_STORE
+        );
+
+        if ($allowAll) {
+            $result['all'] = 'all';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the configured default per-page limit for the given mode.
+     */
+    private function getDefaultLimit(string $mode): string
+    {
+        $configPath = $mode === 'list'
+            ? 'catalog/frontend/list_per_page'
+            : 'catalog/frontend/grid_per_page';
+
+        return (string) $this->scopeConfig->getValue(
+            $configPath,
+            ScopeInterface::SCOPE_STORE
+        );
     }
 }

@@ -14,6 +14,8 @@ use Exception;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\NavigationContext\CurrentContext;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\SortFieldType;
@@ -70,24 +72,34 @@ class Plugin
      */
     public function aroundGetAvailableOrders(Toolbar $subject, Closure $proceed)
     {
-        if (!$this->config->isLayeredEnabled()) {
-            if (!$this->config->isSearchEnabled() || !($this->context->getRequest() instanceof ProductSearchRequest)) {
-                return $proceed();
-            }
+        if ($this->config->getTweakwiseExceptionThrown()) {
+            return $proceed();
         }
 
-        //page is search and search is not enabled
-        if (!$this->config->isSearchEnabled() && ($this->context->getRequest() instanceof ProductSearchRequest)) {
+        if (!$this->isOrderingEnabled()) {
+            return $proceed();
+        }
+
+        try {
+            $response = $this->context->getResponse();
+        } catch (TweakwiseExceptionInterface $e) {
+            if ($e instanceof ApiException && $e->getCode() === 404) {
+                return $proceed();
+            }
+
+            $this->logger->critical($e->getMessage());
+            $this->config->setTweakwiseExceptionThrown();
+
             return $proceed();
         }
 
         // @phpstan-ignore-next-line
-        if (empty($this->context->getResponse())) {
+        if (empty($response)) {
             return $proceed();
         }
 
         /** @var SortFieldType[] $sortFields */
-        $sortFields = $this->context->getResponse()->getProperties()->getSortFields() ?? []; // @phpstan-ignore-line
+        $sortFields = $response->getProperties()->getSortFields() ?? []; // @phpstan-ignore-line
 
         $result = [];
         foreach ($sortFields as $field) {
@@ -99,6 +111,19 @@ class Plugin
         }
 
         return $result;
+    }
+
+    private function isOrderingEnabled(): bool
+    {
+        $layeredEnabled = $this->config->isLayeredEnabled();
+        $searchEnabled = $this->config->isSearchEnabled();
+        if (!$layeredEnabled && !$searchEnabled) {
+            return false;
+        }
+
+        return $this->context->getRequest() instanceof ProductSearchRequest
+            ? (bool)$searchEnabled
+            : (bool)$layeredEnabled;
     }
 
     /**

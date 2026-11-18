@@ -7,12 +7,14 @@ namespace Tweakwise\Test\Unit\ViewModel;
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Serialize\Serializer\JsonHexTag;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use ReflectionMethod;
 use Tweakwise\Magento2Tweakwise\Api\Data\EventInterface;
 use Tweakwise\Magento2Tweakwise\Api\Data\TagInterface;
 use Tweakwise\Magento2Tweakwise\Model\Analytics\RecommendationImpressionCollector;
@@ -24,14 +26,14 @@ class PersonalMerchandisingAnalyticsTest extends Unit
     use MockeryPHPUnitIntegration;
 
     private LayoutInterface&MockInterface $layout;
-    private Json&MockInterface $jsonSerializer;
+    private JsonHexTag&MockInterface $jsonSerializer;
     private RecommendationImpressionCollector&MockInterface $impressionCollector;
     private PersonalMerchandisingAnalytics $subject;
 
     protected function _before(): void
     {
         $this->layout = Mockery::mock(LayoutInterface::class);
-        $this->jsonSerializer = Mockery::mock(Json::class);
+        $this->jsonSerializer = Mockery::mock(JsonHexTag::class);
         $this->impressionCollector = Mockery::mock(RecommendationImpressionCollector::class);
         $this->impressionCollector->shouldReceive('getRequestIds')->andReturn([]);
 
@@ -119,5 +121,52 @@ class PersonalMerchandisingAnalyticsTest extends Unit
         ])->andReturn('[...]');
 
         $this->assertSame('[...]', $this->subject->getEventsData('req-1'));
+    }
+
+    public function testGetEventsDataEncodesMarkupInTagValues(): void
+    {
+        $impressionCollector = Mockery::mock(RecommendationImpressionCollector::class);
+        $impressionCollector->shouldReceive('getRequestIds')->andReturn([]);
+
+        $subject = new PersonalMerchandisingAnalytics(
+            Mockery::mock(Config::class),
+            Mockery::mock(StoreManagerInterface::class),
+            Mockery::mock(RequestInterface::class),
+            $this->createDeclaredJsonSerializer(),
+            $this->layout,
+            $impressionCollector
+        );
+
+        $searchQuery = 'qualys<esi:comment text="" />was<!--esx-->esi</script>';
+        $searchTag = Mockery::mock(TagInterface::class);
+        $searchTag->shouldReceive('get')->once()->andReturn($searchQuery);
+
+        $block = Mockery::mock(AbstractBlock::class);
+        $block->shouldReceive('getData')->once()->with('data_layer')->andReturn(['search' => $searchTag]);
+        $block->shouldReceive('getData')->once()->with('data_layer_events')->andReturn([]);
+
+        $this->layout->shouldReceive('getBlock')->once()->with('tweakwise.analytics')->andReturn($block);
+
+        $eventsData = $subject->getEventsData('req-1');
+
+        $this->assertStringNotContainsString('<', $eventsData);
+        $this->assertStringNotContainsString('>', $eventsData);
+        $this->assertSame($searchQuery, json_decode($eventsData, true)[0]['value']);
+    }
+
+    /**
+     * Instantiates the serializer type the view model declares, as Magento's DI would inject it.
+     */
+    private function createDeclaredJsonSerializer(): Json
+    {
+        $constructor = new ReflectionMethod(PersonalMerchandisingAnalytics::class, '__construct');
+        foreach ($constructor->getParameters() as $parameter) {
+            if ($parameter->getName() === 'jsonSerializer') {
+                $class = $parameter->getType()->getName();
+                return new $class();
+            }
+        }
+
+        $this->fail('PersonalMerchandisingAnalytics has no jsonSerializer dependency');
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tweakwise\Magento2Tweakwise\ViewModel;
 
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Serialize\Serializer\JsonHexTag;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -28,7 +28,7 @@ class PersonalMerchandisingAnalytics implements ArgumentInterface
         private readonly Config $tweakwiseConfig,
         private readonly StoreManagerInterface $storeManager,
         private readonly RequestInterface $request,
-        private readonly Json $jsonSerializer,
+        private readonly JsonHexTag $jsonSerializer,
         private readonly LayoutInterface $layout,
         private readonly RecommendationImpressionCollector $impressionCollector,
     ) {

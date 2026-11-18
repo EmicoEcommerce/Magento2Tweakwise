@@ -15,7 +15,8 @@
                 <server_url>https://gateway.tweakwisenavigator.com/</server_url>
                 <log>0</log>
                 <log_developer>1</log_developer>
-                <timeout>10</timeout>
+                <timeout>5</timeout>
+                <connect_timeout>1</connect_timeout>
                 <analytics_enabled>0</analytics_enabled>
             </general>
             <layered>

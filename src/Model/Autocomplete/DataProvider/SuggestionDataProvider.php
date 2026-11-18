@@ -16,6 +16,9 @@ use Tweakwise\Magento2Tweakwise\Model\Config;
 use GuzzleHttp\Promise\Utils;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Search\Model\Autocomplete\ItemInterface;
+use Psr\Log\LoggerInterface;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
 use Tweakwise\Magento2Tweakwise\Model\Autocomplete\DataProvider\SuggestionBlockItemFactory;
 
 class SuggestionDataProvider implements DataProviderInterface
@@ -71,6 +74,7 @@ class SuggestionDataProvider implements DataProviderInterface
      * @param Client $client
      * @param Request $request
      * @param SuggestionBlockItemFactory $suggestionBlockItemFactory
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Config $config,
@@ -81,7 +85,8 @@ class SuggestionDataProvider implements DataProviderInterface
         RequestFactory $suggestionRequestFactory,
         Client $client,
         Request $request,
-        protected readonly SuggestionBlockItemFactory $suggestionBlockItemFactory
+        protected readonly SuggestionBlockItemFactory $suggestionBlockItemFactory,
+        protected readonly LoggerInterface $logger
     ) {
         $this->config = $config;
         $this->cookieManager = $cookieManager;
@@ -108,17 +113,33 @@ class SuggestionDataProvider implements DataProviderInterface
      */
     public function getItems()
     {
+        if ($this->config->getTweakwiseExceptionThrown()) {
+            return [];
+        }
+
         $query = $this->dataProviderHelper->getQuery();
         if (empty($query)) {
             return [];
         }
 
-        $promises = $this->buildRequests($query, $this->dataProviderHelper->getCategory());
-        if (empty($promises)) {
+        try {
+            $promises = $this->buildRequests($query, $this->dataProviderHelper->getCategory());
+            if (empty($promises)) {
+                return [];
+            }
+
+            $responses = Utils::unwrap($promises);
+        } catch (TweakwiseExceptionInterface $e) {
+            if ($e instanceof ApiException && $e->getCode() === 404) {
+                return [];
+            }
+
+            $this->logger->critical($e->getMessage());
+            $this->config->setTweakwiseExceptionThrown();
+
             return [];
         }
 
-        $responses = Utils::unwrap($promises);
         $results = [];
 
         foreach ($responses as $response) {
@@ -238,9 +259,7 @@ class SuggestionDataProvider implements DataProviderInterface
             return;
         }
 
-        $profileKey = $this->request->setProfileKey($profileKeyCookie);
-        // @phpstan-ignore-next-line
-        $request->addParameter(key($profileKey->getParameters()), $profileKeyCookie);
+        $request->setProfileKey($profileKeyCookie);
     }
 
     /**

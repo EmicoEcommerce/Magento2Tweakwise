@@ -44,6 +44,18 @@
                     <label>Internal traffic IP addresses</label>
                     <comment>Comma-separated list of IP addresses. Requests from these IPs will be tagged with TWN-Source: Internal-Traffic in Tweakwise API calls, allowing you to filter them from Tweakwise Analytics reports.</comment>
                 </field>
+                <field id="timeout" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API request timeout (seconds)</label>
+                    <comment>Maximum duration of one gateway request. Default: 5 seconds.</comment>
+                    <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                    <backend_model>Tweakwise\Magento2Tweakwise\Model\Config\Backend\Timeout</backend_model>
+                </field>
+                <field id="connect_timeout" translate="label,comment" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API connection timeout (seconds)</label>
+                    <comment>Maximum time to connect to a gateway, also bounded by the request timeout. Default: 1 second.</comment>
+                    <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                    <backend_model>Tweakwise\Magento2Tweakwise\Model\Config\Backend\Timeout</backend_model>
+                </field>
             </group>
             <group id="layered" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Layered navigation</label>

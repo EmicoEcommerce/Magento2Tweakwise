@@ -281,19 +281,31 @@ class Collection extends AbstractCollection
         }
 
         // @phpstan-ignore-next-line
-        foreach ($response->getItems() as $item) {
+        $responseItems = $response->getItems();
+        $productIds = $response->getProductIds();
+        $availableProductIds = array_fill_keys(array_keys($this->_items), true);
+        $addedProductIds = [];
+        $position = 0;
+
+        foreach ($responseItems as $index => $item) {
             if ($item->getType() !== ItemType::VISUAL->value) {
+                $productId = $productIds[$index] ?? null;
+                if (
+                    $productId !== null &&
+                    isset($availableProductIds[$productId]) &&
+                    !isset($addedProductIds[$productId])
+                ) {
+                    $addedProductIds[$productId] = true;
+                    $position++;
+                }
+
                 continue;
             }
 
             $visual = $this->visualBuilder->build($item);
 
-            // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.StrictParameterMissing
-            // @phpstan-ignore-next-line
-            $itemPosition = array_search($item, $response->getItems());
-
-            // @phpstan-ignore-next-line
-            array_splice($this->_items, $itemPosition, 0, [$visual]);
+            array_splice($this->_items, $position, 0, [$visual]);
+            $position++;
         }
     }
 

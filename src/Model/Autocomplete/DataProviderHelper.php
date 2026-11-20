@@ -187,13 +187,16 @@ class DataProviderHelper
         $productCollection->addCategoryFilter($category);
 
         $result = [];
+        $addedProductIds = [];
         // @phpstan-ignore-next-line
         foreach ($response->getProductData() as $item) {
             $product = $productCollection->getItemById($item['id']);
 
-            if (!$product) {
+            if (!$product || isset($addedProductIds[$item['id']])) {
                 continue;
             }
+
+            $addedProductIds[$item['id']] = true;
 
             $product->setData('tweakwise_price', $item['tweakwise_price']);
             $product->setData('tweakwise_final_price', $item['tweakwise_final_price']);

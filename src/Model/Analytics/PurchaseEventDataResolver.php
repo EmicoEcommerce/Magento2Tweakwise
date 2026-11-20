@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tweakwise\Magento2Tweakwise\Model\Analytics;
 
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Item;
 use Magento\Store\Model\StoreManagerInterface;
@@ -56,11 +57,9 @@ class PurchaseEventDataResolver
 
     /**
      * Groups order items by their top-level parent (a configurable or bundle parent line item, or a
-     * plain item without children). A parent with exactly one child (the common configurable-product
-     * case) is reported as "childKey-parentKey", matching the format used everywhere else in this
-     * module. A parent with zero or more than one child (a plain item, or a bundle with multiple
-     * selected components) is reported as just the parent product itself: with several children there
-     * is no single "the" child to pick, so guessing one would misrepresent what was actually bought.
+     * plain item without children). A configurable line is reported as "childKey-parentKey"; any other
+     * line (a plain item, a bundle or a grouped product) is reported as the parent product grouped with
+     * itself ("parentKey-parentKey"), which is how the grouped export writes those items.
      *
      * @param Item[] $items
      * @return string[]
@@ -89,13 +88,14 @@ class PurchaseEventDataResolver
 
         foreach ($parentItemsById as $parentId => $parentItem) {
             $childProductIds = $childProductIdsByParentId[$parentId] ?? [];
-            $isSingleChild = count($childProductIds) === 1;
+            $isConfigurableChild = $parentItem->getProductType() === Configurable::TYPE_CODE
+                && count($childProductIds) === 1;
 
-            $rawId = $isSingleChild
+            $rawId = $isConfigurableChild
                 ? $childProductIds[0] . Helper::GROUP_CODE_DELIMITER . $parentItem->getProductId()
                 : (string)$parentItem->getProductId();
 
-            $productTwId[] = $this->productKeyResolver->resolve($rawId, $storeId, $isSingleChild);
+            $productTwId[] = $this->productKeyResolver->resolve($rawId, $storeId, true);
         }
 
         return $productTwId;

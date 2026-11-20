@@ -38,12 +38,17 @@ class PurchaseEventDataResolverTest extends Unit
         $this->subject = new PurchaseEventDataResolver($this->productKeyResolver, $storeManager, $this->config);
     }
 
-    private function mockItem(?Item $parent, int $id, int $productId): Item&MockInterface
-    {
+    private function mockItem(
+        ?Item $parent,
+        int $id,
+        int $productId,
+        string $productType = 'simple'
+    ): Item&MockInterface {
         $item = Mockery::mock(Item::class);
         $item->shouldReceive('getParentItem')->andReturn($parent);
         $item->shouldReceive('getId')->andReturn($id);
         $item->shouldReceive('getProductId')->andReturn($productId);
+        $item->shouldReceive('getProductType')->andReturn($productType);
 
         return $item;
     }
@@ -85,11 +90,11 @@ class PurchaseEventDataResolverTest extends Unit
         $this->assertSame(['10001010'], $result['productKeys']);
     }
 
-    public function testResolveGroupedModeReportsChildParentPairForSingleChild(): void
+    public function testResolveGroupedModeReportsChildParentPairForConfigurableChild(): void
     {
         $this->config->shouldReceive('isGroupedProductsEnabled')->andReturn(true);
 
-        $parent = $this->mockItem(null, 100, 1);
+        $parent = $this->mockItem(null, 100, 1, 'configurable');
         $child = $this->mockItem($parent, 101, 5);
         $order = $this->mockOrder([$parent, $child], '59.00');
 
@@ -100,33 +105,48 @@ class PurchaseEventDataResolverTest extends Unit
         $this->assertSame(['K5-55'], $result['productKeys']);
     }
 
-    public function testResolveGroupedModeReportsPlainItemBoughtDirectlyAsItsOwnProduct(): void
+    public function testResolveGroupedModeReportsPlainItemBoughtDirectlyAsSelfGroupedProduct(): void
     {
         $this->config->shouldReceive('isGroupedProductsEnabled')->andReturn(true);
 
         $plainItem = $this->mockItem(null, 200, 7);
         $order = $this->mockOrder([$plainItem], '19.99');
 
-        $this->productKeyResolver->shouldReceive('resolve')->once()->with('7', 1, false)->andReturn('K7');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('7', 1, true)->andReturn('K7-K7');
 
         $result = $this->subject->resolve($order);
 
-        $this->assertSame(['K7'], $result['productKeys']);
+        $this->assertSame(['K7-K7'], $result['productKeys']);
     }
 
-    public function testResolveGroupedModeReportsBundleWithMultipleChildrenAsParentOnly(): void
+    public function testResolveGroupedModeReportsBundleWithMultipleChildrenAsSelfGroupedParent(): void
     {
         $this->config->shouldReceive('isGroupedProductsEnabled')->andReturn(true);
 
-        $parent = $this->mockItem(null, 300, 3);
+        $parent = $this->mockItem(null, 300, 3, 'bundle');
         $childOne = $this->mockItem($parent, 301, 11);
         $childTwo = $this->mockItem($parent, 302, 12);
         $order = $this->mockOrder([$parent, $childOne, $childTwo], '99.00');
 
-        $this->productKeyResolver->shouldReceive('resolve')->once()->with('3', 1, false)->andReturn('K3');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('3', 1, true)->andReturn('K3-K3');
 
         $result = $this->subject->resolve($order);
 
-        $this->assertSame(['K3'], $result['productKeys']);
+        $this->assertSame(['K3-K3'], $result['productKeys']);
+    }
+
+    public function testResolveGroupedModeReportsBundleWithSingleChildAsSelfGroupedParent(): void
+    {
+        $this->config->shouldReceive('isGroupedProductsEnabled')->andReturn(true);
+
+        $parent = $this->mockItem(null, 400, 4, 'bundle');
+        $child = $this->mockItem($parent, 401, 13);
+        $order = $this->mockOrder([$parent, $child], '25.00');
+
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('4', 1, true)->andReturn('K4-K4');
+
+        $result = $this->subject->resolve($order);
+
+        $this->assertSame(['K4-K4'], $result['productKeys']);
     }
 }

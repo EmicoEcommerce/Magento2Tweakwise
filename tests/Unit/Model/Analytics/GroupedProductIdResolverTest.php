@@ -63,41 +63,62 @@ class GroupedProductIdResolverTest extends Unit
         $this->assertSame('11-10', $this->subject->resolve($product));
     }
 
-    public function testResolveUsesFirstAssociatedProductForGroupedProducts(): void
+    public function testResolveReturnsRawIdForGroupedProducts(): void
     {
-        $childProduct = Mockery::mock(Product::class);
-        $childProduct->shouldReceive('getId')->andReturn(21);
-
         $typeInstance = Mockery::mock(Grouped::class);
-        $typeInstance->shouldReceive('getAssociatedProducts')->once()->andReturn([$childProduct]);
+        $typeInstance->shouldNotReceive('getAssociatedProducts');
 
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getId')->andReturn(20);
         $product->shouldReceive('getTypeId')->once()->andReturn('grouped');
         $product->shouldReceive('getTypeInstance')->once()->andReturn($typeInstance);
 
-        $this->assertSame('21-20', $this->subject->resolve($product));
+        $this->assertSame(20, $this->subject->resolve($product));
     }
 
-    public function testResolveUsesFirstSelectionForBundleProducts(): void
+    public function testResolveReturnsRawIdForBundleProducts(): void
     {
-        $childProduct = Mockery::mock(Product::class);
-        $childProduct->shouldReceive('getId')->andReturn(31);
-
-        $selectionsCollection = Mockery::mock();
-        $selectionsCollection->shouldReceive('getItems')->once()->andReturn([$childProduct]);
-
         $typeInstance = Mockery::mock(Bundle::class);
-        $typeInstance->shouldReceive('getOptionsIds')->once()->andReturn([1, 2]);
-        $typeInstance->shouldReceive('getSelectionsCollection')->once()->with([1, 2], Mockery::any())
-            ->andReturn($selectionsCollection);
+        $typeInstance->shouldNotReceive('getSelectionsCollection');
 
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getId')->andReturn(30);
         $product->shouldReceive('getTypeId')->once()->andReturn('bundle');
         $product->shouldReceive('getTypeInstance')->once()->andReturn($typeInstance);
 
-        $this->assertSame('31-30', $this->subject->resolve($product));
+        $this->assertSame(30, $this->subject->resolve($product));
+    }
+
+    public function testResolveCastsNumericStringIdsFromTheDatabase(): void
+    {
+        $childProduct = Mockery::mock(Product::class);
+        $childProduct->shouldReceive('getId')->andReturn('11');
+
+        $typeInstance = Mockery::mock(Configurable::class);
+        $typeInstance->shouldReceive('getUsedProducts')->once()->andReturn([$childProduct]);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getId')->andReturn('10');
+        $product->shouldReceive('getTypeId')->once()->andReturn('configurable');
+        $product->shouldReceive('getTypeInstance')->once()->andReturn($typeInstance);
+
+        $this->assertSame('11-10', $this->subject->resolve($product));
+    }
+
+    public function testResolveReturnsRawIdWhenAssociatedProductIsTheParentItself(): void
+    {
+        $childProduct = Mockery::mock(Product::class);
+        $childProduct->shouldReceive('getId')->andReturn('10');
+
+        $typeInstance = Mockery::mock(Configurable::class);
+        $typeInstance->shouldReceive('getUsedProducts')->once()->andReturn([$childProduct]);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getId')->andReturn('10');
+        $product->shouldReceive('getTypeId')->once()->andReturn('configurable');
+        $product->shouldReceive('getTypeInstance')->once()->andReturn($typeInstance);
+
+        $this->assertSame(10, $this->subject->resolve($product));
     }
 
     public function testResolveReturnsRawIdWhenAssociatedProductIdIsZero(): void

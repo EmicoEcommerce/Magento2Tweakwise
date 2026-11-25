@@ -55,6 +55,7 @@ healthy for native search fallback to return products.
 3) Use default magento filter renderer: Use Magento standard filter templates or use templates bundled by the module.
    If you want to make full use of the features provided by this module then this should be set to No (i.e. make use of tweakwise template files).
 4) Ajax filtering: When enabled, filter results are fetched via AJAX instead of a full page navigation. Requires 'Use default magento filter renderer' to be set to No.
+   The AJAX response determines URL values for parameters represented by the filter form, including unchecked or disabled filters. Unrelated query parameters, such as tracking tags, are retained when filters are removed.
 5) Filter form: This depends on 'Use default magento filter renderer' having value No. Render all filters in a form with filter buttons so that the user can select a set of filters and then navigate to the result instead of immediately navigating to the results when a filter is clicked.
 6) Filter url query parameters: Tweakwise filter urls will have all query parameters of the page in it so also the "cid" and utm_source parameters if present.
    You can determine in which way you want to filter these out (if any).
@@ -145,6 +146,13 @@ There is an command for regenerting filter urls. This is only relevant when usin
 Running this command may change the filter urls and thus may have SEO implications. The command can be run manually using:
 ```sh
 php bin/magento tweakwise:regenerate-filter-urls
+```
+
+## JavaScript regression tests
+The navigation form tests use Jest with Node.js 24 or newer. Run from this module's directory:
+```sh
+npm ci
+npm test
 ```
 
 ## Support

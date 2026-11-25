@@ -1,0 +1,25 @@
+{
+    "name": "magento2-tweakwise-frontend-tests",
+    "private": true,
+    "description": "Jest regression tests for Tweakwise layered navigation",
+    "scripts": {
+        "test": "jest"
+    },
+    "jest": {
+        "testEnvironment": "jsdom",
+        "testEnvironmentOptions": {
+            "url": "https://magento.test/category/"
+        },
+        "roots": [
+            "<rootDir>/tests/js"
+        ]
+    },
+    "engines": {
+        "node": ">=24"
+    },
+    "devDependencies": {
+        "jest": "^30.5.2",
+        "jest-environment-jsdom": "^30.5.2",
+        "jquery": "^3.7.1"
+    }
+}

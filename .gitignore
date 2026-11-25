@@ -1,5 +1,7 @@
 /composer.lock
 /vendor/
+/node_modules/
+/.npm/
 
 /.idea/*
 

@@ -26,6 +26,20 @@ magento-module/test/functional:
     MIN_PHP_VERSION: '8.2'
     DISABLE_DEPENDENCY_AUDIT: "true"
 
+magento-module/test/js:
+  image: node:24-alpine
+  stage: test
+  needs: []
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  script:
+    - npm ci --cache .npm --prefer-offline --no-audit --no-fund
+    - npm test
+
 release:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

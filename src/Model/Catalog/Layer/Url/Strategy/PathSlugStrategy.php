@@ -331,7 +331,7 @@ class PathSlugStrategy implements
             }
 
             // Keep the search term of an AI assistant search within the category
-            $search = trim((string)$request->getParam(QueryParameterStrategy::PARAM_SEARCH));
+            $search = $this->getSearchTerm($request);
             if ($search !== '') {
                 $query[QueryParameterStrategy::PARAM_SEARCH] = $search;
             }
@@ -427,7 +427,33 @@ class PathSlugStrategy implements
 
         // Replace all occurrences of double slashes with a single slash except those in scheme.
         // This can happen when $categoryUrlSuffix === '/' and in some other cases
-        return preg_replace('/(?<!:)\/\//', '/', $url);
+        $url = preg_replace('/(?<!:)\/\//', '/', $url);
+
+        // Without ajax the filter links are followed directly, keep the search term of an AI assistant search.
+        // With ajax the original url already contains it.
+        $search = $request->getParam('__tw_original_url') ? '' : $this->getSearchTerm($request);
+        if ($search !== '') {
+            $url .= (strpos($url, '?') === false ? '?' : '&')
+                . http_build_query([QueryParameterStrategy::PARAM_SEARCH => $search]);
+        }
+
+        return $url;
+    }
+
+    /**
+     * Search term of an AI assistant search within the category
+     *
+     * @param MagentoHttpRequest $request
+     * @return string
+     */
+    private function getSearchTerm(MagentoHttpRequest $request): string
+    {
+        $search = trim((string)$request->getParam(QueryParameterStrategy::PARAM_SEARCH));
+        if ($search === '' || !$this->config->isAssistantEnabled()) {
+            return '';
+        }
+
+        return $search;
     }
 
     /**

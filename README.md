@@ -155,7 +155,8 @@ Behaviour:
   the assistant returns a search term, it is added as `?q={searchTerm}` and the products are searched within the category
   (Tweakwise `navigation-search` with the category id), like the Tweakwise demoshop. The shopper stays on the category
   page and is not sent to the store wide search results page, so this also works when Tweakwise search is disabled.
-  Filter links and the browser URL keep the search term, also with the "SEO path slug" URL strategy. A `q` parameter on category pages is only applied when the assistant is enabled.
+  Filter links and the browser URL keep the search term, also with the "SEO path slug" URL strategy and without AJAX
+  filtering. A `q` parameter on category pages is only applied when the assistant is enabled.
 - Search banners: when the assistant searches within a category, the Tweakwise search banners for that term are shown
   on the category page (container top, list top and products top), like the Tweakwise demoshop. Normal category pages
   never show search banners. With Tweakwise search enabled this follows "Searchbanners enabled"; without Tweakwise

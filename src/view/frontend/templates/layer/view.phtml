@@ -40,8 +40,9 @@ if (!$block->canShowBlock()) {
     <div class="block-title filter-title" data-count="<?=count($block->getLayer()->getState()->getFilters())?>">
         <strong data-role="title"><?=$escaper->escapeHtml(__('Shop By'))?></strong>
     </div>
-    <div class="block-content filter-content">
-        <?= /* @noEscape */ $block->fetchView($block->getTemplateFile('Tweakwise_Magento2Tweakwise::layer/assistant.phtml')) ?>
+    <?php $assistantHtml = $block->fetchView($block->getTemplateFile('Tweakwise_Magento2Tweakwise::layer/assistant.phtml')); ?>
+    <div class="block-content filter-content<?= trim($assistantHtml) !== '' ? ' tw-assistant-drawer' : '' ?>">
+        <?= /* @noEscape */ $assistantHtml ?>
         <form id="facet-filter-form" <?= /* @noEscape */ $jsFormConfig ? sprintf('data-mage-init=\'%s\'', $jsFormConfig) : ''?>>
         <?=$block->getChildHtml('state');?>
 

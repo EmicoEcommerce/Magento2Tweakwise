@@ -13,5 +13,27 @@
                 <argument name="tweakwise_assistant_view_model" xsi:type="object">Tweakwise\Magento2Tweakwise\ViewModel\Assistant</argument>
             </arguments>
         </referenceBlock>
+        <!-- Search banners for an AI Shopping Assistant search within the category -->
+        <referenceContainer name="columns.top">
+            <block before="-" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.container.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.container.top.phtml">
+                <arguments>
+                    <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block before="-" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.list.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.list.top.phtml">
+                <arguments>
+                    <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="category.products">
+            <block class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.products.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.products.top.phtml">
+                <arguments>
+                    <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
     </body>
 </page>

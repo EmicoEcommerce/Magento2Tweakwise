@@ -184,7 +184,16 @@ class NavigationContext
      */
     public function showSearchBanners(): bool
     {
-        return $this->config->isSearchBannersActive();
+        if ($this->getRequest() instanceof ProductSearchRequest) {
+            return $this->config->isSearchBannersActive();
+        }
+
+        // Category pages only get search banners from an AI Shopping Assistant search within the category
+        if (!$this->config->isLayeredEnabled() || !$this->config->isAssistantEnabled()) {
+            return false;
+        }
+
+        return !$this->config->isSearchEnabled() || $this->config->isSearchBannersActive();
     }
 
     /**

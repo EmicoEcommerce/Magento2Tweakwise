@@ -153,6 +153,10 @@ Behaviour:
   (Tweakwise `navigation-search` with the category id), like the Tweakwise demoshop. The shopper stays on the category
   page and is not sent to the store wide search results page, so this also works when Tweakwise search is disabled.
   Filter links keep the search term. A `q` parameter on category pages is only applied when the assistant is enabled.
+- Search banners: when the assistant searches within a category, the Tweakwise search banners for that term are shown
+  on the category page (container top, list top and products top), like the Tweakwise demoshop. Normal category pages
+  never show search banners. With Tweakwise search enabled this follows "Searchbanners enabled"; without Tweakwise
+  search the banners configured in Tweakwise are always shown for assistant searches.
 - The conversation (messages, history, open state and the URL from before the conversation) is stored in `sessionStorage`
   only. "Reset" clears it and returns to the results from before the conversation; it is also cleared on logout.
 - Message content and history are never logged; only the status code, duration and an error reference are logged.

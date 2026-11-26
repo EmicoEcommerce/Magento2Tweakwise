@@ -413,6 +413,8 @@ define([
                 $(filterSelector).replaceWith(newFilters);
             }
 
+            this._updateSearchBanners(parsedHtml);
+
             var toolbar = $(toolbarSelector);
             const productsGrid = $(this.options.productsGridSelector);
             const mainColumn = $(this.options.mainColumnSelector);
@@ -443,6 +445,8 @@ define([
                 productsGrid.hide();
                 $('script[data-role=\'msrp-popup-template\']').remove();
                 $('script[data-role=\'msrp-info-template\']').remove();
+                // The appended response contains its own search banners
+                $('[data-tw-search-banner]').remove();
                 mainColumn.append(htmlResponse);
             }
             if (newToolbarFirst) {
@@ -471,6 +475,22 @@ define([
             });
 
             $('body').trigger('contentUpdated');
+        },
+
+        /**
+         * Search banners live outside the replaced blocks, sync each location with the response.
+         *
+         * @param {jQuery} parsedHtml
+         * @private
+         */
+        _updateSearchBanners: function (parsedHtml) {
+            $('[data-tw-search-banner]').each(function (index, element) {
+                var location = $(element).attr('data-tw-search-banner');
+                var newBanner = parsedHtml.find('[data-tw-search-banner="' + location + '"]').first();
+
+                $(element).html(newBanner.length ? newBanner.html() : '');
+                newBanner.remove();
+            });
         },
 
         /**

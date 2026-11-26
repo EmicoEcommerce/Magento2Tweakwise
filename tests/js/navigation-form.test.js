@@ -162,3 +162,49 @@ test('inputs excluded from submission do not claim external parameters', () => {
     `, '/category/');
     expect(url.searchParams.get('tracking')).toBe('123');
 });
+
+describe('search banners', () => {
+    const options = {
+        filterSelector: '#layered-filter-block',
+        productListSelector: '.products.wrapper',
+        toolbarSelector: '.toolbar.toolbar-products'
+    };
+
+    function updateBlocks(page, response) {
+        document.body.innerHTML = page;
+        const form = {...widget, options, element: $('#layered-filter-block')};
+        form._updateBlocks(response);
+    }
+
+    const products = `
+        <div class="toolbar toolbar-products"></div>
+        <div class="products wrapper">products</div>
+        <div class="toolbar toolbar-products"></div>
+    `;
+
+    test('banners from the response replace the banners on the page', () => {
+        updateBlocks(`
+            <div class="columns-top"><div data-tw-search-banner="container-top"></div></div>
+            <div data-tw-search-banner="list-top"></div>
+            ${products}
+        `, `
+            <div data-tw-search-banner="list-top"><img src="list.jpg"></div>
+            <div data-tw-search-banner="container-top"><img src="container.jpg"></div>
+            ${products}
+        `);
+
+        expect($('.columns-top [data-tw-search-banner="container-top"] img').attr('src')).toBe('container.jpg');
+        expect($('[data-tw-search-banner="list-top"] img').attr('src')).toBe('list.jpg');
+        expect($('[data-tw-search-banner]').length).toBe(2);
+    });
+
+    test('banners missing from the response are cleared', () => {
+        updateBlocks(`
+            <div data-tw-search-banner="list-top"><img src="list.jpg"></div>
+            ${products}
+        `, products);
+
+        expect($('[data-tw-search-banner="list-top"]').length).toBe(1);
+        expect($('[data-tw-search-banner="list-top"]').html()).toBe('');
+    });
+});

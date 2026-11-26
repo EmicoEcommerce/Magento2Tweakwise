@@ -16,6 +16,14 @@
     </container>
     <update handle="catalog_category_view_type_layered"/>
     <update handle="catalog_category_view"/>
+    <!-- columns.top is not rendered in ajax responses, navigation-form.js syncs this banner into place -->
+    <referenceContainer name="content">
+        <block class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.container.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.container.top.phtml">
+            <arguments>
+                <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Category</argument>
+            </arguments>
+        </block>
+    </referenceContainer>
     <!-- Remove featured products from content as it would be rendered again in ajax call which is not needed -->
     <referenceBlock name="tweakwise.catalog.product.featured.before" remove="true"/>
 </layout>

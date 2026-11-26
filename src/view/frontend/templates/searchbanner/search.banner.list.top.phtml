@@ -3,10 +3,12 @@
 /** @var \Magento\Framework\View\Element\Template $searchBannerLayout */
 
 $banners = $block->getListTopBanner();
-
+?>
+<div data-tw-search-banner="list-top"><?php
 if (!empty($banners)) {
     $searchBannerLayout = $block->getLayout()->createBlock(\Magento\Framework\View\Element\Template::class);
     $searchBannerLayout->setData(['banners' => $banners]);
     $searchBannerLayout->setTemplate("Tweakwise_Magento2Tweakwise::searchbanner/search.banner.phtml");
     echo $searchBannerLayout->toHtml();
 }
+?></div>

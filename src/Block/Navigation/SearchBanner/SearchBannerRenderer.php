@@ -15,6 +15,8 @@ use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Psr\Log\LoggerInterface;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Exception\TweakwiseExceptionInterface;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductNavigationRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\ProductSearchRequest;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 
 class SearchBannerRenderer extends Template
@@ -109,23 +111,46 @@ class SearchBannerRenderer extends Template
                 return [];
             }
 
+            if (!$this->isSearchRequest($navigationContext->getRequest())) {
+                return [];
+            }
+
             if (!empty($response)) {
                 $banners = $response->getValue('searchbanners');
             }
 
             if (isset($banners['searchbanner'])) {
-                $banners = $banners['searchbanner'];
-
-                $result = [];
-                //group by location
-                if (is_array($banners)) {
-                    foreach ($banners as $banner) {
-                        $result[$banner['location']][] = $banner;
-                    }
-                }
+                $result = $this->groupByLocation($banners['searchbanner']);
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @param mixed $banners
+     * @return array
+     */
+    private function groupByLocation($banners): array
+    {
+        $result = [];
+        if (is_array($banners)) {
+            foreach ($banners as $banner) {
+                $result[$banner['location']][] = $banner;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Category pages only show banners for an AI Shopping Assistant search within the category.
+     *
+     * @param ProductNavigationRequest $request
+     * @return bool
+     */
+    private function isSearchRequest(ProductNavigationRequest $request): bool
+    {
+        return $request instanceof ProductSearchRequest || (string)$request->getParameter('tn_q') !== '';
     }
 }

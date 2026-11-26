@@ -145,6 +145,9 @@ Behaviour:
 - The selected facets of the assistant are applied as regular filters using the facet URL keys. Facets that cannot be
   matched are ignored. Price ranges are converted to the slider format. A selected category facet navigates to the matching
   Magento category (ignored when the category does not exist or is not part of the store).
+- Like the Tweakwise demoshop, the selection of the navigation returned by the assistant is applied as well (for example
+  "purple" selects the colour filter Purple), and its search term is used when the response has no `searchTerm`. The
+  explicit `selectedFacets` of the response take precedence.
 - Search pages: the result is loaded as `catalogsearch/result?q={searchTerm}` with the filters, through the existing AJAX
   navigation when AJAX filtering is enabled.
 - Category pages: the result is loaded on the category URL with the filters, through the existing AJAX navigation when

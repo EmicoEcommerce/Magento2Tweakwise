@@ -60,6 +60,9 @@ class ResultMapper
         [$filters, $category] = $this->mapSelectedFacets($response);
 
         $searchTerm = trim((string)$response->getSearchTerm());
+        if ($searchTerm === '') {
+            $searchTerm = $this->getNavigationSearchTerm($response->getNavigation());
+        }
         $toolbar = $this->filterToolbarParameters($toolbarParameters);
 
         if ($context->isSearch()) {
@@ -97,7 +100,13 @@ class ResultMapper
         $filters = [];
         $category = null;
 
-        foreach ($response->getSelectedFacets() as $selectedFacet) {
+        // The returned navigation is what the demoshop shows, the explicit selected facets take precedence
+        $selectedFacets = array_merge(
+            $this->getNavigationSelection($facets),
+            $response->getSelectedFacets()
+        );
+
+        foreach ($selectedFacets as $selectedFacet) {
             $facet = $this->findFacet($facets, (string)$selectedFacet['attribute']);
             if ($facet === null) {
                 continue;
@@ -154,6 +163,72 @@ class ResultMapper
             'filters' => $filters,
             'ajax' => true,
         ];
+    }
+
+    /**
+     * @param array $navigation
+     * @return string
+     */
+    private function getNavigationSearchTerm(array $navigation): string
+    {
+        $searchTerm = $navigation['properties']['searchterm'] ?? '';
+
+        return is_string($searchTerm) ? trim($searchTerm) : '';
+    }
+
+    /**
+     * Returns the selected attributes of the returned navigation in the selected facets format.
+     *
+     * @param array $facets
+     * @return array<int, array{attribute: string, value: string}>
+     */
+    private function getNavigationSelection(array $facets): array
+    {
+        $result = [];
+        foreach ($facets as $facet) {
+            $settings = $facet['facetsettings'];
+            $selected = $this->getSelectedAttributes($facet['attributes'] ?? []);
+            if ($selected === []) {
+                continue;
+            }
+
+            if ($this->isCategoryFacet($settings)) {
+                // The deepest selected category is the category of the result
+                $selected = [(string)end($selected)['attributeid']];
+            } else {
+                $selected = array_map(static fn (array $attribute): string => (string)$attribute['title'], $selected);
+            }
+
+            $isSlider = ($settings['selectiontype'] ?? '') === SettingsType::SELECTION_TYPE_SLIDER;
+            $result[] = [
+                'attribute' => (string)$settings['urlkey'],
+                'value' => implode($isSlider ? '-' : '|', $isSlider ? array_slice($selected, 0, 2) : $selected),
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param mixed $attributes
+     * @return array[] Selected attributes, parents before their selected children
+     */
+    private function getSelectedAttributes($attributes): array
+    {
+        $result = [];
+        foreach ($this->normalizeAttributes($attributes) as $attribute) {
+            if (!filter_var($attribute['isselected'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                continue;
+            }
+
+            if (isset($attribute['title'])) {
+                $result[] = $attribute;
+            }
+
+            array_push($result, ...$this->getSelectedAttributes($attribute['children'] ?? []));
+        }
+
+        return $result;
     }
 
     /**

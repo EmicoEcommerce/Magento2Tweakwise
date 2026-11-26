@@ -190,15 +190,104 @@ class ResultMapperTest extends Unit
         $this->assertFalse($result['ajax']);
     }
 
+    public function testNavigationSelectionAndSearchTermAreUsedLikeTheDemoshop(): void
+    {
+        $this->addCategory(12, '1/2/12', true, self::CATEGORY_URL);
+
+        $result = $this->createMapper()->map(
+            $this->createNavigationResponse(
+                [
+                    $this->facet('kleur', 'color', 'checkbox', [['title' => 'Purple', 'isselected' => true]]),
+                    $this->facet('prijs', 'price', 'slider', [
+                        ['title' => '30', 'isselected' => true],
+                        ['title' => '60', 'isselected' => true],
+                        ['title' => '0', 'isselected' => false],
+                        ['title' => '99', 'isselected' => false],
+                    ]),
+                    $this->facet('maat', 'size', 'checkbox', [
+                        ['title' => 'M', 'isselected' => 'true'],
+                        ['title' => 'L', 'isselected' => false],
+                    ]),
+                    $this->facet('categorie', 'categorie', 'link', [[
+                        'title' => 'Women',
+                        'isselected' => true,
+                        'attributeid' => 1000112,
+                        'children' => [['title' => 'Tops', 'isselected' => true, 'attributeid' => 1000112]],
+                    ]], 'CATEGORY'),
+                ],
+                'purple'
+            ),
+            $this->createCategoryContext()
+        );
+
+        $this->assertSame(
+            ['q' => 'purple', 'kleur' => ['Purple'], 'prijs' => '30-60', 'maat' => ['M']],
+            $result['filters']
+        );
+        $this->assertSame(
+            self::CATEGORY_URL . '?q=purple&kleur[]=Purple&prijs=30-60&maat[]=M',
+            $this->decodeBrackets($result['url'])
+        );
+        $this->assertTrue($result['ajax']);
+    }
+
+    public function testExplicitSelectedFacetsOverrideTheNavigationSelection(): void
+    {
+        $response = new AssistantResponse([
+            'messages' => [],
+            'navigation' => ['facets' => [
+                $this->facet('kleur', 'color', 'checkbox', [['title' => 'Purple', 'isselected' => true]]),
+            ], 'properties' => ['searchterm' => 'purple']],
+            'history' => [],
+            'selectedFacets' => [['attribute' => 'color', 'value' => 'Paars']],
+            'searchTerm' => 'paars',
+        ]);
+
+        $result = $this->createMapper()->map($response, $this->createCategoryContext());
+
+        $this->assertSame(['q' => 'paars', 'kleur' => ['Paars']], $result['filters']);
+    }
+
     private function createCategoryContext(): PageContext
     {
         return new PageContext(PageContext::TYPE_CATEGORY, 12, self::CATEGORY_URL);
+    }
+
+    private function createNavigationResponse(array $facets, ?string $searchTerm): AssistantResponse
+    {
+        return new AssistantResponse([
+            'messages' => [],
+            'navigation' => ['facets' => $facets, 'properties' => ['searchterm' => $searchTerm]],
+            'history' => [],
+            'selectedFacets' => [],
+            'searchTerm' => null,
+        ]);
+    }
+
+    private function facet(
+        string $urlKey,
+        string $attributeName,
+        string $selectionType,
+        array $attributes,
+        string $source = 'FEED'
+    ): array {
+        return [
+            'facetsettings' => [
+                'urlkey' => $urlKey,
+                'attributename' => $attributeName,
+                'source' => $source,
+                'selectiontype' => $selectionType,
+            ],
+            'attributes' => $attributes,
+        ];
     }
 
     private function createResponse(array $selectedFacets, ?string $searchTerm = null): AssistantResponse
     {
         $fixture = json_decode((string)file_get_contents(codecept_data_dir('assistant/success.json')), true);
         $navigation = $fixture['navigation'];
+        // Only the explicit selected facets are under test here
+        $navigation['facets'][0]['attributes'][0]['isselected'] = false;
         $navigation['facets'][] = [
             'facetsettings' => [
                 'urlkey' => 'maat',

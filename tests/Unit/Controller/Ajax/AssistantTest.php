@@ -159,8 +159,8 @@ class AssistantTest extends Unit
         $this->client->shouldReceive('requestAssistant')->once()->with($this->assistantRequest)->andReturn($response);
 
         $this->createController([
-            'url' => 'https://shop.test/women.html?kleur[]=Rood',
-            'filters' => ['kleur' => ['Rood']],
+            'url' => 'https://shop.test/women.html?q=purple&kleur[]=Rood',
+            'filters' => ['q' => 'purple', 'kleur' => ['Rood']],
             'ajax' => true,
         ])->execute();
 
@@ -168,8 +168,10 @@ class AssistantTest extends Unit
         $this->assertSame('no-store, no-cache, must-revalidate, max-age=0', $this->result->headers['Cache-Control']);
         $this->assertSame($response->getMessages(), $this->result->data['messages']);
         $this->assertSame([['id' => 'h1']], $this->result->data['history']);
-        $this->assertSame('https://shop.test/women.html?kleur[]=Rood', $this->result->data['url']);
-        $this->assertEquals((object)['kleur' => ['Rood']], $this->result->data['filters']);
+        $this->assertSame('https://shop.test/women.html?q=purple&kleur[]=Rood', $this->result->data['url']);
+        $this->assertEquals((object)['q' => 'purple', 'kleur' => ['Rood']], $this->result->data['filters']);
+        // The applied search term, which may come from the returned navigation
+        $this->assertSame('purple', $this->result->data['searchTerm']);
         $this->assertTrue($this->result->data['ajax']);
     }
 

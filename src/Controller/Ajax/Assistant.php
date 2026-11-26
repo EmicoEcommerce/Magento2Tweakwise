@@ -19,7 +19,9 @@ use Tweakwise\Magento2Tweakwise\Model\Assistant\ResultMapper;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\AssistantRequest;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request\AssistantRequestFactory;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\AssistantResponse;
 use Tweakwise\Magento2Tweakwise\Model\Config;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 
 /**
  * Proxy for the Tweakwise AI Shopping Assistant. Accepts a form-key protected POST with a JSON "payload" field.
@@ -90,15 +92,25 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
         }
 
         $toolbar = is_array($payload['toolbar'] ?? null) ? $payload['toolbar'] : [];
-        $result = $this->resultMapper->map($response, $context, $toolbar);
 
+        return $this->createSuccessResult($response, $this->resultMapper->map($response, $context, $toolbar));
+    }
+
+    /**
+     * @param AssistantResponse $response
+     * @param array{url: string, filters: array<string, string|string[]>, ajax: bool} $result
+     * @return Json
+     */
+    private function createSuccessResult(AssistantResponse $response, array $result): Json
+    {
         return $this->createResult(
             200,
             [
                 'messages' => $response->getMessages(),
                 'history' => $response->getHistory(),
                 'selectedFacets' => $response->getSelectedFacets(),
-                'searchTerm' => $response->getSearchTerm(),
+                // The applied search term, which may come from the returned navigation
+                'searchTerm' => $result['filters'][QueryParameterStrategy::PARAM_SEARCH] ?? null,
                 'url' => $result['url'],
                 'filters' => (object)$result['filters'],
                 'ajax' => $result['ajax'],

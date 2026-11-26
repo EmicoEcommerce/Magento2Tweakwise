@@ -149,10 +149,10 @@ Behaviour:
   navigation when AJAX filtering is enabled.
 - Category pages: the result is loaded on the category URL with the filters, through the existing AJAX navigation when
   AJAX filtering is enabled. When the assistant selects another category, the shopper navigates to that category. When
-  the assistant returns a search term on a category page, the shopper is redirected to the search results page with that
-  term, the category and the filters, because search within a category is not supported by the URL strategies. When
-  Tweakwise search is disabled, the search term is ignored and the shopper stays on the category page with the filters,
-  because the assistant is only available on pages handled by Tweakwise.
+  the assistant returns a search term, it is added as `?q={searchTerm}` and the products are searched within the category
+  (Tweakwise `navigation-search` with the category id), like the Tweakwise demoshop. The shopper stays on the category
+  page and is not sent to the store wide search results page, so this also works when Tweakwise search is disabled.
+  Filter links keep the search term. A `q` parameter on category pages is only applied when the assistant is enabled.
 - The conversation (messages, history, open state and the URL from before the conversation) is stored in `sessionStorage`
   only. "Reset" clears it and returns to the results from before the conversation; it is also cleared on logout.
 - Message content and history are never logged; only the status code, duration and an error reference are logged.

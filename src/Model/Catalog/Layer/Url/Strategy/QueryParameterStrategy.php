@@ -526,6 +526,9 @@ class QueryParameterStrategy implements UrlInterface, FilterApplierInterface, Ca
         if ($navigationRequest instanceof ProductSearchRequest && $search) {
             /** @var ProductSearchRequest $navigationRequest */
             $navigationRequest->setSearch($search);
+        } elseif (trim((string)$search) !== '' && $this->tweakwiseConfig->isAssistantEnabled()) {
+            // A search term chosen by the AI assistant is applied within the current category
+            $navigationRequest->setCategorySearch(trim((string)$search));
         }
 
         return $this;

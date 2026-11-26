@@ -38,6 +38,19 @@ class ProductNavigationRequest extends Request
     }
 
     /**
+     * Searches within the requested category, the response is the same navigation response.
+     *
+     * @param string $query
+     * @return void
+     */
+    public function setCategorySearch(string $query): void
+    {
+        $this->path = 'navigation-search';
+        $this->groupedPath = 'navigation-search/grouped';
+        $this->setParameter('tn_q', $query);
+    }
+
+    /**
      * @param string $attribute
      * @param string $value
      * @return $this

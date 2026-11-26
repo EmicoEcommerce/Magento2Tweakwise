@@ -13,7 +13,6 @@ use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AssistantResponse;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
-use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 /**
@@ -21,9 +20,9 @@ use Tweakwise\Magento2TweakwiseExport\Model\Helper;
  *
  * Selected facets are matched to the facets of the returned navigation on attributename or urlkey and applied with the
  * facet urlkey, like regular filter links. Facets that cannot be matched are dropped. A selected category facet is
- * mapped back to the Magento category. On category pages a search term redirects to the search results page, because
- * category pages do not support searching within the category. When Tweakwise search is disabled the search results
- * page is not handled by Tweakwise, so the search term is ignored and the shopper stays on the category page.
+ * mapped back to the Magento category. On category pages a search term is applied within the category, like the
+ * Tweakwise demoshop: the shopper stays on the category page and the products come from navigation-search with the
+ * category id, instead of the store wide search results page.
  */
 class ResultMapper
 {
@@ -41,14 +40,12 @@ class ResultMapper
      * @param StoreManagerInterface $storeManager
      * @param UrlInterface $url
      * @param Helper $helper
-     * @param Config $config
      */
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly StoreManagerInterface $storeManager,
         private readonly UrlInterface $url,
-        private readonly Helper $helper,
-        private readonly Config $config
+        private readonly Helper $helper
     ) {
     }
 
@@ -65,8 +62,12 @@ class ResultMapper
         $searchTerm = trim((string)$response->getSearchTerm());
         $toolbar = $this->filterToolbarParameters($toolbarParameters);
 
-        if ($context->isSearch() || ($searchTerm !== '' && $this->config->isSearchEnabled())) {
+        if ($context->isSearch()) {
             return $this->mapSearchResult($context, $filters, $toolbar, $searchTerm, $category);
+        }
+
+        if ($searchTerm !== '') {
+            $filters = [QueryParameterStrategy::PARAM_SEARCH => $searchTerm] + $filters;
         }
 
         $ajax = true;
@@ -141,10 +142,6 @@ class ResultMapper
         }
 
         $searchFilters = [QueryParameterStrategy::PARAM_SEARCH => $searchTerm];
-        if ($category === null && !$context->isSearch()) {
-            $category = $this->getCategory($context->getCategoryId());
-        }
-
         $categoryPath = $category !== null ? $this->getCategoryPath($category) : '';
         if ($categoryPath !== '') {
             $searchFilters[QueryParameterStrategy::PARAM_CATEGORY] = $categoryPath;
@@ -155,7 +152,7 @@ class ResultMapper
         return [
             'url' => $this->buildUrl($this->url->getUrl('catalogsearch/result'), $filters + $toolbar),
             'filters' => $filters,
-            'ajax' => $context->isSearch(),
+            'ajax' => true,
         ];
     }
 

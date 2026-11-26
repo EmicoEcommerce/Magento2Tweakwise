@@ -15,7 +15,6 @@ use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Assistant\PageContext;
 use Tweakwise\Magento2Tweakwise\Model\Assistant\ResultMapper;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AssistantResponse;
-use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class ResultMapperTest extends Unit
@@ -151,34 +150,44 @@ class ResultMapperTest extends Unit
         $this->assertSame(self::SEARCH_URL . '?q=shoes', $result['url']);
     }
 
-    public function testSearchTermOnCategoryPageRedirectsToSearchWithinTheCategory(): void
+    /**
+     * Like the demoshop the assistant searches within the current category instead of the whole catalog.
+     */
+    public function testSearchTermOnCategoryPageSearchesWithinTheCategory(): void
     {
-        $this->addCategory(12, '1/2/12', true, self::CATEGORY_URL);
-
         $result = $this->createMapper()->map(
             $this->createResponse([['attribute' => 'kleur', 'value' => 'Rood']], 'red shoes'),
             $this->createCategoryContext()
         );
 
-        $this->assertSame(
-            self::SEARCH_URL . '?q=red%20shoes&categorie=2-12&kleur[]=Rood',
-            $this->decodeBrackets($result['url'])
-        );
-        $this->assertFalse($result['ajax']);
+        $this->assertSame(self::CATEGORY_URL . '?q=red%20shoes&kleur[]=Rood', $this->decodeBrackets($result['url']));
+        $this->assertSame(['q' => 'red shoes', 'kleur' => ['Rood']], $result['filters']);
+        $this->assertTrue($result['ajax']);
     }
 
-    public function testSearchTermOnCategoryPageStaysOnTheCategoryWhenTweakwiseSearchIsDisabled(): void
+    public function testCategoryPageWithoutSearchTermDropsThePreviousSearchTerm(): void
     {
-        $this->addCategory(12, '1/2/12', true, self::CATEGORY_URL);
-
-        $result = $this->createMapper(false)->map(
-            $this->createResponse([['attribute' => 'kleur', 'value' => 'Rood']], 'red shoes'),
-            $this->createCategoryContext()
+        $result = $this->createMapper()->map(
+            $this->createResponse([['attribute' => 'kleur', 'value' => 'Rood']], '  '),
+            new PageContext(PageContext::TYPE_CATEGORY, 12, self::CATEGORY_URL, 'red shoes')
         );
 
         $this->assertSame(self::CATEGORY_URL . '?kleur[]=Rood', $this->decodeBrackets($result['url']));
         $this->assertSame(['kleur' => ['Rood']], $result['filters']);
         $this->assertTrue($result['ajax']);
+    }
+
+    public function testSearchTermIsKeptWhenTheCategoryFacetSelectsAnotherCategory(): void
+    {
+        $this->addCategory(15, '1/2/15', true, 'https://shop.test/men.html');
+
+        $result = $this->createMapper()->map(
+            $this->createResponse([['attribute' => 'categorie', 'value' => 'Men']], 'red shoes'),
+            $this->createCategoryContext()
+        );
+
+        $this->assertSame('https://shop.test/men.html?q=red%20shoes', $result['url']);
+        $this->assertFalse($result['ajax']);
     }
 
     private function createCategoryContext(): PageContext
@@ -228,7 +237,7 @@ class ResultMapperTest extends Unit
         $this->categories[$id] = $category;
     }
 
-    private function createMapper(bool $searchEnabled = true): ResultMapper
+    private function createMapper(): ResultMapper
     {
         $store = Mockery::mock(Store::class);
         $store->shouldReceive('getId')->andReturn(1);
@@ -254,10 +263,7 @@ class ResultMapperTest extends Unit
             static fn (int $storeId, int $id): string => '1' . str_pad((string)$storeId, 4, '0', STR_PAD_LEFT) . $id
         );
 
-        $config = Mockery::mock(Config::class);
-        $config->shouldReceive('isSearchEnabled')->andReturn($searchEnabled);
-
-        return new ResultMapper($repository, $storeManager, $url, $helper, $config);
+        return new ResultMapper($repository, $storeManager, $url, $helper);
     }
 
     private function decodeBrackets(string $url): string

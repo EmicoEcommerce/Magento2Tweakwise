@@ -15,4 +15,12 @@
         <container name="sidebar.main"/>
     </container>
     <update handle="catalogsearch_result_index"/>
+    <!-- columns.top is not rendered in ajax responses, navigation-form.js syncs this banner into place -->
+    <referenceContainer name="content">
+        <block ifconfig="tweakwise/search/searchbanner" class="Tweakwise\Magento2Tweakwise\Block\Navigation\SearchBanner\SearchBannerRenderer" name="navigation.search.banner.container.top" template="Tweakwise_Magento2Tweakwise::searchbanner/search.banner.container.top.phtml">
+            <arguments>
+                <argument name="tweakwise_navigation_context" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>
+            </arguments>
+        </block>
+    </referenceContainer>
 </layout>

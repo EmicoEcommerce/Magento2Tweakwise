@@ -53,7 +53,10 @@ class AssistantResponse
         }
 
         $this->messages = $this->parseMessages($data['messages']);
-        $this->navigation = $data['navigation'];
+        $this->navigation = is_array($data['navigation']['grouped'] ?? null)
+            // The grouped endpoint wraps the navigation in "grouped", like the demoshop tolerate both
+            ? $data['navigation']['grouped']
+            : $data['navigation'];
         $this->history = $data['history'];
         $this->selectedFacets = $this->parseSelectedFacets($data['selectedFacets']);
         $this->searchTerm = is_string($data['searchTerm'] ?? null) ? $data['searchTerm'] : null;

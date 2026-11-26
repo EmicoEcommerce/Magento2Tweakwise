@@ -231,6 +231,25 @@ class ResultMapperTest extends Unit
         $this->assertTrue($result['ajax']);
     }
 
+    public function testGroupedNavigationIsUnwrapped(): void
+    {
+        $response = new AssistantResponse([
+            'messages' => [],
+            'navigation' => ['grouped' => [
+                'facets' => [$this->facet('kleur', 'color', 'checkbox', [['title' => 'Purple', 'isselected' => true]])],
+                'groups' => [],
+                'properties' => ['searchterm' => 'purple'],
+            ]],
+            'history' => [],
+            'selectedFacets' => [],
+            'searchTerm' => null,
+        ]);
+
+        $result = $this->createMapper()->map($response, $this->createCategoryContext());
+
+        $this->assertSame(['q' => 'purple', 'kleur' => ['Purple']], $result['filters']);
+    }
+
     public function testExplicitSelectedFacetsOverrideTheNavigationSelection(): void
     {
         $response = new AssistantResponse([

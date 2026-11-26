@@ -20,6 +20,7 @@ use Mockery;
 use Mockery\MockInterface;
 use ReflectionProperty;
 use stdClass;
+use Tweakwise\Magento2Tweakwise\Exception\ApiException;
 use Tweakwise\Magento2Tweakwise\Exception\AssistantException;
 use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
@@ -151,6 +152,40 @@ class AssistantClientTest extends Unit
         $this->assertSame('gateway.tweakwisenavigator.net', $this->history[0]['request']->getUri()->getHost());
         $this->assertSame('gateway.tweakwisenavigator.com', $this->history[1]['request']->getUri()->getHost());
         $this->assertSame($this->history[0]['request']->getBody()->__toString(), (string)$this->history[1]['request']->getBody());
+    }
+
+    public function testUnavailableGatewaysAreReportedAsAssistantFailure(): void
+    {
+        $state = new stdClass();
+        $state->fallback = false;
+        $manager = Mockery::mock(EndpointManager::class);
+        $manager->shouldReceive('getServerUrl')->andReturnUsing(
+            static function () use ($state): string {
+                if ($state->fallback) {
+                    throw new ApiException('Tweakwise gateways are temporarily unavailable');
+                }
+
+                return EndpointManager::SERVER_URL;
+            }
+        );
+        $manager->shouldReceive('handleConnectException')->with(false)->once()->andReturnUsing(
+            static function () use ($state): void {
+                $state->fallback = true;
+            }
+        );
+        $client = $this->createClient(
+            [new ConnectException('Could not resolve host', new HttpRequest('POST', EndpointManager::SERVER_URL))],
+            $manager
+        );
+
+        try {
+            $client->requestAssistant($this->createRequest());
+            $this->fail('Expected an AssistantException');
+        } catch (AssistantException $e) {
+            $this->assertInstanceOf(ApiException::class, $e->getPrevious());
+        }
+
+        $this->assertStringContainsString('[AI assistant] Request failed', (string)end($this->logLines));
     }
 
     public function testSlowAssistantDoesNotMarkGatewayDown(): void

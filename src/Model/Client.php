@@ -415,6 +415,7 @@ class Client
      * @param AssistantRequest $request
      * @return HttpRequest
      * @throws JsonException
+     * @throws ApiException
      */
     public function createAssistantPostRequest(AssistantRequest $request): HttpRequest
     {
@@ -451,7 +452,7 @@ class Client
     {
         try {
             $httpRequest = $this->createAssistantPostRequest($request);
-        } catch (JsonException $e) {
+        } catch (JsonException | ApiException $e) {
             throw new AssistantException('Tweakwise AI assistant request could not be created', 0, $reference, null, $e);
         }
 

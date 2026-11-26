@@ -109,7 +109,6 @@ class AssistantTest extends Unit
     public static function invalidPayloads(): array
     {
         $valid = self::validPayload();
-        $tooMany = array_fill(0, Assistant::MAX_MESSAGES + 1, ['role' => 'user', 'content' => 'a']);
 
         return [
             'missing' => [null],
@@ -126,7 +125,6 @@ class AssistantTest extends Unit
                 ['messages' => [['role' => 'user', 'content' => str_repeat('a', Assistant::MAX_MESSAGE_LENGTH + 1)]]]
                 + $valid
             )],
-            'too many messages' => [json_encode(['messages' => $tooMany] + $valid)],
             'invalid facet' => [json_encode(['selectedFacets' => [['value' => 'x']]] + $valid)],
             'invalid history' => [json_encode(['history' => 'x'] + $valid)],
             'invalid context' => [json_encode(['context' => ['hash' => 'tampered']] + $valid)],
@@ -173,6 +171,45 @@ class AssistantTest extends Unit
         // The applied search term, which may come from the returned navigation
         $this->assertSame('purple', $this->result->data['searchTerm']);
         $this->assertTrue($this->result->data['ajax']);
+    }
+
+    public function testLongAssistantMessagesAreAccepted(): void
+    {
+        $messages = [
+            ['role' => 'user', 'content' => 'jackets'],
+            ['role' => 'assistant', 'content' => str_repeat('a', Assistant::MAX_MESSAGE_LENGTH + 1)],
+            ['role' => 'user', 'content' => 'purple'],
+        ];
+        $this->request->shouldReceive('getParam')
+            ->with('payload')
+            ->andReturn(json_encode(['messages' => $messages] + self::validPayload()));
+        $this->assistantRequest->shouldReceive('setMessages')->once()->with($messages)->andReturnSelf();
+        $this->client->shouldReceive('requestAssistant')->once()->andReturn(new AssistantResponse(['messages' => [], 'navigation' => [], 'history' => [], 'selectedFacets' => []]));
+
+        $this->createController()->execute();
+
+        $this->assertSame(200, $this->result->code);
+    }
+
+    public function testOnlyTheLatestMessagesAreSent(): void
+    {
+        $messages = [];
+        for ($i = 0; $i <= Assistant::MAX_MESSAGES; $i++) {
+            $messages[] = ['role' => $i % 2 ? 'assistant' : 'user', 'content' => 'message ' . $i];
+        }
+
+        $this->request->shouldReceive('getParam')
+            ->with('payload')
+            ->andReturn(json_encode(['messages' => $messages] + self::validPayload()));
+        $this->assistantRequest->shouldReceive('setMessages')
+            ->once()
+            ->with(array_slice($messages, -Assistant::MAX_MESSAGES))
+            ->andReturnSelf();
+        $this->client->shouldReceive('requestAssistant')->once()->andReturn(new AssistantResponse(['messages' => [], 'navigation' => [], 'history' => [], 'selectedFacets' => []]));
+
+        $this->createController()->execute();
+
+        $this->assertSame(200, $this->result->code);
     }
 
     public function testProfileKeyIsSentWhenPersonalMerchandisingIsActive(): void

@@ -164,6 +164,8 @@ Behaviour:
   only the assistant, so the shopper can continue the conversation or reset it.
 - The conversation (messages, history, open state and the URL from before the conversation) is stored in `sessionStorage`
   only. "Reset" clears it and returns to the results from before the conversation; it is also cleared on logout.
+- Only the latest 40 messages are sent to Tweakwise. Shopper messages are limited to 1000 characters; assistant answers
+  are not limited.
 - Message content and history are never logged; only the status code, duration and an error reference are logged.
 - Profile key: sent only when personal merchandising is active and the profile cookie is set.
 

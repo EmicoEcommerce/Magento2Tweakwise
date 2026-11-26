@@ -206,20 +206,20 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
     }
 
     /**
-     * Returns the messages when valid: at most MAX_MESSAGES user/assistant messages, ending with a non-empty user
-     * message.
+     * Returns the latest MAX_MESSAGES messages when valid: non-empty user/assistant messages, ending with a user
+     * message. Only user messages are limited to MAX_MESSAGE_LENGTH, assistant answers are written by Tweakwise.
      *
      * @param mixed $messages
      * @return array|null
      */
     private function validateMessages($messages): ?array
     {
-        if (!is_array($messages) || !$messages || count($messages) > self::MAX_MESSAGES || !array_is_list($messages)) {
+        if (!is_array($messages) || !$messages || !array_is_list($messages)) {
             return null;
         }
 
         $result = [];
-        foreach ($messages as $message) {
+        foreach (array_slice($messages, -self::MAX_MESSAGES) as $message) {
             if (!$this->isValidMessage($message)) {
                 return null;
             }
@@ -229,7 +229,7 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
 
         $last = end($result);
 
-        return $last['role'] === 'user' ? $result : null;
+        return $last !== false && $last['role'] === 'user' ? $result : null;
     }
 
     /**
@@ -243,7 +243,7 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
         return in_array($message['role'] ?? null, ['user', 'assistant'], true)
             && is_string($content)
             && trim($content) !== ''
-            && mb_strlen($content) <= self::MAX_MESSAGE_LENGTH;
+            && ($message['role'] !== 'user' || mb_strlen($content) <= self::MAX_MESSAGE_LENGTH);
     }
 
     /**

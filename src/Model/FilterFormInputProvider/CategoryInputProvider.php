@@ -12,6 +12,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url;
+use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Magento\Framework\App\Request\Http as MagentoHttpRequest;
 
 class CategoryInputProvider implements FilterFormInputProviderInterface
@@ -108,8 +109,9 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
      */
     public function getFilterFormInput(): array
     {
+        $parameters = $this->getSearchInput();
         if (!$this->config->isAjaxFilters()) {
-            return [];
+            return $parameters;
         }
 
         $url = $this->getOriginalUrl();
@@ -124,7 +126,22 @@ class CategoryInputProvider implements FilterFormInputProviderInterface
 
         $input['__tw_hash'] = $this->hashInputProvider->getHash($input);
 
-        return array_merge($input, $this->toolbarInputProvider->getFilterFormInput());
+        return array_merge($parameters, $input, $this->toolbarInputProvider->getFilterFormInput());
+    }
+
+    /**
+     * Keeps the search term of an AI assistant search within the category when filtering
+     *
+     * @return array
+     */
+    private function getSearchInput(): array
+    {
+        $search = trim((string)$this->request->getQuery(QueryParameterStrategy::PARAM_SEARCH));
+        if ($search === '' || !$this->config->isAssistantEnabled()) {
+            return [];
+        }
+
+        return [QueryParameterStrategy::PARAM_SEARCH => $search];
     }
 
     /**

@@ -3,6 +3,8 @@ var config = {
         '*': {
             quickSearch: 'Tweakwise_Magento2Tweakwise/js/quick-search',
             tweakwiseNavigationForm: 'Tweakwise_Magento2Tweakwise/js/navigation-form',
+            tweakwiseAssistant: 'Tweakwise_Magento2Tweakwise/js/assistant',
+            tweakwiseAssistantClear: 'Tweakwise_Magento2Tweakwise/js/assistant-clear',
             tweakwiseNavigationSort: 'Tweakwise_Magento2Tweakwise/js/navigation-sort',
             tweakwiseNavigationSlider: 'Tweakwise_Magento2Tweakwise/js/navigation-slider',
             tweakwiseNavigationSliderWidget: 'Tweakwise_Magento2Tweakwise/js/navigation-slider-widget',

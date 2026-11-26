@@ -9,9 +9,14 @@
 
 namespace Tweakwise\Magento2Tweakwise\Model;
 
+use InvalidArgumentException;
+use JsonException;
 use Tweakwise\Magento2Tweakwise\Exception\ApiException;
+use Tweakwise\Magento2Tweakwise\Exception\AssistantException;
 use Tweakwise\Magento2Tweakwise\Model\Client\EndpointManager;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
+use Tweakwise\Magento2Tweakwise\Model\Client\Request\AssistantRequest;
+use Tweakwise\Magento2Tweakwise\Model\Client\Response\AssistantResponse;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response;
 use Tweakwise\Magento2Tweakwise\Model\Client\ResponseFactory;
 use Tweakwise\Magento2Tweakwise\Model\Client\Timer;
@@ -358,5 +363,170 @@ class Client
 
         $this->config->setTweakwiseExceptionThrown(true);
         $this->log->throwException($e);
+    }
+
+    /**
+     * Sends a JSON POST request to the AI Shopping Assistant endpoint.
+     *
+     * Failures throw an AssistantException and never set the global Tweakwise exception flag, so regular navigation
+     * keeps working. Only the status code, duration and an error reference are logged, never the conversation.
+     *
+     * @param AssistantRequest $request
+     * @return AssistantResponse
+     * @throws AssistantException
+     */
+    public function requestAssistant(AssistantRequest $request): AssistantResponse
+    {
+        $reference = bin2hex(random_bytes(6));
+        $timerName = $request->getPath();
+        $this->timer->startTimer($timerName);
+        $statusCode = 0;
+
+        try {
+            $httpResponse = $this->sendAssistantRequest($request, $reference);
+            $statusCode = $httpResponse->getStatusCode();
+            $response = $this->parseAssistantResponse($httpResponse, $reference);
+        } catch (AssistantException $e) {
+            $this->timer->endTimer($timerName);
+            $this->log->error(
+                sprintf(
+                    '[AI assistant] Request failed. Status: %d, duration: %.3fs, reference: %s',
+                    $e->getCode(),
+                    $this->timer->getTime($timerName),
+                    $reference
+                )
+            );
+            throw $e;
+        }
+
+        $this->timer->endTimer($timerName);
+        $this->log->debug(
+            sprintf(
+                '[AI assistant] Status: %d, duration: %.3fs',
+                $statusCode,
+                $this->timer->getTime($timerName)
+            )
+        );
+
+        return $response;
+    }
+
+    /**
+     * @param AssistantRequest $request
+     * @return HttpRequest
+     * @throws JsonException
+     */
+    public function createAssistantPostRequest(AssistantRequest $request): HttpRequest
+    {
+        $url = sprintf(
+            '%s/%s/%s',
+            rtrim($this->endpointManager->getServerUrl(), '/'),
+            trim((string)$request->getPath(), '/'),
+            rawurlencode($this->config->getGeneralAuthenticationKey())
+        );
+
+        $headers = array_merge(
+            [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ],
+            $this->buildInternalTrafficHeader()
+        );
+
+        $body = json_encode($request->getBody(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+
+        return new HttpRequest('POST', new Uri($url), $headers, $body);
+    }
+
+    /**
+     * Sends the request, failing over to the fallback gateway when the primary gateway cannot be reached. A slow
+     * assistant response (operation timeout) does not mark the gateway as down.
+     *
+     * @param AssistantRequest $request
+     * @param string $reference
+     * @return ResponseInterface
+     * @throws AssistantException
+     */
+    protected function sendAssistantRequest(AssistantRequest $request, string $reference): ResponseInterface
+    {
+        try {
+            $httpRequest = $this->createAssistantPostRequest($request);
+        } catch (JsonException $e) {
+            throw new AssistantException('Tweakwise AI assistant request could not be created', 0, $reference, null, $e);
+        }
+
+        try {
+            return $this->getClient()->send(
+                $httpRequest,
+                [
+                    RequestOptions::TIMEOUT => Config::ASSISTANT_REQUEST_TIMEOUT,
+                    RequestOptions::HTTP_ERRORS => false,
+                ]
+            );
+        } catch (ConnectException $e) {
+            if (stripos($e->getMessage(), 'Operation timed out') !== false) {
+                throw new AssistantException('Tweakwise AI assistant timed out', 0, $reference, null, $e);
+            }
+
+            $isFallback = $httpRequest->getUri()->getHost() ===
+                parse_url(EndpointManager::FALLBACK_SERVER_URL, PHP_URL_HOST);
+            $this->endpointManager->handleConnectException($isFallback);
+            if (!$isFallback) {
+                return $this->sendAssistantRequest($request, $reference);
+            }
+
+            throw new AssistantException('Tweakwise AI assistant is not reachable', 0, $reference, null, $e);
+        } catch (GuzzleException $e) {
+            throw new AssistantException('Tweakwise AI assistant request failed', 0, $reference, null, $e);
+        }
+    }
+
+    /**
+     * @param ResponseInterface $httpResponse
+     * @param string $reference
+     * @return AssistantResponse
+     * @throws AssistantException
+     */
+    protected function parseAssistantResponse(ResponseInterface $httpResponse, string $reference): AssistantResponse
+    {
+        $statusCode = $httpResponse->getStatusCode();
+        $body = (string)$httpResponse->getBody();
+
+        if ($statusCode !== 200) {
+            throw new AssistantException(
+                sprintf('Tweakwise AI assistant responded with status %d', $statusCode),
+                $statusCode,
+                $reference,
+                $this->getAssistantErrorReason($statusCode, $body)
+            );
+        }
+
+        try {
+            return AssistantResponse::fromArray(json_decode($body, true, 512, JSON_THROW_ON_ERROR));
+        } catch (JsonException | InvalidArgumentException $e) {
+            throw new AssistantException('Invalid Tweakwise AI assistant response', $statusCode, $reference, null, $e);
+        }
+    }
+
+    /**
+     * @param int $statusCode
+     * @param string $body
+     * @return string|null
+     */
+    protected function getAssistantErrorReason(int $statusCode, string $body): ?string
+    {
+        if (stripos($body, 'quota') === false) {
+            return null;
+        }
+
+        if ($statusCode === 403) {
+            return AssistantException::REASON_QUOTA_REACHED;
+        }
+
+        if ($statusCode === 503) {
+            return AssistantException::REASON_QUOTA_UNAVAILABLE;
+        }
+
+        return null;
     }
 }

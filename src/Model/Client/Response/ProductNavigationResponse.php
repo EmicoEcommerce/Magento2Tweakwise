@@ -53,6 +53,46 @@ class ProductNavigationResponse extends Response
     }
 
     /**
+     * Normalizes the <assistant><enabled/><reason/></assistant> node of the navigation response.
+     *
+     * @param mixed $assistant
+     * @return $this
+     */
+    public function setAssistant($assistant)
+    {
+        $assistant = is_array($assistant) ? $assistant : [];
+        $enabled = $assistant['enabled'] ?? false;
+        $reason = $assistant['reason'] ?? '';
+
+        $this->data['assistant'] = [
+            'enabled' => $enabled === true || (is_string($enabled) && strtolower(trim($enabled)) === 'true'),
+            'reason' => is_string($reason) ? trim($reason) : '',
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAssistantEnabled(): bool
+    {
+        return (bool)($this->data['assistant']['enabled'] ?? false);
+    }
+
+    /**
+     * Reason why the assistant is not available, null when not reported.
+     *
+     * @return string|null
+     */
+    public function getAssistantReason(): ?string
+    {
+        $reason = $this->data['assistant']['reason'] ?? '';
+
+        return $reason !== '' ? $reason : null;
+    }
+
+    /**
      * @param RedirectType[]|array[] $redirects
      * @return $this
      */

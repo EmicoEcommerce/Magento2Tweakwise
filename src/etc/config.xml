@@ -42,6 +42,9 @@ cid
                 <enabled>0</enabled>
                 <template/>
             </search>
+            <assistant>
+                <enabled>0</enabled>
+            </assistant>
             <merchandising_builder>
                 <personal_merchandising>
                     <product_card_lifetime>3600</product_card_lifetime>

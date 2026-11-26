@@ -1,0 +1,32 @@
+{
+    "messages": [
+        {"type": "message", "role": "user", "content": "I need red running shoes under 50 euro"},
+        {"type": "message", "role": "assistant", "content": "I selected red running shoes up to 50 euro for you."}
+    ],
+    "navigation": {
+        "facets": [
+            {
+                "facetsettings": {"facetid": 1, "urlkey": "kleur", "attributename": "color", "title": "Kleur", "source": "FEED", "selectiontype": "checkbox"},
+                "attributes": [{"title": "Rood", "isselected": true, "nrofresults": 12, "attributeid": 1001}]
+            },
+            {
+                "facetsettings": {"facetid": 2, "urlkey": "prijs", "attributename": "price", "title": "Prijs", "source": "FEED", "selectiontype": "slider"},
+                "attributes": []
+            },
+            {
+                "facetsettings": {"facetid": 3, "urlkey": "categorie", "attributename": "categorie", "title": "Categorie", "source": "CATEGORY", "selectiontype": "link"},
+                "attributes": [{"title": "Running", "isselected": true, "nrofresults": 8, "attributeid": "100012"}]
+            }
+        ],
+        "items": [],
+        "properties": {"nrofitems": 12, "pagesize": 12, "currentpage": 1, "nrofpages": 1},
+        "assistant": {"enabled": true, "reason": ""}
+    },
+    "history": [{"id": "h1", "state": "opaque"}],
+    "selectedFacets": [
+        {"attribute": "color", "value": "Rood|Zwart"},
+        {"attribute": "prijs", "value": "5-50"},
+        {"attribute": "unknown", "value": "x"}
+    ],
+    "searchTerm": "running shoes"
+}

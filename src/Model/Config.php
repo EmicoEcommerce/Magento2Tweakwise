@@ -60,6 +60,11 @@ class Config
     public const CONNECT_TIMEOUT = 1;
 
     /**
+     * AI Shopping Assistant responses can take up to 15 seconds.
+     */
+    public const ASSISTANT_REQUEST_TIMEOUT = 30;
+
+    /**
      * @deprecated
      * @see Client\EndpointManager::SERVER_URL
      */
@@ -448,6 +453,15 @@ class Config
     public function isPersonalMerchandisingActive(?Store $store = null)
     {
         return (bool) $this->getStoreConfig('tweakwise/merchandising_builder/personal_merchandising/enabled', $store);
+    }
+
+    /**
+     * @param Store|null $store
+     * @return bool
+     */
+    public function isAssistantEnabled(?Store $store = null): bool
+    {
+        return (bool)$this->getStoreConfig('tweakwise/assistant/enabled', $store);
     }
 
     /**

@@ -1,0 +1,99 @@
+<?php
+/**
+ * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
+ *
+ * @copyright Copyright (c) 2017-2026 Tweakwise.com B.V. (https://www.tweakwise.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+use Magento\Framework\Escaper;
+use Magento\LayeredNavigation\Block\Navigation;
+use Tweakwise\Magento2Tweakwise\ViewModel\Assistant;
+
+/**
+ * @var $block Navigation
+ * @var $escaper Escaper
+ */
+
+/** @var Assistant|null $assistantViewModel */
+$assistantViewModel = $block->getData('tweakwise_assistant_view_model');
+if (!$assistantViewModel instanceof Assistant || !$assistantViewModel->isAvailable()) {
+    return;
+}
+
+$unavailableReason = $assistantViewModel->getUnavailableReason();
+$quotaMessages = [
+    'quota-reached' => __('The AI Assistant has reached its usage limit and is temporarily unavailable.')->render(),
+    'quota-unavailable' => __('The AI Assistant is unavailable because its usage quota could not be verified.')->render(),
+];
+$labels = [
+    'user' => __('You')->render(),
+    'assistant' => __('Assistant')->render(),
+    'responding' => __('Assistant is responding.')->render(),
+    'search' => __('Search')->render(),
+    'cancel' => __('Cancel')->render(),
+    'quota' => $quotaMessages,
+];
+$inputId = 'tw-assistant-input';
+?>
+<section class="tw-assistant-facet"
+         aria-label="<?= $escaper->escapeHtmlAttr(__('AI Assistant')) ?>"
+         data-mage-init='<?= /* @noEscape */ $assistantViewModel->getJsConfig($labels) ?>'>
+    <div class="tw-assistant__header">
+        <span class="tw-assistant__avatar" aria-hidden="true">
+            <?= $escaper->escapeHtml(__('AI')) ?>
+            <span class="tw-assistant__status<?= $unavailableReason ? ' tw-assistant__status--unavailable' : '' ?>"
+                  data-role="tw-assistant-status"></span>
+        </span>
+        <span class="tw-assistant__heading">
+            <strong class="tw-assistant__title"><?= $escaper->escapeHtml(__('AI Assistant')) ?></strong>
+            <span class="tw-assistant__subtitle"><?= $escaper->escapeHtml(__('What are you looking for today?')) ?></span>
+        </span>
+    </div>
+    <button type="button"
+            class="tw-assistant-facet__form"
+            data-role="tw-assistant-open"
+            aria-expanded="false"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Open product finder')) ?>">
+        <span class="tw-assistant-facet__placeholder"><?= $escaper->escapeHtml(__('Open product finder to describe what you need')) ?></span>
+        <svg class="tw-assistant-facet__icon" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+    <div class="tw-assistant__panel" data-role="tw-assistant-panel" hidden>
+        <section class="tw-assistant__messages"
+                 data-role="tw-assistant-messages"
+                 aria-live="polite"
+                 aria-label="<?= $escaper->escapeHtmlAttr(__('Conversation')) ?>">
+            <div class="tw-assistant__empty" data-role="tw-assistant-empty">
+                <svg class="tw-assistant__empty-icon" aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.94 14.06 8 20l-1.94-5.94L0 12l6.06-1.94L8 4l1.94 6.06L16 12z" transform="translate(2 -1) scale(.85)"/><path d="M19 3v4M17 5h4M19 15v4M17 17h4"/></svg>
+                <p><?= $escaper->escapeHtml(__('Describe your product preferences below to narrow down your search.')) ?></p>
+            </div>
+            <div class="tw-assistant__thread" data-role="tw-assistant-thread"></div>
+            <p class="tw-assistant__error" role="alert" data-role="tw-assistant-error" hidden>
+                <strong><?= $escaper->escapeHtml(__('Something went wrong.')) ?></strong>
+                <span><?= $escaper->escapeHtml(__('Search could not be completed. Try again.')) ?></span>
+            </p>
+            <p class="tw-assistant__quota" role="status" data-role="tw-assistant-quota"<?= $unavailableReason ? '' : ' hidden' ?>><?= $unavailableReason ? $escaper->escapeHtml($quotaMessages[$unavailableReason]) : '' ?></p>
+        </section>
+        <form class="tw-assistant__composer" data-role="tw-assistant-composer" novalidate>
+            <label class="tw-assistant__label" for="<?= $escaper->escapeHtmlAttr($inputId) ?>"><?= $escaper->escapeHtml(__('Describe what you need')) ?></label>
+            <textarea id="<?= $escaper->escapeHtmlAttr($inputId) ?>"
+                      class="tw-assistant__input"
+                      data-role="tw-assistant-input"
+                      rows="3"
+                      maxlength="1000"
+                      placeholder="<?= $escaper->escapeHtmlAttr(__('Describe what you need in detail (e.g., leather tote under $200)...')) ?>"
+                      <?= $unavailableReason ? 'disabled' : '' ?>></textarea>
+            <button type="submit" class="tw-assistant__submit" data-role="tw-assistant-submit" disabled>
+                <?= $escaper->escapeHtml(__('Search')) ?>
+            </button>
+        </form>
+        <div class="tw-assistant__toolbar">
+            <button type="button" class="tw-assistant__action" data-role="tw-assistant-reset">
+                <?= $escaper->escapeHtml(__('Reset')) ?>
+            </button>
+            <button type="button" class="tw-assistant__action" data-role="tw-assistant-close">
+                <?= $escaper->escapeHtml(__('Back to filters')) ?>
+            </button>
+        </div>
+    </div>
+</section>

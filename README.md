@@ -118,6 +118,39 @@ The product list is loaded via the merchandising builder only if the following c
 
 When the product list is loaded in such a manner the result will not be cacheable. This has consequences for server load keep this in mind.
     
+#### AI Shopping Assistant
+1) Enabled (store view scope, default No): show the Tweakwise AI Shopping Assistant on category and search pages (Luma).
+
+The assistant is rendered as the first item of the layered navigation, above the selected filters and the filter list, like the
+[Tweakwise demoshop](https://demo.tweakwise.com/). Clicking the entry card replaces the filter list with the assistant panel;
+"Back to filters" shows the filters for the assistant result again.
+
+Prerequisites in Tweakwise:
+- The AI assistant is enabled on the filter template that is used for the category/search page.
+- The Storefront AI context is configured for the instance.
+
+The assistant is only shown when this setting is enabled **and** the Tweakwise navigation response of the page reports the
+assistant as enabled (or reports a quota reason, in which case the composer is disabled with a quota message). It is not
+shown when Tweakwise does not handle the page (navigation/search disabled, non-anchor or CMS-only category, failed Tweakwise
+request). Because availability is read from the navigation response, it is cached together with the layered navigation.
+
+Behaviour:
+- Messages are sent to the `tweakwise/ajax/assistant` controller (POST, form key protected, never cached), which proxies them
+  to `POST /ai/assistant/{instanceKey}` (or `/ai/assistant/grouped/{instanceKey}` when grouped products are enabled) with a
+  30 second timeout. An assistant failure does not disable regular Tweakwise navigation for the page.
+- The selected facets of the assistant are applied as regular filters using the facet URL keys. Facets that cannot be
+  matched are ignored. Price ranges are converted to the slider format. A selected category facet navigates to the matching
+  Magento category (ignored when the category does not exist or is not part of the store).
+- Search pages: the result is loaded as `catalogsearch/result?q={searchTerm}` with the filters, through the existing AJAX
+  navigation when AJAX filtering is enabled.
+- Category pages: the result is loaded with a full page load of the category URL with the filters as query parameters. When
+  the assistant returns a search term on a category page, the shopper is redirected to the search results page with that
+  term, the category and the filters, because search within a category is not supported by the URL strategies.
+- The conversation (messages, history, open state and the URL from before the conversation) is stored in `sessionStorage`
+  only. "Reset" clears it and returns to the results from before the conversation; it is also cleared on logout.
+- Message content and history are never logged; only the status code, duration and an error reference are logged.
+- Profile key: sent only when personal merchandising is active and the profile cookie is set.
+
 #### Recommendations
 1) Related products enabled: Replace magento native related products with tweakwise crosssell & upsell recommendations. Terminology is confusing since this is relevant for magento related products and not for magento crosssell products
 2) Default related products template: Which tweakwise recommendation template to use for related products. Only relevant when crosssell is enabled

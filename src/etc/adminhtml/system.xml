@@ -267,6 +267,14 @@
                     </depends>
                 </field>
             </group>
+            <group id="assistant" translate="label" type="text" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>AI Shopping Assistant</label>
+                <field id="enabled" translate="label,comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Shows the AI Shopping Assistant above the filters on category and search pages. Requires Tweakwise navigation or search to be enabled. In Tweakwise, enable the AI Shopping Assistant on the filter template and set the Storefront AI context. The assistant is only shown when Tweakwise reports it as enabled for the page.]]></comment>
+                </field>
+            </group>
             <group id="merchandising_builder" translate="label" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Merchandising Builder</label>
                 <group id="personal_merchandising" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">

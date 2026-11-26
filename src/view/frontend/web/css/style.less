@@ -243,3 +243,341 @@
         display: none !important;
     }
 }
+
+//
+//  AI Shopping Assistant
+//  _____________________________________________
+
+@tw-assistant__border-color: #e5e5e5;
+@tw-assistant__muted-color: #707070;
+@tw-assistant__dark-color: #1f1f1f;
+@tw-assistant__accent-color: #7c3aed;
+@tw-assistant__online-color: #22c55e;
+@tw-assistant__offline-color: #9ca3af;
+@tw-assistant__radius: 12px;
+
+#layered-filter-block.tw-assistant-open {
+    #facet-filter-form {
+        display: none;
+    }
+}
+
+.tw-assistant-facet {
+    margin: 0 0 20px;
+    padding: 16px;
+    border: 1px solid @tw-assistant__border-color;
+    border-radius: @tw-assistant__radius;
+    background: #fff;
+
+    [hidden] {
+        display: none !important;
+    }
+}
+
+.tw-assistant__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.tw-assistant__avatar {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: @tw-assistant__dark-color;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tw-assistant__status {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: @tw-assistant__online-color;
+
+    &--unavailable {
+        background: @tw-assistant__offline-color;
+    }
+}
+
+.tw-assistant__heading {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.tw-assistant__title {
+    font-size: 15px;
+    line-height: 1.3;
+}
+
+.tw-assistant__subtitle {
+    color: @tw-assistant__muted-color;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.tw-assistant-facet__form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid @tw-assistant__border-color;
+    border-radius: 8px;
+    background: #fafafa;
+    box-shadow: none;
+    color: @tw-assistant__muted-color;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        border-color: @tw-assistant__accent-color;
+        background: #fff;
+        color: @tw-assistant__dark-color;
+    }
+
+    &:focus-visible {
+        outline: 2px solid @tw-assistant__accent-color;
+        outline-offset: 2px;
+    }
+
+    &[aria-expanded="true"] {
+        display: none;
+    }
+}
+
+.tw-assistant-facet__icon {
+    flex: 0 0 auto;
+}
+
+.tw-assistant__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 360px;
+    min-height: 120px;
+    overflow-y: auto;
+    padding: 4px 0 12px;
+}
+
+.tw-assistant__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 8px;
+    color: @tw-assistant__muted-color;
+    font-size: 13px;
+    text-align: center;
+
+    p {
+        margin: 8px 0 0;
+    }
+}
+
+.tw-assistant__thread {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tw-assistant__message {
+    display: flex;
+    flex-direction: column;
+    max-width: 90%;
+
+    &--user {
+        align-self: flex-end;
+        align-items: flex-end;
+
+        .tw-assistant__bubble {
+            background: @tw-assistant__dark-color;
+            color: #fff;
+        }
+    }
+
+    &--assistant {
+        align-self: flex-start;
+    }
+}
+
+.tw-assistant__author {
+    margin-bottom: 2px;
+    color: @tw-assistant__muted-color;
+    font-size: 11px;
+}
+
+.tw-assistant__bubble {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: @tw-assistant__radius;
+    background: #f3f3f3;
+    font-size: 13px;
+    line-height: 1.45;
+    white-space: pre-line;
+    word-break: break-word;
+}
+
+.tw-assistant__typing {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.tw-assistant__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: @tw-assistant__muted-color;
+    animation: tw-assistant-dot 1.2s infinite ease-in-out;
+
+    &:nth-of-type(3) {
+        animation-delay: .2s;
+    }
+
+    &:nth-of-type(4) {
+        animation-delay: .4s;
+    }
+}
+
+@keyframes tw-assistant-dot {
+    0%, 80%, 100% {
+        opacity: .3;
+        transform: translateY(0);
+    }
+
+    40% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tw-assistant__dot {
+        animation: none;
+    }
+}
+
+.tw-assistant__sr-only,
+.tw-assistant__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    white-space: nowrap;
+}
+
+.tw-assistant__error,
+.tw-assistant__quota {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #fdf0f0;
+    color: #b30000;
+    font-size: 13px;
+
+    strong {
+        display: block;
+    }
+}
+
+.tw-assistant__quota {
+    background: #f6f6f6;
+    color: @tw-assistant__muted-color;
+}
+
+.tw-assistant__composer {
+    position: relative;
+    margin: 0 0 12px;
+}
+
+.tw-assistant__input {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    padding: 10px 84px 10px 12px;
+    border: 1px solid @tw-assistant__border-color;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.45;
+    resize: none;
+    box-sizing: border-box;
+
+    &:focus {
+        border-color: @tw-assistant__accent-color;
+        box-shadow: 0 0 0 3px fade(@tw-assistant__accent-color, 25%);
+        outline: none;
+    }
+
+    &[disabled] {
+        opacity: .6;
+    }
+}
+
+.tw-assistant__submit {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: @tw-assistant__dark-color;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.4;
+
+    &:hover,
+    &:focus {
+        border: 0;
+        background: #000;
+        color: #fff;
+    }
+
+    &[disabled] {
+        opacity: .4;
+        cursor: not-allowed;
+    }
+}
+
+.tw-assistant__toolbar {
+    display: flex;
+    gap: 8px;
+}
+
+.tw-assistant__action {
+    flex: 1 1 0;
+    padding: 8px 12px;
+    border: 1px solid @tw-assistant__border-color;
+    border-radius: 8px;
+    background: #fff;
+    color: @tw-assistant__dark-color;
+    font-size: 13px;
+    font-weight: 400;
+
+    &:hover,
+    &:focus {
+        border-color: @tw-assistant__dark-color;
+        background: #fff;
+        color: @tw-assistant__dark-color;
+    }
+}

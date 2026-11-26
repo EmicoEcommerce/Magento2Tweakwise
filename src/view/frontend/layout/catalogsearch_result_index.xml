@@ -40,6 +40,7 @@
         <referenceBlock name="catalogsearch.leftnav">
             <arguments>
                 <argument name="tweakwise_navigation_config" xsi:type="object">Tweakwise\Magento2Tweakwise\Model\NavigationConfig\Search</argument>
+                <argument name="tweakwise_assistant_view_model" xsi:type="object">Tweakwise\Magento2Tweakwise\ViewModel\Assistant</argument>
             </arguments>
         </referenceBlock>
         <referenceBlock name="search_result_list">

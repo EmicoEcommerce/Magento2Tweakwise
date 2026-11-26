@@ -426,6 +426,41 @@ test('search results are loaded through ajax navigation with the existing hash',
     ajax.mockRestore();
 });
 
+test('the widget finishes the answer when the result does not re-render it', async () => {
+    global.fetchMock.mockReturnValue(jsonResponse(200, {
+        messages: [{role: 'user', content: 'pink jackets'}, {role: 'assistant', content: 'Nothing found'}],
+        history: [],
+        searchTerm: 'pink jackets',
+        url: 'https://magento.test/category/?q=pink%20jackets',
+        filters: {q: 'pink jackets'},
+        ajax: true
+    }));
+    const widget = createWidget();
+    $('#facet-filter-form').html('<input type="hidden" name="__tw_hash" value="hash">');
+    $('#facet-filter-form').data('tweakwiseNavigationForm', {
+        options: {ajaxFilters: true, ajaxEndpoint: '/tweakwise/ajax/navigation', ajaxCache: true},
+        _startLoader: jest.fn(),
+        _stopLoader: jest.fn(),
+        _updateBlocks: jest.fn(),
+        _updateCanonical: jest.fn()
+    });
+    const ajax = jest.spyOn($, 'ajax').mockImplementation(() => $.Deferred().resolve({html: '<div></div>'}));
+    widget.ui.open.trigger('click');
+    type(widget, 'pink jackets');
+    pressEnter(widget);
+    await flush();
+    await flush();
+
+    expect(widget.ui.thread.find('.tw-assistant__message--pending').length).toBe(0);
+    expect(widget.ui.input.prop('disabled')).toBe(false);
+    expect(widget.element.hasClass('tw-assistant--pending')).toBe(false);
+    widget._stopReveal();
+    expect(threadTexts(widget)).toEqual(['pink jackets', 'Nothing found']);
+    expect(JSON.parse(window.sessionStorage.getItem(STORAGE_KEY)).revealPending).toBe(false);
+    expect(widget.options.searchTerm).toBe('pink jackets');
+    ajax.mockRestore();
+});
+
 test('the latest assistant message is revealed word by word', () => {
     jest.useFakeTimers();
     window.matchMedia = () => ({matches: false});

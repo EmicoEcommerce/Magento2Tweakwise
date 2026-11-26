@@ -445,9 +445,8 @@ define([
                 productsGrid.hide();
                 $('script[data-role=\'msrp-popup-template\']').remove();
                 $('script[data-role=\'msrp-info-template\']').remove();
-                // The appended response contains its own search banners
-                $('[data-tw-search-banner]').remove();
-                mainColumn.append(htmlResponse);
+                // The filters and search banners are already moved out of the parsed response
+                mainColumn.append(parsedHtml.contents());
             }
             if (newToolbarFirst) {
                 toolbar

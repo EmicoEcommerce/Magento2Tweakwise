@@ -208,3 +208,41 @@ describe('search banners', () => {
         expect($('[data-tw-search-banner="list-top"]').html()).toBe('');
     });
 });
+
+describe('responses without products', () => {
+    const options = {
+        filterSelector: '#layered-filter-block',
+        productListSelector: '.products.wrapper',
+        toolbarSelector: '.toolbar.toolbar-products',
+        productsGridSelector: '.products-grid',
+        mainColumnSelector: '.column.main',
+        emptyInfoMessageSelector: '.message.info.empty',
+        noteMessageSelector: '.message.note',
+        noticeMessageSelector: '.message.notice'
+    };
+
+    test('the empty message is shown once and the filters are not duplicated', () => {
+        document.body.innerHTML = `
+            <div class="sidebar"><div id="layered-filter-block">old filters</div></div>
+            <div class="column main">
+                <div data-tw-search-banner="list-top"></div>
+                <div class="toolbar toolbar-products"></div>
+                <div class="products wrapper">products</div>
+                <div class="toolbar toolbar-products"></div>
+            </div>
+        `;
+        const form = {...widget, options, element: $('#layered-filter-block')};
+
+        form._updateBlocks(`
+            <div data-tw-search-banner="list-top"><img src="list.jpg"></div>
+            <div class="message info empty">No products</div>
+            <div id="layered-filter-block"><section class="tw-assistant-facet"></section></div>
+        `);
+
+        expect(document.querySelectorAll('#layered-filter-block').length).toBe(1);
+        expect($('.sidebar #layered-filter-block .tw-assistant-facet').length).toBe(1);
+        expect($('.column.main .message.info.empty').length).toBe(1);
+        expect($('[data-tw-search-banner="list-top"]').length).toBe(1);
+        expect($('[data-tw-search-banner="list-top"] img').attr('src')).toBe('list.jpg');
+    });
+});

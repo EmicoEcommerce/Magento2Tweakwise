@@ -16,12 +16,15 @@ use Magento\LayeredNavigation\Block\Navigation;
  * @var $escaper Escaper
  */
 
-if (!$block->canShowBlock()) {
+$canShowBlock = $block->canShowBlock();
+$assistantHtml = $block->fetchView($block->getTemplateFile('Tweakwise_Magento2Tweakwise::layer/assistant.phtml'));
+// The AI Shopping Assistant stays available when its answer has no results and thereby no filters
+if (!$canShowBlock && trim($assistantHtml) === '') {
     return;
 }
 ?>
 
-<?php $filters = $block->getFilters(); /** @var $filters Filter[] */ ?>
+<?php $filters = $canShowBlock ? $block->getFilters() : []; /** @var $filters Filter[] */ ?>
 <?php /** @var NavigationConfig $tweakwiseNavigationConfig */?>
 <?php $tweakwiseNavigationConfig = $block->getData('tweakwise_navigation_config');?>
 <?php $jsFormConfig = $tweakwiseNavigationConfig->getJsFormConfig(); ?>
@@ -40,7 +43,6 @@ if (!$block->canShowBlock()) {
     <div class="block-title filter-title" data-count="<?=count($block->getLayer()->getState()->getFilters())?>">
         <strong data-role="title"><?=$escaper->escapeHtml(__('Shop By'))?></strong>
     </div>
-    <?php $assistantHtml = $block->fetchView($block->getTemplateFile('Tweakwise_Magento2Tweakwise::layer/assistant.phtml')); ?>
     <div class="block-content filter-content<?= trim($assistantHtml) !== '' ? ' tw-assistant-drawer' : '' ?>">
         <?= /* @noEscape */ $assistantHtml ?>
         <form id="facet-filter-form" <?= /* @noEscape */ $jsFormConfig ? sprintf('data-mage-init=\'%s\'', $jsFormConfig) : ''?>>

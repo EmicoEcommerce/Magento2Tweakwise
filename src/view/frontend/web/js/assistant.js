@@ -332,6 +332,7 @@ define([
                 $(this.options.searchInputSelector).val(data.searchTerm || '');
                 navigation._updateBlocks(response.html);
                 navigation._updateCanonical(response.canonical);
+                this._finishWhenNotRendered(data);
             }).fail(() => {
                 this._navigate(data.url);
             }).always(() => {
@@ -339,6 +340,23 @@ define([
             });
 
             return true;
+        },
+
+        /**
+         * The result normally re-renders this widget, which shows the answer. Show it here when it was not
+         * re-rendered, so the widget does not stay pending.
+         */
+        _finishWhenNotRendered: function (data) {
+            if (!$.contains(document.documentElement, this.element.get(0))) {
+                return;
+            }
+
+            this.options.searchTerm = data.searchTerm || null;
+            this.state.revealPending = false;
+            this._saveState();
+            this._setPending(false);
+            this._renderMessages();
+            this._revealLastMessage();
         },
 
         _navigate: function (url) {

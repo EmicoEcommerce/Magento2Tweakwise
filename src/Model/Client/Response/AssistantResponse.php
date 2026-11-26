@@ -12,27 +12,35 @@ use InvalidArgumentException;
 class AssistantResponse
 {
     /**
-     * @param array<int, array{type: string, role: string, content: string}> $messages
-     * @param array $navigation
-     * @param array $history
-     * @param array<int, array{attribute: string, value: mixed}> $selectedFacets
-     * @param string|null $searchTerm
+     * @var array<int, array{type: string, role: string, content: string}>
      */
-    public function __construct(
-        private readonly array $messages,
-        private readonly array $navigation,
-        private readonly array $history,
-        private readonly array $selectedFacets,
-        private readonly ?string $searchTerm
-    ) {
-    }
+    private readonly array $messages;
+
+    /**
+     * @var array
+     */
+    private readonly array $navigation;
+
+    /**
+     * @var array
+     */
+    private readonly array $history;
+
+    /**
+     * @var array<int, array{attribute: string, value: mixed}>
+     */
+    private readonly array $selectedFacets;
+
+    /**
+     * @var string|null
+     */
+    private readonly ?string $searchTerm;
 
     /**
      * @param mixed $data Decoded JSON body
-     * @return self
      * @throws InvalidArgumentException When the body does not match the documented schema
      */
-    public static function fromArray($data): self
+    public function __construct($data)
     {
         if (!is_array($data)) {
             throw new InvalidArgumentException('Assistant response is not an object');
@@ -44,8 +52,22 @@ class AssistantResponse
             }
         }
 
-        $messages = [];
-        foreach ($data['messages'] as $message) {
+        $this->messages = $this->parseMessages($data['messages']);
+        $this->navigation = $data['navigation'];
+        $this->history = $data['history'];
+        $this->selectedFacets = $this->parseSelectedFacets($data['selectedFacets']);
+        $this->searchTerm = is_string($data['searchTerm'] ?? null) ? $data['searchTerm'] : null;
+    }
+
+    /**
+     * @param array $messages
+     * @return array<int, array{type: string, role: string, content: string}>
+     * @throws InvalidArgumentException
+     */
+    private function parseMessages(array $messages): array
+    {
+        $result = [];
+        foreach ($messages as $message) {
             if (
                 !is_array($message)
                 || !in_array($message['role'] ?? null, ['user', 'assistant'], true)
@@ -54,27 +76,30 @@ class AssistantResponse
                 throw new InvalidArgumentException('Assistant response contains an invalid message');
             }
 
-            $messages[] = ['type' => 'message', 'role' => $message['role'], 'content' => $message['content']];
+            $result[] = ['type' => 'message', 'role' => $message['role'], 'content' => $message['content']];
         }
 
-        $selectedFacets = [];
-        foreach ($data['selectedFacets'] as $facet) {
+        return $result;
+    }
+
+    /**
+     * Selected facets without an attribute or value are dropped.
+     *
+     * @param array $selectedFacets
+     * @return array<int, array{attribute: string, value: mixed}>
+     */
+    private function parseSelectedFacets(array $selectedFacets): array
+    {
+        $result = [];
+        foreach ($selectedFacets as $facet) {
             if (!is_array($facet) || !is_string($facet['attribute'] ?? null) || !array_key_exists('value', $facet)) {
                 continue;
             }
 
-            $selectedFacets[] = ['attribute' => $facet['attribute'], 'value' => $facet['value']];
+            $result[] = ['attribute' => $facet['attribute'], 'value' => $facet['value']];
         }
 
-        $searchTerm = $data['searchTerm'] ?? null;
-
-        return new self(
-            $messages,
-            $data['navigation'],
-            $data['history'],
-            $selectedFacets,
-            is_string($searchTerm) ? $searchTerm : null
-        );
+        return $result;
     }
 
     /**

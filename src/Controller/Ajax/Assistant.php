@@ -69,14 +69,9 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
         }
 
         $payload = $this->getPayload();
-        $context = $payload !== null
-            ? $this->pageContextProvider->fromSignedData(
-                $payload['context'] ?? null,
-                is_string($payload['searchTerm'] ?? null) ? $payload['searchTerm'] : null
-            )
-            : null;
-        $messages = $payload !== null ? $this->validateMessages($payload['messages'] ?? null) : null;
-        $selectedFacets = $payload !== null ? $this->validateSelectedFacets($payload['selectedFacets'] ?? []) : null;
+        $context = $this->getPageContext($payload);
+        $messages = $this->validateMessages($payload['messages'] ?? null);
+        $selectedFacets = $this->validateSelectedFacets($payload['selectedFacets'] ?? []);
         $history = $payload['history'] ?? [];
 
         if ($context === null || $messages === null || $selectedFacets === null || !is_array($history)) {
@@ -112,6 +107,9 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
     }
 
     /**
+     * Returns a JSON error instead of the default redirect, the request is required by the interface.
+     *
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
      * @param RequestInterface $request
      * @return InvalidRequestException|null
      */
@@ -119,6 +117,7 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
     {
         return new InvalidRequestException($this->createResult(403, ['error' => 'invalid_form_key']));
     }
+    // phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
 
     /**
      * @param RequestInterface $request
@@ -177,6 +176,24 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
     }
 
     /**
+     * @param array|null $payload
+     * @return PageContext|null
+     */
+    private function getPageContext(?array $payload): ?PageContext
+    {
+        if ($payload === null) {
+            return null;
+        }
+
+        $searchTerm = $payload['searchTerm'] ?? null;
+
+        return $this->pageContextProvider->fromSignedData(
+            $payload['context'] ?? null,
+            is_string($searchTerm) ? $searchTerm : null
+        );
+    }
+
+    /**
      * Returns the messages when valid: at most MAX_MESSAGES user/assistant messages, ending with a non-empty user
      * message.
      *
@@ -191,23 +208,30 @@ class Assistant implements HttpPostActionInterface, CsrfAwareActionInterface
 
         $result = [];
         foreach ($messages as $message) {
-            $role = $message['role'] ?? null;
-            $content = $message['content'] ?? null;
-            if (
-                !in_array($role, ['user', 'assistant'], true)
-                || !is_string($content)
-                || trim($content) === ''
-                || mb_strlen($content) > self::MAX_MESSAGE_LENGTH
-            ) {
+            if (!$this->isValidMessage($message)) {
                 return null;
             }
 
-            $result[] = ['role' => $role, 'content' => trim($content)];
+            $result[] = ['role' => $message['role'], 'content' => trim($message['content'])];
         }
 
         $last = end($result);
 
         return $last['role'] === 'user' ? $result : null;
+    }
+
+    /**
+     * @param mixed $message
+     * @return bool
+     */
+    private function isValidMessage($message): bool
+    {
+        $content = $message['content'] ?? null;
+
+        return in_array($message['role'] ?? null, ['user', 'assistant'], true)
+            && is_string($content)
+            && trim($content) !== ''
+            && mb_strlen($content) <= self::MAX_MESSAGE_LENGTH;
     }
 
     /**

@@ -15,6 +15,7 @@ use Mockery;
 use Tweakwise\Magento2Tweakwise\Model\Assistant\PageContext;
 use Tweakwise\Magento2Tweakwise\Model\Assistant\ResultMapper;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AssistantResponse;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class ResultMapperTest extends Unit
@@ -166,6 +167,20 @@ class ResultMapperTest extends Unit
         $this->assertFalse($result['ajax']);
     }
 
+    public function testSearchTermOnCategoryPageStaysOnTheCategoryWhenTweakwiseSearchIsDisabled(): void
+    {
+        $this->addCategory(12, '1/2/12', true, self::CATEGORY_URL);
+
+        $result = $this->createMapper(false)->map(
+            $this->createResponse([['attribute' => 'kleur', 'value' => 'Rood']], 'red shoes'),
+            $this->createCategoryContext()
+        );
+
+        $this->assertSame(self::CATEGORY_URL . '?kleur[]=Rood', $this->decodeBrackets($result['url']));
+        $this->assertSame(['kleur' => ['Rood']], $result['filters']);
+        $this->assertTrue($result['ajax']);
+    }
+
     private function createCategoryContext(): PageContext
     {
         return new PageContext(PageContext::TYPE_CATEGORY, 12, self::CATEGORY_URL);
@@ -192,7 +207,15 @@ class ResultMapperTest extends Unit
             ],
         ];
 
-        return new AssistantResponse([], $navigation, [], $selectedFacets, $searchTerm);
+        return new AssistantResponse(
+            [
+                'messages' => [],
+                'navigation' => $navigation,
+                'history' => [],
+                'selectedFacets' => $selectedFacets,
+                'searchTerm' => $searchTerm,
+            ]
+        );
     }
 
     private function addCategory(int $id, string $path, bool $active, string $url): void
@@ -205,7 +228,7 @@ class ResultMapperTest extends Unit
         $this->categories[$id] = $category;
     }
 
-    private function createMapper(): ResultMapper
+    private function createMapper(bool $searchEnabled = true): ResultMapper
     {
         $store = Mockery::mock(Store::class);
         $store->shouldReceive('getId')->andReturn(1);
@@ -231,7 +254,10 @@ class ResultMapperTest extends Unit
             static fn (int $storeId, int $id): string => '1' . str_pad((string)$storeId, 4, '0', STR_PAD_LEFT) . $id
         );
 
-        return new ResultMapper($repository, $storeManager, $url, $helper);
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('isSearchEnabled')->andReturn($searchEnabled);
+
+        return new ResultMapper($repository, $storeManager, $url, $helper, $config);
     }
 
     private function decodeBrackets(string $url): string

@@ -117,12 +117,7 @@ class Assistant implements ArgumentInterface
 
         try {
             $context = $this->currentContext->getContext();
-            $isSearch = $context->getRequest() instanceof ProductSearchRequest;
-            if (($isSearch && !$this->config->isSearchEnabled()) || (!$isSearch && !$this->config->isLayeredEnabled())) {
-                return null;
-            }
-
-            if (!$isSearch && !$this->isTweakwiseCategory()) {
+            if (!$this->isHandledByTweakwise($context->getRequest() instanceof ProductSearchRequest)) {
                 return null;
             }
 
@@ -132,6 +127,19 @@ class Assistant implements ArgumentInterface
         }
 
         return $this->config->getTweakwiseExceptionThrown() ? null : $response;
+    }
+
+    /**
+     * @param bool $isSearch
+     * @return bool
+     */
+    private function isHandledByTweakwise(bool $isSearch): bool
+    {
+        if ($isSearch) {
+            return (bool)$this->config->isSearchEnabled();
+        }
+
+        return $this->config->isLayeredEnabled() && $this->isTweakwiseCategory();
     }
 
     /**

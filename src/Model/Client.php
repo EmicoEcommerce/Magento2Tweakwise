@@ -502,7 +502,7 @@ class Client
         }
 
         try {
-            return AssistantResponse::fromArray(json_decode($body, true, 512, JSON_THROW_ON_ERROR));
+            return new AssistantResponse(json_decode($body, true, 512, JSON_THROW_ON_ERROR));
         } catch (JsonException | InvalidArgumentException $e) {
             throw new AssistantException('Invalid Tweakwise AI assistant response', $statusCode, $reference, null, $e);
         }

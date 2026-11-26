@@ -143,9 +143,12 @@ Behaviour:
   Magento category (ignored when the category does not exist or is not part of the store).
 - Search pages: the result is loaded as `catalogsearch/result?q={searchTerm}` with the filters, through the existing AJAX
   navigation when AJAX filtering is enabled.
-- Category pages: the result is loaded with a full page load of the category URL with the filters as query parameters. When
+- Category pages: the result is loaded on the category URL with the filters, through the existing AJAX navigation when
+  AJAX filtering is enabled. When the assistant selects another category, the shopper navigates to that category. When
   the assistant returns a search term on a category page, the shopper is redirected to the search results page with that
-  term, the category and the filters, because search within a category is not supported by the URL strategies.
+  term, the category and the filters, because search within a category is not supported by the URL strategies. When
+  Tweakwise search is disabled, the search term is ignored and the shopper stays on the category page with the filters,
+  because the assistant is only available on pages handled by Tweakwise.
 - The conversation (messages, history, open state and the URL from before the conversation) is stored in `sessionStorage`
   only. "Reset" clears it and returns to the results from before the conversation; it is also cleared on logout.
 - Message content and history are never logged; only the status code, duration and an error reference are logged.

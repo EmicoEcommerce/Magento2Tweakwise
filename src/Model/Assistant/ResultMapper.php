@@ -13,6 +13,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2Tweakwise\Model\Catalog\Layer\Url\Strategy\QueryParameterStrategy;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\AssistantResponse;
 use Tweakwise\Magento2Tweakwise\Model\Client\Type\FacetType\SettingsType;
+use Tweakwise\Magento2Tweakwise\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 /**
@@ -21,7 +22,8 @@ use Tweakwise\Magento2TweakwiseExport\Model\Helper;
  * Selected facets are matched to the facets of the returned navigation on attributename or urlkey and applied with the
  * facet urlkey, like regular filter links. Facets that cannot be matched are dropped. A selected category facet is
  * mapped back to the Magento category. On category pages a search term redirects to the search results page, because
- * category pages do not support searching within the category.
+ * category pages do not support searching within the category. When Tweakwise search is disabled the search results
+ * page is not handled by Tweakwise, so the search term is ignored and the shopper stays on the category page.
  */
 class ResultMapper
 {
@@ -39,12 +41,14 @@ class ResultMapper
      * @param StoreManagerInterface $storeManager
      * @param UrlInterface $url
      * @param Helper $helper
+     * @param Config $config
      */
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly StoreManagerInterface $storeManager,
         private readonly UrlInterface $url,
-        private readonly Helper $helper
+        private readonly Helper $helper,
+        private readonly Config $config
     ) {
     }
 
@@ -56,42 +60,12 @@ class ResultMapper
      */
     public function map(AssistantResponse $response, PageContext $context, array $toolbarParameters = []): array
     {
-        $facets = $this->getNavigationFacets($response->getNavigation());
-        $filters = [];
-        $category = null;
-
-        foreach ($response->getSelectedFacets() as $selectedFacet) {
-            $facet = $this->findFacet($facets, (string)$selectedFacet['attribute']);
-            if ($facet === null) {
-                continue;
-            }
-
-            $settings = $facet['facetsettings'] ?? [];
-            if ($this->isCategoryFacet($settings)) {
-                $category = $this->resolveCategory($facet, $selectedFacet['value']) ?? $category;
-                continue;
-            }
-
-            $urlKey = (string)$settings['urlkey'];
-            if (($settings['selectiontype'] ?? '') === SettingsType::SELECTION_TYPE_SLIDER) {
-                $range = $this->normalizeRange($selectedFacet['value']);
-                if ($range !== null) {
-                    $filters[$urlKey] = $range;
-                }
-
-                continue;
-            }
-
-            $values = $this->splitValues($selectedFacet['value']);
-            if ($values) {
-                $filters[$urlKey] = $values;
-            }
-        }
+        [$filters, $category] = $this->mapSelectedFacets($response);
 
         $searchTerm = trim((string)$response->getSearchTerm());
         $toolbar = $this->filterToolbarParameters($toolbarParameters);
 
-        if ($context->isSearch() || $searchTerm !== '') {
+        if ($context->isSearch() || ($searchTerm !== '' && $this->config->isSearchEnabled())) {
             return $this->mapSearchResult($context, $filters, $toolbar, $searchTerm, $category);
         }
 
@@ -111,11 +85,48 @@ class ResultMapper
     }
 
     /**
+     * Returns the filters by facet urlkey and the selected category.
+     *
+     * @param AssistantResponse $response
+     * @return array{0: array<string, string|string[]>, 1: Category|null}
+     */
+    private function mapSelectedFacets(AssistantResponse $response): array
+    {
+        $facets = $this->getNavigationFacets($response->getNavigation());
+        $filters = [];
+        $category = null;
+
+        foreach ($response->getSelectedFacets() as $selectedFacet) {
+            $facet = $this->findFacet($facets, (string)$selectedFacet['attribute']);
+            if ($facet === null) {
+                continue;
+            }
+
+            $settings = $facet['facetsettings'] ?? [];
+            if ($this->isCategoryFacet($settings)) {
+                $category = $this->resolveCategory($facet, $selectedFacet['value']) ?? $category;
+                continue;
+            }
+
+            $value = ($settings['selectiontype'] ?? '') === SettingsType::SELECTION_TYPE_SLIDER
+                ? $this->normalizeRange($selectedFacet['value'])
+                : $this->splitValues($selectedFacet['value']);
+            if ($value === null || $value === []) {
+                continue;
+            }
+
+            $filters[(string)$settings['urlkey']] = $value;
+        }
+
+        return [$filters, $category];
+    }
+
+    /**
      * @param PageContext $context
      * @param array $filters
      * @param array $toolbar
      * @param string $searchTerm
-     * @param CategoryInterface|null $category
+     * @param Category|null $category
      * @return array{url: string, filters: array<string, string|string[]>, ajax: bool}
      */
     private function mapSearchResult(
@@ -123,7 +134,7 @@ class ResultMapper
         array $filters,
         array $toolbar,
         string $searchTerm,
-        ?CategoryInterface $category
+        ?Category $category
     ): array {
         if ($searchTerm === '') {
             $searchTerm = (string)$context->getSearchTerm();
@@ -271,9 +282,9 @@ class ResultMapper
     /**
      * @param array $facet
      * @param mixed $value
-     * @return CategoryInterface|null
+     * @return Category|null
      */
-    private function resolveCategory(array $facet, $value): ?CategoryInterface
+    private function resolveCategory(array $facet, $value): ?Category
     {
         $values = $this->splitValues($value);
         $value = end($values);
@@ -302,27 +313,9 @@ class ResultMapper
      */
     private function findCategoryAttributeId($attributes, string $value): ?string
     {
-        if (isset($attributes['attribute'])) {
-            $attributes = $attributes['attribute'];
-        }
-
-        if (!is_array($attributes)) {
-            return null;
-        }
-
-        if (isset($attributes['title'])) {
-            $attributes = [$attributes];
-        }
-
-        foreach ($attributes as $attribute) {
-            if (!is_array($attribute)) {
-                continue;
-            }
-
-            $attributeId = isset($attribute['attributeid']) ? (string)$attribute['attributeid'] : null;
-            $title = isset($attribute['title']) ? (string)$attribute['title'] : null;
-            if ($attributeId !== null && ($attributeId === $value || mb_strtolower((string)$title) === mb_strtolower($value))) {
-                return $attributeId;
+        foreach ($this->normalizeAttributes($attributes) as $attribute) {
+            if ($this->matchesCategoryAttribute($attribute, $value)) {
+                return (string)$attribute['attributeid'];
             }
 
             $childId = $this->findCategoryAttributeId($attribute['children'] ?? [], $value);
@@ -335,12 +328,48 @@ class ResultMapper
     }
 
     /**
+     * @param mixed $attributes
+     * @return array[]
+     */
+    private function normalizeAttributes($attributes): array
+    {
+        if (isset($attributes['attribute'])) {
+            $attributes = $attributes['attribute'];
+        }
+
+        if (!is_array($attributes)) {
+            return [];
+        }
+
+        if (isset($attributes['title'])) {
+            $attributes = [$attributes];
+        }
+
+        return array_filter($attributes, 'is_array');
+    }
+
+    /**
+     * @param array $attribute
+     * @param string $value
+     * @return bool
+     */
+    private function matchesCategoryAttribute(array $attribute, string $value): bool
+    {
+        if (!isset($attribute['attributeid'])) {
+            return false;
+        }
+
+        return (string)$attribute['attributeid'] === $value
+            || mb_strtolower((string)($attribute['title'] ?? '')) === mb_strtolower($value);
+    }
+
+    /**
      * Returns the category when it exists and is visible in the current store.
      *
      * @param int $categoryId
-     * @return CategoryInterface|null
+     * @return Category|null
      */
-    private function getCategory(int $categoryId): ?CategoryInterface
+    private function getCategory(int $categoryId): ?Category
     {
         if ($categoryId <= 0) {
             return null;
@@ -348,9 +377,12 @@ class ResultMapper
 
         $store = $this->storeManager->getStore();
         try {
-            /** @var Category $category */
             $category = $this->categoryRepository->get($categoryId, (int)$store->getId());
         } catch (NoSuchEntityException $e) {
+            return null;
+        }
+
+        if (!$category instanceof Category) {
             return null;
         }
 
@@ -387,9 +419,11 @@ class ResultMapper
         $result = [];
         foreach (self::TOOLBAR_PARAMETERS as $name) {
             $value = $parameters[$name] ?? null;
-            if (is_scalar($value) && preg_match('/^[\w\-]{1,64}$/', (string)$value)) {
-                $result[$name] = (string)$value;
+            if (!is_scalar($value) || !preg_match('/^[\w\-]{1,64}$/', (string)$value)) {
+                continue;
             }
+
+            $result[$name] = (string)$value;
         }
 
         return $result;
@@ -415,7 +449,7 @@ class ResultMapper
             $query[] = rawurlencode((string)$name) . '=' . rawurlencode((string)$value);
         }
 
-        $baseUrl = strtok($baseUrl, '?') ?: $baseUrl;
+        $baseUrl = explode('?', $baseUrl, 2)[0];
 
         return $query ? $baseUrl . '?' . implode('&', $query) : $baseUrl;
     }

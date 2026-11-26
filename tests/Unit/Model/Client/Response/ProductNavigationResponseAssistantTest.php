@@ -12,6 +12,7 @@ use Tweakwise\Magento2Tweakwise\Model\Client;
 use Tweakwise\Magento2Tweakwise\Model\Client\Request;
 use Tweakwise\Magento2Tweakwise\Model\Client\Response\ProductNavigationResponse;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
+use ReflectionClass;
 
 class ProductNavigationResponseAssistantTest extends Unit
 {
@@ -31,7 +32,7 @@ class ProductNavigationResponseAssistantTest extends Unit
      */
     public function testAssistantFlagIsParsedFromXml(string $xml, bool $enabled, ?string $reason): void
     {
-        $client = (new \ReflectionClass(Client::class))->newInstanceWithoutConstructor();
+        $client = (new ReflectionClass(Client::class))->newInstanceWithoutConstructor();
         $data = (new ReflectionMethod($client, 'xmlToArray'))->invoke($client, new SimpleXMLElement($xml));
         $response = new ProductNavigationResponse(Mockery::mock(Helper::class), Mockery::mock(Request::class), $data);
 

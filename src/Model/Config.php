@@ -161,6 +161,7 @@ class Config
     /**
      * Returns whether a Tweakwise exception has occurred during this request.
      *
+     * @phpstan-impure The flag is set when a Tweakwise request fails later in the same request.
      * @return bool
      * @SuppressWarnings("PHPMD.BooleanGetMethodName")
      */

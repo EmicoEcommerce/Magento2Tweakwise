@@ -149,11 +149,12 @@ class AssistantTest extends Unit
         $this->assistantRequest->shouldNotReceive('setProfileKey');
 
         $response = new AssistantResponse(
-            [['type' => 'message', 'role' => 'assistant', 'content' => 'Here you go']],
-            [],
-            [['id' => 'h1']],
-            [['attribute' => 'kleur', 'value' => 'Rood']],
-            null
+            [
+                'messages' => [['role' => 'assistant', 'content' => 'Here you go']],
+                'navigation' => [],
+                'history' => [['id' => 'h1']],
+                'selectedFacets' => [['attribute' => 'kleur', 'value' => 'Rood']],
+            ]
         );
         $this->client->shouldReceive('requestAssistant')->once()->with($this->assistantRequest)->andReturn($response);
 
@@ -164,7 +165,7 @@ class AssistantTest extends Unit
         ])->execute();
 
         $this->assertSame(200, $this->result->code);
-        $this->assertSame('no-store, no-cache, must-revalidate, max-age=0', $this->result->cacheControl);
+        $this->assertSame('no-store, no-cache, must-revalidate, max-age=0', $this->result->headers['Cache-Control']);
         $this->assertSame($response->getMessages(), $this->result->data['messages']);
         $this->assertSame([['id' => 'h1']], $this->result->data['history']);
         $this->assertSame('https://shop.test/women.html?kleur[]=Rood', $this->result->data['url']);
@@ -227,7 +228,7 @@ class AssistantTest extends Unit
                 return $json;
             });
             $json->shouldReceive('setHeader')->andReturnUsing(function (string $name, string $value) use ($json) {
-                $this->result->cacheControl = $value;
+                $this->result->headers[$name] = $value;
 
                 return $json;
             });

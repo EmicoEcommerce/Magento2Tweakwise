@@ -38,7 +38,7 @@ $inputId = 'tw-assistant-input';
 ?>
 <section class="tw-assistant-facet"
          aria-label="<?= $escaper->escapeHtmlAttr(__('AI Assistant')) ?>"
-         data-mage-init='<?= /* @noEscape */ $assistantViewModel->getJsConfig($labels) ?>'>
+         data-mage-init="<?= $escaper->escapeHtmlAttr($assistantViewModel->getJsConfig($labels)) ?>">
     <div class="tw-assistant__header">
         <span class="tw-assistant__avatar" aria-hidden="true">
             <?= $escaper->escapeHtml(__('AI')) ?>

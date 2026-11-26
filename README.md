@@ -125,6 +125,10 @@ The assistant is rendered as the first item of the layered navigation, above the
 [Tweakwise demoshop](https://demo.tweakwise.com/). Clicking the entry card replaces the filter list with the assistant panel;
 "Back to filters" shows the filters for the assistant result again.
 
+The assistant uses the width of the sidebar it is rendered in (Luma: 25% of the page on desktop, full width in the mobile
+filter drawer). To give the conversation more room, widen the sidebar in your theme instead of the assistant itself, e.g.
+`.page-layout-2columns-left .sidebar-main { width: 30%; }` together with `.page-layout-2columns-left .column.main { width: 70%; }`.
+
 Prerequisites in Tweakwise:
 - The AI assistant is enabled on the filter template that is used for the category/search page.
 - The Storefront AI context is configured for the instance.

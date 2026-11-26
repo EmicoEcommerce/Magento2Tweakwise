@@ -330,6 +330,12 @@ class PathSlugStrategy implements
                 $query['product_list_mode'] = $mode;
             }
 
+            // Keep the search term of an AI assistant search within the category
+            $search = trim((string)$request->getParam(QueryParameterStrategy::PARAM_SEARCH));
+            if ($search !== '') {
+                $query[QueryParameterStrategy::PARAM_SEARCH] = $search;
+            }
+
             $url = filter_var(
                 $this->magentoUrl->getDirectUrl($twOriginalUrl, ['_query' => $query]),
                 FILTER_SANITIZE_URL

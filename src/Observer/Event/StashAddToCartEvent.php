@@ -6,6 +6,7 @@ namespace Tweakwise\Magento2Tweakwise\Observer\Event;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -58,15 +59,15 @@ class StashAddToCartEvent implements ObserverInterface
         $storeId = (int)$this->storeManager->getStore()->getId();
         $groupedProductsEnabled = $this->config->isGroupedProductsEnabled();
 
-        // $product is still the parent; Configurable::_prepareProduct() already pointed $quoteItem at the child.
-        $childProductId = $quoteItem->getProductId();
-        if ($groupedProductsEnabled && !empty($quoteItem->getQtyOptions())) {
-            $childProductId = array_key_first($quoteItem->getQtyOptions());
+        // Only configurable children are exported as child-parent; anything else is grouped with itself.
+        $rawId = (string)$quoteItem->getProductId();
+        if (
+            $groupedProductsEnabled &&
+            $product->getTypeId() === Configurable::TYPE_CODE &&
+            !empty($quoteItem->getQtyOptions())
+        ) {
+            $rawId = array_key_first($quoteItem->getQtyOptions()) . Helper::GROUP_CODE_DELIMITER . $product->getId();
         }
-
-        $rawId = $groupedProductsEnabled
-            ? $childProductId . Helper::GROUP_CODE_DELIMITER . $product->getId()
-            : (string)$childProductId;
 
         $this->checkoutSessionDataProvider->add('addtocart_event', [
             'productKey' => $this->productKeyResolver->resolve($rawId, $storeId, $groupedProductsEnabled),

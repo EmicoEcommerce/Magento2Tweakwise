@@ -6,9 +6,13 @@ namespace Tweakwise\Test\Unit\Observer\Event;
 
 use Emico\CodeCept\Test\Unit;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Bundle\Model\Product\Type as BundleType;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Type;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Api\Data\StoreInterface;
@@ -121,6 +125,7 @@ class StashAddToCartEventTest extends Unit
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getFinalPrice')->andReturn(15.0);
         $product->shouldReceive('getId')->andReturn(10);
+        $product->shouldReceive('getTypeId')->andReturn(Configurable::TYPE_CODE);
 
         $quoteItem = Mockery::mock(Item::class);
         $quoteItem->shouldReceive('getQtyToAdd')->andReturn(1.0);
@@ -139,7 +144,7 @@ class StashAddToCartEventTest extends Unit
         $this->subject->execute($observer);
     }
 
-    public function testExecuteTreatsProductAsItsOwnGroupWhenGroupedProductsAreEnabledButThereAreNoQtyOptions(): void
+    public function testExecuteSelfGroupsSimpleProductsWhenGroupedProductsAreEnabled(): void
     {
         $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
         $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
@@ -147,18 +152,127 @@ class StashAddToCartEventTest extends Unit
         $product = Mockery::mock(Product::class);
         $product->shouldReceive('getFinalPrice')->andReturn(5.0);
         $product->shouldReceive('getId')->andReturn(42);
+        $product->shouldReceive('getTypeId')->andReturn(Type::TYPE_SIMPLE);
 
         $quoteItem = Mockery::mock(Item::class);
         $quoteItem->shouldReceive('getQtyToAdd')->andReturn(1.0);
         $quoteItem->shouldReceive('getProductId')->andReturn(42);
         $quoteItem->shouldReceive('getQtyOptions')->andReturn([]);
 
-        $this->productKeyResolver->shouldReceive('resolve')->once()->with('42-42', 1, true)->andReturn('10001042-10001042');
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('42', 1, true)->andReturn('10001042-10001042');
 
         $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
             'productKey' => '10001042-10001042',
             'quantity' => 1.0,
             'totalAmount' => 5.0,
+        ]);
+
+        $observer = $this->observerWith($product, $quoteItem);
+        $this->subject->execute($observer);
+    }
+
+    public function testExecuteUsesTheConfigurableIdWhenGroupedProductsAreDisabled(): void
+    {
+        $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
+        $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(false);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getFinalPrice')->andReturn(15.0);
+        $product->shouldReceive('getId')->andReturn(10);
+        $product->shouldReceive('getTypeId')->andReturn(Configurable::TYPE_CODE);
+
+        $quoteItem = Mockery::mock(Item::class);
+        $quoteItem->shouldReceive('getQtyToAdd')->andReturn(1.0);
+        $quoteItem->shouldReceive('getProductId')->andReturn(10);
+        $quoteItem->shouldNotReceive('getQtyOptions');
+
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('10', 1, false)->andReturn('1000110');
+
+        $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
+            'productKey' => '1000110',
+            'quantity' => 1.0,
+            'totalAmount' => 15.0,
+        ]);
+
+        $observer = $this->observerWith($product, $quoteItem);
+        $this->subject->execute($observer);
+    }
+
+    public function testExecuteSelfGroupsAConfigurableWithoutQtyOptions(): void
+    {
+        $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
+        $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getFinalPrice')->andReturn(15.0);
+        $product->shouldReceive('getId')->andReturn(10);
+        $product->shouldReceive('getTypeId')->andReturn(Configurable::TYPE_CODE);
+
+        $quoteItem = Mockery::mock(Item::class);
+        $quoteItem->shouldReceive('getQtyToAdd')->andReturn(1.0);
+        $quoteItem->shouldReceive('getProductId')->andReturn(10);
+        $quoteItem->shouldReceive('getQtyOptions')->andReturn([]);
+
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('10', 1, true)->andReturn('1000110-1000110');
+
+        $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
+            'productKey' => '1000110-1000110',
+            'quantity' => 1.0,
+            'totalAmount' => 15.0,
+        ]);
+
+        $observer = $this->observerWith($product, $quoteItem);
+        $this->subject->execute($observer);
+    }
+
+    public function testExecuteTreatsBundleAsItsOwnGroupInsteadOfUsingASelection(): void
+    {
+        $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
+        $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getFinalPrice')->andReturn(30.0);
+        $product->shouldReceive('getId')->andReturn(20);
+        $product->shouldReceive('getTypeId')->andReturn(BundleType::TYPE_CODE);
+
+        $quoteItem = Mockery::mock(Item::class);
+        $quoteItem->shouldReceive('getQtyToAdd')->andReturn(1.0);
+        $quoteItem->shouldReceive('getProductId')->andReturn(20);
+        $quoteItem->shouldReceive('getQtyOptions')->andReturn([21 => Mockery::mock(), 22 => Mockery::mock()]);
+
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('20', 1, true)->andReturn('10001020-10001020');
+
+        $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
+            'productKey' => '10001020-10001020',
+            'quantity' => 1.0,
+            'totalAmount' => 30.0,
+        ]);
+
+        $observer = $this->observerWith($product, $quoteItem);
+        $this->subject->execute($observer);
+    }
+
+    public function testExecuteTreatsTheAddedSimpleOfAGroupedProductAsItsOwnGroup(): void
+    {
+        $this->config->shouldReceive('isAnalyticsEnabled')->once()->andReturn(true);
+        $this->config->shouldReceive('isGroupedProductsEnabled')->once()->andReturn(true);
+
+        $product = Mockery::mock(Product::class);
+        $product->shouldReceive('getFinalPrice')->andReturn(8.0);
+        $product->shouldReceive('getId')->andReturn(30);
+        $product->shouldReceive('getTypeId')->andReturn(Grouped::TYPE_CODE);
+
+        $quoteItem = Mockery::mock(Item::class);
+        $quoteItem->shouldReceive('getQtyToAdd')->andReturn(1.0);
+        $quoteItem->shouldReceive('getProductId')->andReturn(31);
+        $quoteItem->shouldReceive('getQtyOptions')->andReturn([]);
+
+        $this->productKeyResolver->shouldReceive('resolve')->once()->with('31', 1, true)->andReturn('10001031-10001031');
+
+        $this->checkoutSessionDataProvider->shouldReceive('add')->once()->with('addtocart_event', [
+            'productKey' => '10001031-10001031',
+            'quantity' => 1.0,
+            'totalAmount' => 8.0,
         ]);
 
         $observer = $this->observerWith($product, $quoteItem);
